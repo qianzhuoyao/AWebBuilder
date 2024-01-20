@@ -158,7 +158,7 @@ export class Panel {
   private mapDataWithPanelAccept() {
     this.onSubscribeScale();
     this.onSubscribeLoading();
-    this.onSubscribeCoordinateSystemLayerTransform({});
+    this.onSubscribeCSTransform({});
   }
 
   /**
@@ -166,7 +166,7 @@ export class Panel {
    *
    * @return  {[type]}  [return description]
    */
-  public onSubscribeCoordinateSystemLayerTransform(callbacks: {
+  public onSubscribeCSTransform(callbacks: {
     start?: (v: ITransformValue) => void;
     moving?: (v: ITransformValue) => void;
     end?: () => void;

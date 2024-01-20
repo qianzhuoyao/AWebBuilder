@@ -13,9 +13,9 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
   const [panelLoading, setPanelLoading] = useState(false);
 
   useEffect(() => {
-    ALayoutInstance.onSubscribeCoordinateSystemLayerTransform({
+    ALayoutInstance.onSubscribeCSTransform({
       end: () => {
-        console.log('onSubscribeCoordinateSystemLayerTransform');
+        console.log('onSubscribeCSTransform');
       },
     });
     ALayoutInstance.onSubscribeLoading((loading) => {
