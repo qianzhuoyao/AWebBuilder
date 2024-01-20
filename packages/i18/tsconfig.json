@@ -1,0 +1,15 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "./*.ts", "."],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "module": "es2020"
+  }
+}

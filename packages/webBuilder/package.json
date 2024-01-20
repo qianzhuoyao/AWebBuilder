@@ -1,0 +1,44 @@
+{
+  "name": "AWebBuilder",
+  "description": "yug forever",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "author": "qzy",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "create-config": "ts-jest config:init",
+    "test": "jest",
+    "lint": "eslint \"**/*.ts\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "devDependencies": {
+    "@babel/core": "7",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.4",
+    "@types/node": "20.10.5",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "babel-jest": "^29.7.0",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "workspace:*",
+    "jest": "29.4.3",
+    "ts-jest": "^29.1.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.9.4",
+    "vite": "^4"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1"
+  },
+  "dependencies": {
+    "dayjs": "1.11.6",
+    "fabric": "5.3.0",
+    "moveable": "0.52.0",
+    "rxjs": "7.8.1"
+  }
+}

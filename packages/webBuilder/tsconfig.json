@@ -1,0 +1,13 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "./*.ts", "."],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react-jsx",
+    "types": ["vite/client","node","jest"]
+  }
+}
