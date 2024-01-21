@@ -8,6 +8,8 @@ interface ILayout {
   content: React.ReactNode;
 }
 
+const unitSize = 40;
+
 export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) => {
   const [tick, setTick] = useState<any>(null);
   const [panelLoading, setPanelLoading] = useState(false);
@@ -108,7 +110,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                     left: '0px',
                     display: 'flex',
                     width: '100%',
-                    height: '40px',
+                    height: unitSize + 'px',
                     alignItems: 'flex-end',
                   }}
                 >
@@ -118,11 +120,11 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                         key={t}
                         style={{
                           position: 'absolute',
-                          left: (index + 1) * 40 - String(t).length * 4.5 + 'px',
+                          left: (index + 1) * unitSize - String(t).length * 4.5 + 'px',
                           fontSize: '14px',
                         }}
                       >
-                        {t - 40}
+                        {t - unitSize}
                       </div>
                     );
                   })}
@@ -134,6 +136,8 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
               style={{
                 width: '100%',
                 height: '100%',
+                left:unitSize+'px',
+                top:unitSize+'px'
               }}
             >
               {content}
@@ -146,7 +150,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                     position: 'absolute',
                     top: '0px',
                     left: '0px',
-                    width: '40px',
+                    width: unitSize + 'px',
                     height: '100%',
                   }}
                 >
@@ -156,14 +160,14 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                         key={t}
                         style={{
                           position: 'absolute',
-                          top: (index + 1) * 40 - 9 + 'px',
+                          top: (index + 1) * unitSize - 9 + 'px',
                           width: '100%',
                           textAlign: 'right',
                           fontSize: '14px',
                           paddingRight: '5px',
                         }}
                       >
-                        {t - 40}
+                        {t - unitSize}
                       </div>
                     );
                   })}
