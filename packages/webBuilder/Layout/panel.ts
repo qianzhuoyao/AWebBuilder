@@ -48,8 +48,8 @@ export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 export class Panel {
   private uiTheme: IUiTheme;
   private loading = false;
-  private coordinatorConfig: ICoordinateSystemParams;
-  private coordinator: ICoordinateSystem;
+  // private coordinatorConfig: ICoordinateSystemParams;
+  // private coordinator: ICoordinateSystem;
   private layer: Layer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
 
@@ -79,21 +79,15 @@ export class Panel {
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
     //默认操作对齐网格方式just-vertex
     this.alignGrid = 'just-vertex';
-    this.coordinatorConfig = coordinateSystemConfig;
-    this.coordinator = generateCoordinateSystem(coordinateSystemConfig);
-    console.log(this.coordinator, 'this.coordinator');
-    //计算完坐标后发送副本至所有的slot
-    getPanelSendObservable().next({
-      type: BACKUP_COORDINATOR_TRIGGER,
-      time: dayjs(),
-      value: this.coordinator,
-    });
 
-    this.coordinateSystemLayer = this.setCoordinateSystemLayer({
-      width: coordinateSystemConfig.width,
-      height: coordinateSystemConfig.height,
-    });
-    this.coordinateSystemLayer.drawGrid(this.coordinator, this.coordinatorConfig.unitSize);
+    this.coordinateSystemLayer = this.setCoordinateSystemLayer(
+      {
+        width: coordinateSystemConfig.width,
+        height: coordinateSystemConfig.height,
+      },
+      coordinateSystemConfig
+    );
+    this.coordinateSystemLayer.drawGrid();
     //注册下对齐的调整流,初始进入不执行修正流，执行初次渲染的修正
     this.initAlignGridStream();
     //默认dim背景
@@ -236,18 +230,18 @@ export class Panel {
     for (let index = 0; index < html.length; index++) {
       html[index].setAttribute('data-theme', theme);
       if (theme === 'dark' || theme === 'night') {
-        this.coordinateSystemLayer.drawGrid(this.coordinator, this.coordinatorConfig.unitSize);
+        this.coordinateSystemLayer.drawGrid();
       }
     }
   }
 
   /**
-   * 获取切分刻度
+   * 放大或者拖拽下同步获取切分刻度
    *
    * @return  {[type]}  [return description]
    */
   public getCoordinateSystemLayerTick() {
-    return this.coordinateSystemLayer.getTickCoordinate();
+    return this.coordinateSystemLayer.asyncTickCoordinate();
   }
 
   /**
@@ -336,9 +330,6 @@ export class Panel {
    *
    * @return  {boolean}     [return description]
    */
-  protected verifyVertex(x: number, y: number): boolean {
-    return this.coordinator.x.includes(x) && this.coordinator.y.includes(y);
-  }
 
   /**
    * 设置坐标图层
@@ -347,8 +338,8 @@ export class Panel {
    *
    * @return  {[type]}       [return description]
    */
-  public setCoordinateSystemLayer(size: ISize) {
-    const cs = new CoordinateLayer(size, this.coordinatorConfig.unitSize);
+  public setCoordinateSystemLayer(size: ISize, config: ICoordinateSystemParams) {
+    const cs = new CoordinateLayer(size, config);
     this.layer.push(cs);
     return cs;
   }
@@ -379,11 +370,9 @@ export class Panel {
      * @var {[type]}
      */
     this.coordinateSystemLayer.setSize(size.width, size.height);
-    this.coordinatorConfig = { ...this.coordinatorConfig, ...size };
-    this.coordinator = generateCoordinateSystem(this.coordinatorConfig);
-    console.log(this.coordinator, 'this.coordinator-a');
-
-    this.coordinateSystemLayer.drawGrid(this.coordinator, this.coordinatorConfig.unitSize);
+    this.coordinateSystemLayer.setConfig(size);
+    this.coordinateSystemLayer.updateCoordinator();
+    this.coordinateSystemLayer.drawGrid();
     //通知网格变更
     getCoordinateObservable().next(() => {
       return new Promise((res) => {
@@ -393,12 +382,6 @@ export class Panel {
           type: 'grid-size-set',
         });
       });
-    });
-    //计算完坐标后发送副本至所有的slot
-    getPanelSendObservable().next({
-      type: BACKUP_COORDINATOR_TRIGGER,
-      time: dayjs(),
-      value: this.coordinator,
     });
   }
 
@@ -427,23 +410,6 @@ export class Panel {
 
   public getCoordinateSystemLayer() {
     return this.coordinateSystemLayer;
-  }
-  /**
-   * 获取原始配置信息
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getCoordinatorConfig() {
-    return this.coordinatorConfig;
-  }
-
-  /**
-   * 获取坐标
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getCoordinator() {
-    return this.coordinator;
   }
 
   /**

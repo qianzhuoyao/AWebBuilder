@@ -1,5 +1,9 @@
 import { singletonDController } from '../Layout/DOMController';
-import { ICoordinateSystem } from '../Layout/coordinateSystem';
+import {
+  ICoordinateSystem,
+  ICoordinateSystemParams,
+  generateCoordinateSystem,
+} from '../Layout/coordinateSystem';
 import { ISize } from '../Layout/panel';
 import { Layer } from './Layer';
 import { fabric } from 'fabric';
@@ -17,18 +21,18 @@ import {
 } from '../Layout/subscribePanel';
 
 export class CoordinateLayer extends Layer {
-  // private tickFontFamily = 'Calibri';
-
+  private coordinatorConfig: ICoordinateSystemParams;
+  private coordinator: ICoordinateSystem;
   private canZoom = true;
   private canTransform = true;
   private fCanvas: any = null;
   private tickCoordinate: ICoordinateSystem | null = null;
-  // private tickObj: any = [];
   private gridObj: any = [];
-  // private tickFontColor = '#000';
-  // private tickFontSize = 10;
-  constructor(Size: ISize, unitSize: number) {
-    super(Size, unitSize);
+
+  constructor(Size: ISize, config: ICoordinateSystemParams) {
+    super(Size, config.unitSize);
+    this.coordinatorConfig = config;
+    this.coordinator = generateCoordinateSystem(config);
     //注册默认的放大缩小事件
     this.zoomIn();
     this.zoomOut();
@@ -51,8 +55,22 @@ export class CoordinateLayer extends Layer {
     this.fCanvas?.getZoom();
   }
 
-  public getTickCoordinate() {
+  /**
+   * 同步当前可视区域的tick
+   *
+   * @return  {[type]}  [return description]
+   */
+  public asyncTickCoordinate() {
+    this.gridObj.map((obj) => {
+      console.log(obj, 'f-sasfs');
+    });
+
+    const tickCoordinate = this.setTick(this.coordinator, this.coordinatorConfig.unitSize);
     return this.tickCoordinate;
+  }
+
+  public verifyVertex(x: number, y: number): boolean {
+    return this.coordinator.x.includes(x) && this.coordinator.y.includes(y);
   }
 
   protected fCanvasEvent(fCanvas: any) {
@@ -149,6 +167,17 @@ export class CoordinateLayer extends Layer {
       zoom // 传入修改后的缩放级别
     );
 
+    //触发刻度线订阅通知zoom变更
+    getCoordinateObservable().next(() => {
+      return new Promise((res) => {
+        res({
+          time: dayjs(),
+          options: zoom,
+          type: 'grid-zoom-set',
+        });
+      });
+    });
+
     getPanelAcceptObservable().next({
       type: SCALE_COORDINATOR_TRIGGER,
       time: dayjs(),
@@ -171,7 +200,7 @@ export class CoordinateLayer extends Layer {
         takeUntil(keyUp().observable),
         withLatestFrom(keyDown().observable),
         takeWhile(([a, b]) => {
-          a.options.e.preventDefault();
+          a?.options?.e?.preventDefault();
           return b.code === 'KeyM';
         }),
         repeat()
@@ -203,6 +232,16 @@ export class CoordinateLayer extends Layer {
               this.fCanvas.lastPosX = evt.clientX;
               this.fCanvas.lastPosY = evt.clientY;
               this.fCanvas.requestRenderAll();
+              //通知transform变更
+              getCoordinateObservable().next(() => {
+                return new Promise((res) => {
+                  res({
+                    time: dayjs(),
+                    options: vpt,
+                    type: 'grid-transform-set',
+                  });
+                });
+              });
               getPanelAcceptObservable().next({
                 type: TRANSFORM_MOVING_TRIGGER,
                 time: dayjs(),
@@ -241,15 +280,17 @@ export class CoordinateLayer extends Layer {
         takeUntil(keyUp().observable),
         withLatestFrom(keyDown().observable),
         takeWhile(([a, b]) => {
-          a.options.e.preventDefault();
+          a?.options?.e?.preventDefault();
           return b.code === 'KeyF';
         }),
         repeat()
       )
       .subscribe(([v]) => {
-        const delta = v.options.e.deltaY;
-        if (delta < 0 && v.type === 'fCanvas-mouse-wheel') {
-          this.setZoom(0.05, v.options.e.offsetX, v.options.e.offsetY);
+        if (v.type === 'fCanvas-mouse-wheel') {
+          const delta = v.options.e.deltaY;
+          if (delta < 0) {
+            this.setZoom(0.05, v.options.e.offsetX, v.options.e.offsetY);
+          }
         }
       });
   }
@@ -268,15 +309,17 @@ export class CoordinateLayer extends Layer {
         takeUntil(keyUp().observable),
         withLatestFrom(keyDown().observable),
         takeWhile(([a, b]) => {
-          a.options.e.preventDefault();
+          a?.options?.e?.preventDefault();
           return b.code === 'KeyF';
         }),
         repeat()
       )
       .subscribe(([v]) => {
-        const delta = v.options.e.deltaY;
-        if (delta > 0 && v.type === 'fCanvas-mouse-wheel') {
-          this.setZoom(-0.05, v.options.e.offsetX, v.options.e.offsetY);
+        if (v.type === 'fCanvas-mouse-wheel') {
+          const delta = v.options.e.deltaY;
+          if (delta > 0) {
+            this.setZoom(-0.05, v.options.e.offsetX, v.options.e.offsetY);
+          }
         }
       });
   }
@@ -302,31 +345,44 @@ export class CoordinateLayer extends Layer {
     this.newProvider = dom;
   }
 
+  public updateCoordinator() {
+    this.coordinator = generateCoordinateSystem(this.coordinatorConfig);
+  }
+
+  public setConfig(config: Partial<ICoordinateSystemParams>) {
+    this.coordinatorConfig = { ...this.coordinatorConfig, ...config };
+  }
+
   /**
    * 绘制网格
    * 默认再layerDom上追加canvas
    * @return  {[type]}  [return description]
    */
-  public drawGrid(coordinate: ICoordinateSystem, tickSize: number) {
+  public drawGrid() {
     //canvas 在最下面
     this.layerDom && this.newProvider?.appendChild(this.layerDom);
     if (this.layerDom instanceof HTMLCanvasElement) {
       this.layerDom.width = this.width;
       this.layerDom.height = this.height;
-      this.splitDrawGrid(this.layerDom, coordinate, tickSize);
+      this.splitDrawGrid(this.layerDom, this.coordinator, this.coordinatorConfig.unitSize);
     }
   }
 
   /**
    * 刻度偏移
+   * 实际显示
    *
    * @param   {ICoordinateSystem}  coordinate  [coordinate description]
    *
    * 默认偏移40px 同unitSize
+   * 并且同步至 tranform 大小
+   * 与 zoom值
    *
    * @return  {[type]}                         [return description]
    */
   private setTick(coordinate: ICoordinateSystem, tickSize: number): ICoordinateSystem {
+    const currentZoom = this.fCanvas.getZoom();
+    console.log(currentZoom, 'currentZoom');
     return {
       x: coordinate.x.map((value) => value + tickSize),
       y: coordinate.y.map((value) => value + tickSize),
@@ -356,6 +412,7 @@ export class CoordinateLayer extends Layer {
       //给fCanvas增加事件
       this.fCanvasEvent(this.fCanvas);
     }
+
     this.fCanvas.setWidth(this.width);
     this.fCanvas.setHeight(this.height);
     //计算包含刻度内的冗余位置
@@ -380,6 +437,7 @@ export class CoordinateLayer extends Layer {
         centeredScaling: true,
       });
 
+      console.log(lineX, 'lineX');
       this.fCanvas.add(lineX);
       // this.fCanvas.add(textXTickMark);
       // this.tickObj.push(textXTickMark);

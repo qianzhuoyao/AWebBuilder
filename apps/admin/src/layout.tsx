@@ -24,7 +24,11 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
       setPanelLoading(loading);
     });
     ALayoutInstance.onCoordinateSystemLayerEvent((e) => {
-      if (e.type === 'grid-size-set') {
+      if (
+        e.type === 'grid-size-set' ||
+        e.type === 'grid-transform-set' ||
+        e.type === 'grid-zoom-set'
+      ) {
         setTick(ALayoutInstance.getCoordinateSystemLayerTick());
       }
     });
@@ -136,8 +140,8 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
               style={{
                 width: '100%',
                 height: '100%',
-                left:unitSize+'px',
-                top:unitSize+'px'
+                left: unitSize + 'px',
+                top: unitSize + 'px',
               }}
             >
               {content}

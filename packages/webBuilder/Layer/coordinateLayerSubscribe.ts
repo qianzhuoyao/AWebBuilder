@@ -12,7 +12,9 @@ export interface IFcanvasRes {
     | 'fCanvas-mouse-down'
     | 'fCanvas-mouse-wheel'
     | 'grid-size-set'
-    | 'fCanvas-mouse-move';
+    | 'fCanvas-mouse-move'
+    | 'grid-zoom-set'
+    | 'grid-transform-set';
   options: any;
 }
 
