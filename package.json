@@ -2,7 +2,7 @@
   "name": "ABuilder",
   "version": "0.0.0",
   "author": {
-    "name": "mw"
+    "name": "arronqzy"
   },
   "scripts": {
     "bootstrap": "pnpm install",
