@@ -59,9 +59,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
 
     setProvider(document.getElementById('content') as HTMLElement);
 
-    ALayoutInstance.setCoordinateLayerParentDom(
-      document.getElementById('content') as HTMLElement
-    );
+    ALayoutInstance.setCoordinateLayerParentDom(document.getElementById('content') as HTMLElement);
     ALayoutInstance.setCoordinateSystemSize({
       width: 1920,
       height: 1080,
@@ -142,7 +140,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                     alignItems: 'flex-end',
                   }}
                 >
-                  {tick?.x?.map((t, index) => {
+                  {tick?.x?.map((t: number) => {
                     return (
                       <>
                         {t >= 0 && (
@@ -186,7 +184,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                     height: '100%',
                   }}
                 >
-                  {tick?.y?.map((t, index) => {
+                  {tick?.y?.map((t: number) => {
                     return (
                       <>
                         {t >= 0 && (
