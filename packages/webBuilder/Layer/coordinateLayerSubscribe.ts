@@ -14,7 +14,8 @@ export interface IFcanvasRes {
     | 'grid-size-set'
     | 'fCanvas-mouse-move'
     | 'grid-zoom-set'
-    | 'grid-transform-set';
+    | 'grid-transform-set'
+    | 'grid-scale-set';
   options: any;
 }
 

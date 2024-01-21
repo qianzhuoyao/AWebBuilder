@@ -30,7 +30,7 @@ export class CoordinateLayer extends Layer {
   private gridObj: any = [];
 
   constructor(Size: ISize, config: ICoordinateSystemParams) {
-    super(Size, config.unitSize);
+    super(Size);
     this.coordinatorConfig = config;
     this.coordinator = generateCoordinateSystem(config);
     //注册默认的放大缩小事件
@@ -60,13 +60,8 @@ export class CoordinateLayer extends Layer {
    *
    * @return  {[type]}  [return description]
    */
-  public asyncTickCoordinate() {
-    this.gridObj.map((obj) => {
-      console.log(obj, 'f-sasfs');
-    });
-
-    const tickCoordinate = this.setTick(this.coordinator, this.coordinatorConfig.unitSize);
-    return this.tickCoordinate;
+  public getGridObj() {
+    return this.gridObj;
   }
 
   public verifyVertex(x: number, y: number): boolean {
@@ -138,6 +133,16 @@ export class CoordinateLayer extends Layer {
       },
       scale // 传入修改后的缩放级别
     );
+    //触发刻度线订阅通知zoom变更
+    getCoordinateObservable().next(() => {
+      return new Promise((res) => {
+        res({
+          time: dayjs(),
+          options: scale,
+          type: 'grid-scale-set',
+        });
+      });
+    });
     getPanelAcceptObservable().next({
       type: SCALE_COORDINATOR_TRIGGER,
       time: dayjs(),
@@ -232,16 +237,7 @@ export class CoordinateLayer extends Layer {
               this.fCanvas.lastPosX = evt.clientX;
               this.fCanvas.lastPosY = evt.clientY;
               this.fCanvas.requestRenderAll();
-              //通知transform变更
-              getCoordinateObservable().next(() => {
-                return new Promise((res) => {
-                  res({
-                    time: dayjs(),
-                    options: vpt,
-                    type: 'grid-transform-set',
-                  });
-                });
-              });
+
               getPanelAcceptObservable().next({
                 type: TRANSFORM_MOVING_TRIGGER,
                 time: dayjs(),
@@ -256,6 +252,16 @@ export class CoordinateLayer extends Layer {
             this.fCanvas.setViewportTransform(this.fCanvas.viewportTransform);
             this.fCanvas.isDragging = false;
             this.fCanvas.selection = true;
+            //通知transform变更
+            getCoordinateObservable().next(() => {
+              return new Promise((res) => {
+                res({
+                  time: dayjs(),
+                  options: this.fCanvas.viewportTransform,
+                  type: 'grid-transform-set',
+                });
+              });
+            });
             getPanelAcceptObservable().next({
               type: TRANSFORM_END_TRIGGER,
               time: dayjs(),
@@ -345,6 +351,10 @@ export class CoordinateLayer extends Layer {
     this.newProvider = dom;
   }
 
+  public getConfig() {
+    return this.coordinatorConfig;
+  }
+
   public updateCoordinator() {
     this.coordinator = generateCoordinateSystem(this.coordinatorConfig);
   }
@@ -364,7 +374,7 @@ export class CoordinateLayer extends Layer {
     if (this.layerDom instanceof HTMLCanvasElement) {
       this.layerDom.width = this.width;
       this.layerDom.height = this.height;
-      this.splitDrawGrid(this.layerDom, this.coordinator, this.coordinatorConfig.unitSize);
+      this.splitDrawGrid(this.layerDom, this.coordinator);
     }
   }
 
@@ -380,12 +390,12 @@ export class CoordinateLayer extends Layer {
    *
    * @return  {[type]}                         [return description]
    */
-  private setTick(coordinate: ICoordinateSystem, tickSize: number): ICoordinateSystem {
+  private setTick(coordinate: ICoordinateSystem): ICoordinateSystem {
     const currentZoom = this.fCanvas.getZoom();
     console.log(currentZoom, 'currentZoom');
     return {
-      x: coordinate.x.map((value) => value + tickSize),
-      y: coordinate.y.map((value) => value + tickSize),
+      x: coordinate.x.map((value) => value),
+      y: coordinate.y.map((value) => value),
     };
   }
 
@@ -402,7 +412,7 @@ export class CoordinateLayer extends Layer {
  *
  * @return  {[type]}                         [return description]
  */
-  public splitDrawGrid(canvas: HTMLCanvasElement, coordinate: ICoordinateSystem, tickSize: number) {
+  public splitDrawGrid(canvas: HTMLCanvasElement, coordinate: ICoordinateSystem) {
     const lineStroke = '#C5C9CB';
     //重置操作
     if (!this.fCanvas) {
@@ -416,7 +426,7 @@ export class CoordinateLayer extends Layer {
     this.fCanvas.setWidth(this.width);
     this.fCanvas.setHeight(this.height);
     //计算包含刻度内的冗余位置
-    this.tickCoordinate = this.setTick(coordinate, tickSize);
+    this.tickCoordinate = this.setTick(coordinate);
     // this.tickObj.map((to: any) => {
     //   this.fCanvas.remove(to);
     // });
@@ -425,19 +435,19 @@ export class CoordinateLayer extends Layer {
       this.fCanvas.remove(go);
     });
     this.gridObj = [];
+    console.log(this.tickCoordinate, 'slineX');
     this.tickCoordinate.x.map((c) => {
       //最后一项不要 溢出 保留溢出
-      if (c >= this.width) {
-        return;
-      }
-      const lineX = new fabric.Line([c, tickSize, c, this.height - tickSize], {
+      // if (c >= this.width) {
+      //   return;
+      // }
+      const lineX = new fabric.Line([c, 0, c, this.height], {
         stroke: lineStroke,
         selectable: false,
         type: 'line',
         centeredScaling: true,
       });
 
-      console.log(lineX, 'lineX');
       this.fCanvas.add(lineX);
       // this.fCanvas.add(textXTickMark);
       // this.tickObj.push(textXTickMark);
@@ -446,11 +456,11 @@ export class CoordinateLayer extends Layer {
     this.tickCoordinate.y.map((c) => {
       //最后一项不要 溢出
 
-      if (c >= this.height) {
-        return;
-      }
+      // if (c >= this.height) {
+      //   return;
+      // }
 
-      const lineY = new fabric.Line([tickSize, c, this.width - tickSize, c], {
+      const lineY = new fabric.Line([0, c, this.width, c], {
         stroke: lineStroke,
         selectable: false,
         type: 'line',

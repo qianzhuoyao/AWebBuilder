@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState, startTransition } from 'react';
 import { ALayoutInstance, setProvider } from 'AWebBuilder';
 
 interface ILayout {
@@ -27,9 +27,33 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
       if (
         e.type === 'grid-size-set' ||
         e.type === 'grid-transform-set' ||
-        e.type === 'grid-zoom-set'
+        e.type === 'grid-zoom-set' ||
+        e.type === 'grid-scale-set'
       ) {
-        setTick(ALayoutInstance.getCoordinateSystemLayerTick());
+        const newTickX: number[] = [];
+        const newTickY: number[] = [];
+        ALayoutInstance.getCoordinateSystemLayerGrid().map((mark: any) => {
+          console.log(mark, e.type, 'mark');
+          if (mark.top === 0) {
+            newTickX.push(mark.lineCoords.tl.x);
+          }
+          if (mark.left === 0) {
+            newTickY.push(mark.lineCoords.tl.y);
+          }
+        });
+        console.log(
+          {
+            x: newTickX,
+            y: newTickY,
+          },
+          'newTickY'
+        );
+        startTransition(() => {
+          setTick({
+            x: newTickX,
+            y: newTickY,
+          });
+        });
       }
     });
 
@@ -43,8 +67,8 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
       height: 1080,
     });
 
-    if (ALayoutInstance.getCoordinateSystemLayerTick()) {
-      setTick(ALayoutInstance.getCoordinateSystemLayerTick());
+    if (ALayoutInstance.getCoordinateSystemLayerGrid()) {
+      setTick(ALayoutInstance.getCoordinateSystemLayerGrid());
     }
   }, []);
   return (
@@ -120,16 +144,20 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                 >
                   {tick?.x?.map((t, index) => {
                     return (
-                      <div
-                        key={t}
-                        style={{
-                          position: 'absolute',
-                          left: (index + 1) * unitSize - String(t).length * 4.5 + 'px',
-                          fontSize: '14px',
-                        }}
-                      >
-                        {t - unitSize}
-                      </div>
+                      <>
+                        {t >= 0 && (
+                          <div
+                            key={t}
+                            style={{
+                              position: 'absolute',
+                              left: t + unitSize + 'px',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {Math.floor(t)}
+                          </div>
+                        )}
+                      </>
                     );
                   })}
                 </div>
@@ -160,19 +188,23 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                 >
                   {tick?.y?.map((t, index) => {
                     return (
-                      <div
-                        key={t}
-                        style={{
-                          position: 'absolute',
-                          top: (index + 1) * unitSize - 9 + 'px',
-                          width: '100%',
-                          textAlign: 'right',
-                          fontSize: '14px',
-                          paddingRight: '5px',
-                        }}
-                      >
-                        {t - unitSize}
-                      </div>
+                      <>
+                        {t >= 0 && (
+                          <div
+                            key={t}
+                            style={{
+                              position: 'absolute',
+                              top: t + unitSize - 9 + 'px',
+                              width: '100%',
+                              textAlign: 'right',
+                              fontSize: '14px',
+                              paddingRight: '5px',
+                            }}
+                          >
+                            {Math.floor(t)}
+                          </div>
+                        )}
+                      </>
                     );
                   })}
                 </div>

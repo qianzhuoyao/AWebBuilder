@@ -17,13 +17,12 @@ export class Layer {
   protected offset: [number, number] = [0, 0];
   protected width: number;
   protected height: number;
-  protected unitSize: number;
+
   protected layerDom: HTMLElement | HTMLCanvasElement | null = null;
 
-  constructor(layerSize: ISize, unitSize: number) {
-    this.unitSize = unitSize;
-    this.height = layerSize.height + 2 * unitSize;
-    this.width = layerSize.width + 2 * unitSize;
+  constructor(layerSize: ISize) {
+    this.height = layerSize.height;
+    this.width = layerSize.width;
     /**
      * 订阅来自panel 的信息
      *
@@ -93,8 +92,8 @@ export class Layer {
    * @return  {[type]}     [return description]
    */
   public setSize(w: number, h: number) {
-    this.width = w + 2 * this.unitSize;
-    this.height = h + 2 * this.unitSize;
+    this.width = w;
+    this.height = h;
     if (this.layerDom) {
       this.layerDom.style.width = this.width + 'px';
       this.layerDom.style.height = this.height + 'px';

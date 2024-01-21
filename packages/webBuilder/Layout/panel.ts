@@ -236,12 +236,14 @@ export class Panel {
   }
 
   /**
-   * 放大或者拖拽下同步获取切分刻度
+   * 获取线坐标
    *
-   * @return  {[type]}  [return description]
+   * @param   {boolean}  filterVisible  筛选可视
+   *
+   * @return  {[type]}                  [return description]
    */
-  public getCoordinateSystemLayerTick() {
-    return this.coordinateSystemLayer.asyncTickCoordinate();
+  public getCoordinateSystemLayerGrid() {
+    return this.coordinateSystemLayer.getGridObj();
   }
 
   /**
