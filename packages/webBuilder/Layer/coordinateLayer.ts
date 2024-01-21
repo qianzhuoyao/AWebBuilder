@@ -25,6 +25,7 @@ export class CoordinateLayer extends Layer {
   private coordinator: ICoordinateSystem;
   private canZoom = true;
   private canTransform = true;
+  private scale = 1;
   private fCanvas: any = null;
   private tickCoordinate: ICoordinateSystem | null = null;
   private gridObj: any = [];
@@ -64,12 +65,21 @@ export class CoordinateLayer extends Layer {
     return this.gridObj;
   }
 
+  /**
+   * 面板下所有的缩放
+   *
+   * @return  {[type]}  [return description]
+   */
+  public getScale() {
+    return this.scale;
+  }
+
   public verifyVertex(x: number, y: number): boolean {
     return this.coordinator.x.includes(x) && this.coordinator.y.includes(y);
   }
 
-  protected fCanvasEvent(fCanvas: any) {
-    fCanvas.on('mouse:down', (options: any) => {
+  private fCanvasOnMouseDown() {
+    this.fCanvas.on('mouse:down', (options: any) => {
       getCoordinateObservable().next(() => {
         return new Promise((res) => {
           res({
@@ -80,7 +90,10 @@ export class CoordinateLayer extends Layer {
         });
       });
     });
-    fCanvas.on('mouse:move', (options: any) => {
+  }
+
+  private fCanvasOnMouseMove() {
+    this.fCanvas.on('mouse:move', (options: any) => {
       getCoordinateObservable().next(() => {
         return new Promise((res) => {
           res({
@@ -91,7 +104,9 @@ export class CoordinateLayer extends Layer {
         });
       });
     });
-    fCanvas.on('mouse:up', (options: any) => {
+  }
+  private fCanvasOnMouseUp() {
+    this.fCanvas.on('mouse:up', (options: any) => {
       getCoordinateObservable().next(() => {
         return new Promise((res) => {
           res({
@@ -102,7 +117,9 @@ export class CoordinateLayer extends Layer {
         });
       });
     });
-    fCanvas.on('mouse:wheel', (options: any) => {
+  }
+  private fCanvasOnMouseWheel() {
+    this.fCanvas.on('mouse:wheel', (options: any) => {
       getCoordinateObservable().next(() => {
         return new Promise((res) => {
           res({
@@ -113,6 +130,12 @@ export class CoordinateLayer extends Layer {
         });
       });
     });
+  }
+  protected fCanvasEvent() {
+    this.fCanvasOnMouseDown();
+    this.fCanvasOnMouseMove();
+    this.fCanvasOnMouseUp();
+    this.fCanvasOnMouseWheel();
   }
 
   /**
@@ -125,6 +148,7 @@ export class CoordinateLayer extends Layer {
    * @return  {[type]}           [return description]
    */
   public setScale(scale: number, offsetX: number, offsetY: number) {
+    this.scale = scale;
     this.fCanvas?.zoomToPoint(
       {
         // 关键点
@@ -133,7 +157,6 @@ export class CoordinateLayer extends Layer {
       },
       scale // 传入修改后的缩放级别
     );
-    //触发刻度线订阅通知zoom变更
     getCoordinateObservable().next(() => {
       return new Promise((res) => {
         res({
@@ -213,7 +236,6 @@ export class CoordinateLayer extends Layer {
       .subscribe(([v]) => {
         if (['fCanvas-mouse-up', 'fCanvas-mouse-down', 'fCanvas-mouse-move'].includes(v.type)) {
           const evt = v.options.e;
-
           if (v.type === 'fCanvas-mouse-down') {
             this.fCanvas.isDragging = true;
             this.fCanvas.lastPosX = evt.clientX;
@@ -347,7 +369,6 @@ export class CoordinateLayer extends Layer {
     dom.appendChild(this.fCanvas.wrapperEl);
     this.fCanvas.wrapperEl.style.zIndex = 10;
     dom.style.position = 'relative';
-
     this.newProvider = dom;
   }
 
@@ -378,29 +399,23 @@ export class CoordinateLayer extends Layer {
     }
   }
 
-  /**
-   * 刻度偏移
-   * 实际显示
-   *
-   * @param   {ICoordinateSystem}  coordinate  [coordinate description]
-   *
-   * 默认偏移40px 同unitSize
-   * 并且同步至 tranform 大小
-   * 与 zoom值
-   *
-   * @return  {[type]}                         [return description]
-   */
-  private setTick(coordinate: ICoordinateSystem): ICoordinateSystem {
-    const currentZoom = this.fCanvas.getZoom();
-    console.log(currentZoom, 'currentZoom');
-    return {
-      x: coordinate.x.map((value) => value),
-      y: coordinate.y.map((value) => value),
-    };
-  }
-
   public disposeFCanvas() {
     this.fCanvas?.dispose();
+  }
+
+  private initCanvas(canvas: HTMLCanvasElement) {
+    if (!this.fCanvas) {
+      this.fCanvas = new fabric.Canvas(canvas.id, {
+        allowTouchScrolling: true,
+      });
+      this.fCanvasEvent();
+    }
+    this.fCanvas.setWidth(this.width);
+    this.fCanvas.setHeight(this.height);
+    this.gridObj.map((grid: any) => {
+      this.fCanvas.remove(grid);
+    });
+    this.gridObj = [];
   }
   /**
  * 重新绘制网格
@@ -414,20 +429,8 @@ export class CoordinateLayer extends Layer {
  */
   public splitDrawGrid(canvas: HTMLCanvasElement, coordinate: ICoordinateSystem) {
     const lineStroke = '#C5C9CB';
-    if (!this.fCanvas) {
-      this.fCanvas = new fabric.Canvas(canvas.id, {
-        allowTouchScrolling: true,
-      });
-      this.fCanvasEvent(this.fCanvas);
-    }
-
-    this.fCanvas.setWidth(this.width);
-    this.fCanvas.setHeight(this.height);
-    this.tickCoordinate = this.setTick(coordinate);
-    this.gridObj.map((go: any) => {
-      this.fCanvas.remove(go);
-    });
-    this.gridObj = [];
+    this.initCanvas(canvas);
+    this.tickCoordinate = coordinate;
     this.tickCoordinate.x.map((c) => {
       const lineX = new fabric.Line([c, 0, c, this.height], {
         stroke: lineStroke,

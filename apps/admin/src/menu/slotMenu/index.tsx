@@ -37,7 +37,7 @@ export const SlotMenu = () => {
     setTimeout(() => {
       ALayoutInstance.setLoading(false);
     }, 1000);
-    
+
     ALayoutInstance.setCoordinateSystemSize({
       width: Number(size[0]?.trim()) || 1920,
       height: Number(size[1]?.trim()) || 1080,
@@ -105,10 +105,10 @@ export const SlotMenu = () => {
 
   useEffect(() => {
     ALayoutInstance.onCoordinateSystemLayerEvent((e) => {
-     // console.log(e, 'ALayoutInstance.coordinateSystemLayerSelection');
+      // console.log(e, 'ALayoutInstance.coordinateSystemLayerSelection');
     });
     //回车后设置尺寸与比例
-    ALayoutInstance.onKeyUp((e) => {
+    ALayoutInstance.getEvent().onKeyUp((e: any) => {
       console.log(e, ratioRef.current?.value, 'e-kk');
       if (e.code === 'Enter') {
         //
@@ -116,7 +116,7 @@ export const SlotMenu = () => {
         if (splitCode?.some((n) => !Number(n))) {
           setRatio('1920*1080');
         }
-        ALayoutInstance.setScale(Number(scaleRef.current?.value));
+        ALayoutInstance.getCoordinateSystemLayer().setScale(Number(scaleRef.current?.value), 0, 0);
         setPanelSize(ratioRef.current?.value || '');
         setRatioFocus(false);
       }
@@ -476,7 +476,6 @@ export const SlotMenu = () => {
           >
             <input
               ref={scaleRef}
-             
               type="text"
               defaultValue={1}
               placeholder="比例"
@@ -491,7 +490,7 @@ export const SlotMenu = () => {
                   <li
                     key={R}
                     onClick={() => {
-                      ALayoutInstance.setScale(Number(R));
+                      ALayoutInstance.getCoordinateSystemLayer().setScale(Number(R), 0, 0);
                     }}
                   >
                     <a>{R}</a>
@@ -522,7 +521,6 @@ export const SlotMenu = () => {
                 className="theme-controller"
                 value="synthwave"
                 onChange={(e) => {
-                  
                   if (e.target.checked) {
                     ALayoutInstance.setTheme('dark');
                   } else {
@@ -697,7 +695,6 @@ export const SlotMenu = () => {
                         <li
                           key={ra}
                           onClick={(e) => {
-                            
                             setRatio(ra);
                             setPanelSize(ra);
                           }}

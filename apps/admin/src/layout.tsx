@@ -59,7 +59,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
 
     setProvider(document.getElementById('content') as HTMLElement);
 
-    ALayoutInstance.setCoordinateSystemLayerCanvasParentDom(
+    ALayoutInstance.setCoordinateLayerParentDom(
       document.getElementById('content') as HTMLElement
     );
     ALayoutInstance.setCoordinateSystemSize({

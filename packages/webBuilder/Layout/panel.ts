@@ -24,8 +24,8 @@ import {
   getCoordinateObservable,
   removeCoordinateObservable,
 } from '../Layer/coordinateLayerSubscribe';
-import { keyDown, keyUp } from '../eventStream/keyEvent';
 import { singletonDController } from './DOMController';
+import { PanelEvent } from '../eventStream/panelEvent';
 
 /**
  * 面板
@@ -42,16 +42,17 @@ export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 
 export class Panel {
   private uiTheme: IUiTheme;
+  private event: PanelEvent;
   private loading = false;
   private layer: Layer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
 
-  /**
-   * 缩放比例
-   *
-   * @var {[type]}
-   */
-  private scale = 1;
+  // /**
+  //  * 缩放比例
+  //  *
+  //  * @var {[type]}
+  //  */
+  // private scale = 1;
   /**
    * [alignGrid description]
    *just-vertex 顶点对齐 对长宽忽略
@@ -70,6 +71,7 @@ export class Panel {
    * @return  {[type]}                     [return description]
    */
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
+    this.event = new PanelEvent();
     //默认操作对齐网格方式just-vertex
     this.alignGrid = 'just-vertex';
 
@@ -90,51 +92,8 @@ export class Panel {
     this.mapDataWithPanelAccept();
   }
 
-  /**
-   * 按下事件
-   *
-   * @param   {KeyboardEvent}  callback  [callback description]
-   *
-   * @return  {[type]}                   [return description]
-   */
-  public onKeyDown(callback: (e: KeyboardEvent) => void) {
-    keyDown(callback, {
-      first: true,
-      repeat: true,
-    });
-  }
-
-  /**
-   * 抬起事件
-   *
-   * @param   {KeyboardEvent}  callback  [callback description]
-   *
-   * @return  {[type]}                   [return description]
-   */
-  public onKeyUp(callback: (e: KeyboardEvent) => void) {
-    keyUp(callback, {
-      first: true,
-      repeat: true,
-    });
-  }
-
-  /**
-   * 面板下所有的缩放
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getScale() {
-    return this.scale;
-  }
-
-  /**
-   * 设置缩放
-   *
-   * @return  {[type]}  [return description]
-   */
-  public setScale(scale: number) {
-    this.scale = scale;
-    this.coordinateSystemLayer.setScale(scale, 0, 0);
+  public getEvent() {
+    return this.event;
   }
 
   /**
@@ -160,11 +119,9 @@ export class Panel {
   }) {
     getPanelAcceptObservable().subscribe((v) => {
       if (v.type === TRANSFORM_START_TRIGGER) {
-        console.log(v.value, 'v-0-a');
         //开始
         callbacks.start && callbacks.start(v.value);
       } else if (v.type === TRANSFORM_MOVING_TRIGGER) {
-        console.log(v.value, 'v-0-a01');
         callbacks.moving && callbacks.moving(v.value);
         //ing
       } else if (v.type === TRANSFORM_END_TRIGGER) {
@@ -239,21 +196,9 @@ export class Panel {
     return this.coordinateSystemLayer.getGridObj();
   }
 
-  /**
-   *     获取缩放比例
-   *  以coordinateSystemLayer为准
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getFCanvasScale() {
-    return this.coordinateSystemLayer.getFCanvasZoom();
-  }
-
   public onSubscribeScale(callback?: (scale: number) => void) {
     getPanelAcceptObservable().subscribe((v) => {
-      console.log(v, 'getPanelAcceptObservable');
       if (v.type === SCALE_COORDINATOR_TRIGGER) {
-        this.scale = v.value;
         callback && callback(v.value);
       }
     });
@@ -385,7 +330,7 @@ export class Panel {
    *
    * @return  {[type]}            [return description]
    */
-  public setCoordinateSystemLayerCanvasParentDom(dom: HTMLElement) {
+  public setCoordinateLayerParentDom(dom: HTMLElement) {
     this.coordinateSystemLayer.setCanvasParentDom(dom);
   }
 
