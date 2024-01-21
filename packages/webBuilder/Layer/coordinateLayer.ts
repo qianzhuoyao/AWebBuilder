@@ -414,61 +414,38 @@ export class CoordinateLayer extends Layer {
  */
   public splitDrawGrid(canvas: HTMLCanvasElement, coordinate: ICoordinateSystem) {
     const lineStroke = '#C5C9CB';
-    //重置操作
     if (!this.fCanvas) {
       this.fCanvas = new fabric.Canvas(canvas.id, {
         allowTouchScrolling: true,
       });
-      //给fCanvas增加事件
       this.fCanvasEvent(this.fCanvas);
     }
 
     this.fCanvas.setWidth(this.width);
     this.fCanvas.setHeight(this.height);
-    //计算包含刻度内的冗余位置
     this.tickCoordinate = this.setTick(coordinate);
-    // this.tickObj.map((to: any) => {
-    //   this.fCanvas.remove(to);
-    // });
-    // this.tickObj = [];
     this.gridObj.map((go: any) => {
       this.fCanvas.remove(go);
     });
     this.gridObj = [];
-    console.log(this.tickCoordinate, 'slineX');
     this.tickCoordinate.x.map((c) => {
-      //最后一项不要 溢出 保留溢出
-      // if (c >= this.width) {
-      //   return;
-      // }
       const lineX = new fabric.Line([c, 0, c, this.height], {
         stroke: lineStroke,
         selectable: false,
         type: 'line',
         centeredScaling: true,
       });
-
       this.fCanvas.add(lineX);
-      // this.fCanvas.add(textXTickMark);
-      // this.tickObj.push(textXTickMark);
       this.gridObj.push(lineX);
     });
     this.tickCoordinate.y.map((c) => {
-      //最后一项不要 溢出
-
-      // if (c >= this.height) {
-      //   return;
-      // }
-
       const lineY = new fabric.Line([0, c, this.width, c], {
         stroke: lineStroke,
         selectable: false,
         type: 'line',
         centeredScaling: true,
       });
-      // this.fCanvas.add(textYTickMark);
       this.fCanvas.add(lineY);
-      // this.tickObj.push(textYTickMark);
       this.gridObj.push(lineY);
     });
   }

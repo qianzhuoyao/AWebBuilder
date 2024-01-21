@@ -1,15 +1,10 @@
 import { Layer } from '../Layer/Layer';
-import {
-  ICoordinateSystem,
-  ICoordinateSystemParams,
-  generateCoordinateSystem,
-} from './coordinateSystem';
+import { ICoordinateSystemParams } from './coordinateSystem';
 import { CoordinateLayer } from '../Layer/coordinateLayer';
 import { getAdjust, removeAdjust } from '../renderStream/adjust';
 import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
 import {
   ALIGN_TRIGGER,
-  BACKUP_COORDINATOR_TRIGGER,
   removePanelAcceptObservable,
   removePanelSendObservable,
   getPanelAcceptObservable,
@@ -48,8 +43,6 @@ export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 export class Panel {
   private uiTheme: IUiTheme;
   private loading = false;
-  // private coordinatorConfig: ICoordinateSystemParams;
-  // private coordinator: ICoordinateSystem;
   private layer: Layer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
 
@@ -262,7 +255,6 @@ export class Panel {
       if (v.type === SCALE_COORDINATOR_TRIGGER) {
         this.scale = v.value;
         callback && callback(v.value);
-        //接收到来自坐标系的缩放信号后，同步缩放
       }
     });
   }
@@ -294,7 +286,6 @@ export class Panel {
       .subscribe((v) => {
         callback(v);
       });
-    // this.coordinateSystemLayer.selection();
   }
   /**
    * 设置对齐方式
