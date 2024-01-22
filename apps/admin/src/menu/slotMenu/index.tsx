@@ -26,6 +26,8 @@ export const SlotMenu = () => {
   const scaleRef = useRef<HTMLInputElement | null>(null);
   const ratioRef = useRef<HTMLInputElement | null>(null);
 
+  const transformRef = useRef<HTMLInputElement | null>(null);
+
   const [ratio, setRatio] = useState<string>('1920*1080');
 
   const [ratioFocus, setRatioFocus] = useState<boolean>(false);
@@ -44,6 +46,14 @@ export const SlotMenu = () => {
     });
   };
 
+  const onResetTransform = useCallback((e) => {
+    ALayoutInstance.getCoordinateSystemLayer().reSetTransform();
+    setTimeout(() => {
+      if (transformRef.current) {
+        transformRef.current.checked = false;
+      }
+    }, 600);
+  }, []);
   /**
    * 当前选中的nav的组件
    */
@@ -600,6 +610,73 @@ export const SlotMenu = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path fill="currentColor" d="M11 17V7H8v10zm5 0V7h-3v10z" />
+              </svg>
+            </label>
+          </button>
+
+          {/* 恢复transform */}
+          <button className="btn btn-circle btn-ghost">
+            <label className="swap swap-rotate">
+              {/* this hidden checkbox controls the state */}
+              <input
+                ref={transformRef}
+                type="checkbox"
+                className="theme-controller"
+                value="synthwave"
+                onChange={onResetTransform}
+              />
+              <svg
+                style={{
+                  color: '#989898',
+                }}
+                className="swap-off fill-current w-10 h-10"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="currentColor"
+                  d="M9.808 20q-.344 0-.576-.232Q9 19.536 9 19.192V18H4.615q-.666 0-1.14-.475Q3 17.051 3 16.385V5.615q0-.666.475-1.14Q3.949 4 4.615 4h14.77q.666 0 1.14.475q.475.474.475 1.14V8q0 .213-.144.356q-.144.144-.357.144q-.212 0-.356-.144Q20 8.213 20 8V5.615q0-.269-.173-.442T19.385 5H4.615q-.269 0-.442.173T4 5.615v10.77q0 .269.173.442t.442.173h14.77q.269 0 .442-.173t.173-.442v-4.27q0-.269-.173-.442t-.442-.173h-7.777l1.996 1.996q.14.14.15.344q.01.204-.15.364t-.354.16q-.194 0-.354-.16l-2.638-2.639q-.243-.242-.243-.565q0-.323.243-.565l2.638-2.639q.14-.14.344-.15q.204-.01.364.15t.16.354q0 .194-.16.354L11.608 10.5h7.777q.69 0 1.152.463q.463.462.463 1.152v4.27q0 .666-.475 1.14q-.474.475-1.14.475H15v1.192q0 .344-.232.576q-.232.232-.576.232zm2.692-9"
+                />
+              </svg>
+
+              {/* sun icon */}
+
+              {/* moon icon */}
+              <svg
+                style={{
+                  color: '#989898',
+                }}
+                className="swap-on fill-current w-10 h-10"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-dasharray="15"
+                  stroke-dashoffset="15"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  d="M12 3C16.9706 3 21 7.02944 21 12"
+                >
+                  <animate
+                    fill="freeze"
+                    attributeName="stroke-dashoffset"
+                    dur="0.3s"
+                    values="15;0"
+                  />
+                  <animateTransform
+                    attributeName="transform"
+                    dur="1.5s"
+                    repeatCount="indefinite"
+                    type="rotate"
+                    values="0 12 12;360 12 12"
+                  />
+                </path>
               </svg>
             </label>
           </button>

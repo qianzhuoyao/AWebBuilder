@@ -213,6 +213,23 @@ export class CoordinateLayer extends Layer {
     });
   }
 
+  public reSetTransform() {
+    this.fCanvas?.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    getCoordinateObservable().next(() => {
+      return new Promise((res) => {
+        res({
+          time: dayjs(),
+          options: this.fCanvas.viewportTransform,
+          type: 'grid-transform-set',
+        });
+      });
+    });
+    getPanelAcceptObservable().next({
+      type: TRANSFORM_END_TRIGGER,
+      time: dayjs(),
+      value: undefined,
+    });
+  }
   /**
    * 鼠标 与 键M
    * 可以移动坐标系中心值
