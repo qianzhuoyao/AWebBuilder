@@ -61,7 +61,7 @@ export class TemplateNode {
       className: 'adrag24-move-movable',
       draggable: true,
       resizable: true,
-      scalable: true,
+      scalable: false,
       rotatable: true,
       // Enabling pinchable lets you use events that
       // can be used in draggable, resizable, scalable, and rotateable.
@@ -128,7 +128,7 @@ export class TemplateNode {
   protected resize() {
     this.moveable
       ?.on('resizeStart', ({ target, clientX, clientY }) => {
-        //  console.log('onResizeStart', target);
+        console.log('onResizeStart', target);
       })
       .on('resize', ({ target, drag, width, height, dist, delta, clientX, clientY }) => {
         //  console.log('onResize', target);
@@ -142,10 +142,51 @@ export class TemplateNode {
         //  console.log('onResizeEnd', target, isDrag);
       });
   }
+
+  private focus() {
+    if (!this.moveable) {
+      return;
+    }
+    this.moveable.draggable = true;
+    this.moveable.resizable = true;
+    this.moveable.rotatable = true;
+    // document.querySelectorAll('.moveable-rotation').forEach((node) => {
+    //   if (node instanceof HTMLElement) {
+    //     node.style.display = 'block';
+    //   }
+    // });
+    // document.querySelectorAll('.moveable-resizable').forEach((node) => {
+    //   if (node instanceof HTMLElement) {
+    //     node.style.display = 'block';
+    //   }
+    // });
+  }
+
+  private blur() {
+    if (!this.moveable) {
+      return;
+    }
+    this.moveable.draggable = false;
+    this.moveable.resizable = false;
+
+    this.moveable.rotatable = false;
+    // document.querySelectorAll('.moveable-rotation').forEach((node) => {
+    //   if (node instanceof HTMLElement) {
+    //     node.style.display = 'none';
+    //   }
+    // });
+    // document.querySelectorAll('.moveable-resizable').forEach((node) => {
+    //   if (node instanceof HTMLElement) {
+    //     node.style.display = 'none';
+    //   }
+    // });
+  }
+
   protected drag() {
     this.moveable
       ?.on('dragStart', ({ target, clientX, clientY }) => {
-        //  console.log('onDragStart', target);
+        console.log('onDragStart', target);
+   
       })
       .on(
         'drag',
@@ -172,6 +213,7 @@ export class TemplateNode {
       )
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
         // console.log('onDragEnd', target, isDrag);
+   
       });
   }
   protected rotate() {
