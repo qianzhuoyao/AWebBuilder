@@ -28,8 +28,8 @@ import {
 import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
-
-type IWidget = 'chart' | 'table' | 'text' | 'image';
+import { removeDomObservable } from './domSubscribe';
+import { IWidgetType } from '../templateSlot';
 
 /**
  * 面板
@@ -45,7 +45,7 @@ interface IPanelConstructor {
 export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 
 export class Panel {
-  private widgetType?: IWidget;
+  private widgetType?: IWidgetType;
   private isEdit: boolean;
   private uiTheme: IUiTheme;
   private event: PanelEvent;
@@ -135,7 +135,7 @@ export class Panel {
     this.widgetType = undefined;
     this.coordinateSystemLayer.setFCanvasSelection(false);
   }
-  public currentWidgetWillBuilder(widgetType: IWidget) {
+  public currentWidgetWillBuilder(widgetType: IWidgetType) {
     this.widgetType = widgetType;
     this.coordinateSystemLayer.setFCanvasSelection(true);
   }
@@ -169,6 +169,7 @@ export class Panel {
             type: CREATE_WIDGET,
             time: dayjs(),
             value: {
+              type: this.widgetType,
               pageY: startCoord.pageY,
               pageX: startCoord.pageX,
               pointX: startCoord.pointX,
@@ -425,5 +426,6 @@ export class Panel {
     removeLayerObservable();
     //移除坐标系事件
     removeCoordinateObservable();
+    removeDomObservable();
   }
 }

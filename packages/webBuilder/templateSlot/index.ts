@@ -2,8 +2,10 @@ import Moveable, { OnScale } from 'moveable';
 import { singletonDController } from '../Layout/DOMController';
 import { buildId } from '../uuid';
 import { getDomObservable } from '../Layout/domSubscribe';
+import { Chart } from './chart';
 
 export interface IWidget {
+  type: IWidgetType;
   pageY: number;
   pageX: number;
   pointX: number;
@@ -11,8 +13,10 @@ export interface IWidget {
   width: number;
   height: number;
 }
+export type IWidgetType = 'chart' | 'table' | 'text' | 'image';
 export class TemplateNode {
   private nodeInfo: IWidget;
+  private instance?: Chart;
   private matrix: number[];
   private dom?: HTMLElement;
   private moveable?: Moveable;
@@ -81,6 +85,9 @@ export class TemplateNode {
     this.dom.style.top = this.nodeInfo.pointY + 'px';
     this.dom.style.background = 'red';
 
+    //内容构建
+    this.genChart();
+
     this.createMovable(singletonDController.getProviderDom() || document.body);
     this.drag();
     this.scale();
@@ -90,39 +97,43 @@ export class TemplateNode {
     singletonDController.getProviderDom()?.appendChild(this.dom);
   }
 
+  private genChart() {
+    this.instance = new Chart();
+  }
+
   protected wrap() {
     this.moveable
       ?.on('warpStart', ({ target, clientX, clientY }) => {
-        console.log('onWarpStart', target);
+        // console.log('onWarpStart', target);
       })
       .on('warp', ({ target, clientX, clientY, delta, dist, multiply, transform }) => {
-        console.log('onWarp', target);
+        //  console.log('onWarp', target);
         // target.style.transform = transform;
         this.matrix = multiply(this.matrix, delta);
         target.style.transform = `matrix3d(${this.matrix.join(',')})`;
       })
       .on('warpEnd', ({ target, isDrag, clientX, clientY }) => {
-        console.log('onWarpEnd', target, isDrag);
+        //  console.log('onWarpEnd', target, isDrag);
       });
   }
   protected resize() {
     this.moveable
       ?.on('resizeStart', ({ target, clientX, clientY }) => {
-        console.log('onResizeStart', target);
+        //  console.log('onResizeStart', target);
       })
       .on('resize', ({ target, width, height, dist, delta, clientX, clientY }) => {
-        console.log('onResize', target);
+        //  console.log('onResize', target);
         delta[0] && (target!.style.width = `${width}px`);
         delta[1] && (target!.style.height = `${height}px`);
       })
       .on('resizeEnd', ({ target, isDrag, clientX, clientY }) => {
-        console.log('onResizeEnd', target, isDrag);
+        //  console.log('onResizeEnd', target, isDrag);
       });
   }
   protected drag() {
     this.moveable
       ?.on('dragStart', ({ target, clientX, clientY }) => {
-        console.log('onDragStart', target);
+        //  console.log('onDragStart', target);
       })
       .on(
         'drag',
@@ -140,7 +151,7 @@ export class TemplateNode {
           clientX,
           clientY,
         }) => {
-          console.log('onDrag left, top', left, top);
+          // console.log('onDrag left, top', left, top);
           target!.style.left = `${left}px`;
           target!.style.top = `${top}px`;
           // console.log("onDrag translate", dist);
@@ -148,33 +159,33 @@ export class TemplateNode {
         }
       )
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
-        console.log('onDragEnd', target, isDrag);
+        // console.log('onDragEnd', target, isDrag);
       });
   }
   protected rotate() {
     this.moveable
       ?.on('rotateStart', ({ target, clientX, clientY }) => {
-        console.log('onRotateStart', target);
+        //  console.log('onRotateStart', target);
       })
       .on('rotate', ({ target, beforeDelta, delta, dist, transform, clientX, clientY }) => {
-        console.log('onRotate', dist);
+        //  console.log('onRotate', dist);
         target!.style.transform = transform;
       })
       .on('rotateEnd', ({ target, isDrag, clientX, clientY }) => {
-        console.log('onRotateEnd', target, isDrag);
+        //  console.log('onRotateEnd', target, isDrag);
       });
   }
   protected scale() {
     this.moveable
       ?.on('scaleStart', ({ target, clientX, clientY }) => {
-        console.log('onScaleStart', target);
+        //  console.log('onScaleStart', target);
       })
       .on('scale', ({ target, scale, dist, delta, transform, clientX, clientY }: OnScale) => {
-        console.log('onScale scale', scale);
+        // console.log('onScale scale', scale);
         target!.style.transform = transform;
       })
       .on('scaleEnd', ({ target, isDrag, clientX, clientY }) => {
-        console.log('onScaleEnd', target, isDrag);
+        //console.log('onScaleEnd', target, isDrag);
       });
   }
 }
