@@ -14,6 +14,29 @@ export class Slots {
   }
 
   /**
+   * 筛选节点
+   *
+   * @return  {[type]}  [return description]
+   */
+  public filterTempNode(ids: string[]) {
+    const res: HTMLElement[] = [];
+    this.Templates.forEach((node) => {
+      if (ids.includes(node.id)) {
+        res.push(node);
+      }
+    });
+    return res;
+  }
+  public unFilterTempNode(ids: string[]) {
+    const res: HTMLElement[] = [];
+    this.Templates.forEach((node) => {
+      if (!ids.includes(node.id)) {
+        res.push(node);
+      }
+    });
+    return res;
+  }
+  /**
    * 订阅处理单元
    *
    * @param   {IMsg}  msg  [msg description]

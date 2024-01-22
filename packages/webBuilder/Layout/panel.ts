@@ -1,4 +1,3 @@
-import { Layer } from '../Layer/Layer';
 import { ICoordinateSystemParams } from './coordinateSystem';
 import { CoordinateLayer } from '../Layer/coordinateLayer';
 import { getAdjust, removeAdjust } from '../renderStream/adjust';
@@ -30,6 +29,8 @@ import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
 import { removeDomObservable } from './domSubscribe';
 import { IWidgetType } from '../templateSlot';
+import { OperationLayer } from '../Layer/operationLayer';
+import { buildId } from '../uuid';
 
 /**
  * 面板
@@ -50,10 +51,10 @@ export class Panel {
   private uiTheme: IUiTheme;
   private event: PanelEvent;
   private loading = false;
-  private layer: Layer[] = [];
+  private currentLayer: OperationLayer;
+  private layer: OperationLayer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
   private slots: Slots;
-
   // /**
   //  * 缩放比例
   //  *
@@ -101,10 +102,103 @@ export class Panel {
     this.mapDataWithPanelAccept();
     //处理默认的来自坐标系的事件消息
     this.mapCoordinateEvent();
-    //初始关于widget的渲染订阅
     this.onCreateWidget();
+    //初始创建一个home图层,不可删除
+    this.currentLayer = this.initLayer();
+    console.log(this.layer, 'this.layer');
   }
 
+  /**
+   * 创建组件放置区块订阅
+   * 创建空间
+   *
+   * @return  {[type]}  [return description]
+   */
+  public onCreateWidget() {
+    const startCoord: { pageX: number; pageY: number; pointX: number; pointY: number } = {
+      pageX: 0,
+      pageY: 0,
+      pointX: 0,
+      pointY: 0,
+    };
+    getCoordinateObservable()
+      .pipe(mergeTaskPipe(10))
+      .subscribe((v) => {
+        if (v.type === 'fCanvas-mouse-down') {
+          // startCoord.x = v.options.
+          startCoord.pageX = v.options.e.pageX;
+          startCoord.pageY = v.options.e.pageY;
+          startCoord.pointX = v.options.pointer.x;
+          startCoord.pointY = v.options.pointer.y;
+        }
+        if (this.isEdit && this.widgetType && v.type === 'fCanvas-mouse-up') {
+          const nodeId = buildId();
+          this.currentLayer.addNode(nodeId);
+          getPanelSendObservable().next({
+            type: CREATE_WIDGET,
+            time: dayjs(),
+            value: {
+              id: nodeId,
+              type: this.widgetType,
+              pageY: startCoord.pageY,
+              pageX: startCoord.pageX,
+              pointX: startCoord.pointX,
+              pointY: startCoord.pointY,
+              width: v.options.e.pageX - startCoord.pageX,
+              height: v.options.e.pageY - startCoord.pageY,
+            },
+          });
+        }
+      });
+  }
+
+  public getLayer() {
+    return this.layer;
+  }
+  /**
+   * 同步图层节点
+   *
+   * @return  {[type]}  [return description]
+   */
+  private syncSlotByChangeLayer() {
+    const visibleNodes = this.slots.filterTempNode(this.currentLayer.getNode());
+    const hiddenNodes = this.slots.unFilterTempNode(this.currentLayer.getNode());
+    console.log(
+      visibleNodes,
+      hiddenNodes,
+      this.layer,
+      this.currentLayer,
+      'visibleNodes,hiddenNodes'
+    );
+    visibleNodes.forEach((node) => {
+      node.style.display = 'block';
+    });
+    hiddenNodes.forEach((node) => {
+      node.style.display = 'none';
+    });
+  }
+
+  public changeLayer(layerId: string) {
+    this.currentLayer = this.layer.filter((l) => l.id === layerId)[0];
+    this.syncSlotByChangeLayer();
+  }
+  /**
+   * 新建图层并指向它
+   *
+   * @return  {[type]}  [return description]
+   */
+  public addLayer() {
+    this.initLayer();
+    console.log(this.layer, 'cosiu');
+  }
+  protected initLayer() {
+    //构建操作图层
+    const ol = new OperationLayer(this.coordinateSystemLayer.getConfig());
+    this.currentLayer = ol;
+    this.syncSlotByChangeLayer();
+    this.layer.push(ol);
+    return ol;
+  }
   protected mapCoordinateEvent() {
     this.coordinateSystemLayer.onCoordinateSystemLayerEvent((v) => {
       if (v.type === 'fCanvas-mouse-up') {
@@ -138,48 +232,6 @@ export class Panel {
   public currentWidgetWillBuilder(widgetType: IWidgetType) {
     this.widgetType = widgetType;
     this.coordinateSystemLayer.setFCanvasSelection(true);
-  }
-
-  /**
-   * 创建组件放置区块订阅
-   * 创建空间
-   *
-   * @return  {[type]}  [return description]
-   */
-  public onCreateWidget() {
-    const startCoord: { pageX: number; pageY: number; pointX: number; pointY: number } = {
-      pageX: 0,
-      pageY: 0,
-      pointX: 0,
-      pointY: 0,
-    };
-    getCoordinateObservable()
-      .pipe(mergeTaskPipe(10))
-      .subscribe((v) => {
-        if (v.type === 'fCanvas-mouse-down') {
-          console.log(v, 'onHandleCreateWidget');
-          // startCoord.x = v.options.
-          startCoord.pageX = v.options.e.pageX;
-          startCoord.pageY = v.options.e.pageY;
-          startCoord.pointX = v.options.pointer.x;
-          startCoord.pointY = v.options.pointer.y;
-        }
-        if (this.isEdit && this.widgetType && v.type === 'fCanvas-mouse-up') {
-          getPanelSendObservable().next({
-            type: CREATE_WIDGET,
-            time: dayjs(),
-            value: {
-              type: this.widgetType,
-              pageY: startCoord.pageY,
-              pageX: startCoord.pageX,
-              pointX: startCoord.pointX,
-              pointY: startCoord.pointY,
-              width: v.options.e.pageX - startCoord.pageX,
-              height: v.options.e.pageY - startCoord.pageY,
-            },
-          });
-        }
-      });
   }
 
   /**
@@ -367,9 +419,7 @@ export class Panel {
    * @return  {[type]}       [return description]
    */
   public setCoordinateSystemLayer(size: ISize, config: ICoordinateSystemParams) {
-    const cs = new CoordinateLayer(size, config);
-    this.layer.push(cs);
-    return cs;
+    return new CoordinateLayer(size, config);
   }
 
   /**

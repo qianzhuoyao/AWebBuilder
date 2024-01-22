@@ -1,6 +1,5 @@
 import { singletonDController } from '../Layout/DOMController';
 import { ISize } from '../Layout/panel';
-import { ILayerMsg, getLayerObservable } from './layerSubscribe';
 
 export class Layer {
   //层级
@@ -23,28 +22,6 @@ export class Layer {
   constructor(layerSize: ISize) {
     this.height = layerSize.height;
     this.width = layerSize.width;
-    /**
-     * 订阅来自panel 的信息
-     *
-     * @param   {[type]}  v  [v description]
-     *
-     * @return  {<v>}        [return description]
-     */
-    getLayerObservable().subscribe((v) => {
-      this.layerProcessingUnit(v);
-    });
-  }
-
-  /**
-   * 与panel 信息的 处理单元
-   *
-   * @param   {ILayerMsg}  msg  [msg description]
-   *
-   * @return  {[type]}          [return description]
-   */
-  private layerProcessingUnit(msg: ILayerMsg) {
-    //处理变更 消息
-    console.log(msg);
   }
 
   public setLayerDom(dom: HTMLElement | HTMLCanvasElement) {

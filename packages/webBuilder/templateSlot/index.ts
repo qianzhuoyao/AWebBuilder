@@ -3,8 +3,10 @@ import { singletonDController } from '../Layout/DOMController';
 import { buildId } from '../uuid';
 import { getDomObservable } from '../Layout/domSubscribe';
 import { Chart } from './chart';
+import { OperationLayer } from 'Layer/operationLayer';
 
 export interface IWidget {
+  id: string;
   type: IWidgetType;
   pageY: number;
   pageX: number;
@@ -20,7 +22,6 @@ export class TemplateNode {
   private matrix: number[];
   private dom?: HTMLElement;
   private moveable?: Moveable;
-  private readonly id = buildId();
   constructor(info: IWidget) {
     this.nodeInfo = info;
     this.matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -39,7 +40,7 @@ export class TemplateNode {
   }
 
   public getId() {
-    return this.id;
+    return this.nodeInfo.id;
   }
 
   public getNode() {
@@ -75,7 +76,7 @@ export class TemplateNode {
     if (!this.dom) {
       return;
     }
-    this.dom.id = this.id;
+    this.dom.id = this.nodeInfo.id;
     this.dom.style.position = 'absolute';
     this.dom.style.zIndex = '10';
     this.dom.className = 'adrag24-move-movable';

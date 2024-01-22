@@ -1,9 +1,19 @@
-import { useState } from 'react';
+import { ALayoutInstance } from 'AWebBuilder';
+import { useEffect, useState } from 'react';
 
 export const LayerMenu = () => {
   const [layerType, setLayerType] = useState<1 | 2>(1);
   const [sceneDetailOpen, setSceneDetailOpen] = useState(false);
-
+  const [currentScene, setCurrentScene] = useState('');
+  const [scene, setScene] = useState<{ id: string; name: string }[]>(
+    ALayoutInstance.getLayer().map((layer) => ({
+      id: layer.id,
+      name: layer.getName(),
+    }))
+  );
+  useEffect(() => {
+    setCurrentScene(scene[0].id);
+  }, []);
   return (
     <div
       style={{
@@ -28,6 +38,7 @@ export const LayerMenu = () => {
             className="btn btn-ghost text-md"
             onClick={() => {
               setSceneDetailOpen(!sceneDetailOpen);
+              console.log(scene, 'scscsscsc');
             }}
           >
             scene
@@ -46,7 +57,7 @@ export const LayerMenu = () => {
               </button>
             </li>
             <li>
-              <div className="dropdown">
+              <div className="dropdown dropdown-bottom dropdown-end">
                 <button tabIndex={0} role="button" className="btn btn-circle btn-ghost">
                   <svg
                     width="24"
@@ -65,7 +76,19 @@ export const LayerMenu = () => {
                   className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 mt-1"
                 >
                   <li>
-                    <a>新建图层</a>
+                    <a
+                      onClick={() => {
+                        ALayoutInstance.addLayer();
+                        setScene(
+                          ALayoutInstance.getLayer().map((layer) => ({
+                            id: layer.id,
+                            name: layer.getName(),
+                          }))
+                        );
+                      }}
+                    >
+                      新建图层
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -76,34 +99,20 @@ export const LayerMenu = () => {
       {/* 面板详情 */}
       {sceneDetailOpen && (
         <ul className="menu bg-base-200 w-full">
-          <li>
-            <a>Item 1</a>
-          </li>
-          <li>
-            <a>Parent</a>
-            <ul>
-              <li>
-                <a>Submenu 1</a>
+          {scene.map((sn, index) => {
+            return (
+              <li key={sn.id} className={currentScene === sn.id ? 'bg-base-300 rounded-md' : ''}>
+                <a
+                  onClick={() => {
+                    ALayoutInstance.changeLayer(sn.id);
+                    setCurrentScene(sn.id);
+                  }}
+                >
+                  {sn.name}-{index}
+                </a>
               </li>
-              <li>
-                <a>Submenu 2</a>
-              </li>
-              <li>
-                <a>Parent</a>
-                <ul>
-                  <li>
-                    <a>Submenu 1</a>
-                  </li>
-                  <li>
-                    <a>Submenu 2</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a>Item 3</a>
-          </li>
+            );
+          })}
         </ul>
       )}
       <ul
