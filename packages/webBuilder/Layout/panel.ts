@@ -189,6 +189,7 @@ export class Panel {
    */
   public addLayer() {
     this.initLayer();
+    return this.currentLayer;
     console.log(this.layer, 'cosiu');
   }
   protected initLayer() {

@@ -78,13 +78,14 @@ export const LayerMenu = () => {
                   <li>
                     <a
                       onClick={() => {
-                        ALayoutInstance.addLayer();
-                        setScene(
-                          ALayoutInstance.getLayer().map((layer) => ({
-                            id: layer.id,
-                            name: layer.getName(),
-                          }))
-                        );
+                        const currentLayer = ALayoutInstance.addLayer();
+                        const newScene = ALayoutInstance.getLayer().map((layer) => ({
+                          id: layer.id,
+                          name: layer.getName(),
+                        }));
+                        setSceneDetailOpen(true);
+                        setScene(newScene);
+                        setCurrentScene(currentLayer.id);
                       }}
                     >
                       新建图层
@@ -101,14 +102,49 @@ export const LayerMenu = () => {
         <ul className="menu bg-base-200 w-full">
           {scene.map((sn, index) => {
             return (
-              <li key={sn.id} className={currentScene === sn.id ? 'bg-base-300 rounded-md' : ''}>
+              <li
+                key={sn.id}
+                className={currentScene === sn.id ? 'bg-base-300 rounded-md flex m-1' : 'flex m-1'}
+              >
                 <a
+                  className="justify-between flex w-full"
                   onClick={() => {
                     ALayoutInstance.changeLayer(sn.id);
                     setCurrentScene(sn.id);
                   }}
                 >
-                  {sn.name}-{index}
+                  <span  className="justify-start flex">
+                    {currentScene === sn.id && (
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 36 36"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className='mr-1'
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M13.72 27.69L3.29 17.27a1 1 0 0 1 1.41-1.41l9 9L31.29 7.29A1 1 0 0 1 32.7 8.7Z"
+                          className="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                    )}
+                    {sn.name}-{index}
+                  </span>
+                  {index === 0 && (
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M18.672 11H17v6c0 .445-.194 1-1 1h-4v-6H8v6H4c-.806 0-1-.555-1-1v-6H1.328c-.598 0-.47-.324-.06-.748L9.292 2.22c.195-.202.451-.302.708-.312c.257.01.513.109.708.312l8.023 8.031c.411.425.539.749-.059.749"
+                      />
+                    </svg>
+                  )}
                 </a>
               </li>
             );
