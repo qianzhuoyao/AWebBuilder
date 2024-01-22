@@ -30,28 +30,29 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
         e.type === 'grid-zoom-set' ||
         e.type === 'grid-scale-set'
       ) {
-        const newTickX: number[] = [];
-        const newTickY: number[] = [];
+        const newTickX: Set<number> = new Set([]);
+        const newTickY: Set<number> = new Set([]);
         ALayoutInstance.getCoordinateSystemLayerGrid().map((mark: any) => {
-          console.log(mark, e.type, 'mark');
+          mark.top === 0 && console.log(mark, e.type, 'mark');
+
           if (mark.top === 0) {
-            newTickX.push(mark.lineCoords.tl.x);
+            newTickX.add(mark.lineCoords.tl.x);
           }
           if (mark.left === 0) {
-            newTickY.push(mark.lineCoords.tl.y);
+            newTickY.add(mark.lineCoords.tl.y);
           }
         });
         console.log(
           {
-            x: newTickX,
-            y: newTickY,
+            x: [...newTickX],
+            y: [...newTickY],
           },
           'newTickY'
         );
         startTransition(() => {
           setTick({
-            x: newTickX,
-            y: newTickY,
+            x: [...newTickX],
+            y: [...newTickY],
           });
         });
       }
@@ -136,11 +137,12 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                     left: '0px',
                     display: 'flex',
                     width: '100%',
+
                     height: unitSize + 'px',
                     alignItems: 'flex-end',
                   }}
                 >
-                  {tick?.x?.map((t: number) => {
+                  {tick?.x?.map((t: number, index: number) => {
                     return (
                       <>
                         {t >= 0 && (
@@ -152,7 +154,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                               fontSize: '14px',
                             }}
                           >
-                            {Math.floor(t)}
+                            {index * unitSize}
                           </div>
                         )}
                       </>
@@ -179,12 +181,13 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                   style={{
                     position: 'absolute',
                     top: '0px',
+
                     left: '0px',
                     width: unitSize + 'px',
                     height: '100%',
                   }}
                 >
-                  {tick?.y?.map((t: number) => {
+                  {tick?.y?.map((t: number, index: number) => {
                     return (
                       <>
                         {t >= 0 && (
@@ -199,7 +202,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
                               paddingRight: '5px',
                             }}
                           >
-                            {Math.floor(t)}
+                            {index * unitSize}
                           </div>
                         )}
                       </>
