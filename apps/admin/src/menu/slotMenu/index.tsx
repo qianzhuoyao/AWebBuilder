@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ALayoutAutoFill, ALayoutInstance } from 'AWebBuilder';
+import { ALayoutInstance } from 'AWebBuilder';
 
 const DEFAULT_RATIO = ['1920*1080', '2560*1600', '2048*1536', '1280*1024'];
 
@@ -40,7 +40,7 @@ export const SlotMenu = () => {
       ALayoutInstance.setLoading(false);
     }, 1000);
 
-    ALayoutInstance.setCoordinateSystemSize({
+    ALayoutInstance.getCoordinateSystemLayer().setCoordinateSystemSize({
       width: Number(size[0]?.trim()) || 1920,
       height: Number(size[1]?.trim()) || 1080,
     });
@@ -114,7 +114,7 @@ export const SlotMenu = () => {
   };
 
   useEffect(() => {
-    ALayoutInstance.onCoordinateSystemLayerEvent((e) => {
+    ALayoutInstance.getCoordinateSystemLayer().onCoordinateSystemLayerEvent((e) => {
       // console.log(e, 'ALayoutInstance.coordinateSystemLayerSelection');
     });
     //回车后设置尺寸与比例

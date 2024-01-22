@@ -23,7 +23,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
     ALayoutInstance.onSubscribeLoading((loading) => {
       setPanelLoading(loading);
     });
-    ALayoutInstance.onCoordinateSystemLayerEvent((e) => {
+    ALayoutInstance.getCoordinateSystemLayer().onCoordinateSystemLayerEvent((e) => {
       if (
         e.type === 'grid-size-set' ||
         e.type === 'grid-transform-set' ||
@@ -61,7 +61,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
     setProvider(document.getElementById('content') as HTMLElement);
 
     ALayoutInstance.setCoordinateLayerParentDom(document.getElementById('content') as HTMLElement);
-    ALayoutInstance.setCoordinateSystemSize({
+    ALayoutInstance.getCoordinateSystemLayer().setCoordinateSystemSize({
       width: 1920,
       height: 1080,
     });

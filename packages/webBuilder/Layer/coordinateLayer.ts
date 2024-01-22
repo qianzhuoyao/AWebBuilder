@@ -7,7 +7,7 @@ import {
 import { ISize } from '../Layout/panel';
 import { Layer } from './Layer';
 import { fabric } from 'fabric';
-import { getCoordinateObservable } from './coordinateLayerSubscribe';
+import { IFcanvasRes, getCoordinateObservable } from './coordinateLayerSubscribe';
 import dayjs from 'dayjs';
 import { keyDown, keyUp } from '../eventStream/keyEvent';
 import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
@@ -414,6 +414,49 @@ export class CoordinateLayer extends Layer {
       this.layerDom.height = this.height;
       this.splitDrawGrid(this.layerDom, this.coordinator);
     }
+  }
+
+  /**
+   * 来自坐标系的事件
+   *
+   * @return  {[type]}  [return description]
+   */
+  public onCoordinateSystemLayerEvent(callback: (e: IFcanvasRes) => void) {
+    getCoordinateObservable()
+      .pipe(mergeTaskPipe(10))
+      .subscribe((v) => {
+        callback(v);
+      });
+  }
+
+  /**
+   * 设置大小
+   *
+   *  同步会更新网格
+   * @param   {ISize}  size  [size description]
+   *
+   * @return  {[type]}       [return description]
+   */
+  public setCoordinateSystemSize(size: ISize) {
+    /**
+     * 设置大小
+     *
+     * @var {[type]}
+     */
+    this.setSize(size.width, size.height);
+    this.setConfig(size);
+    this.updateCoordinator();
+    this.drawGrid();
+    //通知网格变更
+    getCoordinateObservable().next(() => {
+      return new Promise((res) => {
+        res({
+          time: dayjs(),
+          options: size,
+          type: 'grid-size-set',
+        });
+      });
+    });
   }
 
   public disposeFCanvas() {

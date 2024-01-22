@@ -26,17 +26,13 @@ export const ALayoutInstance = new Panel({
   },
 });
 
-export const setProvider=(p:HTMLElement)=>{
-  ALayoutInstance.setProvider(p)
-}
-
-
-
-export const ALayoutAutoFill = () => {
-  ALayoutInstance.setCoordinateSystemSize({
-    width: window.innerWidth-120,
-    height: window.innerHeight-120,
-  });
+export const setProvider = (p: HTMLElement) => {
+  ALayoutInstance.setProvider(p);
 };
 
-
+export const ALayoutAutoFill = () => {
+  ALayoutInstance.getCoordinateSystemLayer().setCoordinateSystemSize({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+};

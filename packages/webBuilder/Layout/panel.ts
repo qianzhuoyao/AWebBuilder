@@ -41,6 +41,7 @@ interface IPanelConstructor {
 export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 
 export class Panel {
+  private isEdit: boolean;
   private uiTheme: IUiTheme;
   private event: PanelEvent;
   private loading = false;
@@ -71,6 +72,7 @@ export class Panel {
    * @return  {[type]}                     [return description]
    */
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
+    this.isEdit = false;
     this.event = new PanelEvent();
     //默认操作对齐网格方式just-vertex
     this.alignGrid = 'just-vertex';
@@ -220,18 +222,7 @@ export class Panel {
       });
   }
 
-  /**
-   * 来自坐标系的事件
-   *
-   * @return  {[type]}  [return description]
-   */
-  public onCoordinateSystemLayerEvent(callback: (e: IFcanvasRes) => void) {
-    getCoordinateObservable()
-      .pipe(mergeTaskPipe(10))
-      .subscribe((v) => {
-        callback(v);
-      });
-  }
+  
   /**
    * 设置对齐方式
    * 他同步更新所有的节点
@@ -293,35 +284,7 @@ export class Panel {
     this.coordinateSystemLayer.setVisible(visible);
   }
 
-  /**
-   * 设置大小
-   *
-   *  同步会更新网格
-   * @param   {ISize}  size  [size description]
-   *
-   * @return  {[type]}       [return description]
-   */
-  public setCoordinateSystemSize(size: ISize) {
-    /**
-     * 设置大小
-     *
-     * @var {[type]}
-     */
-    this.coordinateSystemLayer.setSize(size.width, size.height);
-    this.coordinateSystemLayer.setConfig(size);
-    this.coordinateSystemLayer.updateCoordinator();
-    this.coordinateSystemLayer.drawGrid();
-    //通知网格变更
-    getCoordinateObservable().next(() => {
-      return new Promise((res) => {
-        res({
-          time: dayjs(),
-          options: size,
-          type: 'grid-size-set',
-        });
-      });
-    });
-  }
+
 
   /**
    * 设置坐标系挂载节点
