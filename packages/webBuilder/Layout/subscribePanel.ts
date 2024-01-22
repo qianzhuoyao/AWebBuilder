@@ -6,6 +6,7 @@
 import { Dayjs } from 'dayjs';
 import { ReplaySubject } from 'rxjs';
 import { ICoordinateSystem } from './coordinateSystem';
+import { IWidget } from '../templateSlot';
 //对齐修正
 export const ALIGN_TRIGGER = 'ALIGN_TRIGGER' as const;
 //通知slot发放坐标副本
@@ -22,11 +23,19 @@ export const TRANSFORM_MOVING_TRIGGER = 'TRANSFORM_MOVING_TRIGGER' as const;
 export const TRANSFORM_END_TRIGGER = 'TRANSFORM_END_TRIGGER' as const;
 //edit状态
 export const EDIT_STATUS_TRIGGER = 'EDIT_STATUS_TRIGGER' as const;
+//创建widget
+export const CREATE_WIDGET = 'CREATE_WIDGET' as const;
 
 export interface ITransformValue {
   vpt: number[];
   lastPosX: number;
   lastPosY: number;
+}
+
+interface ICreateWidgetTrigger {
+  type: typeof CREATE_WIDGET;
+  time: Dayjs;
+  value: IWidget;
 }
 
 interface IEditTrigger {
@@ -74,7 +83,11 @@ interface IAlignGridTrigger {
   value: 'just-vertex' | 'strict-vertex' | 'none';
 }
 
-export type ISendMsg = IAlignGridTrigger | IBackUpCoordinatorTrigger | IEditTrigger;
+export type ISendMsg =
+  | IAlignGridTrigger
+  | IBackUpCoordinatorTrigger
+  | IEditTrigger
+  | ICreateWidgetTrigger;
 export type IAcceptMsg =
   | ICoordinateScaleTrigger
   | ILoadingTrigger

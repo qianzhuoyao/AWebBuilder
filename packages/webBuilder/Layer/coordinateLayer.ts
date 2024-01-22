@@ -11,19 +11,22 @@ import { IFcanvasRes, getCoordinateObservable } from './coordinateLayerSubscribe
 import dayjs from 'dayjs';
 import { keyDown, keyUp } from '../eventStream/keyEvent';
 import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
-import { repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rxjs';
+import { map, repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rxjs';
 import {
+  CREATE_WIDGET,
   SCALE_COORDINATOR_TRIGGER,
   TRANSFORM_END_TRIGGER,
   TRANSFORM_MOVING_TRIGGER,
   TRANSFORM_START_TRIGGER,
   getPanelAcceptObservable,
+  getPanelSendObservable,
 } from '../Layout/subscribePanel';
 
 export class CoordinateLayer extends Layer {
   private coordinatorConfig: ICoordinateSystemParams;
   private coordinator: ICoordinateSystem;
   private canZoom = true;
+  private canSelection = true;
   private canTransform = true;
   private scale = 1;
   private fCanvas: any = null;
@@ -40,6 +43,8 @@ export class CoordinateLayer extends Layer {
     //默认注册一个移动事件
     this.transform();
     //默认设置一个图层dom
+    //注册一个selection的操作方法
+    this.selection();
     const newLayer = singletonDController.addCanvasRetCanvas();
     if (!newLayer) {
       return;
@@ -50,6 +55,48 @@ export class CoordinateLayer extends Layer {
 
   public setCanZoom(state: boolean) {
     this.canZoom = state;
+  }
+
+  public setFCanvasSelection(state: boolean) {
+    this.fCanvas.selection = state;
+  }
+  /**
+   * 多选
+   *
+   * @return  {[type]}  [return description]
+   */
+  private selection() {
+    getCoordinateObservable()
+      .pipe(
+        mergeTaskPipe(1),
+        takeWhile(() => this.canSelection),
+        skipUntil(keyDown().observable),
+        takeUntil(
+          keyUp().observable.pipe(
+            map(() => {
+              this.fCanvas.wrapperEl.style.zIndex = 10;
+              this.setFCanvasSelection(false);
+            })
+          )
+        ),
+        withLatestFrom(keyDown().observable),
+        takeWhile(([a, b]) => {
+          a?.options?.e?.preventDefault();
+          return b.code === 'KeyS';
+        }),
+        repeat()
+      )
+      .subscribe(([v]) => {
+        if (
+          v.type === 'fCanvas-mouse-down' ||
+          v.type === 'fCanvas-mouse-move' ||
+          v.type === 'fCanvas-mouse-up'
+        ) {
+          console.log(this.fCanvas, 'a0fgsaf');
+          this.fCanvas.wrapperEl.style.zIndex = 100;
+          this.setFCanvasSelection(true);
+        }
+      });
   }
 
   public getFCanvasZoom() {
@@ -387,6 +434,7 @@ export class CoordinateLayer extends Layer {
     this.fCanvas.wrapperEl.style.zIndex = 10;
     dom.style.position = 'relative';
     this.newProvider = dom;
+    singletonDController.setProviderDom(this.newProvider);
   }
 
   public getConfig() {
@@ -470,6 +518,7 @@ export class CoordinateLayer extends Layer {
       });
       this.fCanvasEvent();
     }
+    this.fCanvas.selection = false;
     this.fCanvas.setWidth(this.width);
     this.fCanvas.setHeight(this.height);
     this.gridObj.map((grid: any) => {

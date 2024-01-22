@@ -1,4 +1,6 @@
+import dayjs from 'dayjs';
 import { buildId } from '../uuid';
+import { getDomObservable } from './domSubscribe';
 
 /**
  * dom
@@ -26,6 +28,10 @@ export class DController {
     return DController.instance;
   }
 
+  public getProviderDom() {
+    return DController.instance?.provider;
+  }
+
   /**
    * 会变更doms的所属位置
    *
@@ -36,6 +42,11 @@ export class DController {
   public setProviderDom(provider: HTMLElement) {
     if (DController.instance) {
       DController.instance.provider = provider;
+      getDomObservable().next({
+        type: 'set-dom-provider',
+        time: dayjs(),
+        value: provider,
+      });
       DController.instance.doms.forEach((dom) => {
         DController.instance?.provider.appendChild(dom);
       });

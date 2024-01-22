@@ -16,17 +16,20 @@ import {
   TRANSFORM_START_TRIGGER,
   ITransformValue,
   EDIT_STATUS_TRIGGER,
+  CREATE_WIDGET,
 } from './subscribePanel';
 import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
 import { IUiTheme } from './theme';
 import {
-  IFcanvasRes,
   getCoordinateObservable,
   removeCoordinateObservable,
 } from '../Layer/coordinateLayerSubscribe';
 import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
+import { Slots } from '../Slot/Slots';
+
+type IWidget = 'chart' | 'table' | 'text' | 'image';
 
 /**
  * 面板
@@ -42,12 +45,14 @@ interface IPanelConstructor {
 export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 
 export class Panel {
+  private widgetType?: IWidget;
   private isEdit: boolean;
   private uiTheme: IUiTheme;
   private event: PanelEvent;
   private loading = false;
   private layer: Layer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
+  private slots: Slots;
 
   // /**
   //  * 缩放比例
@@ -73,6 +78,7 @@ export class Panel {
    * @return  {[type]}                     [return description]
    */
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
+    this.slots = new Slots();
     this.isEdit = false;
     this.event = new PanelEvent();
     //默认操作对齐网格方式just-vertex
@@ -95,6 +101,8 @@ export class Panel {
     this.mapDataWithPanelAccept();
     //处理默认的来自坐标系的事件消息
     this.mapCoordinateEvent();
+    //初始关于widget的渲染订阅
+    this.onCreateWidget();
   }
 
   protected mapCoordinateEvent() {
@@ -121,6 +129,56 @@ export class Panel {
 
   public getEvent() {
     return this.event;
+  }
+
+  public resetCurrentWidgetWillBuilder() {
+    this.widgetType = undefined;
+    this.coordinateSystemLayer.setFCanvasSelection(false);
+  }
+  public currentWidgetWillBuilder(widgetType: IWidget) {
+    this.widgetType = widgetType;
+    this.coordinateSystemLayer.setFCanvasSelection(true);
+  }
+
+  /**
+   * 创建组件放置区块订阅
+   * 创建空间
+   *
+   * @return  {[type]}  [return description]
+   */
+  public onCreateWidget() {
+    const startCoord: { pageX: number; pageY: number; pointX: number; pointY: number } = {
+      pageX: 0,
+      pageY: 0,
+      pointX: 0,
+      pointY: 0,
+    };
+    getCoordinateObservable()
+      .pipe(mergeTaskPipe(10))
+      .subscribe((v) => {
+        if (v.type === 'fCanvas-mouse-down') {
+          console.log(v, 'onHandleCreateWidget');
+          // startCoord.x = v.options.
+          startCoord.pageX = v.options.e.pageX;
+          startCoord.pageY = v.options.e.pageY;
+          startCoord.pointX = v.options.pointer.x;
+          startCoord.pointY = v.options.pointer.y;
+        }
+        if (this.isEdit && this.widgetType && v.type === 'fCanvas-mouse-up') {
+          getPanelSendObservable().next({
+            type: CREATE_WIDGET,
+            time: dayjs(),
+            value: {
+              pageY: startCoord.pageY,
+              pageX: startCoord.pageX,
+              pointX: startCoord.pointX,
+              pointY: startCoord.pointY,
+              width: v.options.e.pageX - startCoord.pageX,
+              height: v.options.e.pageY - startCoord.pageY,
+            },
+          });
+        }
+      });
   }
 
   /**

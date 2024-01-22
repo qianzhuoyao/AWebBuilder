@@ -60,6 +60,12 @@ export const SlotMenu = () => {
   const setCurrentNavWidget = useCallback((type: IWidgetType) => {
     const widgetOperationMap: Record<IWidgetType, () => void> = {
       chart: () => {
+        if (chartButtonRef.current?.checked) {
+          ALayoutInstance.currentWidgetWillBuilder('chart');
+        } else {
+          ALayoutInstance.resetCurrentWidgetWillBuilder();
+        }
+
         if (tableButtonRef.current) {
           tableButtonRef.current.checked = false;
         }
@@ -71,6 +77,11 @@ export const SlotMenu = () => {
         }
       },
       table: () => {
+        if (chartButtonRef.current?.checked) {
+          ALayoutInstance.currentWidgetWillBuilder('table');
+        } else {
+          ALayoutInstance.resetCurrentWidgetWillBuilder();
+        }
         if (chartButtonRef.current) {
           chartButtonRef.current.checked = false;
         }
@@ -82,6 +93,11 @@ export const SlotMenu = () => {
         }
       },
       text: () => {
+        if (chartButtonRef.current?.checked) {
+          ALayoutInstance.currentWidgetWillBuilder('text');
+        } else {
+          ALayoutInstance.resetCurrentWidgetWillBuilder();
+        }
         if (tableButtonRef.current) {
           tableButtonRef.current.checked = false;
         }
@@ -93,6 +109,11 @@ export const SlotMenu = () => {
         }
       },
       image: () => {
+        if (chartButtonRef.current?.checked) {
+          ALayoutInstance.currentWidgetWillBuilder('image');
+        } else {
+          ALayoutInstance.resetCurrentWidgetWillBuilder();
+        }
         if (tableButtonRef.current) {
           tableButtonRef.current.checked = false;
         }
@@ -115,7 +136,7 @@ export const SlotMenu = () => {
 
   useEffect(() => {
     ALayoutInstance.onEditStatusSubscribe((v) => {
-      console.log(v,'vvvvv')
+      console.log(v, 'vvvvv');
       if (!operationButtonRef.current) {
         return;
       }
