@@ -19,6 +19,7 @@ export type IWidgetType = 'chart' | 'table' | 'text' | 'image';
 export class TemplateNode {
   private nodeInfo: IWidget;
   private instance?: Chart;
+  private observer?: MutationObserver;
   private matrix: number[];
   private dom?: HTMLElement;
   private moveable?: Moveable;
@@ -58,7 +59,7 @@ export class TemplateNode {
       target: this.dom,
       // If the container is null, the position is fixed. (default: parentElement(document.body))
       container: parentDom,
-      className: 'adrag24-move-movable',
+      className: this.nodeInfo.id,
       draggable: true,
       resizable: true,
       scalable: false,
@@ -69,12 +70,13 @@ export class TemplateNode {
       keepRatio: false,
       // Resize, Scale Events at edges.
       edge: false,
+
       throttleDrag: 0,
       throttleResize: 0,
       throttleScale: 0,
       throttleRotate: 0,
     });
-    console.log(this.moveable, 'movfsjgsgsg');
+    console.log(this.moveable.getControlBoxElement(), 'movfsjgsgsg');
   }
   protected createWidget() {
     console.log(singletonDController, 'singletonDController');
@@ -93,6 +95,7 @@ export class TemplateNode {
     this.dom.style.background = 'red';
 
     //监听dom的变化,使dom隐藏时 其余钩子节点都隐藏
+    this.mutationDom();
 
     //内容构建
     this.genChart();
@@ -104,6 +107,29 @@ export class TemplateNode {
     this.rotate();
     this.wrap();
     singletonDController.getProviderDom()?.appendChild(this.dom);
+  }
+
+  private mutationDom() {
+    const config = { attributes: true, childList: true, subtree: true };
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
+    this.observer = new MutationObserver(function (mutationsList, observer) {
+      // Use traditional 'for loops' for IE 11
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes') {
+          console.log('The ' + mutation.attributeName + ' attribute was modified.');
+          console.log(observer, mutationsList, 'asdasdadssad');
+          if (mutation.target instanceof HTMLElement) {
+            if (mutation.target.style.display === 'none') {
+              that.blur();
+            } else {
+              that.focus();
+            }
+          }
+        }
+      }
+    });
+    this.dom && this.observer.observe(this.dom, config);
   }
 
   private genChart() {
@@ -143,50 +169,28 @@ export class TemplateNode {
       });
   }
 
+  public update() {
+    this.moveable?.forceUpdate();
+  }
+
   private focus() {
     if (!this.moveable) {
       return;
     }
-    this.moveable.draggable = true;
-    this.moveable.resizable = true;
-    this.moveable.rotatable = true;
-    // document.querySelectorAll('.moveable-rotation').forEach((node) => {
-    //   if (node instanceof HTMLElement) {
-    //     node.style.display = 'block';
-    //   }
-    // });
-    // document.querySelectorAll('.moveable-resizable').forEach((node) => {
-    //   if (node instanceof HTMLElement) {
-    //     node.style.display = 'block';
-    //   }
-    // });
+    this.moveable.getControlBoxElement().style.display = 'block';
   }
 
   private blur() {
     if (!this.moveable) {
       return;
     }
-    this.moveable.draggable = false;
-    this.moveable.resizable = false;
-
-    this.moveable.rotatable = false;
-    // document.querySelectorAll('.moveable-rotation').forEach((node) => {
-    //   if (node instanceof HTMLElement) {
-    //     node.style.display = 'none';
-    //   }
-    // });
-    // document.querySelectorAll('.moveable-resizable').forEach((node) => {
-    //   if (node instanceof HTMLElement) {
-    //     node.style.display = 'none';
-    //   }
-    // });
+    this.moveable.getControlBoxElement().style.display = 'none';
   }
 
   protected drag() {
     this.moveable
       ?.on('dragStart', ({ target, clientX, clientY }) => {
         console.log('onDragStart', target);
-   
       })
       .on(
         'drag',
@@ -213,7 +217,6 @@ export class TemplateNode {
       )
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
         // console.log('onDragEnd', target, isDrag);
-   
       });
   }
   protected rotate() {

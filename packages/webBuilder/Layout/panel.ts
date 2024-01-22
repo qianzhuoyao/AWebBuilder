@@ -156,8 +156,8 @@ export class Panel {
     return this.currentLayer;
   }
 
-  public getCurrentLayerNodes(){
-   return this.slots.filterTemp(this.currentLayer.getNode());
+  public getCurrentLayerNodes() {
+    return this.slots.filterTemp(this.currentLayer.getNode());
   }
 
   public getLayer() {
@@ -169,8 +169,8 @@ export class Panel {
    * @return  {[type]}  [return description]
    */
   private syncSlotByChangeLayer() {
-    const visibleNodes = this.slots.filterTempNode(this.currentLayer.getNode());
-    const hiddenNodes = this.slots.unFilterTempNode(this.currentLayer.getNode());
+    const visibleNodes = this.slots.filterTemp(this.currentLayer.getNode());
+    const hiddenNodes = this.slots.unFilterTemp(this.currentLayer.getNode());
     console.log(
       visibleNodes,
       hiddenNodes,
@@ -179,10 +179,18 @@ export class Panel {
       'visibleNodes,hiddenNodes'
     );
     visibleNodes.forEach((node) => {
-      node.style.display = 'block';
+      const ele = node.getNode();
+      if (!ele) {
+        return;
+      }
+      ele.style.display = 'block';
     });
     hiddenNodes.forEach((node) => {
-      node.style.display = 'none';
+      const ele = node.getNode();
+      if (!ele) {
+        return;
+      }
+      ele.style.display = 'none';
     });
   }
 
