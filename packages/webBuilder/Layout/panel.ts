@@ -28,7 +28,7 @@ import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
 import { removeDomObservable } from './domSubscribe';
-import { IWidgetType } from '../templateSlot';
+import { IWidget, IWidgetType } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
 import { buildId } from '../uuid';
 
@@ -152,6 +152,14 @@ export class Panel {
       });
   }
 
+  public getCurrentLayer() {
+    return this.currentLayer;
+  }
+
+  public getCurrentLayerNodes(){
+   return this.slots.filterTemp(this.currentLayer.getNode());
+  }
+
   public getLayer() {
     return this.layer;
   }
@@ -218,6 +226,21 @@ export class Panel {
     getPanelSendObservable().subscribe((v) => {
       if (v.type === EDIT_STATUS_TRIGGER) {
         callback(this.isEdit);
+      }
+    });
+  }
+
+  /**
+   * 监听创建
+   *
+   * @param   {boolean}  callback  [callback description]
+   *
+   * @return  {[type]}             [return description]
+   */
+  public onCreateWidgetSubscribe(callback: (node: IWidget) => void) {
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === CREATE_WIDGET) {
+        callback(v.value);
       }
     });
   }

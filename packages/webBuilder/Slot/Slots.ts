@@ -5,12 +5,32 @@ import { CREATE_WIDGET, ISendMsg, getPanelSendObservable } from '../Layout/subsc
  * 显示单元
  */
 export class Slots {
-  private Templates: Map<string, HTMLElement> = new Map([]);
+  private Templates: Map<string, TemplateNode> = new Map([]);
   constructor() {
     //订阅来自panel的消息
     getPanelSendObservable().subscribe((msg) => {
       this.processingUnit(msg);
     });
+  }
+
+  public filterTemp(ids: string[]) {
+    const res: TemplateNode[] = [];
+    this.Templates.forEach((node) => {
+      if (ids.includes(node.getId())) {
+        res.push(node);
+      }
+    });
+    return res;
+  }
+
+  public unFilterTemp(ids: string[]) {
+    const res: TemplateNode[] = [];
+    this.Templates.forEach((node) => {
+      if (!ids.includes(node.getId())) {
+        res.push(node);
+      }
+    });
+    return res;
   }
 
   /**
@@ -19,22 +39,10 @@ export class Slots {
    * @return  {[type]}  [return description]
    */
   public filterTempNode(ids: string[]) {
-    const res: HTMLElement[] = [];
-    this.Templates.forEach((node) => {
-      if (ids.includes(node.id)) {
-        res.push(node);
-      }
-    });
-    return res;
+    return this.filterTemp(ids).map((n) => n.getNode());
   }
   public unFilterTempNode(ids: string[]) {
-    const res: HTMLElement[] = [];
-    this.Templates.forEach((node) => {
-      if (!ids.includes(node.id)) {
-        res.push(node);
-      }
-    });
-    return res;
+    return this.unFilterTemp(ids).map((n) => n.getNode());
   }
   /**
    * 订阅处理单元
@@ -49,7 +57,7 @@ export class Slots {
       console.log(msg, 's0v');
       const newTemp = new TemplateNode(msg.value);
       if (newTemp.getNode() instanceof HTMLElement) {
-        this.Templates.set(newTemp.getId(), newTemp.getNode() as HTMLElement);
+        this.Templates.set(newTemp.getId(), newTemp);
       }
     }
   }

@@ -29,6 +29,7 @@ export class TemplateNode {
     this.createWidget();
     getDomObservable().subscribe((v) => {
       if (v.type === 'set-dom-provider' && this.moveable) {
+        console.log('cscscscscscscs');
         this.createMovable(v.value);
         this.drag();
         this.scale();
@@ -41,6 +42,10 @@ export class TemplateNode {
 
   public getId() {
     return this.nodeInfo.id;
+  }
+
+  public getInfo() {
+    return this.nodeInfo;
   }
 
   public getNode() {
@@ -69,6 +74,7 @@ export class TemplateNode {
       throttleScale: 0,
       throttleRotate: 0,
     });
+    console.log(this.moveable, 'movfsjgsgsg');
   }
   protected createWidget() {
     console.log(singletonDController, 'singletonDController');
@@ -85,6 +91,8 @@ export class TemplateNode {
     this.dom.style.left = this.nodeInfo.pointX + 'px';
     this.dom.style.top = this.nodeInfo.pointY + 'px';
     this.dom.style.background = 'red';
+
+    //监听dom的变化,使dom隐藏时 其余钩子节点都隐藏
 
     //内容构建
     this.genChart();
@@ -122,10 +130,13 @@ export class TemplateNode {
       ?.on('resizeStart', ({ target, clientX, clientY }) => {
         //  console.log('onResizeStart', target);
       })
-      .on('resize', ({ target, width, height, dist, delta, clientX, clientY }) => {
+      .on('resize', ({ target, drag, width, height, dist, delta, clientX, clientY }) => {
         //  console.log('onResize', target);
-        delta[0] && (target!.style.width = `${width}px`);
-        delta[1] && (target!.style.height = `${height}px`);
+        // delta[0] && (target!.style.width = `${width}px`);
+        // delta[1] && (target!.style.height = `${height}px`);
+        target.style.width = `${width}px`;
+        target.style.height = `${height}px`;
+        target.style.transform = drag.transform;
       })
       .on('resizeEnd', ({ target, isDrag, clientX, clientY }) => {
         //  console.log('onResizeEnd', target, isDrag);
