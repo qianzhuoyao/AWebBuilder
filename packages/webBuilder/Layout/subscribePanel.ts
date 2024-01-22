@@ -20,11 +20,19 @@ export const TRANSFORM_START_TRIGGER = 'TRANSFORM_START_TRIGGER' as const;
 export const TRANSFORM_MOVING_TRIGGER = 'TRANSFORM_MOVING_TRIGGER' as const;
 //transform END
 export const TRANSFORM_END_TRIGGER = 'TRANSFORM_END_TRIGGER' as const;
+//edit状态
+export const EDIT_STATUS_TRIGGER = 'EDIT_STATUS_TRIGGER' as const;
 
 export interface ITransformValue {
   vpt: number[];
   lastPosX: number;
   lastPosY: number;
+}
+
+interface IEditTrigger {
+  type: typeof EDIT_STATUS_TRIGGER;
+  time: Dayjs;
+  value: boolean;
 }
 
 interface ITransformStartCoordinatorTrigger {
@@ -66,13 +74,14 @@ interface IAlignGridTrigger {
   value: 'just-vertex' | 'strict-vertex' | 'none';
 }
 
-export type ISendMsg = IAlignGridTrigger | IBackUpCoordinatorTrigger;
+export type ISendMsg = IAlignGridTrigger | IBackUpCoordinatorTrigger | IEditTrigger;
 export type IAcceptMsg =
   | ICoordinateScaleTrigger
   | ILoadingTrigger
   | ITransformStartCoordinatorTrigger
   | ITransformEndCoordinatorTrigger
   | ITransformMovingCoordinatorTrigger;
+
 /**
  * 讯息
  *

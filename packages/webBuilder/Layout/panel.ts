@@ -15,6 +15,7 @@ import {
   TRANSFORM_MOVING_TRIGGER,
   TRANSFORM_START_TRIGGER,
   ITransformValue,
+  EDIT_STATUS_TRIGGER,
 } from './subscribePanel';
 import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
@@ -90,8 +91,32 @@ export class Panel {
     //默认dim背景
     this.uiTheme = 'light';
     this.setTheme(this.uiTheme);
-    //接收所有发送给panel的信息
+    //接收所有发送给panel的操作信息
     this.mapDataWithPanelAccept();
+    //处理默认的来自坐标系的事件消息
+    this.mapCoordinateEvent();
+  }
+
+  protected mapCoordinateEvent() {
+    this.coordinateSystemLayer.onCoordinateSystemLayerEvent((v) => {
+      if (v.type === 'fCanvas-mouse-up') {
+        this.setEditStatus(true);
+      }
+    });
+  }
+  /**
+   * 编辑状态的订阅
+   *
+   * @param   {boolean}  callback  [callback description]
+   *
+   * @return  {[type]}             [return description]
+   */
+  public onEditStatusSubscribe(callback: (state: boolean) => void) {
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === EDIT_STATUS_TRIGGER) {
+        callback(this.isEdit);
+      }
+    });
   }
 
   public getEvent() {
@@ -107,6 +132,22 @@ export class Panel {
     this.onSubscribeScale();
     this.onSubscribeLoading();
     this.onSubscribeCSTransform({});
+  }
+
+  /**
+   * 更改编辑状态
+   *
+   * @param   {boolean}  status  [status description]
+   *
+   * @return  {[type]}           [return description]
+   */
+  public setEditStatus(status: boolean) {
+    this.isEdit = status;
+    getPanelSendObservable().next({
+      type: EDIT_STATUS_TRIGGER,
+      time: dayjs(),
+      value: this.isEdit,
+    });
   }
 
   /**
@@ -222,7 +263,6 @@ export class Panel {
       });
   }
 
-  
   /**
    * 设置对齐方式
    * 他同步更新所有的节点
@@ -283,8 +323,6 @@ export class Panel {
   public setCoordinateSystemVisible(visible: boolean) {
     this.coordinateSystemLayer.setVisible(visible);
   }
-
-
 
   /**
    * 设置坐标系挂载节点

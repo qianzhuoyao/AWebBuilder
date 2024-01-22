@@ -114,6 +114,13 @@ export const SlotMenu = () => {
   };
 
   useEffect(() => {
+    ALayoutInstance.onEditStatusSubscribe((v) => {
+      console.log(v,'vvvvv')
+      if (!operationButtonRef.current) {
+        return;
+      }
+      operationButtonRef.current.checked = v;
+    });
     ALayoutInstance.getCoordinateSystemLayer().onCoordinateSystemLayerEvent((e) => {
       // console.log(e, 'ALayoutInstance.coordinateSystemLayerSelection');
     });
