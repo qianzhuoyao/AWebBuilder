@@ -16,6 +16,8 @@ import {
   ITransformValue,
   EDIT_STATUS_TRIGGER,
   CREATE_WIDGET,
+  PANEL_SELECTION_TRIGGER,
+  ISelectionParams,
 } from './subscribePanel';
 import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
@@ -28,9 +30,10 @@ import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
 import { removeDomObservable } from './domSubscribe';
-import { IWidget, IWidgetType } from '../templateSlot';
+import { IWidget, IWidgetType, TemplateNode } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
 import { buildId } from '../uuid';
+import { removeSelectionNodesObservable } from '../Slot/selectionNodeOpSubscribe';
 
 /**
  * 面板
@@ -55,6 +58,7 @@ export class Panel {
   private layer: OperationLayer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
   private slots: Slots;
+
   // /**
   //  * 缩放比例
   //  *
@@ -275,6 +279,7 @@ export class Panel {
     this.onSubscribeScale();
     this.onSubscribeLoading();
     this.onSubscribeCSTransform({});
+    this.onSubscribeSelection();
   }
 
   /**
@@ -293,6 +298,28 @@ export class Panel {
     });
   }
 
+  /**
+   * 处理来自坐标系的多选操作
+   *
+   * @param   {ISelectionParams}  callbacks  [callbacks description]
+   *
+   * @return  {[type]}                       [return description]
+   */
+  public onSubscribeSelection(callbacks?: (e: ISelectionParams) => void) {
+    getPanelAcceptObservable().subscribe((v) => {
+      if (v.type === PANEL_SELECTION_TRIGGER) {
+         this.slots.selectNode(
+          v.value.downAbsolutePointer.x,
+          v.value.moveAbsolutePointer.x,
+          v.value.downAbsolutePointer.y,
+          v.value.moveAbsolutePointer.y
+        );
+
+        callbacks && callbacks(v.value);
+        console.log(v, 'onSubscribeSelection');
+      }
+    });
+  }
   /**
    * 处理来自坐标系的偏移操作
    *
@@ -509,5 +536,6 @@ export class Panel {
     //移除坐标系事件
     removeCoordinateObservable();
     removeDomObservable();
+    removeSelectionNodesObservable()
   }
 }

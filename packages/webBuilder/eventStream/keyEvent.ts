@@ -9,6 +9,8 @@ export interface IKeyOption {
 export const keyDownEvent$ = fromEvent<KeyboardEvent>(document, 'keydown');
 export const keyUpEvent$ = fromEvent<KeyboardEvent>(document, 'keyup');
 
+
+
 export const keyDown = (callback?: (e: KeyboardEvent) => void, option?: IKeyOption) => {
   let ob = keyDownEvent$.pipe();
   if (option?.take) {

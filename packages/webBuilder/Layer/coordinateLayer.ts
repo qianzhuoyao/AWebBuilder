@@ -14,6 +14,7 @@ import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
 import { map, repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rxjs';
 import {
   CREATE_WIDGET,
+  PANEL_SELECTION_TRIGGER,
   SCALE_COORDINATOR_TRIGGER,
   TRANSFORM_END_TRIGGER,
   TRANSFORM_MOVING_TRIGGER,
@@ -66,11 +67,18 @@ export class CoordinateLayer extends Layer {
    * @return  {[type]}  [return description]
    */
   private selection() {
+    let downAbsolutePointer: any = null;
     getCoordinateObservable()
       .pipe(
         mergeTaskPipe(1),
         takeWhile(() => this.canSelection),
-        skipUntil(keyDown().observable),
+        skipUntil(
+          keyDown().observable.pipe(
+            map(() => {
+              downAbsolutePointer = null;
+            })
+          )
+        ),
         takeUntil(
           keyUp().observable.pipe(
             map(() => {
@@ -92,9 +100,35 @@ export class CoordinateLayer extends Layer {
           v.type === 'fCanvas-mouse-move' ||
           v.type === 'fCanvas-mouse-up'
         ) {
-          console.log(this.fCanvas, 'a0fgsaf');
+          if (v.type === 'fCanvas-mouse-down') {
+            if (!downAbsolutePointer) {
+              downAbsolutePointer = v.options.absolutePointer;
+            }
+          }
+
+          console.log(this.fCanvas, v, 'a0fgsaf');
           this.fCanvas.wrapperEl.style.zIndex = 100;
           this.setFCanvasSelection(true);
+          getPanelAcceptObservable().next({
+            type: PANEL_SELECTION_TRIGGER,
+            time: dayjs(),
+            value: {
+              downAbsolutePointer,
+              moveAbsolutePointer: v.options.absolutePointer,
+            },
+          });
+          getCoordinateObservable().next(() => {
+            return new Promise((res) => {
+              res({
+                type: 'fCanvas-mouse-selection',
+                time: dayjs(),
+                options: {
+                  downAbsolutePointer,
+                  moveAbsolutePointer: v.options.absolutePointer,
+                },
+              });
+            });
+          });
         }
       });
   }

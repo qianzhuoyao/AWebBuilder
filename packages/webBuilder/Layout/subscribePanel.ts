@@ -26,10 +26,30 @@ export const EDIT_STATUS_TRIGGER = 'EDIT_STATUS_TRIGGER' as const;
 //创建widget
 export const CREATE_WIDGET = 'CREATE_WIDGET' as const;
 
+//基于坐标系的多选操作
+export const PANEL_SELECTION_TRIGGER = 'PANEL_SELECTION_TRIGGER' as const;
+
 export interface ITransformValue {
   vpt: number[];
   lastPosX: number;
   lastPosY: number;
+}
+
+export interface ISelectionParams {
+  downAbsolutePointer: {
+    x: number;
+    y: number;
+  };
+  moveAbsolutePointer: {
+    x: number;
+    y: number;
+  };
+}
+
+interface ISelectionTrigger {
+  type: typeof PANEL_SELECTION_TRIGGER;
+  time: Dayjs;
+  value: ISelectionParams;
 }
 
 interface ICreateWidgetTrigger {
@@ -93,7 +113,8 @@ export type IAcceptMsg =
   | ILoadingTrigger
   | ITransformStartCoordinatorTrigger
   | ITransformEndCoordinatorTrigger
-  | ITransformMovingCoordinatorTrigger;
+  | ITransformMovingCoordinatorTrigger
+  | ISelectionTrigger;
 
 /**
  * 讯息

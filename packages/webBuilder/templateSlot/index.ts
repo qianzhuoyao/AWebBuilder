@@ -4,6 +4,9 @@ import { buildId } from '../uuid';
 import { getDomObservable } from '../Layout/domSubscribe';
 import { Chart } from './chart';
 import { OperationLayer } from 'Layer/operationLayer';
+import { getSelectionNodesObservable } from '../Slot/selectionNodeOpSubscribe';
+import { time } from 'console';
+import dayjs from 'dayjs';
 
 export interface IWidget {
   id: string;
@@ -19,6 +22,10 @@ export type IWidgetType = 'chart' | 'table' | 'text' | 'image';
 export class TemplateNode {
   private nodeInfo: IWidget;
   private instance?: Chart;
+  private syncStartPosition: {
+    left: number;
+    top: number;
+  } | null = null;
   private observer?: MutationObserver;
   private matrix: number[];
   private dom?: HTMLElement;
@@ -26,7 +33,7 @@ export class TemplateNode {
   constructor(info: IWidget) {
     this.nodeInfo = info;
     this.matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    console.log(info, 'info-info');
+    console.log(info, this.moveable?.getManager(), 'info-info');
     this.createWidget();
     getDomObservable().subscribe((v) => {
       if (v.type === 'set-dom-provider' && this.moveable) {
@@ -39,6 +46,20 @@ export class TemplateNode {
         this.wrap();
       }
     });
+  }
+
+  public syncPosition(left: number, top: number) {
+    this.setPosition(
+      (this.syncStartPosition?.left || 0) + left,
+      (this.syncStartPosition?.top || 0) + top
+    );
+  }
+
+  public setSyncStartPosition() {
+    this.syncStartPosition = {
+      left: this.moveable?.getRect().left || 0,
+      top: this.moveable?.getRect().top || 0,
+    };
   }
 
   public getId() {
@@ -117,8 +138,6 @@ export class TemplateNode {
       // Use traditional 'for loops' for IE 11
       for (const mutation of mutationsList) {
         if (mutation.type === 'attributes') {
-          console.log('The ' + mutation.attributeName + ' attribute was modified.');
-          console.log(observer, mutationsList, 'asdasdadssad');
           if (mutation.target instanceof HTMLElement) {
             if (mutation.target.style.display === 'none') {
               that.blur();
@@ -157,6 +176,7 @@ export class TemplateNode {
         console.log('onResizeStart', target);
       })
       .on('resize', ({ target, drag, width, height, dist, delta, clientX, clientY }) => {
+        console.log('onResizeStartdrag', drag);
         //  console.log('onResize', target);
         // delta[0] && (target!.style.width = `${width}px`);
         // delta[1] && (target!.style.height = `${height}px`);
@@ -169,28 +189,74 @@ export class TemplateNode {
       });
   }
 
-  public update() {
-    this.moveable?.forceUpdate();
+  /**
+   * 设置位置
+   *
+   * @param   {number}  left   [left description]
+   * @param   {number}  top    [top description]
+   *
+   * @return  {[type]}         [return description]
+   */
+  public setPosition(left: number, top: number) {
+    if (!this.dom) {
+      return;
+    }
+    console.log(this.moveable?.getDragElement(), 'html');
+    const target = this.moveable?.getDragElement();
+    if (!target) {
+      return;
+    }
+    target.style.left = left + 'px';
+    target.style.top = top + 'px';
+    this.update();
   }
 
-  private focus() {
+  private update() {
+    this.moveable?.updateRect();
+    this.moveable?.forceUpdate();
+  }
+  public getMovable() {
+    return this.moveable;
+  }
+
+  public focus() {
     if (!this.moveable) {
       return;
     }
     this.moveable.getControlBoxElement().style.display = 'block';
+    this.moveable.getControlBoxElement().style.visibility = 'visible';
+    this.moveable.forceUpdate();
   }
 
-  private blur() {
+  public blur() {
     if (!this.moveable) {
       return;
     }
     this.moveable.getControlBoxElement().style.display = 'none';
+    this.moveable.getControlBoxElement().style.visibility = 'hidden';
+    this.moveable.forceUpdate();
   }
 
   protected drag() {
+    let downLeft = 0;
+    let downTop = 0;
     this.moveable
-      ?.on('dragStart', ({ target, clientX, clientY }) => {
-        console.log('onDragStart', target);
+      ?.on('dragStart', (params) => {
+        console.log('onDragStart', params.moveable.getState());
+        downLeft = params.moveable.getState().left;
+        downTop = params.moveable.getState().top;
+        getSelectionNodesObservable().next({
+          type: 'MOVE_START',
+          time: dayjs(),
+          value: {
+            id: this.nodeInfo.id,
+            moveable: this.moveable,
+            info: {
+              left: downLeft,
+              top: downLeft,
+            },
+          },
+        });
       })
       .on(
         'drag',
@@ -211,12 +277,36 @@ export class TemplateNode {
           // console.log('onDrag left, top', left, top);
           target!.style.left = `${left}px`;
           target!.style.top = `${top}px`;
+          getSelectionNodesObservable().next({
+            type: 'MOVE',
+            time: dayjs(),
+            value: {
+              id: this.nodeInfo.id,
+              moveable: this.moveable,
+              info: {
+                left: left - downLeft,
+                top: top - downTop,
+              },
+            },
+          });
           // console.log("onDrag translate", dist);
           // target!.style.transform = transform;
         }
       )
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
         // console.log('onDragEnd', target, isDrag);
+        getSelectionNodesObservable().next({
+          type: 'MOVE_OVER',
+          time: dayjs(),
+          value: {
+            id: this.nodeInfo.id,
+            moveable: this.moveable,
+            info: {
+              left: downLeft,
+              top: downLeft,
+            },
+          },
+        });
       });
   }
   protected rotate() {
