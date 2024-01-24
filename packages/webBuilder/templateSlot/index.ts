@@ -121,9 +121,7 @@ export class TemplateNode {
           if (mutation.target instanceof HTMLElement) {
             if (mutation.target.style.display === 'none') {
               that.blur();
-            } else {
-              that.focus();
-            }
+            } 
           }
         }
       }

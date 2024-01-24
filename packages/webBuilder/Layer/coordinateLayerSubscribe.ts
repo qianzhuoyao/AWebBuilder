@@ -16,7 +16,8 @@ export interface IFcanvasRes {
     | 'grid-zoom-set'
     | 'grid-transform-set'
     | 'grid-scale-set'
-    | 'fCanvas-mouse-selection';
+    | 'fCanvas-mouse-selection'
+    | 'layer-about-slot';
   options: any;
 }
 

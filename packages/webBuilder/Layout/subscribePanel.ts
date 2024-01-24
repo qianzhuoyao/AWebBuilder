@@ -7,6 +7,7 @@ import { Dayjs } from 'dayjs';
 import { ReplaySubject } from 'rxjs';
 import { ICoordinateSystem } from './coordinateSystem';
 import { IWidget } from '../templateSlot';
+import { OperationLayer } from 'Layer/operationLayer';
 //对齐修正
 export const ALIGN_TRIGGER = 'ALIGN_TRIGGER' as const;
 //通知slot发放坐标副本
@@ -25,6 +26,8 @@ export const TRANSFORM_END_TRIGGER = 'TRANSFORM_END_TRIGGER' as const;
 export const EDIT_STATUS_TRIGGER = 'EDIT_STATUS_TRIGGER' as const;
 //创建widget
 export const CREATE_WIDGET = 'CREATE_WIDGET' as const;
+//图层更换
+export const LAYOUT_CHANGE = 'LAYOUT_CHANGE' as const;
 
 //基于坐标系的多选操作
 export const PANEL_SELECTION_TRIGGER = 'PANEL_SELECTION_TRIGGER' as const;
@@ -50,6 +53,11 @@ interface ISelectionTrigger {
   type: typeof PANEL_SELECTION_TRIGGER;
   time: Dayjs;
   value: ISelectionParams;
+}
+interface ILayoutTrigger {
+  type: typeof LAYOUT_CHANGE;
+  time: Dayjs;
+  value: OperationLayer;
 }
 
 interface ICreateWidgetTrigger {
@@ -107,7 +115,8 @@ export type ISendMsg =
   | IAlignGridTrigger
   | IBackUpCoordinatorTrigger
   | IEditTrigger
-  | ICreateWidgetTrigger;
+  | ICreateWidgetTrigger
+  | ILayoutTrigger;
 export type IAcceptMsg =
   | ICoordinateScaleTrigger
   | ILoadingTrigger

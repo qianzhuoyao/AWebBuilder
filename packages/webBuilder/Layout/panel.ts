@@ -18,6 +18,7 @@ import {
   CREATE_WIDGET,
   PANEL_SELECTION_TRIGGER,
   ISelectionParams,
+  LAYOUT_CHANGE,
 } from './subscribePanel';
 import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
@@ -33,7 +34,6 @@ import { removeDomObservable } from './domSubscribe';
 import { IWidget, IWidgetType, TemplateNode } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
 import { buildId } from '../uuid';
-
 
 /**
  * 面板
@@ -165,7 +165,20 @@ export class Panel {
     return this.currentLayer;
   }
 
+  public setSelectNodeByLayer(nodeId: string) {
+    console.log(nodeId, 'nodeId');
+    this.slots.filterTemp([nodeId]).map((node) => {
+      if (node.getNode()?.style.display !== 'none') {
+        node.focus();
+      }
+    });
+    this.slots.unFilterTemp([nodeId]).map((node) => {
+      node.blur();
+    });
+  }
+
   public getCurrentLayerNodes() {
+    console.log(this.currentLayer.getNode(), 'this.currentLayer.getNode()');
     return this.slots.filterTemp(this.currentLayer.getNode());
   }
 
@@ -180,18 +193,13 @@ export class Panel {
   private syncSlotByChangeLayer() {
     const visibleNodes = this.slots.filterTemp(this.currentLayer.getNode());
     const hiddenNodes = this.slots.unFilterTemp(this.currentLayer.getNode());
-    console.log(
-      visibleNodes,
-      hiddenNodes,
-      this.layer,
-      this.currentLayer,
-      'visibleNodes,hiddenNodes'
-    );
+    console.log(visibleNodes, 'visibleNodes');
     visibleNodes.forEach((node) => {
       const ele = node.getNode();
       if (!ele) {
         return;
       }
+      node.blur();
       ele.style.display = 'block';
     });
     hiddenNodes.forEach((node) => {
@@ -199,6 +207,7 @@ export class Panel {
       if (!ele) {
         return;
       }
+      node.blur();
       ele.style.display = 'none';
     });
   }
@@ -206,6 +215,11 @@ export class Panel {
   public changeLayer(layerId: string) {
     this.currentLayer = this.layer.filter((l) => l.id === layerId)[0];
     this.syncSlotByChangeLayer();
+    getPanelSendObservable().next({
+      type: LAYOUT_CHANGE,
+      time: dayjs(),
+      value: this.currentLayer,
+    });
   }
   /**
    * 新建图层并指向它
@@ -257,6 +271,14 @@ export class Panel {
   public onCreateWidgetSubscribe(callback: (node: IWidget) => void) {
     getPanelSendObservable().subscribe((v) => {
       if (v.type === CREATE_WIDGET) {
+        callback(v.value);
+      }
+    });
+  }
+
+  public onLayerChange(callback: (node: OperationLayer) => void) {
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === LAYOUT_CHANGE) {
         callback(v.value);
       }
     });
@@ -542,6 +564,5 @@ export class Panel {
     //移除坐标系事件
     removeCoordinateObservable();
     removeDomObservable();
-
   }
 }

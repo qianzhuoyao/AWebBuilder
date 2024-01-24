@@ -5,7 +5,7 @@ export const LayerMenu = () => {
   const [layerType, setLayerType] = useState<1 | 2>(1);
   const [sceneDetailOpen, setSceneDetailOpen] = useState(false);
   const [currentScene, setCurrentScene] = useState('');
-  const [sceneWidget, setSceneWidget] = useState<string[]>([]);
+  const [sceneWidget, setSceneWidget] = useState<any[]>([]);
   const [scene, setScene] = useState<{ id: string; name: string }[]>(
     ALayoutInstance.getLayer().map((layer) => ({
       id: layer.id,
@@ -14,9 +14,13 @@ export const LayerMenu = () => {
   );
   useEffect(() => {
     setCurrentScene(scene[0].id);
+    ALayoutInstance.onLayerChange((v) => {
+      const curLayerAllNode = ALayoutInstance.getCurrentLayerNodes();
+      setSceneWidget(curLayerAllNode.map((z) => z.getInfo()));
+    });
     ALayoutInstance.onCreateWidgetSubscribe(() => {
       const curLayerAllNode = ALayoutInstance.getCurrentLayerNodes();
-      setSceneWidget(curLayerAllNode.map((z) => z.getInfo().type));
+      setSceneWidget(curLayerAllNode.map((z) => z.getInfo()));
       console.log(curLayerAllNode, 'curLayerAllNode');
     });
   }, []);
@@ -205,11 +209,15 @@ export const LayerMenu = () => {
           height: '100%',
         }}
       >
-        {sceneWidget.map((name, index) => {
+        {sceneWidget.map((node, index) => {
           return (
-            <li key={index} className="ellipsis-text">
+            <li
+              key={index}
+              className="ellipsis-text"
+              onClick={() => ALayoutInstance.setSelectNodeByLayer(node.id)}
+            >
               <a className="ellipsis-text">
-                {name}-{index}
+                {node.type}-{index}
               </a>
             </li>
           );
