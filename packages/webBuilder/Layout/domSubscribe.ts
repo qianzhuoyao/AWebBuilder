@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs';
-import { ReplaySubject } from 'rxjs';
+import {  Subject } from 'rxjs';
 
 interface ISetProvider {
   type: 'set-dom-provider';
@@ -8,10 +8,10 @@ interface ISetProvider {
 }
 type IDomMsg = ISetProvider;
 
-let domObservable$: ReplaySubject<IDomMsg> | null = null;
+let domObservable$: Subject<IDomMsg> | null = null;
 export const getDomObservable = () => {
   if (!domObservable$) {
-    domObservable$ = new ReplaySubject<IDomMsg>();
+    domObservable$ = new Subject<IDomMsg>();
   }
   return domObservable$;
 };

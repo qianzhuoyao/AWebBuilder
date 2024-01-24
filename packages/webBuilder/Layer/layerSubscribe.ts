@@ -3,9 +3,12 @@ import { ISize } from '../Layout/panel';
 import { Dayjs } from 'dayjs';
 
 /**
- * layer的通讯
+ * layer与节点的的通讯
  */
+//对齐
 export const ASYNC_SIZE = 'ASYNC_SIZE' as const;
+
+
 
 interface IAsyncTrigger {
   type: typeof ASYNC_SIZE;

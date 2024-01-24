@@ -204,7 +204,7 @@ export const LayerMenu = () => {
       </div>
 
       <ul
-        className="menu menu-lg bg-base-200 w-full"
+        className="menu menu-md bg-base-200 w-full"
         style={{
           height: '100%',
         }}

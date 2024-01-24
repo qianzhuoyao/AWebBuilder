@@ -1,8 +1,18 @@
-import { TemplateNode } from '../templateSlot/index';
-import { CREATE_WIDGET, ISendMsg, getPanelSendObservable } from '../Layout/subscribePanel';
-import { getSelectionObservable } from './selection';
-import { keyUp, mouseDown } from '../eventStream/keyEvent';
-import { filter, map, withLatestFrom } from 'rxjs';
+import { IWidgetType, TemplateNode } from '../templateSlot/index';
+import {
+  CREATE_WIDGET,
+  LAYOUT_CHANGE,
+  getPanelAcceptObservable,
+  getPanelSendObservable,
+} from '../Layout/subscribePanel';
+
+import { takeWhile } from 'rxjs';
+import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
+import { getCoordinateObservable } from '../Layer/coordinateLayerSubscribe';
+import { buildId } from '../uuid';
+import dayjs from 'dayjs';
+import { CoordinateLayer } from '../Layer/coordinateLayer';
+import { OperationLayer } from 'Layer/operationLayer';
 
 /**
  * 显示单元
@@ -10,55 +20,83 @@ import { filter, map, withLatestFrom } from 'rxjs';
 export class Slots {
   private Templates: Map<string, TemplateNode> = new Map([]);
   private selection: TemplateNode[] = [];
-  private selectionPointer: Map<string, { x: number; y: number }> = new Map();
-  private current: TemplateNode | null = null;
-  constructor() {
-    mouseDown().observable.subscribe((b) => {
-      if ((b.target as HTMLElement).getAttribute('data-isNode') !== '1') {
-        this.Templates.forEach((t) => {
-          t.blur();
-        });
+  private belongLayer?: OperationLayer;
+  private coordinateSystem: CoordinateLayer;
+  //创建类型
+  private widgetType?: IWidgetType;
+  constructor(coord: CoordinateLayer) {
+    this.coordinateSystem = coord;
+    //所有节点的创建流
+    this.onCreateWidget();
+    //监听面板当前layer
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === LAYOUT_CHANGE) {
+        this.setBelongLayer(v.value);
       }
-      console.log(b, 'casvgasgasgasgasgas');
     });
-    getSelectionObservable().subscribe((v) => {
-      if (v.type === 'select') {
-        this.selection.map((s) => {
-          this.selectionPointer.set(s.getId(), {
-            x: s.getMovable()?.getRect().left || 0,
-            y: s.getMovable()?.getRect().top || 0,
+  }
+
+  public setBelongLayer(layer?: OperationLayer) {
+    this.belongLayer = layer;
+  }
+
+  public setWidgetType(type?: IWidgetType) {
+    this.widgetType = type;
+  }
+  /**
+   * 创建组件放置区块订阅
+   * 创建空间
+   *
+   * @return  {[type]}  [return description]
+   */
+  public onCreateWidget() {
+    const startCoord: { pageX: number; pageY: number; pointX: number; pointY: number } = {
+      pageX: 0,
+      pageY: 0,
+      pointX: 0,
+      pointY: 0,
+    };
+    getCoordinateObservable()
+      .pipe(
+        takeWhile(() => !!this.widgetType && !!this.belongLayer),
+        mergeTaskPipe(10)
+      )
+      .subscribe((v) => {
+        if (v.type === 'fCanvas-mouse-down') {
+          // startCoord.x = v.options.
+          startCoord.pageX = v.options.e.pageX;
+          startCoord.pageY = v.options.e.pageY;
+          startCoord.pointX = v.options.pointer.x;
+          startCoord.pointY = v.options.pointer.y;
+        }
+        if (this.widgetType && v.type === 'fCanvas-mouse-up') {
+          if (!this.belongLayer) {
+            return;
+          }
+          const nodeId = buildId();
+          const node = new TemplateNode({
+            id: nodeId,
+            layer: this.belongLayer,
+            type: this.widgetType,
+            pageY: startCoord.pageY,
+            pageX: startCoord.pageX,
+            pointX: startCoord.pointX,
+            pointY: startCoord.pointY,
+            width: v.options.e.pageX - startCoord.pageX,
+            height: v.options.e.pageY - startCoord.pageY,
           });
-        });
-      }
-      if (v.type === 'select' && this.selection.length <= 1) {
-        this.Templates.forEach((t) => {
-          if (t.getId() !== v.value.getId()) {
-            t.blur();
-          } else {
-            this.current = t;
-            t.focus();
-          }
-        });
-      } else if (v.type === 'selection-move') {
-        console.log(v.value, 'casvvvv');
-        this.selection.map((s) => {
-          if (s.getId() !== this.current?.getId()) {
-            (s.getNode() as HTMLElement).style.top =
-              (this.selectionPointer.get(s.getId())?.y || 0) + v.value.top + 'px';
-            (s.getNode() as HTMLElement).style.left =
-              (this.selectionPointer.get(s.getId())?.x || 0) + v.value.left + 'px';
-          }
-          s.getMovable()?.updateRect();
-        });
-      } else if (v.type === 'selection-over') {
-        this.current = null;
-        this.selection = [];
-      }
-    });
-    //订阅来自panel的消息
-    getPanelSendObservable().subscribe((msg) => {
-      this.processingUnit(msg);
-    });
+          this.Templates.set(nodeId, node);
+          //通知panel创建成功一个widget
+          getPanelAcceptObservable().next({
+            type: CREATE_WIDGET,
+            time: dayjs(),
+            value: node,
+          });
+        }
+      });
+  }
+  public getSelectionNodes() {
+    return this.selection;
   }
 
   /**
@@ -90,60 +128,9 @@ export class Slots {
         ((nodeX1 >= MinX && nodeX1 <= MaxX) || (nodeX2 >= MinX && nodeX2 <= MaxX)) &&
         ((nodeY1 >= MinY && nodeY1 <= MaxY) || (nodeY2 >= MinY && nodeY2 <= MaxY))
       ) {
-        node.focus();
-
         s.push(node);
       }
     });
     this.selection = s;
-  }
-
-  public filterTemp(ids: string[]) {
-    const res: TemplateNode[] = [];
-    this.Templates.forEach((node) => {
-      if (ids.includes(node.getId())) {
-        res.push(node);
-      }
-    });
-    return res;
-  }
-
-  public unFilterTemp(ids: string[]) {
-    const res: TemplateNode[] = [];
-    this.Templates.forEach((node) => {
-      if (!ids.includes(node.getId())) {
-        res.push(node);
-      }
-    });
-    return res;
-  }
-
-  /**
-   * 筛选节点
-   *
-   * @return  {[type]}  [return description]
-   */
-  public filterTempNode(ids: string[]) {
-    return this.filterTemp(ids).map((n) => n.getNode());
-  }
-  public unFilterTempNode(ids: string[]) {
-    return this.unFilterTemp(ids).map((n) => n.getNode());
-  }
-  /**
-   * 订阅处理单元
-   *
-   * @param   {IMsg}  msg  [msg description]
-   *
-   * @return  {[type]}     [return description]
-   */
-  private processingUnit(msg: ISendMsg) {
-    //新建
-    if (msg.type === CREATE_WIDGET) {
-      console.log(msg, 's0v');
-      const newTemp = new TemplateNode(msg.value);
-      if (newTemp.getNode() instanceof HTMLElement) {
-        this.Templates.set(newTemp.getId(), newTemp);
-      }
-    }
   }
 }

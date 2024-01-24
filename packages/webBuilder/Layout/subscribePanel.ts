@@ -6,7 +6,7 @@
 import { Dayjs } from 'dayjs';
 import { ReplaySubject } from 'rxjs';
 import { ICoordinateSystem } from './coordinateSystem';
-import { IWidget } from '../templateSlot';
+import { IWidget, TemplateNode } from '../templateSlot';
 import { OperationLayer } from 'Layer/operationLayer';
 //对齐修正
 export const ALIGN_TRIGGER = 'ALIGN_TRIGGER' as const;
@@ -63,7 +63,7 @@ interface ILayoutTrigger {
 interface ICreateWidgetTrigger {
   type: typeof CREATE_WIDGET;
   time: Dayjs;
-  value: IWidget;
+  value: TemplateNode;
 }
 
 interface IEditTrigger {
@@ -115,7 +115,6 @@ export type ISendMsg =
   | IAlignGridTrigger
   | IBackUpCoordinatorTrigger
   | IEditTrigger
-  | ICreateWidgetTrigger
   | ILayoutTrigger;
 export type IAcceptMsg =
   | ICoordinateScaleTrigger
@@ -123,6 +122,7 @@ export type IAcceptMsg =
   | ITransformStartCoordinatorTrigger
   | ITransformEndCoordinatorTrigger
   | ITransformMovingCoordinatorTrigger
+  | ICreateWidgetTrigger
   | ISelectionTrigger;
 
 /**

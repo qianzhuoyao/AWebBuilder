@@ -1,10 +1,15 @@
 import { buildId } from '../uuid';
 import { ISize } from '../Layout/panel';
 import { Layer } from './Layer';
+import { TemplateNode } from '../templateSlot';
 
 export class OperationLayer extends Layer {
-  private nodes: string[] = [];
-  private selected: Set<string> = new Set();
+  private deletable = true;
+  //当前图层下的所有节点id集合
+  private nodeIdList: Map<string, TemplateNode> = new Map([]);
+  //默认操作对齐网格方式just-vertex
+  private alignGrid: 'just-vertex' | 'strict-vertex' | 'none' = 'just-vertex';
+  private selectedNodeIdList: Set<string> = new Set();
   public readonly id = buildId();
   private layerName = 'scene';
 
@@ -19,10 +24,17 @@ export class OperationLayer extends Layer {
    *
    * @return  {[type]}          [return description]
    */
-  public addNode(nodeId: string) {
-    this.nodes.push(nodeId);
+  public addNode(node: TemplateNode) {
+    this.nodeIdList.set(node.getId(), node);
   }
-
+  public deleteNode(nodeList: TemplateNode[]) {
+    nodeList.map((node) => {
+      this.nodeIdList.delete(node.getId());
+    });
+  }
+  public clearNode() {
+    this.nodeIdList = new Map();
+  }
   /**
    * 选中节点
    *
@@ -30,29 +42,27 @@ export class OperationLayer extends Layer {
    *
    * @return  {[type]}      [return description]
    */
-  public toSelectNode(id: string) {
-    this.selected.add(id);
+  public selectNode(id: string) {
+    this.selectedNodeIdList.add(id);
   }
-
-  /**
-   * 获取图层内的tempnode id 集合
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getNode() {
-    return this.nodes;
+  public unSelectNode(ids: string[]) {
+    ids.map((id) => {
+      this.selectedNodeIdList.delete(id);
+    });
+  }
+  public clearSelectedNode() {
+    this.selectedNodeIdList = new Set();
   }
 
   public setName(name: string) {
     this.layerName = name;
   }
-  /**
-   * 获取图层名称
-   *
-   *
-   * @return  {[type]}  [return description]
-   */
+
   public getName() {
     return this.layerName;
+  }
+
+  public setDeletable(able: boolean) {
+    this.deletable = able;
   }
 }

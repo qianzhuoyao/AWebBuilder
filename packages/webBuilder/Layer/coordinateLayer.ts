@@ -10,19 +10,8 @@ import { fabric } from 'fabric';
 import { IFcanvasRes, getCoordinateObservable } from './coordinateLayerSubscribe';
 import dayjs from 'dayjs';
 import { keyDown, keyUp } from '../eventStream/keyEvent';
-import { concatTaskPipe, mergeTaskPipe } from '../Queue/mergeTaskPipe';
-import {
-  concatAll,
-  first,
-  map,
-  repeat,
-  skipUntil,
-  skipWhile,
-  take,
-  takeUntil,
-  takeWhile,
-  withLatestFrom,
-} from 'rxjs';
+import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
+import { map, repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rxjs';
 import {
   PANEL_SELECTION_TRIGGER,
   SCALE_COORDINATOR_TRIGGER,
@@ -169,7 +158,7 @@ export class CoordinateLayer extends Layer {
   }
 
   /**
-   * 面板下所有的缩放
+   * 面板下的缩放
    *
    * @return  {[type]}  [return description]
    */
@@ -297,7 +286,7 @@ export class CoordinateLayer extends Layer {
       },
       zoom // 传入修改后的缩放级别
     );
-
+    this.scale = zoom;
     //触发刻度线订阅通知zoom变更
     getCoordinateObservable().next(() => {
       return new Promise((res) => {

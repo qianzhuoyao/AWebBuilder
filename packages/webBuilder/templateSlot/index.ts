@@ -1,13 +1,13 @@
-import Moveable, { OnScale } from 'moveable';
+import Moveable from 'moveable';
 import { singletonDController } from '../Layout/DOMController';
 import { getDomObservable } from '../Layout/domSubscribe';
 import { Chart } from './chart';
 
-import dayjs from 'dayjs';
-import { getSelectionObservable } from '../Slot/selection';
+import { OperationLayer } from 'Layer/operationLayer';
 
 export interface IWidget {
   id: string;
+  layer: OperationLayer;
   type: IWidgetType;
   pageY: number;
   pageX: number;
@@ -25,22 +25,12 @@ export class TemplateNode {
   private moveable?: Moveable;
   constructor(info: IWidget) {
     this.nodeInfo = info;
-    console.log(info, this.moveable?.getManager(), 'info-info');
     this.createWidget();
     getDomObservable().subscribe((v) => {
       if (v.type === 'set-dom-provider' && this.moveable) {
-        console.log('cscscscscscscs');
         this.createMovable(v.value);
-        this.drag();
-        this.click();
-        this.resize();
-        this.rotate();
       }
     });
-  }
-
-  public getCurrentRect() {
-    return this.moveable?.getRect();
   }
 
   public getId() {
@@ -70,7 +60,9 @@ export class TemplateNode {
       throttleScale: 0,
       throttleRotate: 0,
     });
-    console.log(this.moveable.getControlBoxElement(), 'movfsjgsgsg');
+    this.drag();
+    this.resize();
+    this.rotate();
   }
   protected createWidget() {
     console.log(singletonDController, 'singletonDController');
@@ -95,21 +87,10 @@ export class TemplateNode {
     this.genChart();
 
     this.createMovable(singletonDController.getProviderDom() || document.body);
-    this.drag();
-    this.click();
-    this.resize();
-    this.rotate();
+
     singletonDController.getProviderDom()?.appendChild(this.dom);
   }
-  public click() {
-    this.moveable?.on('click', (params) => {
-      getSelectionObservable().next({
-        type: 'click',
-        time: dayjs(),
-        value: params,
-      });
-    });
-  }
+
   private mutationDom() {
     const config = { attributes: true, childList: true, subtree: true };
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -120,8 +101,8 @@ export class TemplateNode {
         if (mutation.type === 'attributes') {
           if (mutation.target instanceof HTMLElement) {
             if (mutation.target.style.display === 'none') {
-              that.blur();
-            } 
+              //
+            }
           }
         }
       }
@@ -158,65 +139,21 @@ export class TemplateNode {
    * @return  {[type]}         [return description]
    */
 
-  private update() {
-    this.moveable?.updateRect();
-    this.moveable?.forceUpdate();
-  }
   public getMovable() {
     return this.moveable;
   }
 
-  public focus() {
-    if (!this.moveable) {
-      return;
-    }
-    this.moveable.getControlBoxElement().style.display = 'block';
-    this.moveable.getControlBoxElement().style.visibility = 'visible';
-    this.moveable.forceUpdate();
-  }
-
-  public blur() {
-    if (!this.moveable) {
-      return;
-    }
-    this.moveable.getControlBoxElement().style.display = 'none';
-    this.moveable.getControlBoxElement().style.visibility = 'hidden';
-    this.moveable.forceUpdate();
-  }
-
   protected drag() {
-    let offsetLeft = 0;
-    let offsetTop = 0;
     this.moveable
       ?.on('dragStart', (params) => {
         //
-        offsetLeft = params.moveable.getRect().left;
-        offsetTop = params.moveable.getRect().top;
-        getSelectionObservable().next({
-          type: 'select',
-          time: dayjs(),
-          value: this,
-        });
       })
       .on('drag', ({ target, left, top }) => {
         target!.style.left = `${left}px`;
         target!.style.top = `${top}px`;
-        getSelectionObservable().next({
-          type: 'selection-move',
-          time: dayjs(),
-          value: {
-            left: left - offsetLeft,
-            top: top - offsetTop,
-          },
-        });
       })
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
         // console.log('onDragEnd', target, isDrag);
-        getSelectionObservable().next({
-          type: 'selection-over',
-          time: dayjs(),
-          value: this,
-        });
       });
   }
   protected rotate() {

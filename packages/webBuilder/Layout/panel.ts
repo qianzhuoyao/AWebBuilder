@@ -34,6 +34,7 @@ import { removeDomObservable } from './domSubscribe';
 import { IWidget, IWidgetType, TemplateNode } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
 import { buildId } from '../uuid';
+import { removeSelectionObservable } from '../Slot/selection';
 
 /**
  * 面板
@@ -49,30 +50,14 @@ interface IPanelConstructor {
 export type ISize = Omit<ICoordinateSystemParams, 'unitSize'>;
 
 export class Panel {
-  private widgetType?: IWidgetType;
   private isEdit: boolean;
   private uiTheme: IUiTheme;
   private event: PanelEvent;
   private loading = false;
-  private currentLayer: OperationLayer;
+  private currentLayer?: OperationLayer;
   private layer: OperationLayer[] = [];
   private coordinateSystemLayer: CoordinateLayer;
   private slots: Slots;
-
-  // /**
-  //  * 缩放比例
-  //  *
-  //  * @var {[type]}
-  //  */
-  // private scale = 1;
-  /**
-   * [alignGrid description]
-   *just-vertex 顶点对齐 对长宽忽略
-    strict-vertex 四个顶点都要对其
-    none 不对齐
-   * @var {[type]}
-   */
-  private alignGrid: 'just-vertex' | 'strict-vertex' | 'none';
 
   /**
    * 长宽比例设置
@@ -83,7 +68,6 @@ export class Panel {
    * @return  {[type]}                     [return description]
    */
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
-    this.slots = new Slots();
     this.isEdit = false;
     /**
      * panel的事件对象统一的逐层下发事件
@@ -91,8 +75,6 @@ export class Panel {
      * @return  {[type]}  [return description]
      */
     this.event = new PanelEvent();
-    //默认操作对齐网格方式just-vertex
-    this.alignGrid = 'just-vertex';
 
     this.coordinateSystemLayer = this.setCoordinateSystemLayer(
       {
@@ -102,199 +84,93 @@ export class Panel {
       coordinateSystemConfig
     );
     this.coordinateSystemLayer.drawGrid();
-    //注册下对齐的调整流,初始进入不执行修正流，执行初次渲染的修正
-    this.initAlignGridStream();
     //默认dim背景
     this.uiTheme = 'light';
     this.setTheme(this.uiTheme);
     //接收所有发送给panel的操作信息
     this.mapDataWithPanelAccept();
-    //处理默认的来自坐标系的事件消息
-    this.mapCoordinateEvent();
-    this.onCreateWidget();
     //初始创建一个home图层,不可删除
-    this.currentLayer = this.initLayer();
+    const home = this.addLayer();
+    home.setDeletable(false);
+    this.setCurrentLayer(home.id);
+    this.slots = new Slots(this.coordinateSystemLayer);
     console.log(this.layer, 'this.layer');
   }
 
+  public getSlots() {
+    return this.slots;
+  }
   /**
-   * 创建组件放置区块订阅
-   * 创建空间
+   * 获取当前图层
    *
    * @return  {[type]}  [return description]
    */
-  public onCreateWidget() {
-    const startCoord: { pageX: number; pageY: number; pointX: number; pointY: number } = {
-      pageX: 0,
-      pageY: 0,
-      pointX: 0,
-      pointY: 0,
-    };
-    getCoordinateObservable()
-      .pipe(mergeTaskPipe(10))
-      .subscribe((v) => {
-        if (v.type === 'fCanvas-mouse-down') {
-          // startCoord.x = v.options.
-          startCoord.pageX = v.options.e.pageX;
-          startCoord.pageY = v.options.e.pageY;
-          startCoord.pointX = v.options.pointer.x;
-          startCoord.pointY = v.options.pointer.y;
-        }
-        if (this.isEdit && this.widgetType && v.type === 'fCanvas-mouse-up') {
-          const nodeId = buildId();
-          this.currentLayer.addNode(nodeId);
-          getPanelSendObservable().next({
-            type: CREATE_WIDGET,
-            time: dayjs(),
-            value: {
-              id: nodeId,
-              type: this.widgetType,
-              pageY: startCoord.pageY,
-              pageX: startCoord.pageX,
-              pointX: startCoord.pointX,
-              pointY: startCoord.pointY,
-              width: v.options.e.pageX - startCoord.pageX,
-              height: v.options.e.pageY - startCoord.pageY,
-            },
-          });
-        }
-      });
-  }
-
   public getCurrentLayer() {
     return this.currentLayer;
   }
 
-  public setSelectNodeByLayer(nodeId: string) {
-    console.log(nodeId, 'nodeId');
-    this.slots.filterTemp([nodeId]).map((node) => {
-      if (node.getNode()?.style.display !== 'none') {
-        node.focus();
-      }
-    });
-    this.slots.unFilterTemp([nodeId]).map((node) => {
-      node.blur();
-    });
-  }
-
-  public getCurrentLayerNodes() {
-    console.log(this.currentLayer.getNode(), 'this.currentLayer.getNode()');
-    return this.slots.filterTemp(this.currentLayer.getNode());
-  }
-
-  public getLayer() {
-    return this.layer;
-  }
   /**
-   * 同步图层节点
+   * 获取所有图层
    *
    * @return  {[type]}  [return description]
    */
-  private syncSlotByChangeLayer() {
-    const visibleNodes = this.slots.filterTemp(this.currentLayer.getNode());
-    const hiddenNodes = this.slots.unFilterTemp(this.currentLayer.getNode());
-    console.log(visibleNodes, 'visibleNodes');
-    visibleNodes.forEach((node) => {
-      const ele = node.getNode();
-      if (!ele) {
-        return;
-      }
-      node.blur();
-      ele.style.display = 'block';
-    });
-    hiddenNodes.forEach((node) => {
-      const ele = node.getNode();
-      if (!ele) {
-        return;
-      }
-      node.blur();
-      ele.style.display = 'none';
-    });
+  public getLayer() {
+    return this.layer;
   }
 
-  public changeLayer(layerId: string) {
+  /**
+   * 更改当前图层
+   *
+   * @param   {string}  layerId  [layerId description]
+   *
+   * @return  {[type]}           [return description]
+   */
+  public setCurrentLayer(layerId: string) {
     this.currentLayer = this.layer.filter((l) => l.id === layerId)[0];
-    this.syncSlotByChangeLayer();
     getPanelSendObservable().next({
       type: LAYOUT_CHANGE,
       time: dayjs(),
       value: this.currentLayer,
     });
+    return this.currentLayer;
   }
+
+  public onEditStatusSubscribe(fn: (state: boolean) => void) {
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === EDIT_STATUS_TRIGGER) {
+        fn(v.value);
+      }
+    });
+  }
+
   /**
-   * 新建图层并指向它
+   * 新建图层
    *
    * @return  {[type]}  [return description]
    */
   public addLayer() {
-    this.initLayer();
-    return this.currentLayer;
-    console.log(this.layer, 'cosiu');
-  }
-  protected initLayer() {
-    //构建操作图层
-    const ol = new OperationLayer(this.coordinateSystemLayer.getConfig());
-    this.currentLayer = ol;
-    this.syncSlotByChangeLayer();
-    this.layer.push(ol);
-    return ol;
-  }
-  protected mapCoordinateEvent() {
-    this.coordinateSystemLayer.onCoordinateSystemLayerEvent((v) => {
-      if (v.type === 'fCanvas-mouse-up') {
-        this.setEditStatus(true);
-      }
-    });
-  }
-  /**
-   * 编辑状态的订阅
-   *
-   * @param   {boolean}  callback  [callback description]
-   *
-   * @return  {[type]}             [return description]
-   */
-  public onEditStatusSubscribe(callback: (state: boolean) => void) {
-    getPanelSendObservable().subscribe((v) => {
-      if (v.type === EDIT_STATUS_TRIGGER) {
-        callback(this.isEdit);
-      }
-    });
+    const newLayer = new OperationLayer(this.coordinateSystemLayer.getConfig());
+    this.layer.push(newLayer);
+    return newLayer;
   }
 
   /**
-   * 监听创建
+   * 图层变更订阅
    *
-   * @param   {boolean}  callback  [callback description]
+   * @param   {OperationLayer}  callback  [callback description]
    *
-   * @return  {[type]}             [return description]
+   * @return  {[type]}                    [return description]
    */
-  public onCreateWidgetSubscribe(callback: (node: IWidget) => void) {
-    getPanelSendObservable().subscribe((v) => {
-      if (v.type === CREATE_WIDGET) {
-        callback(v.value);
-      }
-    });
-  }
-
-  public onLayerChange(callback: (node: OperationLayer) => void) {
+  public onLayerChange(callback?: (node: OperationLayer) => void) {
     getPanelSendObservable().subscribe((v) => {
       if (v.type === LAYOUT_CHANGE) {
-        callback(v.value);
+        callback && callback(v.value);
       }
     });
   }
 
   public getEvent() {
     return this.event;
-  }
-
-  public resetCurrentWidgetWillBuilder() {
-    this.widgetType = undefined;
-    this.coordinateSystemLayer.setFCanvasSelection(false);
-  }
-  public currentWidgetWillBuilder(widgetType: IWidgetType) {
-    this.widgetType = widgetType;
-    this.coordinateSystemLayer.setFCanvasSelection(true);
   }
 
   /**
@@ -304,11 +180,20 @@ export class Panel {
    */
   private mapDataWithPanelAccept() {
     this.onSubscribeScale();
-    this.onSubscribeLoading();
     this.onSubscribeCSTransform({});
     this.onSubscribeSelection();
+    this.onLayerChange();
+    this.onSubscribeSlots();
   }
 
+  public onSubscribeSlots() {
+    getPanelAcceptObservable().subscribe((v) => {
+      if (v.type === CREATE_WIDGET) {
+        //往当前layer下注入节点id
+        this.currentLayer?.addNode(v.value);
+      }
+    });
+  }
   /**
    * 更改编辑状态
    *
@@ -317,12 +202,12 @@ export class Panel {
    * @return  {[type]}           [return description]
    */
   public setEditStatus(status: boolean) {
-    this.isEdit = status;
     getPanelSendObservable().next({
       type: EDIT_STATUS_TRIGGER,
       time: dayjs(),
-      value: this.isEdit,
+      value: status,
     });
+    this.isEdit = status;
   }
 
   /**
@@ -334,7 +219,6 @@ export class Panel {
    */
   public onSubscribeSelection(callbacks?: (e: ISelectionParams) => void) {
     getPanelAcceptObservable().subscribe((v) => {
-      console.log(v, 'onSusbscribeSelection');
       if (v.type === PANEL_SELECTION_TRIGGER) {
         this.slots.selectNode(
           v.value.downAbsolutePointer.x,
@@ -344,7 +228,6 @@ export class Panel {
         );
 
         callbacks && callbacks(v.value);
-        console.log(v, 'onSubscribeSelection');
       }
     });
   }
@@ -388,26 +271,7 @@ export class Panel {
    * @return  {[type]}          [return description]
    */
   public setLoading(state: boolean) {
-    getPanelAcceptObservable().next({
-      type: LOADING_TRIGGER,
-      time: dayjs(),
-      value: state,
-    });
-  }
-
-  /**
-   * 处理加载
-   *
-   * @return  {[type]}  [return description]
-   */
-  public onSubscribeLoading(callback?: (loading: boolean) => void) {
-    getPanelAcceptObservable().subscribe((v) => {
-      if (v.type === LOADING_TRIGGER) {
-        //加载效果
-        this.loading = v.value;
-        callback && callback(v.value);
-      }
-    });
+    this.loading = state;
   }
 
   /**
@@ -427,13 +291,13 @@ export class Panel {
   }
 
   /**
-   * 获取线坐标
+   * 获取线
    *
    * @param   {boolean}  filterVisible  筛选可视
    *
    * @return  {[type]}                  [return description]
    */
-  public getCoordinateSystemLayerGrid() {
+  public getCSLayerGrid() {
     return this.coordinateSystemLayer.getGridObj();
   }
 
@@ -444,59 +308,6 @@ export class Panel {
       }
     });
   }
-  /**
-   * 调整流
-   * 只针对 alginGrid变更下的Slot位置调整
-   *
-   * @return  {[type]}  [return description]
-   */
-  protected initAlignGridStream() {
-    getAdjust()
-      //允许并行10个修正任务
-      .pipe(mergeTaskPipe(10))
-      .subscribe((slot) => {
-        //重新绘制slot位置
-        //避免slot更新
-        console.log(slot);
-      });
-  }
-
-  /**
-   * 设置对齐方式
-   * 他同步更新所有的节点
-   *
-   * @param   {[type]}  alignType      [alignType description]
-   *just-vertex 顶点对齐 对长宽忽略
-   *strict-vertex 四个顶点都要对其
-   *none 不对齐
-   * @return  {[type]}                      [return description]
-   */
-  public setAlignGrid(alignType: 'just-vertex' | 'strict-vertex' | 'none') {
-    this.alignGrid = alignType;
-    //通知slot 主动修正位置
-    getPanelSendObservable().next({
-      type: ALIGN_TRIGGER,
-      time: dayjs(),
-      value: alignType,
-    });
-  }
-
-  /**
-   * 获取对齐方式
-   *
-   * @return  {[type]}  [return description]
-   */
-  public getAlignGrid() {
-    return this.alignGrid;
-  }
-  /**
-   * 校验顶点是否在坐标点上
-   *
-   * @param   {number}   x  [x description]
-   * @param   {number}   y  [y description]
-   *
-   * @return  {boolean}     [return description]
-   */
 
   /**
    * 设置坐标图层
@@ -535,7 +346,7 @@ export class Panel {
     singletonDController.setProviderDom(dom);
   }
   /**
-   * 图层是否展示
+   * 坐标是否展示
    *
    * @return  {[type]}  [return description]
    */
@@ -562,6 +373,7 @@ export class Panel {
     //取消图层与面板的订阅消息
     removeLayerObservable();
     //移除坐标系事件
+    removeSelectionObservable();
     removeCoordinateObservable();
     removeDomObservable();
   }

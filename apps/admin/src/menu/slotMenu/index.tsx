@@ -61,9 +61,9 @@ export const SlotMenu = () => {
     const widgetOperationMap: Record<IWidgetType, () => void> = {
       chart: () => {
         if (chartButtonRef.current?.checked) {
-          ALayoutInstance.currentWidgetWillBuilder('chart');
+          ALayoutInstance.getSlots().setWidgetType('chart');
         } else {
-          ALayoutInstance.resetCurrentWidgetWillBuilder();
+          ALayoutInstance.getSlots().setWidgetType();
         }
 
         if (tableButtonRef.current) {
@@ -78,9 +78,9 @@ export const SlotMenu = () => {
       },
       table: () => {
         if (chartButtonRef.current?.checked) {
-          ALayoutInstance.currentWidgetWillBuilder('table');
+          ALayoutInstance.getSlots().setWidgetType('table');
         } else {
-          ALayoutInstance.resetCurrentWidgetWillBuilder();
+          ALayoutInstance.getSlots().setWidgetType();
         }
         if (chartButtonRef.current) {
           chartButtonRef.current.checked = false;
@@ -94,9 +94,9 @@ export const SlotMenu = () => {
       },
       text: () => {
         if (chartButtonRef.current?.checked) {
-          ALayoutInstance.currentWidgetWillBuilder('text');
+          ALayoutInstance.getSlots().setWidgetType('text');
         } else {
-          ALayoutInstance.resetCurrentWidgetWillBuilder();
+          ALayoutInstance.getSlots().setWidgetType();
         }
         if (tableButtonRef.current) {
           tableButtonRef.current.checked = false;
@@ -110,9 +110,9 @@ export const SlotMenu = () => {
       },
       image: () => {
         if (chartButtonRef.current?.checked) {
-          ALayoutInstance.currentWidgetWillBuilder('image');
+          ALayoutInstance.getSlots().setWidgetType('image');
         } else {
-          ALayoutInstance.resetCurrentWidgetWillBuilder();
+          ALayoutInstance.getSlots().setWidgetType();
         }
         if (tableButtonRef.current) {
           tableButtonRef.current.checked = false;
