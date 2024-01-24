@@ -1,46 +1,34 @@
-import { Dayjs } from 'dayjs';
-import Moveable, { OnClick, OnEvent, WithEventStop } from 'moveable';
 import { Subject } from 'rxjs';
-import { TemplateNode } from 'templateSlot';
 
-export interface ISelectionMove {
-  type: 'selection-move';
-  value: {
-    left: number;
-    top: number;
-  };
-  time: Dayjs;
+//结束通知
+interface IOver {
+  type: 'OVER';
 }
-export interface ISelectionOver {
-  type: 'selection-over';
-  value: TemplateNode;
-  time: Dayjs;
+//通知
+interface ISignal {
+  type: 'SIGNAL';
+  bothId: string[];
+  syncPosition: { id: string; left: number; top: number }[];
 }
-
-export interface IClick {
-  time: Dayjs;
-  value: OnEvent;
-  type: 'click';
-}
-export interface ISelection {
-  type: 'select';
-  value: TemplateNode;
-  time: Dayjs;
+//开始移动以及偏移量
+interface IBothMoveOffset {
+  type: 'MOVE';
+  id: string;
+  left: number;
+  top: number;
 }
 
-type IParamsType = ISelection | ISelectionMove | IClick | ISelectionOver;
+let bothMove$: Subject<IBothMoveOffset | ISignal | IOver> | null = null;
 
-let selection$: Subject<IParamsType> | null = null;
-
-export const getSelectionObservable = () => {
-  if (!selection$) {
-    selection$ = new Subject<IParamsType>();
+export const getBothMoveObservable = () => {
+  if (!bothMove$) {
+    bothMove$ = new Subject<IBothMoveOffset | ISignal | IOver>();
   }
-  return selection$;
+  return bothMove$;
 };
-export const removeSelectionObservable = () => {
-  if (selection$) {
-    selection$.unsubscribe();
+export const removeBothMoveObservable = () => {
+  if (bothMove$) {
+    bothMove$.unsubscribe();
   }
-  selection$ = null;
+  bothMove$ = null;
 };

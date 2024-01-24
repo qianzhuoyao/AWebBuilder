@@ -1,15 +1,12 @@
 import { ICoordinateSystemParams } from './coordinateSystem';
 import { CoordinateLayer } from '../Layer/coordinateLayer';
-import { getAdjust, removeAdjust } from '../renderStream/adjust';
-import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
+import { removeAdjust } from '../renderStream/adjust';
 import {
-  ALIGN_TRIGGER,
   removePanelAcceptObservable,
   removePanelSendObservable,
   getPanelAcceptObservable,
   getPanelSendObservable,
   SCALE_COORDINATOR_TRIGGER,
-  LOADING_TRIGGER,
   TRANSFORM_END_TRIGGER,
   TRANSFORM_MOVING_TRIGGER,
   TRANSFORM_START_TRIGGER,
@@ -24,17 +21,14 @@ import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
 import { IUiTheme } from './theme';
 import {
-  getCoordinateObservable,
   removeCoordinateObservable,
 } from '../Layer/coordinateLayerSubscribe';
 import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
 import { removeDomObservable } from './domSubscribe';
-import { IWidget, IWidgetType, TemplateNode } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
-import { buildId } from '../uuid';
-import { removeSelectionObservable } from '../Slot/selection';
+import { removeBothMoveObservable } from '../Slot/selection';
 
 /**
  * 面板
@@ -211,7 +205,7 @@ export class Panel {
   }
 
   /**
-   * 处理来自坐标系的多选操作
+   * 多选节点
    *
    * @param   {ISelectionParams}  callbacks  [callbacks description]
    *
@@ -220,13 +214,12 @@ export class Panel {
   public onSubscribeSelection(callbacks?: (e: ISelectionParams) => void) {
     getPanelAcceptObservable().subscribe((v) => {
       if (v.type === PANEL_SELECTION_TRIGGER) {
-        this.slots.selectNode(
+        this.currentLayer?.getSelectedNodes(
           v.value.downAbsolutePointer.x,
           v.value.moveAbsolutePointer.x,
           v.value.downAbsolutePointer.y,
           v.value.moveAbsolutePointer.y
         );
-
         callbacks && callbacks(v.value);
       }
     });
@@ -373,7 +366,7 @@ export class Panel {
     //取消图层与面板的订阅消息
     removeLayerObservable();
     //移除坐标系事件
-    removeSelectionObservable();
+    removeBothMoveObservable();
     removeCoordinateObservable();
     removeDomObservable();
   }

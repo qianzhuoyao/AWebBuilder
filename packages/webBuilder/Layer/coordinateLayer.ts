@@ -58,6 +58,11 @@ export class CoordinateLayer extends Layer {
 
   public setFCanvasSelection(state: boolean) {
     this.fCanvas.selection = state;
+    if (state) {
+      this.fCanvas.wrapperEl.style.zIndex = 100;
+    } else {
+      this.fCanvas.wrapperEl.style.zIndex = 10;
+    }
   }
   /**
    * 多选
@@ -69,7 +74,6 @@ export class CoordinateLayer extends Layer {
     keyDown(
       (e) => {
         if (e.code === 'KeyS') {
-          this.fCanvas.wrapperEl.style.zIndex = 100;
           this.setFCanvasSelection(true);
         }
       },
@@ -81,7 +85,6 @@ export class CoordinateLayer extends Layer {
     keyUp(
       (e) => {
         if (e.code === 'KeyS') {
-          this.fCanvas.wrapperEl.style.zIndex = 10;
           this.setFCanvasSelection(false);
         }
       },

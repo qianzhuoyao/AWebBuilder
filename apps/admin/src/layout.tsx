@@ -20,9 +20,6 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
         console.log('onSubscribeCSTransform');
       },
     });
-    ALayoutInstance.onSubscribeLoading((loading) => {
-      setPanelLoading(loading);
-    });
     ALayoutInstance.getCoordinateSystemLayer().onCoordinateSystemLayerEvent((e) => {
       if (
         e.type === 'grid-size-set' ||
@@ -32,7 +29,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
       ) {
         const newTickX: Set<number> = new Set([]);
         const newTickY: Set<number> = new Set([]);
-        ALayoutInstance.getCoordinateSystemLayerGrid().map((mark: any) => {
+        ALayoutInstance.getCSLayerGrid().map((mark: any) => {
           mark.top === 0 && console.log(mark, e.type, 'mark');
 
           if (mark.top === 0) {
@@ -42,13 +39,7 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
             newTickY.add(mark.lineCoords.tl.y);
           }
         });
-        console.log(
-          {
-            x: [...newTickX],
-            y: [...newTickY],
-          },
-          'newTickY'
-        );
+
         startTransition(() => {
           setTick({
             x: [...newTickX],
@@ -66,8 +57,8 @@ export const Layout: FC<ILayout> = ({ leftNode, topNode, RightNode, content }) =
       height: 1080,
     });
 
-    if (ALayoutInstance.getCoordinateSystemLayerGrid()) {
-      setTick(ALayoutInstance.getCoordinateSystemLayerGrid());
+    if (ALayoutInstance.getCSLayerGrid()) {
+      setTick(ALayoutInstance.getCSLayerGrid());
     }
   }, []);
   return (

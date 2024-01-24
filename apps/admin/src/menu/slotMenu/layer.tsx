@@ -14,15 +14,6 @@ export const LayerMenu = () => {
   );
   useEffect(() => {
     setCurrentScene(scene[0].id);
-    ALayoutInstance.onLayerChange((v) => {
-      const curLayerAllNode = ALayoutInstance.getCurrentLayerNodes();
-      setSceneWidget(curLayerAllNode.map((z) => z.getInfo()));
-    });
-    ALayoutInstance.onCreateWidgetSubscribe(() => {
-      const curLayerAllNode = ALayoutInstance.getCurrentLayerNodes();
-      setSceneWidget(curLayerAllNode.map((z) => z.getInfo()));
-      console.log(curLayerAllNode, 'curLayerAllNode');
-    });
   }, []);
   return (
     <div
@@ -159,7 +150,6 @@ export const LayerMenu = () => {
                   <a
                     className="justify-between flex w-full"
                     onClick={() => {
-                      ALayoutInstance.changeLayer(sn.id);
                       setCurrentScene(sn.id);
                     }}
                   >
@@ -211,11 +201,7 @@ export const LayerMenu = () => {
       >
         {sceneWidget.map((node, index) => {
           return (
-            <li
-              key={index}
-              className="ellipsis-text"
-              onClick={() => ALayoutInstance.setSelectNodeByLayer(node.id)}
-            >
+            <li key={index} className="ellipsis-text">
               <a className="ellipsis-text">
                 {node.type}-{index}
               </a>
