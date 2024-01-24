@@ -146,7 +146,7 @@ export const SlotMenu = () => {
       // console.log(e, 'ALayoutInstance.coordinateSystemLayerSelection');
     });
     //回车后设置尺寸与比例
-    ALayoutInstance.getEvent().onKeyUp((e: any) => {
+    ALayoutInstance.getEvent().onKeyUpSubscribe((e: any) => {
       console.log(e, ratioRef.current?.value, 'e-kk');
       if (e.code === 'Enter') {
         //

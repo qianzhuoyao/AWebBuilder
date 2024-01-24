@@ -1,4 +1,4 @@
-import { mergeMap, defer, from } from 'rxjs';
+import { mergeMap, defer, from, concatMap } from 'rxjs';
 
 /**
  * 并发任务的管道
@@ -9,3 +9,6 @@ import { mergeMap, defer, from } from 'rxjs';
  */
 export const mergeTaskPipe = <T>(taskLimit: number) =>
   mergeMap((task: () => Promise<T>) => defer(() => from(task())), taskLimit);
+
+export const concatTaskPipe = <T>() =>
+  concatMap((task: () => Promise<T>) => from(task()));

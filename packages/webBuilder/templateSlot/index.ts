@@ -1,12 +1,10 @@
 import Moveable, { OnScale } from 'moveable';
 import { singletonDController } from '../Layout/DOMController';
-import { buildId } from '../uuid';
 import { getDomObservable } from '../Layout/domSubscribe';
 import { Chart } from './chart';
-import { OperationLayer } from 'Layer/operationLayer';
-import { getSelectionNodesObservable } from '../Slot/selectionNodeOpSubscribe';
-import { time } from 'console';
+
 import dayjs from 'dayjs';
+import { getSelectionObservable } from '../Slot/selection';
 
 export interface IWidget {
   id: string;
@@ -22,17 +20,11 @@ export type IWidgetType = 'chart' | 'table' | 'text' | 'image';
 export class TemplateNode {
   private nodeInfo: IWidget;
   private instance?: Chart;
-  private syncStartPosition: {
-    left: number;
-    top: number;
-  } | null = null;
   private observer?: MutationObserver;
-  private matrix: number[];
   private dom?: HTMLElement;
   private moveable?: Moveable;
   constructor(info: IWidget) {
     this.nodeInfo = info;
-    this.matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     console.log(info, this.moveable?.getManager(), 'info-info');
     this.createWidget();
     getDomObservable().subscribe((v) => {
@@ -40,26 +32,15 @@ export class TemplateNode {
         console.log('cscscscscscscs');
         this.createMovable(v.value);
         this.drag();
-        this.scale();
+        this.click();
         this.resize();
         this.rotate();
-        this.wrap();
       }
     });
   }
 
-  public syncPosition(left: number, top: number) {
-    this.setPosition(
-      (this.syncStartPosition?.left || 0) + left,
-      (this.syncStartPosition?.top || 0) + top
-    );
-  }
-
-  public setSyncStartPosition() {
-    this.syncStartPosition = {
-      left: this.moveable?.getRect().left || 0,
-      top: this.moveable?.getRect().top || 0,
-    };
+  public getCurrentRect() {
+    return this.moveable?.getRect();
   }
 
   public getId() {
@@ -78,20 +59,12 @@ export class TemplateNode {
     this.moveable?.destroy();
     this.moveable = new Moveable(parentDom, {
       target: this.dom,
-      // If the container is null, the position is fixed. (default: parentElement(document.body))
       container: parentDom,
       className: this.nodeInfo.id,
       draggable: true,
       resizable: true,
-      scalable: false,
-      rotatable: true,
-      // Enabling pinchable lets you use events that
-      // can be used in draggable, resizable, scalable, and rotateable.
       origin: false,
-      keepRatio: false,
-      // Resize, Scale Events at edges.
-      edge: false,
-
+      rotatable: true,
       throttleDrag: 0,
       throttleResize: 0,
       throttleScale: 0,
@@ -114,7 +87,7 @@ export class TemplateNode {
     this.dom.style.left = this.nodeInfo.pointX + 'px';
     this.dom.style.top = this.nodeInfo.pointY + 'px';
     this.dom.style.background = 'red';
-
+    this.dom.setAttribute('data-isNode', '1');
     //监听dom的变化,使dom隐藏时 其余钩子节点都隐藏
     this.mutationDom();
 
@@ -123,13 +96,20 @@ export class TemplateNode {
 
     this.createMovable(singletonDController.getProviderDom() || document.body);
     this.drag();
-    this.scale();
+    this.click();
     this.resize();
     this.rotate();
-    this.wrap();
     singletonDController.getProviderDom()?.appendChild(this.dom);
   }
-
+  public click() {
+    this.moveable?.on('click', (params) => {
+      getSelectionObservable().next({
+        type: 'click',
+        time: dayjs(),
+        value: params,
+      });
+    });
+  }
   private mutationDom() {
     const config = { attributes: true, childList: true, subtree: true };
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -155,21 +135,6 @@ export class TemplateNode {
     this.instance = new Chart();
   }
 
-  protected wrap() {
-    this.moveable
-      ?.on('warpStart', ({ target, clientX, clientY }) => {
-        // console.log('onWarpStart', target);
-      })
-      .on('warp', ({ target, clientX, clientY, delta, dist, multiply, transform }) => {
-        //  console.log('onWarp', target);
-        // target.style.transform = transform;
-        this.matrix = multiply(this.matrix, delta);
-        target.style.transform = `matrix3d(${this.matrix.join(',')})`;
-      })
-      .on('warpEnd', ({ target, isDrag, clientX, clientY }) => {
-        //  console.log('onWarpEnd', target, isDrag);
-      });
-  }
   protected resize() {
     this.moveable
       ?.on('resizeStart', ({ target, clientX, clientY }) => {
@@ -177,9 +142,6 @@ export class TemplateNode {
       })
       .on('resize', ({ target, drag, width, height, dist, delta, clientX, clientY }) => {
         console.log('onResizeStartdrag', drag);
-        //  console.log('onResize', target);
-        // delta[0] && (target!.style.width = `${width}px`);
-        // delta[1] && (target!.style.height = `${height}px`);
         target.style.width = `${width}px`;
         target.style.height = `${height}px`;
         target.style.transform = drag.transform;
@@ -197,19 +159,6 @@ export class TemplateNode {
    *
    * @return  {[type]}         [return description]
    */
-  public setPosition(left: number, top: number) {
-    if (!this.dom) {
-      return;
-    }
-    console.log(this.moveable?.getDragElement(), 'html');
-    const target = this.moveable?.getDragElement();
-    if (!target) {
-      return;
-    }
-    target.style.left = left + 'px';
-    target.style.top = top + 'px';
-    this.update();
-  }
 
   private update() {
     this.moveable?.updateRect();
@@ -238,74 +187,37 @@ export class TemplateNode {
   }
 
   protected drag() {
-    let downLeft = 0;
-    let downTop = 0;
+    let offsetLeft = 0;
+    let offsetTop = 0;
     this.moveable
       ?.on('dragStart', (params) => {
-        console.log('onDragStart', params.moveable.getState());
-        downLeft = params.moveable.getState().left;
-        downTop = params.moveable.getState().top;
-        getSelectionNodesObservable().next({
-          type: 'MOVE_START',
+        //
+        offsetLeft = params.moveable.getRect().left;
+        offsetTop = params.moveable.getRect().top;
+        getSelectionObservable().next({
+          type: 'select',
+          time: dayjs(),
+          value: this,
+        });
+      })
+      .on('drag', ({ target, left, top }) => {
+        target!.style.left = `${left}px`;
+        target!.style.top = `${top}px`;
+        getSelectionObservable().next({
+          type: 'selection-move',
           time: dayjs(),
           value: {
-            id: this.nodeInfo.id,
-            moveable: this.moveable,
-            info: {
-              left: downLeft,
-              top: downLeft,
-            },
+            left: left - offsetLeft,
+            top: top - offsetTop,
           },
         });
       })
-      .on(
-        'drag',
-        ({
-          target,
-          transform,
-          left,
-          top,
-          right,
-          bottom,
-          beforeDelta,
-          beforeDist,
-          delta,
-          dist,
-          clientX,
-          clientY,
-        }) => {
-          // console.log('onDrag left, top', left, top);
-          target!.style.left = `${left}px`;
-          target!.style.top = `${top}px`;
-          getSelectionNodesObservable().next({
-            type: 'MOVE',
-            time: dayjs(),
-            value: {
-              id: this.nodeInfo.id,
-              moveable: this.moveable,
-              info: {
-                left: left - downLeft,
-                top: top - downTop,
-              },
-            },
-          });
-          // console.log("onDrag translate", dist);
-          // target!.style.transform = transform;
-        }
-      )
       .on('dragEnd', ({ target, isDrag, clientX, clientY }) => {
         // console.log('onDragEnd', target, isDrag);
-        getSelectionNodesObservable().next({
-          type: 'MOVE_OVER',
+        getSelectionObservable().next({
+          type: 'selection-over',
           time: dayjs(),
-          value: {
-            id: this.nodeInfo.id,
-            moveable: this.moveable,
-            info: {
-              left: downLeft,
-              top: downLeft,
-            },
-          },
+          value: this,
         });
       });
   }
@@ -320,19 +232,6 @@ export class TemplateNode {
       })
       .on('rotateEnd', ({ target, isDrag, clientX, clientY }) => {
         //  console.log('onRotateEnd', target, isDrag);
-      });
-  }
-  protected scale() {
-    this.moveable
-      ?.on('scaleStart', ({ target, clientX, clientY }) => {
-        //  console.log('onScaleStart', target);
-      })
-      .on('scale', ({ target, scale, dist, delta, transform, clientX, clientY }: OnScale) => {
-        // console.log('onScale scale', scale);
-        target!.style.transform = transform;
-      })
-      .on('scaleEnd', ({ target, isDrag, clientX, clientY }) => {
-        //console.log('onScaleEnd', target, isDrag);
       });
   }
 }

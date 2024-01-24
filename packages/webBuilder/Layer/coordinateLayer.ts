@@ -10,17 +10,26 @@ import { fabric } from 'fabric';
 import { IFcanvasRes, getCoordinateObservable } from './coordinateLayerSubscribe';
 import dayjs from 'dayjs';
 import { keyDown, keyUp } from '../eventStream/keyEvent';
-import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
-import { map, repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rxjs';
+import { concatTaskPipe, mergeTaskPipe } from '../Queue/mergeTaskPipe';
 import {
-  CREATE_WIDGET,
+  concatAll,
+  first,
+  map,
+  repeat,
+  skipUntil,
+  skipWhile,
+  take,
+  takeUntil,
+  takeWhile,
+  withLatestFrom,
+} from 'rxjs';
+import {
   PANEL_SELECTION_TRIGGER,
   SCALE_COORDINATOR_TRIGGER,
   TRANSFORM_END_TRIGGER,
   TRANSFORM_MOVING_TRIGGER,
   TRANSFORM_START_TRIGGER,
   getPanelAcceptObservable,
-  getPanelSendObservable,
 } from '../Layout/subscribePanel';
 
 export class CoordinateLayer extends Layer {
@@ -68,6 +77,30 @@ export class CoordinateLayer extends Layer {
    */
   private selection() {
     let downAbsolutePointer: any = null;
+    keyDown(
+      (e) => {
+        if (e.code === 'KeyS') {
+          this.fCanvas.wrapperEl.style.zIndex = 100;
+          this.setFCanvasSelection(true);
+        }
+      },
+      {
+        first: true,
+        repeat: true,
+      }
+    );
+    keyUp(
+      (e) => {
+        if (e.code === 'KeyS') {
+          this.fCanvas.wrapperEl.style.zIndex = 10;
+          this.setFCanvasSelection(false);
+        }
+      },
+      {
+        first: true,
+        repeat: true,
+      }
+    );
     getCoordinateObservable()
       .pipe(
         mergeTaskPipe(1),
@@ -79,14 +112,7 @@ export class CoordinateLayer extends Layer {
             })
           )
         ),
-        takeUntil(
-          keyUp().observable.pipe(
-            map(() => {
-              this.fCanvas.wrapperEl.style.zIndex = 10;
-              this.setFCanvasSelection(false);
-            })
-          )
-        ),
+        takeUntil(keyUp().observable),
         withLatestFrom(keyDown().observable),
         takeWhile(([a, b]) => {
           a?.options?.e?.preventDefault();
@@ -105,10 +131,6 @@ export class CoordinateLayer extends Layer {
               downAbsolutePointer = v.options.absolutePointer;
             }
           }
-
-          console.log(this.fCanvas, v, 'a0fgsaf');
-          this.fCanvas.wrapperEl.style.zIndex = 100;
-          this.setFCanvasSelection(true);
           getPanelAcceptObservable().next({
             type: PANEL_SELECTION_TRIGGER,
             time: dayjs(),

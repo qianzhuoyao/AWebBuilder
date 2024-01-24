@@ -33,7 +33,7 @@ import { removeDomObservable } from './domSubscribe';
 import { IWidget, IWidgetType, TemplateNode } from '../templateSlot';
 import { OperationLayer } from '../Layer/operationLayer';
 import { buildId } from '../uuid';
-import { removeSelectionNodesObservable } from '../Slot/selectionNodeOpSubscribe';
+
 
 /**
  * 面板
@@ -85,6 +85,11 @@ export class Panel {
   constructor({ coordinateSystemConfig }: IPanelConstructor) {
     this.slots = new Slots();
     this.isEdit = false;
+    /**
+     * panel的事件对象统一的逐层下发事件
+     *
+     * @return  {[type]}  [return description]
+     */
     this.event = new PanelEvent();
     //默认操作对齐网格方式just-vertex
     this.alignGrid = 'just-vertex';
@@ -307,8 +312,9 @@ export class Panel {
    */
   public onSubscribeSelection(callbacks?: (e: ISelectionParams) => void) {
     getPanelAcceptObservable().subscribe((v) => {
+      console.log(v, 'onSusbscribeSelection');
       if (v.type === PANEL_SELECTION_TRIGGER) {
-         this.slots.selectNode(
+        this.slots.selectNode(
           v.value.downAbsolutePointer.x,
           v.value.moveAbsolutePointer.x,
           v.value.downAbsolutePointer.y,
@@ -536,6 +542,6 @@ export class Panel {
     //移除坐标系事件
     removeCoordinateObservable();
     removeDomObservable();
-    removeSelectionNodesObservable()
+
   }
 }
