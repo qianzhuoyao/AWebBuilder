@@ -59,7 +59,7 @@ export class Slots {
       .subscribe((v) => {
         if (!!this.widgetType && !!this.belongLayer) {
           if (v.type === 'fCanvas-mouse-down') {
-            console.log('ffffff');
+      
             // startCoord.x = v.options.
             startCoord.pageX = v.options.e.pageX;
             startCoord.pageY = v.options.e.pageY;

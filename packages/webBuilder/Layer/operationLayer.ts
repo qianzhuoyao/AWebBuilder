@@ -36,7 +36,7 @@ export class OperationLayer extends Layer {
       }
     );
     selected$.subscribe((v) => {
-      console.log(v, 'csacacasc');
+    
       this.selectedNodeIdList = v;
       const currentSelectedNodes: TemplateNode[] = [];
       //同步至slots

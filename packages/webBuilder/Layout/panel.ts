@@ -88,7 +88,7 @@ export class Panel {
     home.setDeletable(false);
     this.setCurrentLayer(home.id);
     this.slots = new Slots(this.coordinateSystemLayer);
-    console.log(this.layer, 'this.layer');
+  
   }
 
   public getSlots() {
@@ -357,7 +357,7 @@ export class Panel {
    * @return  {[type]}  [return description]
    */
   public clear() {
-    console.log('clear');
+  
     //将修正流移除
     removeAdjust();
     //取消panel的相关订阅

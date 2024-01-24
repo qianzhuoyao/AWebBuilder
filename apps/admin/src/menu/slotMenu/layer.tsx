@@ -39,7 +39,7 @@ export const LayerMenu = () => {
               className="btn btn-ghost text-md"
               onClick={() => {
                 setSceneDetailOpen(!sceneDetailOpen);
-                console.log(scene, 'scscsscsc');
+               
               }}
             >
               scene

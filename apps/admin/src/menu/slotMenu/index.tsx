@@ -136,7 +136,7 @@ export const SlotMenu = () => {
 
   useEffect(() => {
     ALayoutInstance.onEditStatusSubscribe((v) => {
-      console.log(v, 'vvvvv');
+     
       if (!operationButtonRef.current) {
         return;
       }
@@ -147,7 +147,7 @@ export const SlotMenu = () => {
     });
     //回车后设置尺寸与比例
     ALayoutInstance.getEvent().onKeyUpSubscribe((e: any) => {
-      console.log(e, ratioRef.current?.value, 'e-kk');
+     
       if (e.code === 'Enter') {
         //
         const splitCode = ratioRef.current?.value.split('*');
@@ -161,7 +161,7 @@ export const SlotMenu = () => {
     });
     //订阅f按下时的数据
     ALayoutInstance.onSubscribeScale((s) => {
-      console.log(s, 'scale-a');
+     
       if (scaleRef.current) {
         scaleRef.current.value = String(s);
       }
@@ -194,7 +194,7 @@ export const SlotMenu = () => {
               role="button"
               className="btn btn-circle btn-ghost"
               onBlur={() => {
-                console.log(otherButtonRef, 'blur');
+              
                 if (menuButtonRef.current) {
                   menuButtonRef.current.checked = false;
                 }

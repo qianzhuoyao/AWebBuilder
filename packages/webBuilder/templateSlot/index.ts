@@ -36,8 +36,6 @@ export class TemplateNode {
     this.nodeInfo = info;
     this.createWidget();
 
-
-
     mouseUp(
       (e) => {
         if (this.bothMoveTag) {
@@ -58,7 +56,6 @@ export class TemplateNode {
 
     getBothMoveObservable().subscribe((v) => {
       if (v.type === 'SIGNAL') {
-        console.log(v, 'vsavasasvasvggg');
         if (v.bothId.includes(this.getId())) {
           //开始标记移动准备
           this.bothMoveTag = true;
@@ -68,11 +65,6 @@ export class TemplateNode {
         }
       } else if (v.type === 'MOVE') {
         if (v.id !== this.getId() && this.bothMoveTag) {
-          console.log(
-            v,
-            Number(this.dom?.getAttribute('data-B')) || 0,
-            'this.moveable?.getRect().left'
-          );
           if (!this.dom) {
             return;
           }
@@ -130,7 +122,6 @@ export class TemplateNode {
     this.rotate();
   }
   protected createWidget() {
-    console.log(singletonDController, 'singletonDController');
     this.dom = singletonDController.addDomRetEle();
     if (!this.dom) {
       return;
@@ -185,10 +176,10 @@ export class TemplateNode {
   protected resize() {
     this.moveable
       ?.on('resizeStart', ({ target, clientX, clientY }) => {
-        console.log('onResizeStart', target);
+        //
       })
       .on('resize', ({ target, drag, width, height, dist, delta, clientX, clientY }) => {
-        console.log('onResizeStartdrag', drag);
+        //
         target.style.width = `${width}px`;
         target.style.height = `${height}px`;
         target.style.transform = drag.transform;
