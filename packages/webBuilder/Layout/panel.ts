@@ -115,10 +115,11 @@ export class Panel {
    *
    * @param   {string}  layerId  [layerId description]
    *
-   * @return  {[type]}           [return description]
+   * @return  {[]}           [return description]
    */
   public setCurrentLayer(layerId: string) {
     this.currentLayer = this.layer.filter((l) => l.id === layerId)[0];
+    console.log(this.currentLayer,this.layer,'this.layer')
     getPanelSendObservable().next({
       type: LAYOUT_CHANGE,
       time: dayjs(),

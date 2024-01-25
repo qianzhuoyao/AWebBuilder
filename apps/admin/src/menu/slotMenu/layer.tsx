@@ -218,7 +218,12 @@ export const LayerMenu = () => {
         {sceneWidget?.map((node, index) => {
           return (
             <li key={index} className="ellipsis-text">
-              <a className="ellipsis-text">
+              <a
+                className="ellipsis-text"
+                onClick={() => {
+                  ALayoutInstance.getCurrentLayer()?.selectNode(node.getInfo().id);
+                }}
+              >
                 {node.getInfo().type}-{index}
               </a>
             </li>

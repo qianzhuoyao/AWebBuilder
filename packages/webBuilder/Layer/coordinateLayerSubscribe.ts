@@ -3,7 +3,7 @@
  */
 
 import { Dayjs } from 'dayjs';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 
 export interface IFcanvasRes {
   time: Dayjs;

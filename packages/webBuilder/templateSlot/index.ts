@@ -197,7 +197,7 @@ export class TemplateNode {
             if (mutation.target.style.display === 'none') {
               //
               if (this.moveable?.getControlBoxElement()) {
-                this.moveable.getControlBoxElement().style.display = 'none';
+                this.moveable.getControlBoxElement().style.visibility = 'hidden';
               }
             }
           }

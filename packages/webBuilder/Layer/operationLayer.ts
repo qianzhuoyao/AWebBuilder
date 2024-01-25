@@ -2,14 +2,15 @@ import { buildId } from '../uuid';
 import { ISize } from '../Layout/panel';
 import { Layer } from './Layer';
 import { TemplateNode } from '../templateSlot';
-import { Subject } from 'rxjs';
+import { Subject, filter } from 'rxjs';
 import { getBothMoveObservable } from '../Slot/selection';
 import { mouseDown } from '../eventStream/keyEvent';
-
-export const selected$ = new Subject<Set<string>>();
+import { LAYOUT_CHANGE, getPanelSendObservable } from '../Layout/subscribePanel';
 
 export class OperationLayer extends Layer {
   private deletable = true;
+  private selected$: Subject<Set<string>> = new Subject<Set<string>>();
+  private isShow = false;
   //当前图层下的所有节点id集合
   private nodeIdList: Map<string, TemplateNode> = new Map([]);
   //默认操作对齐网格方式just-vertex
@@ -20,13 +21,27 @@ export class OperationLayer extends Layer {
 
   constructor(Size: ISize) {
     super(Size);
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === LAYOUT_CHANGE) {
+        console.log(v, this.id, 'vvvv0gt');
+        if (v.value.id === this.id) {
+          //当前图层才显示
+          this.isShow = true;
+        } else {
+          this.isShow = false;
+        }
+      }
+    });
     mouseDown(
       (e) => {
+        if (!this.isShow) {
+          return;
+        }
         if (e.target instanceof HTMLElement) {
           if (e.target.getAttribute('data-isNode') !== '1') {
-            selected$.next(new Set([]));
+            this.selected$.next(new Set([]));
           } else {
-            selected$.next(new Set([e.target.id]));
+            this.selected$.next(new Set([e.target.id]));
           }
         }
       },
@@ -35,37 +50,45 @@ export class OperationLayer extends Layer {
         repeat: true,
       }
     );
-    selected$.subscribe((v) => {
-      this.selectedNodeIdList = v;
-      const currentSelectedNodes: TemplateNode[] = [];
-      //同步至slots
-      this.nodeIdList.forEach((node) => {
-        const box = node.getMovable()?.getControlBoxElement();
-        if (!box) {
-          return;
-        }
-        if (this.selectedNodeIdList.has(node.getId())) {
-          currentSelectedNodes.push(node);
-          box.style.visibility = 'visible';
-        } else {
-          box.style.visibility = 'hidden';
+    this.selected$
+      .pipe(
+        filter(() => {
+          console.log(this.isShow, 'this.isShow');
+          return this.isShow;
+        })
+      )
+      .subscribe((v) => {
+        console.log(v, this.isShow, this.nodeIdList, 'v-sv');
+        this.selectedNodeIdList = v;
+        const currentSelectedNodes: TemplateNode[] = [];
+        //同步至slots
+        this.nodeIdList.forEach((node) => {
+          const box = node.getMovable()?.getControlBoxElement();
+          if (!box) {
+            return;
+          }
+          if (this.selectedNodeIdList.has(node.getId())) {
+            currentSelectedNodes.push(node);
+            box.style.visibility = 'visible';
+          } else {
+            box.style.visibility = 'hidden';
+          }
+        });
+        if (this.selectedNodeIdList.size > 1) {
+          //同步移动其他的
+          getBothMoveObservable().next({
+            type: 'SIGNAL',
+            bothId: [...this.selectedNodeIdList],
+            syncPosition: currentSelectedNodes.map((node) => {
+              return {
+                id: node.getId(),
+                left: node.getMovable()?.getRect().left || 0,
+                top: node.getMovable()?.getRect().top || 0,
+              };
+            }),
+          });
         }
       });
-      if (this.selectedNodeIdList.size > 1) {
-        //同步移动其他的
-        getBothMoveObservable().next({
-          type: 'SIGNAL',
-          bothId: [...this.selectedNodeIdList],
-          syncPosition: currentSelectedNodes.map((node) => {
-            return {
-              id: node.getId(),
-              left: node.getMovable()?.getRect().left || 0,
-              top: node.getMovable()?.getRect().top || 0,
-            };
-          }),
-        });
-      }
-    });
   }
 
   /**
@@ -79,6 +102,7 @@ export class OperationLayer extends Layer {
    * @return  {[type]}      [return description]
    */
   public getSelectedNodes(x1: number, x2: number, y1: number, y2: number) {
+    console.log('p[polo');
     const MaxX = Math.max(x1, x2);
     const MinX = Math.min(x1, x2);
     const MaxY = Math.max(y1, y2);
@@ -101,7 +125,7 @@ export class OperationLayer extends Layer {
       }
     });
 
-    selected$.next(S);
+    this.selected$.next(S);
   }
   /**
    * 添加节点
@@ -112,9 +136,13 @@ export class OperationLayer extends Layer {
    */
   public addNode(node: TemplateNode) {
     // node.getMovable()?.on('click', () => {
-    //   selected$.next(new Set([node.getId()]));
+    //   this.selected$.next(new Set([node.getId()]));
     // });
     this.nodeIdList.set(node.getId(), node);
+  }
+
+  public setNode() {
+    //
   }
   public deleteNode(nodeList: TemplateNode[]) {
     nodeList.map((node) => {
@@ -127,9 +155,9 @@ export class OperationLayer extends Layer {
     return this.nodeIdList;
   }
 
-  public checkTempIsIn(tempId:string){
-    console.log(tempId,'tempId')
-    return this.nodeIdList.has(tempId)
+  public checkTempIsIn(tempId: string) {
+    console.log(tempId, 'tempId');
+    return this.nodeIdList.has(tempId);
   }
 
   public clearNode() {
@@ -144,17 +172,18 @@ export class OperationLayer extends Layer {
    * @return  {[type]}      [return description]
    */
   public selectNode(id: string) {
-    selected$.next(new Set([id]));
+    console.log(id, 'selectNode-selectNode');
+    this.selected$.next(new Set([id]));
   }
   public unSelectNode(ids: string[]) {
     ids.map((id) => {
       this.selectedNodeIdList.delete(id);
     });
-    selected$.next(this.selectedNodeIdList);
+    this.selected$.next(this.selectedNodeIdList);
   }
   public clearSelectedNode() {
     this.selectedNodeIdList = new Set();
-    selected$.next(this.selectedNodeIdList);
+    this.selected$.next(this.selectedNodeIdList);
   }
 
   public setName(name: string) {
