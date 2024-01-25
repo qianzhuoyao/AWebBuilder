@@ -15,11 +15,13 @@ import { map, repeat, skipUntil, takeUntil, takeWhile, withLatestFrom } from 'rx
 import {
   PANEL_SELECTION_TRIGGER,
   SCALE_COORDINATOR_TRIGGER,
+  SET_PROVIDER_TRIGGER,
   TRANSFORM_END_TRIGGER,
   TRANSFORM_MOVING_TRIGGER,
   TRANSFORM_START_TRIGGER,
   getPanelAcceptObservable,
 } from '../Layout/subscribePanel';
+import { time } from 'console';
 
 export class CoordinateLayer extends Layer {
   private coordinatorConfig: ICoordinateSystemParams;
@@ -483,6 +485,11 @@ export class CoordinateLayer extends Layer {
     dom.style.position = 'relative';
     this.newProvider = dom;
     singletonDController.setProviderDom(this.newProvider);
+    getPanelAcceptObservable().next({
+      type: SET_PROVIDER_TRIGGER,
+      time: dayjs(),
+      value: dom,
+    });
   }
 
   public getConfig() {

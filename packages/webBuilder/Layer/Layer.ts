@@ -1,9 +1,12 @@
+import { mergeTaskPipe } from '../Queue/mergeTaskPipe';
 import { singletonDController } from '../Layout/DOMController';
 import { ISize } from '../Layout/panel';
+import { getCoordinateObservable } from './coordinateLayerSubscribe';
+import { SET_PROVIDER_TRIGGER, getPanelAcceptObservable } from '../Layout/subscribePanel';
 
 export class Layer {
   //层级
-  protected zIndex = 1;
+  protected zIndex = 2;
 
   /**
    * 偏移量
@@ -22,6 +25,19 @@ export class Layer {
   constructor(layerSize: ISize) {
     this.height = layerSize.height;
     this.width = layerSize.width;
+    getPanelAcceptObservable().subscribe((v) => {
+      if (v.type === SET_PROVIDER_TRIGGER) {
+        this.newProvider = v.value;
+      }
+    });
+    getCoordinateObservable()
+      .pipe(mergeTaskPipe(10))
+      .subscribe((v) => {
+        if (v.type === 'grid-size-set') {
+          this.height = v.options.height;
+          this.width = v.options.width;
+        }
+      });
   }
 
   public setLayerDom(dom: HTMLElement | HTMLCanvasElement) {
@@ -60,6 +76,9 @@ export class Layer {
     this.zIndex = zIndex;
   }
 
+  public getZIndex() {
+    return this.zIndex;
+  }
   /**
    * 设置尺寸
    *

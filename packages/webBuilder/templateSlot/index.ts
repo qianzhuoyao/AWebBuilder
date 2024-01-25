@@ -261,6 +261,12 @@ export class TemplateNode {
       .on('drag', ({ target, left, top }) => {
         target!.style.left = `${left}px`;
         target!.style.top = `${top}px`;
+
+        //存在边界时
+        if (this.nodeInfo.layer.getIsBound()) {
+          console.log({left,top,l:this.nodeInfo.layer},'dafgggggad')
+        }
+
         if (this.bothMoveTag) {
           getBothMoveObservable().next({
             type: 'MOVE',

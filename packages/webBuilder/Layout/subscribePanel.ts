@@ -28,7 +28,8 @@ export const EDIT_STATUS_TRIGGER = 'EDIT_STATUS_TRIGGER' as const;
 export const CREATE_WIDGET = 'CREATE_WIDGET' as const;
 //图层更换
 export const LAYOUT_CHANGE = 'LAYOUT_CHANGE' as const;
-
+//更新provider
+export const SET_PROVIDER_TRIGGER = 'SET_PROVIDER_TRIGGER' as const;
 //基于坐标系的多选操作
 export const PANEL_SELECTION_TRIGGER = 'PANEL_SELECTION_TRIGGER' as const;
 
@@ -88,6 +89,12 @@ interface ITransformEndCoordinatorTrigger {
   value: any;
 }
 
+interface ISetProviderTrigger {
+  type: typeof SET_PROVIDER_TRIGGER;
+  time: Dayjs;
+  value: HTMLElement;
+}
+
 interface IBackUpCoordinatorTrigger {
   type: typeof BACKUP_COORDINATOR_TRIGGER;
   time: Dayjs;
@@ -123,7 +130,8 @@ export type IAcceptMsg =
   | ITransformEndCoordinatorTrigger
   | ITransformMovingCoordinatorTrigger
   | ICreateWidgetTrigger
-  | ISelectionTrigger;
+  | ISelectionTrigger
+  | ISetProviderTrigger;
 
 /**
  * 讯息

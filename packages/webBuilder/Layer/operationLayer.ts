@@ -10,13 +10,17 @@ import { LAYOUT_CHANGE, getPanelSendObservable } from '../Layout/subscribePanel'
 type ILayerEventName = 'selection';
 
 export class OperationLayer extends Layer {
+  //边界是否存在
+  private isBound = true;
+  //是否可删除
   private deletable = true;
+  //选中订阅
   private selected$: Subject<Set<string>> = new Subject<Set<string>>();
+  //事件订阅
   private on$: ReplaySubject<{
     layer?: OperationLayer;
     eventName: ILayerEventName;
   }> = new ReplaySubject();
-  private isShow = false;
   //当前图层下的所有节点id集合
   private nodeIdList: Map<string, TemplateNode> = new Map([]);
   //默认操作对齐网格方式just-vertex
@@ -30,10 +34,10 @@ export class OperationLayer extends Layer {
     getPanelSendObservable().subscribe((v) => {
       if (v.type === LAYOUT_CHANGE) {
         if (v.value.id === this.id) {
-          //当前图层才显示
-          this.isShow = true;
+          //顶层图层才显示
+          this.setZIndex(1);
         } else {
-          this.isShow = false;
+          this.setZIndex(2);
         }
       }
     });
@@ -55,12 +59,12 @@ export class OperationLayer extends Layer {
     this.selected$
       .pipe(
         filter(() => {
-          console.log(this.isShow, 'this.isShow');
-          return this.isShow;
+          console.log(this.getZIndex(), 'this.isShow');
+          return this.getZIndex() === 1;
         })
       )
       .subscribe((v) => {
-        console.log(v, this.isShow, this.nodeIdList, 'v-sv');
+        console.log(v, this.getZIndex(), this.nodeIdList, 'v-sv');
         this.selectedNodeIdList = v;
         const currentSelectedNodes: TemplateNode[] = [];
         //同步至slots
@@ -91,6 +95,10 @@ export class OperationLayer extends Layer {
           });
         }
       });
+  }
+
+  public getIsBound() {
+    return this.isBound;
   }
 
   public on(onEventName: ILayerEventName, callback: (e?: OperationLayer) => any) {
