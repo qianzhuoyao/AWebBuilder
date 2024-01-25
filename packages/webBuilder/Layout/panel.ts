@@ -20,15 +20,14 @@ import {
 import dayjs from 'dayjs';
 import { removeLayerObservable } from '../Layer/layerSubscribe';
 import { IUiTheme } from './theme';
-import {
-  removeCoordinateObservable,
-} from '../Layer/coordinateLayerSubscribe';
+import { removeCoordinateObservable } from '../Layer/coordinateLayerSubscribe';
 import { singletonDController } from './DOMController';
 import { PanelEvent } from '../eventStream/panelEvent';
 import { Slots } from '../Slot/Slots';
 import { removeDomObservable } from './domSubscribe';
 import { OperationLayer } from '../Layer/operationLayer';
 import { removeBothMoveObservable } from '../Slot/selection';
+import { TemplateNode } from 'templateSlot';
 
 /**
  * 面板
@@ -88,7 +87,6 @@ export class Panel {
     home.setDeletable(false);
     this.setCurrentLayer(home.id);
     this.slots = new Slots(this.coordinateSystemLayer);
-  
   }
 
   public getSlots() {
@@ -127,6 +125,21 @@ export class Panel {
       value: this.currentLayer,
     });
     return this.currentLayer;
+  }
+
+  /**
+   * 布局更改
+   *
+   * @param   {OperationLayer}  fn  [fn description]
+   *
+   * @return  {[type]}              [return description]
+   */
+  public onCurrentLayerChangeSubscribe(fn: (currentLayer: OperationLayer) => void) {
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === LAYOUT_CHANGE) {
+        fn(v.value);
+      }
+    });
   }
 
   public onEditStatusSubscribe(fn: (state: boolean) => void) {
@@ -177,14 +190,15 @@ export class Panel {
     this.onSubscribeCSTransform({});
     this.onSubscribeSelection();
     this.onLayerChange();
-    this.onSubscribeSlots();
+    this.onSubscribeSlots({});
   }
 
-  public onSubscribeSlots() {
+  public onSubscribeSlots(slotCallback: { create?: (node: TemplateNode) => void }) {
     getPanelAcceptObservable().subscribe((v) => {
       if (v.type === CREATE_WIDGET) {
         //往当前layer下注入节点id
         this.currentLayer?.addNode(v.value);
+        slotCallback?.create && slotCallback?.create(v.value);
       }
     });
   }
@@ -357,7 +371,6 @@ export class Panel {
    * @return  {[type]}  [return description]
    */
   public clear() {
-  
     //将修正流移除
     removeAdjust();
     //取消panel的相关订阅

@@ -14,6 +14,21 @@ export const LayerMenu = () => {
   );
   useEffect(() => {
     setCurrentScene(scene[0].id);
+    ALayoutInstance.onSubscribeSlots({
+      create: (node) => {
+        setSceneWidget((curr) => {
+          return curr.concat([node]);
+        });
+      },
+    });
+    ALayoutInstance.onCurrentLayerChangeSubscribe((layer) => {
+      console.log(layer, [...(layer?.getNodes() || [])], 'layers');
+      setSceneWidget(() => {
+        return [...(layer?.getNodes() || [])]?.map(([_, node]) => {
+          return node;
+        });
+      });
+    });
   }, []);
   return (
     <div
@@ -39,7 +54,6 @@ export const LayerMenu = () => {
               className="btn btn-ghost text-md"
               onClick={() => {
                 setSceneDetailOpen(!sceneDetailOpen);
-               
               }}
             >
               scene
@@ -118,6 +132,7 @@ export const LayerMenu = () => {
                       <a
                         onClick={() => {
                           const currentLayer = ALayoutInstance.addLayer();
+                          ALayoutInstance.setCurrentLayer(currentLayer.id);
                           const newScene = ALayoutInstance.getLayer().map((layer) => ({
                             id: layer.id,
                             name: layer.getName(),
@@ -151,6 +166,7 @@ export const LayerMenu = () => {
                     className="justify-between flex w-full"
                     onClick={() => {
                       setCurrentScene(sn.id);
+                      ALayoutInstance.setCurrentLayer(sn.id);
                     }}
                   >
                     <span className="justify-start flex">
@@ -199,11 +215,11 @@ export const LayerMenu = () => {
           height: '100%',
         }}
       >
-        {sceneWidget.map((node, index) => {
+        {sceneWidget?.map((node, index) => {
           return (
             <li key={index} className="ellipsis-text">
               <a className="ellipsis-text">
-                {node.type}-{index}
+                {node.getInfo().type}-{index}
               </a>
             </li>
           );

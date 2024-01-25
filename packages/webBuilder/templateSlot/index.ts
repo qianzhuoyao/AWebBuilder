@@ -5,7 +5,8 @@ import { Chart } from './chart';
 
 import { OperationLayer } from '../Layer/operationLayer';
 import { getBothMoveObservable } from '../Slot/selection';
-import { mouseDown, mouseUp } from '../eventStream/keyEvent';
+import { mouseUp } from '../eventStream/keyEvent';
+import { LAYOUT_CHANGE, getPanelSendObservable } from '../Layout/subscribePanel';
 
 export interface IWidget {
   id: string;
@@ -36,16 +37,26 @@ export class TemplateNode {
     this.nodeInfo = info;
     this.createWidget();
 
+    //监听面板当前layer
+    getPanelSendObservable().subscribe((v) => {
+      if (v.type === LAYOUT_CHANGE) {
+        //显示隐藏当前widget
+        if (v.value.id !== this.nodeInfo.layer.id) {
+          this.boxHidden();
+          this.domHidden();
+        } else {
+          this.boxVisible();
+          this.domVisible();
+        }
+      }
+    });
+
     mouseUp(
       (e) => {
         if (this.bothMoveTag) {
           this.bothMoveTag = false;
           this.bothMovePositionMemo = undefined;
-          const box = this.getMovable()?.getControlBoxElement();
-          if (!box) {
-            return;
-          }
-          box.style.visibility = 'hidden';
+          this.boxHidden();
         }
       },
       {
@@ -90,6 +101,33 @@ export class TemplateNode {
     });
   }
 
+  private domHidden() {
+    if (!this.dom) {
+      return;
+    }
+    this.dom.style.display = 'none';
+  }
+  private domVisible() {
+    if (!this.dom) {
+      return;
+    }
+    this.dom.style.display = 'block';
+  }
+  private boxVisible() {
+    const box = this.getMovable()?.getControlBoxElement();
+    if (!box) {
+      return;
+    }
+    box.style.visibility = 'visible';
+  }
+
+  private boxHidden() {
+    const box = this.getMovable()?.getControlBoxElement();
+    if (!box) {
+      return;
+    }
+    box.style.visibility = 'hidden';
+  }
   public getId() {
     return this.nodeInfo.id;
   }

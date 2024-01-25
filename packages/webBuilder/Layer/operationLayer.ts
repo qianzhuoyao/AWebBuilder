@@ -36,7 +36,6 @@ export class OperationLayer extends Layer {
       }
     );
     selected$.subscribe((v) => {
-    
       this.selectedNodeIdList = v;
       const currentSelectedNodes: TemplateNode[] = [];
       //同步至slots
@@ -123,6 +122,16 @@ export class OperationLayer extends Layer {
       this.selectedNodeIdList.delete(node.getId());
     });
   }
+
+  public getNodes() {
+    return this.nodeIdList;
+  }
+
+  public checkTempIsIn(tempId:string){
+    console.log(tempId,'tempId')
+    return this.nodeIdList.has(tempId)
+  }
+
   public clearNode() {
     this.nodeIdList = new Map();
     this.selectedNodeIdList = new Set();
