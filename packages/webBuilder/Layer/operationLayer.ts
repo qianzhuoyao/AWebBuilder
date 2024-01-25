@@ -23,7 +23,6 @@ export class OperationLayer extends Layer {
     super(Size);
     getPanelSendObservable().subscribe((v) => {
       if (v.type === LAYOUT_CHANGE) {
-        console.log(v, this.id, 'vvvv0gt');
         if (v.value.id === this.id) {
           //当前图层才显示
           this.isShow = true;
@@ -34,9 +33,6 @@ export class OperationLayer extends Layer {
     });
     mouseDown(
       (e) => {
-        if (!this.isShow) {
-          return;
-        }
         if (e.target instanceof HTMLElement) {
           if (e.target.getAttribute('data-isNode') !== '1') {
             this.selected$.next(new Set([]));
@@ -63,15 +59,11 @@ export class OperationLayer extends Layer {
         const currentSelectedNodes: TemplateNode[] = [];
         //同步至slots
         this.nodeIdList.forEach((node) => {
-          const box = node.getMovable()?.getControlBoxElement();
-          if (!box) {
-            return;
-          }
           if (this.selectedNodeIdList.has(node.getId())) {
             currentSelectedNodes.push(node);
-            box.style.visibility = 'visible';
+            node.boxVisible();
           } else {
-            box.style.visibility = 'hidden';
+            node.boxHidden();
           }
         });
         if (this.selectedNodeIdList.size > 1) {
@@ -151,6 +143,9 @@ export class OperationLayer extends Layer {
     });
   }
 
+  public clear() {
+    this.selected$.unsubscribe();
+  }
   public getNodes() {
     return this.nodeIdList;
   }

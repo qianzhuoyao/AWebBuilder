@@ -5,6 +5,7 @@ export const LayerMenu = () => {
   const [layerType, setLayerType] = useState<1 | 2>(1);
   const [sceneDetailOpen, setSceneDetailOpen] = useState(false);
   const [currentScene, setCurrentScene] = useState('');
+  const [menuSelected, setMenuSelected] = useState<string[]>([]);
   const [sceneWidget, setSceneWidget] = useState<any[]>([]);
   const [scene, setScene] = useState<{ id: string; name: string }[]>(
     ALayoutInstance.getLayer().map((layer) => ({
@@ -14,6 +15,12 @@ export const LayerMenu = () => {
   );
   useEffect(() => {
     setCurrentScene(scene[0].id);
+    ALayoutInstance.getSlots().on('click', (e) => {
+      e && setMenuSelected([e.getId()]);
+    });
+    ALayoutInstance.getSlots().on('mouseDownEmpty', (e) => {
+      setMenuSelected([]);
+    });
     ALayoutInstance.onSubscribeSlots({
       create: (node) => {
         setSceneWidget((curr) => {
@@ -217,7 +224,13 @@ export const LayerMenu = () => {
       >
         {sceneWidget?.map((node, index) => {
           return (
-            <li key={index} className="ellipsis-text">
+            <li
+              key={index}
+              className="ellipsis-text"
+              style={{
+                background: menuSelected.includes(node.getId()) ? 'red' : '',
+              }}
+            >
               <a
                 className="ellipsis-text"
                 onClick={() => {

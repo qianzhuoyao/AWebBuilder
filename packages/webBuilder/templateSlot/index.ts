@@ -23,6 +23,7 @@ export type IWidgetType = 'chart' | 'table' | 'text' | 'image';
 export class TemplateNode {
   //原始值
   private nodeInfo: IWidget;
+  private isSelected = false;
   private instance?: Chart;
   private observer?: MutationObserver;
   private dom?: HTMLElement;
@@ -101,31 +102,37 @@ export class TemplateNode {
     });
   }
 
-  private domHidden() {
+  public domHidden() {
     if (!this.dom) {
       return;
     }
     this.dom.style.display = 'none';
   }
-  private domVisible() {
+  public domVisible() {
     if (!this.dom) {
       return;
     }
     this.dom.style.display = 'block';
   }
-  private boxVisible() {
+  public boxVisible() {
     const box = this.getMovable()?.getControlBoxElement();
     if (!box) {
       return;
     }
+    this.isSelected = true;
     box.style.visibility = 'visible';
   }
 
-  private boxHidden() {
+  public getSelected() {
+    return this.isSelected;
+  }
+
+  public boxHidden() {
     const box = this.getMovable()?.getControlBoxElement();
     if (!box) {
       return;
     }
+    this.isSelected = false;
     box.style.visibility = 'hidden';
   }
   public getId() {
