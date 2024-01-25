@@ -15,12 +15,23 @@ export const LayerMenu = () => {
   );
   useEffect(() => {
     setCurrentScene(scene[0].id);
-    ALayoutInstance.getSlots().on('click', (e) => {
+    ALayoutInstance.getCurrentLayer()?.on('selection', (e) => {
+      const selectedIds: string[] = [];
+      e?.getNodes().forEach((node) => {
+        selectedIds.push(node.getId());
+      });
+      console.log(selectedIds, 'selectedIds');
+      e && setMenuSelected(selectedIds);
+    });
+
+    ALayoutInstance.getSlots().on('dragStart', (e) => {
       e && setMenuSelected([e.getId()]);
     });
+
     ALayoutInstance.getSlots().on('mouseDownEmpty', (e) => {
       setMenuSelected([]);
     });
+
     ALayoutInstance.onSubscribeSlots({
       create: (node) => {
         setSceneWidget((curr) => {
@@ -28,6 +39,7 @@ export const LayerMenu = () => {
         });
       },
     });
+    
     ALayoutInstance.onCurrentLayerChangeSubscribe((layer) => {
       console.log(layer, [...(layer?.getNodes() || [])], 'layers');
       setSceneWidget(() => {

@@ -2,14 +2,20 @@ import { buildId } from '../uuid';
 import { ISize } from '../Layout/panel';
 import { Layer } from './Layer';
 import { TemplateNode } from '../templateSlot';
-import { Subject, filter } from 'rxjs';
+import { ReplaySubject, Subject, filter } from 'rxjs';
 import { getBothMoveObservable } from '../Slot/selection';
 import { mouseDown } from '../eventStream/keyEvent';
 import { LAYOUT_CHANGE, getPanelSendObservable } from '../Layout/subscribePanel';
 
+type ILayerEventName = 'selection';
+
 export class OperationLayer extends Layer {
   private deletable = true;
   private selected$: Subject<Set<string>> = new Subject<Set<string>>();
+  private on$: ReplaySubject<{
+    layer?: OperationLayer;
+    eventName: ILayerEventName;
+  }> = new ReplaySubject();
   private isShow = false;
   //当前图层下的所有节点id集合
   private nodeIdList: Map<string, TemplateNode> = new Map([]);
@@ -67,6 +73,10 @@ export class OperationLayer extends Layer {
           }
         });
         if (this.selectedNodeIdList.size > 1) {
+          this.on$.next({
+            eventName: 'selection',
+            layer: this,
+          });
           //同步移动其他的
           getBothMoveObservable().next({
             type: 'SIGNAL',
@@ -83,6 +93,11 @@ export class OperationLayer extends Layer {
       });
   }
 
+  public on(onEventName: ILayerEventName, callback: (e?: OperationLayer) => any) {
+    this.on$.subscribe(({ eventName, layer }) => {
+      eventName === onEventName && callback(layer);
+    });
+  }
   /**
    * 获取多选区域内选中的节点
    *
