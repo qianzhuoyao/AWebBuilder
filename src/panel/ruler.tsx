@@ -1,187 +1,145 @@
-import { Component } from "react";
+import { useRef } from "react";
 import * as React from "react";
-import Scene from "scenejs";
-import "./Rule.css";
+
 import Guides from "@scena/react-guides";
-import { ref } from "framework-utils";
 import Gesto from "gesto";
+import { useDispatch } from "react-redux";
 import { AScene } from "./operation";
+import {
+  updateRulerMinY,
+  updateRulerMinX,
+  IPs,
+} from "../store/slice/panelSlice";
+import { useSelector } from "react-redux";
 
-interface State {
-  lockAdd: boolean;
-  lockRemove: boolean;
-  lockChange: boolean;
-  unit: number;
-  horizontalZoom: number;
-  verticalZoom: number;
-}
+export const ARuler = () => {
+  const guides1 = useRef<Guides>(null);
+  const guides2 = useRef<Guides>(null);
+  let scrollX = 0;
+  let scrollY = 0;
 
-export default class ARuler extends Component<{}> {
-  public state: State = {
-    horizontalZoom: 1,
-    verticalZoom: 1,
-    unit: 37.7,
-    lockAdd: false,
-    lockChange: false,
-    lockRemove: false,
-  };
-  private scene: Scene = new Scene();
-  // private editor!: Editor;
-  private guides1: Guides;
-  private guides2: Guides;
-  private scrollX: number = 0;
-  private scrollY: number = 0;
+  const dispatch = useDispatch();
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    console.log(state, "statescvsfv");
+    return state.panelSlice;
+  });
 
-  private handleLockRemoveClick = () => {
-    const lockRemove = !this.state.lockRemove;
-
-    this.setState({ lockRemove });
+  const restore = () => {
+    scrollX = 0;
+    scrollY = 0;
+    guides1.current?.scroll(0);
+    guides1.current?.scrollGuides(0);
+    guides2.current?.scroll(0);
+    guides2.current?.scrollGuides(0);
   };
 
-  private handleLockAddClick = () => {
-    const lockAdd = !this.state.lockAdd;
-    this.setState({ lockAdd });
-  };
+  React.useEffect(() => {
+    const dom = document.getElementById("Ar-Panel");
 
-  private handleLockChangeClick = () => {
-    const lockChange = !this.state.lockChange;
-    const lockRemove = !this.state.lockRemove && true;
-    this.setState({ lockChange, lockRemove });
-  };
-
-  private handleLockToggleClick = () => {
-    this.setState({ lockAdd: false, lockRemove: false, lockChange: false });
-  };
-
-  public render() {
-    const lockGuides: Array<"add" | "change" | "remove"> = [];
-    if (this.state.lockAdd) {
-      lockGuides.push("add");
+    if (!dom) {
+      return;
     }
-    if (this.state.lockChange) {
-      lockGuides.push("change");
-    }
-    if (this.state.lockRemove) {
-      lockGuides.push("remove");
-    }
-    const lockText = lockGuides.length ? "unlock" : "lock";
-    const isLockButtonActive = (lockType: boolean) =>
-      lockType && { background: "#333", color: "#fff" };
-    return (
-      <div className="page h-full relative">
-        <div className="box" onClick={this.restore}></div>
-        <Guides
-          ref={ref(this, "guides1")}
-          type="horizontal"
-          zoom={1}
-          unit={50}
-          lockGuides={lockGuides}
-          snapThreshold={5}
-          textFormat={(v) => `${v}px`}
-          snaps={[1, 2, 3]}
-          digit={1}
-          style={{ height: "30px", width: "calc(100%px)" }}
-          rulerStyle={{
-            left: "30px",
-            width: "calc(100% - 30px)",
-            height: "100%",
-          }}
-          dragPosFormat={(v) => `${v}px`}
-          displayDragPos={true}
-          displayGuidePos={true}
-          guidesOffset={50}
-          onChangeGuides={({ guides }) => {
-            console.log("horizontal", guides);
-          }}
-          onDragStart={(e) => {
-            console.log("dragStart", e);
-          }}
-          onDrag={(e) => {
-            console.log("drag", e);
-          }}
-          onDragEnd={(e) => {
-            console.log("dragEnd", e);
-          }}
-          onClickRuler={(e) => {
-            console.log("?", e);
-          }}
-        />
-        <Guides
-          ref={ref(this, "guides2")}
-          type="vertical"
-          zoom={1}
-          unit={50}
-          font="10px"
-          lockGuides={lockGuides}
-          snapThreshold={5}
-          textFormat={(v) => `${v}px`}
-          snaps={[1, 2, 3]}
-          digit={1}
-          rulerStyle={{
-            height: "calc(100%)",
-            width: "100%",
-          }}
-          style={{ width: "30px", height: "calc(100% - 30px)" }}
-          dragPosFormat={(v) => `${v}px`}
-          displayDragPos={true}
-          displayGuidePos={true}
-          guidesOffset={50}
-          onChangeGuides={({ guides }) => {
-            console.log("horizontal", guides);
-          }}
-          onDragStart={(e) => {
-            console.log("dragStart", e);
-          }}
-          onDrag={(e) => {
-            console.log("drag", e);
-          }}
-          onDragEnd={(e) => {
-            console.log("dragEnd", e);
-          }}
-          onClickRuler={(e) => {
-            console.log("?", e);
-          }}
-        
-        />
-        <AScene></AScene>
-      </div>
-    );
-  }
+    new Gesto(dom).on("drag", (e) => {
+      scrollX -= e.deltaX;
+      scrollY -= e.deltaY;
 
-  public componentDidMount() {
-    new Gesto(document.body).on("drag", (e) => {
-      this.scrollX -= e.deltaX;
-      this.scrollY -= e.deltaY;
+      guides1.current?.scrollGuides(scrollY);
+      guides1.current?.scroll(scrollX);
 
-      this.guides1.scrollGuides(this.scrollY);
-      this.guides1.scroll(this.scrollX);
+      guides2.current?.scrollGuides(scrollX);
+      guides2.current?.scroll(scrollY);
 
-      this.guides2.scrollGuides(this.scrollX);
-      this.guides2.scroll(this.scrollY);
-      console.log(this.guides2,'e-e')
+      dispatch(updateRulerMinY(guides1.current?.scrollPos));
+      dispatch(updateRulerMinX(guides2.current?.scrollPos));
+      console.log(guides1.current, "e-e");
     });
     window.addEventListener("resize", () => {
-      this.guides1.resize();
-      this.guides2.resize();
+      guides1.current?.resize();
+      guides2.current?.resize();
     });
-  }
-  public restore = () => {
-    this.scrollX = 0;
-    this.scrollY = 0;
-    this.guides1.scroll(0);
-    this.guides1.scrollGuides(0);
-    this.guides2.scroll(0);
-    this.guides2.scrollGuides(0);
-  };
-}
-
-Object.defineProperty(Array.prototype, "remove", {
-  value: function (value) {
-    for (let key in this) {
-      if (this[key] === value) {
-        this.splice(key, 1);
-      }
-    }
-    return this;
-  },
-});
+  }, []);
+  return (
+    <div className="page h-full relative">
+      <div className="box" onClick={restore}></div>
+      <Guides
+        ref={guides1}
+        type="horizontal"
+        className="bg-[#333333]"
+        zoom={1}
+        unit={50}
+        lockGuides={[]}
+        snapThreshold={PanelState.snap}
+        textFormat={(v) => `${v * PanelState.tickUnit}px`}
+        snaps={[1, 2, 3]}
+        digit={1}
+        style={{ height: "30px", width: "calc(100%px)" }}
+        rulerStyle={{
+          left: "30px",
+          width: "calc(100% - 30px)",
+          height: "100%",
+        }}
+        dragPosFormat={(v) => `${v * PanelState.tickUnit +10 * PanelState.tickUnit * PanelState.snap}px`}
+        displayDragPos={true}
+        displayGuidePos={true}
+        guidesOffset={50}
+        onChangeGuides={({ guides }) => {
+          console.log("horizontal", guides);
+        }}
+        onDragStart={(e) => {
+          console.log("dragStart", e);
+        }}
+        onDrag={(e) => {
+          console.log("drag", e);
+        }}
+        onDragEnd={(e) => {
+          console.log("dragEnd", e);
+        }}
+        onClickRuler={(e) => {
+          console.log("?", e);
+        }}
+      />
+      <Guides
+        ref={guides2}
+        type="vertical"
+        zoom={1}
+        unit={50}
+        font="10px"
+        lockGuides={[]}
+        snapThreshold={PanelState.snap}
+        textFormat={(v) => `${v * PanelState.tickUnit}px`}
+        snaps={[1, 2, 3]}
+        digit={1}
+        rulerStyle={{
+          height: "calc(100%)",
+          width: "100%",
+        }}
+        style={{ width: "30px", height: "calc(100% - 30px)" }}
+        dragPosFormat={(v) => {
+          console.log(v, "cascascas");
+          return `${
+            v * PanelState.tickUnit + 10 * PanelState.tickUnit * PanelState.snap
+          }px`;
+        }}
+        displayDragPos={true}
+        displayGuidePos={true}
+        guidesOffset={50}
+        onChangeGuides={({ guides }) => {
+          console.log("horizontal", guides);
+        }}
+        onDragStart={(e) => {
+          console.log("dragStart", e);
+        }}
+        onDrag={(e) => {
+          console.log("drag", guides2);
+        }}
+        onDragEnd={(e) => {
+          console.log("dragEnd", e);
+        }}
+        onClickRuler={(e) => {
+          console.log("?", e);
+        }}
+      />
+      <AScene></AScene>
+    </div>
+  );
+};

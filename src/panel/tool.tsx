@@ -83,7 +83,7 @@ const ToolHeader = () => {
 
 export const Tools = () => {
   return (
-    <div className="w-[330px] h-full">
+    <div className="w-[300px] min-w-[300px] h-full">
       <ToolHeader></ToolHeader>
       <WidgetMenu></WidgetMenu>
     </div>
