@@ -13,6 +13,12 @@ export const Nav = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setShowTools(
+      location.pathname === "/panel" || location.pathname === "/panel/"
+    );
+  }, [location]);
+
+  useEffect(() => {
     console.log(location, "location");
     if (
       location.pathname === "/" ||
@@ -21,9 +27,6 @@ export const Nav = () => {
     ) {
       navigate("/menu/proj");
     }
-    setShowTools(
-      location.pathname === "/panel" || location.pathname === "/panel/"
-    );
   }, []);
 
   const onChangeTheme = useCallback(() => {
@@ -40,65 +43,87 @@ export const Nav = () => {
               <Icon icon="ic:round-home" width={"16px"} height={"16px"} />
             </Button>
           </Link>
-          <Button
-            className="ml-6"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
-          </Button>
-          <Button
-            className="ml-2"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="mingcute:layer-fill" width={"16px"} height={"16px"} />
-          </Button>
-          <Button
-            className="ml-2"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="tabler:list-details" width={"16px"} height={"16px"} />
-          </Button>
+          <>
+            {showTools && (
+              <>
+                <Button
+                  className="ml-6"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
+                </Button>
+                <Button
+                  className="ml-2"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon
+                    icon="mingcute:layer-fill"
+                    width={"16px"}
+                    height={"16px"}
+                  />
+                </Button>
+                <Button
+                  className="ml-2"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon
+                    icon="tabler:list-details"
+                    width={"16px"}
+                    height={"16px"}
+                  />
+                </Button>
 
-          <Button
-            className="ml-6"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="icons8:left-round" width={"16px"} height={"16px"} />
-          </Button>
-          <Button
-            className="ml-2"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="icons8:right-round" width={"16px"} height={"16px"} />
-          </Button>
-          <Button
-            className="ml-6"
-            isIconOnly
-            variant="light"
-            aria-label="locale"
-          >
-            <Icon icon="uil:save" width={"16px"} height={"16px"} />
-          </Button>
+                <Button
+                  className="ml-6"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon
+                    icon="icons8:left-round"
+                    width={"16px"}
+                    height={"16px"}
+                  />
+                </Button>
+                <Button
+                  className="ml-2"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon
+                    icon="icons8:right-round"
+                    width={"16px"}
+                    height={"16px"}
+                  />
+                </Button>
+                <Button
+                  className="ml-6"
+                  isIconOnly
+                  variant="light"
+                  aria-label="locale"
+                >
+                  <Icon icon="uil:save" width={"16px"} height={"16px"} />
+                </Button>
 
-          <div className="ml-6 flex items-center">
-            <Icon icon="fluent-mdl2:pen-workspace" className="mr-2" />
-            <AInput
-              placeholder="工作空间"
-              className="w-[120px] rounded-md"
-              size="xs"
-              radius="md"
-            />
-          </div>
+                <div className="ml-6 flex items-center">
+                  <Icon icon="fluent-mdl2:pen-workspace" className="mr-2" />
+                  <AInput
+                    placeholder="工作空间"
+                    className="w-[120px] rounded-md"
+                    size="xs"
+                    radius="md"
+                  />
+                </div>
+              </>
+            )}
+          </>
         </div>
         <div>
           <Tooltip color={"primary"} content={"国际化"} className="capitalize">
