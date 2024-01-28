@@ -60,8 +60,7 @@ const ToolHeader = () => {
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
       <div className="flex items-center p-2">
-        <small className="pr-2">组件</small>
-        <Icon icon="mdi:widget-tree"  width={"16px"} height={"16px"}/>
+        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
       </div>
       <div className="flex">
         <AInput
@@ -69,7 +68,9 @@ const ToolHeader = () => {
           className="w-[100px] mr-2"
           size="sml"
           radius={"md"}
-          startContent={<Icon icon="ic:round-search" width={"20px"} height={"20px"}/>}
+          startContent={
+            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
+          }
         />
         <Tabs size={"sm"} aria-label="Tabs sizes">
           <Tab key="photos" title={<ZIndexIcon />} />
@@ -82,7 +83,7 @@ const ToolHeader = () => {
 
 export const Tools = () => {
   return (
-    <div className="w-[330px] h-[100vh]">
+    <div className="w-[330px] h-full">
       <ToolHeader></ToolHeader>
       <WidgetMenu></WidgetMenu>
     </div>

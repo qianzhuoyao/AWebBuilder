@@ -26,7 +26,7 @@ const tabs = [
 
 export const MenuCard = () => {
   return (
-    <div className="h-[100vh]">
+    <div className="h-[calc(100vh_-_40px)]">
       <div>
         <Tabs aria-label="Dynamic tabs" items={tabs} className="ml-1">
           {(item) => (

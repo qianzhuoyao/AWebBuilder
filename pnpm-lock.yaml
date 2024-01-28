@@ -17,6 +17,12 @@ dependencies:
   '@nextui-org/react':
     specifier: ^2.2.9
     version: 2.2.9(@types/react@18.2.48)(framer-motion@11.0.3)(react-dom@18.2.0)(react@18.2.0)(tailwind-variants@0.1.20)(tailwindcss@3.4.1)
+  '@scena/react-guides':
+    specifier: ^0.28.2
+    version: 0.28.2
+  '@scena/react-ruler':
+    specifier: ^0.19.0
+    version: 0.19.0
   '@scena/ruler':
     specifier: ^0.20.0
     version: 0.20.0
@@ -59,6 +65,12 @@ dependencies:
   framer-motion:
     specifier: ^11.0.3
     version: 11.0.3(react-dom@18.2.0)(react@18.2.0)
+  framework-utils:
+    specifier: ^1.1.0
+    version: 1.1.0
+  gesto:
+    specifier: ^1.19.4
+    version: 1.19.4
   gsap:
     specifier: ^3.11.3
     version: 3.12.5
@@ -122,9 +134,15 @@ dependencies:
   redux-undo:
     specifier: ^1.1.0
     version: 1.1.0
+  scenejs:
+    specifier: ^1.10.3
+    version: 1.10.3
   screenfull:
     specifier: ^6.0.1
     version: 6.0.2
+  selecto:
+    specifier: ^1.26.3
+    version: 1.26.3
   three:
     specifier: ^0.145.0
     version: 0.145.0
@@ -431,6 +449,12 @@ packages:
 
   /@cfcs/core@0.0.6:
     resolution: {integrity: sha512-FxfJMwoLB8MEMConeXUCqtMGqxdtePQxRBOiGip9ULcYYam3WfCgoY6xdnMaSkYvRvmosp5iuG+TiPofm65+Pw==}
+    dependencies:
+      '@egjs/component': 3.0.5
+    dev: false
+
+  /@cfcs/core@0.1.0:
+    resolution: {integrity: sha512-kvYX0RpL45XTHJ5sW7teNbKeAa7pK3nNqaJPoFfZDPTIBJOkTtRD3QhkBG+O3Hu69a8xeMoPvF6y/RtJ6JUOdA==}
     dependencies:
       '@egjs/component': 3.0.5
     dev: false
@@ -3549,6 +3573,18 @@ packages:
       '@daybrush/utils': 1.13.0
     dev: false
 
+  /@scena/react-guides@0.28.2:
+    resolution: {integrity: sha512-3TylBDU32BPk/SARQdZ2dkwW0NbQA7D21XUMMdGm/RXxuMNg39oHrxQ/XjlkFOvRFDgc7gPDsDgi1Am8wRuu1Q==}
+    dependencies:
+      '@daybrush/utils': 1.13.0
+      '@scena/dragscroll': 1.4.0
+      '@scena/react-ruler': 0.19.0
+      css-to-mat: 1.1.1
+      framework-utils: 1.1.0
+      gesto: 1.19.4
+      react-css-styled: 1.1.9
+    dev: false
+
   /@scena/react-ruler@0.19.0:
     resolution: {integrity: sha512-2OEOjLMOptDxdSuEqID2JAljQuYoeoV09MnLjiBeyzJxoUcVjzyBCPwkMbHRKj2Z3WrwztJAFBF+y6yNNM5Lcw==}
     dependencies:
@@ -6495,6 +6531,10 @@ packages:
       wcwidth: 1.0.1
     dev: true
 
+  /order-map@0.3.1:
+    resolution: {integrity: sha512-RSuElIGwzPuBLzS9Io7G8fpcnQeudg0XswOyOiwRNLX7lkf+eQ/KUp+kcAP7z7nTOdkrfxhZycyXwzFW75iJ6A==}
+    dev: false
+
   /os-tmpdir@1.0.2:
     resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
     engines: {node: '>=0.10.0'}
@@ -7290,6 +7330,16 @@ packages:
       chokidar: 3.5.3
       immutable: 4.3.5
       source-map-js: 1.0.2
+
+  /scenejs@1.10.3:
+    resolution: {integrity: sha512-o1Xrz5sRMeVOD5R9MizY2tYVPYeRnQNttiNRD7vtfi4j4+su1nuP2R/1yv3jDNol1zFfFHwwh2G0jxyt0SIqUA==}
+    dependencies:
+      '@cfcs/core': 0.1.0
+      '@daybrush/utils': 1.13.0
+      '@scena/event-emitter': 1.0.5
+      css-styled: 1.0.8
+      order-map: 0.3.1
+    dev: false
 
   /scheduler@0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}

@@ -295,7 +295,7 @@ const tabs = [
 ];
 export const WidgetMenu = () => {
   return (
-    <div className="flex h-[100%]">
+    <div className="flex h-[calc(100%_-_44px)]">
       <Tabs
         aria-label="Dynamic tabs"
         color="primary"
