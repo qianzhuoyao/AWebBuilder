@@ -146,6 +146,9 @@ dependencies:
   redux-undo:
     specifier: ^1.1.0
     version: 1.1.0
+  rxjs:
+    specifier: ^7.8.1
+    version: 7.8.1
   scenejs:
     specifier: ^1.10.3
     version: 1.10.3
@@ -7397,7 +7400,6 @@ packages:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
       tslib: 2.6.2
-    dev: true
 
   /safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}

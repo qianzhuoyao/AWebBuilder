@@ -11,6 +11,8 @@ import {
   IPs,
 } from "../store/slice/panelSlice";
 import { useSelector } from "react-redux";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useCustomHotKeys } from "./hotKey";
 
 export const ARuler = () => {
   const guides1 = useRef<Guides>(null);
@@ -33,6 +35,8 @@ export const ARuler = () => {
     guides2.current?.scroll(0);
     guides2.current?.scrollGuides(0);
   };
+
+  useCustomHotKeys()
 
   React.useEffect(() => {
     const dom = document.getElementById("Ar-Panel");
@@ -62,7 +66,7 @@ export const ARuler = () => {
     ArDomResizeObserver.observe(dom);
     return () => {
       ArDomResizeObserver.unobserve(dom);
-      ArDomResizeObserver.disconnect()
+      ArDomResizeObserver.disconnect();
     };
     // window.addEventListener("resize", () => {
     //   guides1.current?.resize();

@@ -57,6 +57,7 @@
     "react-transition-group": "^4.4.5",
     "redux": "^5.0.1",
     "redux-undo": "^1.1.0",
+    "rxjs": "^7.8.1",
     "scenejs": "^1.10.3",
     "screenfull": "^6.0.1",
     "selecto": "^1.26.3",

@@ -1,4 +1,5 @@
 import { ARuler } from "./ruler";
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   Tabs,
   Tab,
@@ -6,15 +7,35 @@ import {
   CardBody,
   Button,
   Tooltip,
+  Kbd,
   AutocompleteItem,
   Divider,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
   Switch,
   Autocomplete,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Chip,
+  useDisclosure,
 } from "@nextui-org/react";
+
 import gsap from "gsap";
 import { Icon } from "@iconify-icon/react";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IWs, updateShow } from "../store/slice/widgetMapSlice";
 
@@ -39,92 +60,151 @@ export const STabs = [
   },
 ];
 
-const SceneLayer = () => {
+const HotKeyModal = ({ open }: { open: boolean }) => {
+
+
+
+  useEffect(() => {
+    open ? onOpen() : onClose();
+  }, [open]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
-      <div className="absolute bottom-[5px] left-[5px]">
-        <Chip
-          startContent={
-            <Icon icon="material-symbols:history" height={16} width={16} />
-          }
-          variant="faded"
-          radius="sm"
-          color="default"
-        >
-          <small>操作历史</small>
-        </Chip>
-      </div>
-      <div className="absolute bottom-[5px] right-[5px]">
-        <Tooltip
-          color={"default"}
-          content={"快捷键"}
-          placement="top"
-          className="capitalize"
-        >
-          <Icon
-            icon="material-symbols:keyboard"
-            className="cursor-pointer mr-2"
-            height={16}
-            width={16}
-          />
-        </Tooltip>
-        <Tooltip
-          color={"default"}
-          content={"锁定画布状态"}
-          placement="top"
-          className="capitalize"
-        >
-          <Icon
-            icon="uis:lock"
-            className="cursor-pointer mr-2"
-            height={16}
-            width={16}
-          />
-        </Tooltip>
-        <Tooltip
-          color={"default"}
-          content={"当前缩放值"}
-          placement="top"
-          className="capitalize"
-        >
+    <Modal
+      size={"2xl"}
+      isOpen={isOpen}
+      onClose={onClose}
+      scrollBehavior="inside"
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">快捷键</ModalHeader>
+            <ModalBody>
+              <Table aria-label="Example static collection table">
+                <TableHeader>
+                  <TableColumn>作用</TableColumn>
+                  <TableColumn>win快捷键</TableColumn>
+                  <TableColumn>mac快捷键</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  <TableRow key="1">
+                    <TableCell>放大缩小</TableCell>
+                    <TableCell>
+                      <Kbd keys={[]}>KeyF</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={[]}>KeyF</Kbd>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={onClose}>
+                关闭
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const SceneLayer = () => {
+  const [hotKeyOpen, setHotKeyOpen] = useState(false);
+  return (
+    <>
+      <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
+        <div className="absolute bottom-[5px] left-[5px]">
           <Chip
             startContent={
-              <Icon
-                icon="carbon:intent-request-scale-in"
-                className="cursor-pointer mx-1"
-                height={16}
-                width={16}
-              />
+              <Icon icon="material-symbols:history" height={16} width={16} />
             }
             variant="faded"
-            color="success"
+            radius="sm"
+            color="default"
           >
-            0.2
+            <small>操作历史</small>
           </Chip>
-        </Tooltip>
+        </div>
+        <div className="absolute bottom-[5px] right-[5px]">
+          <Tooltip
+            color={"default"}
+            content={"快捷键"}
+            placement="top"
+            className="capitalize"
+          >
+            <Icon
+              icon="material-symbols:keyboard"
+              className="cursor-pointer mr-2"
+              height={16}
+              width={16}
+              onClick={() => {
+                setHotKeyOpen(!hotKeyOpen);
+              }}
+            />
+          </Tooltip>
+          <Tooltip
+            color={"default"}
+            content={"锁定画布状态"}
+            placement="top"
+            className="capitalize"
+          >
+            <Icon
+              icon="uis:lock"
+              className="cursor-pointer mr-2"
+              height={16}
+              width={16}
+            />
+          </Tooltip>
+          <Tooltip
+            color={"default"}
+            content={"当前缩放值"}
+            placement="top"
+            className="capitalize"
+          >
+            <Chip
+              startContent={
+                <Icon
+                  icon="carbon:intent-request-scale-in"
+                  className="cursor-pointer mx-1"
+                  height={16}
+                  width={16}
+                />
+              }
+              variant="faded"
+              color="success"
+            >
+              0.2
+            </Chip>
+          </Tooltip>
+        </div>
+        <Tabs
+          aria-label="Dynamic tabs"
+          size="sm"
+          items={STabs}
+          radius="md"
+          classNames={{
+            tab: "",
+            tabList: "w-[120px]",
+            panel: "p-0 bg-default-100 h-[calc(100%)] w-[100%]",
+            cursor: "rounded-md",
+            base: "bg-default-200 p-1 flex justify-center",
+          }}
+        >
+          {(item) => (
+            <Tab key={item.id} title={item.label}>
+              <Card className="rounded-none h-[100%]">
+                <CardBody className="p-0">{item.content}</CardBody>
+              </Card>
+            </Tab>
+          )}
+        </Tabs>
       </div>
-      <Tabs
-        aria-label="Dynamic tabs"
-        size="sm"
-        items={STabs}
-        radius="md"
-        classNames={{
-          tab: "",
-          tabList: "w-[120px]",
-          panel: "p-0 bg-default-100 h-[calc(100%)] w-[100%]",
-          cursor: "rounded-md",
-          base: "bg-default-200 p-1 flex justify-center",
-        }}
-      >
-        {(item) => (
-          <Tab key={item.id} title={item.label}>
-            <Card className="rounded-none h-[100%]">
-              <CardBody className="p-0">{item.content}</CardBody>
-            </Card>
-          </Tab>
-        )}
-      </Tabs>
-    </div>
+      <HotKeyModal open={hotKeyOpen}></HotKeyModal>
+    </>
   );
 };
 
@@ -233,7 +313,7 @@ export const Scene = () => {
       });
       gsap.to(dom, {
         width: "0px",
-        padding:'0rem',
+        padding: "0rem",
         duration: 0.1,
         ease: "none",
       });
@@ -245,7 +325,7 @@ export const Scene = () => {
       });
       gsap.to(dom, {
         width: "72px",
-        padding:'0.25rem',
+        padding: "0.25rem",
         duration: 0.1,
         ease: "none",
       });
