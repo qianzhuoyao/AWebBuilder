@@ -173,7 +173,7 @@ export const Tools = () => {
       className="w-[300px] min-w-[300px] h-full overflow-hidden"
     >
       <div className="w-[300px] min-w-[300px] h-full relative">
-        <div className="absolute right-[10px] top-[1px]">
+        <div className="absolute right-[10px] top-[-2px]">
           <Button
             className="ml-2"
             isIconOnly

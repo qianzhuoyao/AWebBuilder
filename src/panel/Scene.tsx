@@ -295,7 +295,6 @@ const SLayerTabs = [
   },
 ];
 export const Scene = () => {
-  const gsapSceneContainer = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
   const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
