@@ -38,10 +38,12 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IWs, updateShow } from "../store/slice/widgetMapSlice";
+import { AR_PANEL_DOM_ID } from "../contant";
+import { IPs } from "../store/slice/panelSlice";
 
 const View = () => {
   return (
-    <div id="Ar-Panel" className="w-full h-full">
+    <div id={AR_PANEL_DOM_ID} className="w-full h-full">
       <ARuler></ARuler>
     </div>
   );
@@ -61,9 +63,6 @@ export const STabs = [
 ];
 
 const HotKeyModal = ({ open }: { open: boolean }) => {
-
-
-
   useEffect(() => {
     open ? onOpen() : onClose();
   }, [open]);
@@ -114,6 +113,12 @@ const HotKeyModal = ({ open }: { open: boolean }) => {
 
 const SceneLayer = () => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
+
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    console.log(state, "statescvsfv");
+    return state.panelSlice;
+  });
+
   return (
     <>
       <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
@@ -177,7 +182,7 @@ const SceneLayer = () => {
               variant="faded"
               color="success"
             >
-              0.2
+              {PanelState.tickUnit}
             </Chip>
           </Tooltip>
         </div>

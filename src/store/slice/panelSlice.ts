@@ -5,6 +5,8 @@ export interface IPs {
   rulerMinY: number;
   tickUnit: number;
   offset: number;
+  lockScale: boolean;
+  lockTransform: boolean;
   snap: number;
   panelWidth: number;
   panelHeight: number;
@@ -16,6 +18,8 @@ export const panelSlice = createSlice({
   name: "panel",
   initialState: {
     rulerMinX: 0,
+    lockTransform: false,
+    lockScale: false,
     rulerMinY: 0,
     snap: 5,
     offset: 30,
@@ -26,8 +30,16 @@ export const panelSlice = createSlice({
     panelTop: 0,
   },
   reducers: {
+    updatePanelLockTransform: (state, action) => {
+      state.lockTransform = action.payload;
+    },
+    updatePanelLockScale: (state, action) => {
+      state.lockScale = action.payload;
+    },
     updatePanelTickUnit: (state, action) => {
-      state.tickUnit = action.payload;
+      if (!state.lockScale) {
+        state.tickUnit = action.payload;
+      }
     },
     updatePanelTop: (state, action) => {
       state.panelTop = action.payload;
@@ -53,7 +65,9 @@ export const panelSlice = createSlice({
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
   updateRulerMinX,
+  updatePanelLockTransform,
   updatePanelTop,
+  updatePanelLockScale,
   updatePanelHeight,
   updatePanelLeft,
   updatePanelWidth,

@@ -11,21 +11,21 @@ import {
   IPs,
 } from "../store/slice/panelSlice";
 import { useSelector } from "react-redux";
-import { useHotkeys } from "react-hotkeys-hook";
 import { useCustomHotKeys } from "./hotKey";
+import { AR_PANEL_DOM_ID } from "../contant";
 
 export const ARuler = () => {
-  const guides1 = useRef<Guides>(null);
-  const guides2 = useRef<Guides>(null);
-  let scrollX = 0;
-  let scrollY = 0;
-
-  const dispatch = useDispatch();
-
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     console.log(state, "statescvsfv");
     return state.panelSlice;
   });
+
+  const guides1 = useRef<Guides>(null);
+  const guides2 = useRef<Guides>(null);
+  let scrollX = PanelState.rulerMinX;
+  let scrollY = PanelState.rulerMinY;
+
+  const dispatch = useDispatch();
 
   const restore = () => {
     scrollX = 0;
@@ -36,27 +36,35 @@ export const ARuler = () => {
     guides2.current?.scrollGuides(0);
   };
 
-  useCustomHotKeys()
+  useCustomHotKeys();
 
+  // React.useEffect(() => {
+  //   guides1.current?.resize();
+  //   guides2.current?.resize();
+  // }, [PanelState]);
+
+  let ges: Gesto | null = null;
   React.useEffect(() => {
-    const dom = document.getElementById("Ar-Panel");
+    const dom = document.getElementById(AR_PANEL_DOM_ID);
 
     if (!dom) {
       return;
     }
-    new Gesto(dom).on("drag", (e) => {
-      scrollX -= e.deltaX;
-      scrollY -= e.deltaY;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ges = new Gesto(dom);
+    ges.on("drag", (e) => {
+      console.log(PanelState.lockTransform, "PanelState.lockTransform");
+      if (!PanelState.lockTransform) {
+        scrollX -= e.deltaX;
+        scrollY -= e.deltaY;
+        guides1.current?.scrollGuides(scrollY);
+        guides1.current?.scroll(scrollX);
 
-      guides1.current?.scrollGuides(scrollY);
-      guides1.current?.scroll(scrollX);
-
-      guides2.current?.scrollGuides(scrollX);
-      guides2.current?.scroll(scrollY);
-
-      dispatch(updateRulerMinY(guides1.current?.scrollPos));
-      dispatch(updateRulerMinX(guides2.current?.scrollPos));
-      console.log(guides1.current, "e-e");
+        guides2.current?.scrollGuides(scrollX);
+        guides2.current?.scroll(scrollY);
+        dispatch(updateRulerMinY(guides1.current?.scrollPos));
+        dispatch(updateRulerMinX(guides2.current?.scrollPos));
+      }
     });
 
     const ArDomResizeObserver = new ResizeObserver(() => {
@@ -65,17 +73,14 @@ export const ARuler = () => {
     });
     ArDomResizeObserver.observe(dom);
     return () => {
+      ges?.off();
       ArDomResizeObserver.unobserve(dom);
       ArDomResizeObserver.disconnect();
     };
-    // window.addEventListener("resize", () => {
-    //   guides1.current?.resize();
-    //   guides2.current?.resize();
-    // });
-  }, []);
+  }, [PanelState.lockTransform]);
   return (
     <div className="page h-full relative">
-      <div className="box" onClick={restore}></div>
+      {/* <div className="box" onClick={restore}></div> */}
       <Guides
         ref={guides1}
         type="horizontal"
@@ -84,7 +89,7 @@ export const ARuler = () => {
         unit={50}
         lockGuides={[]}
         snapThreshold={PanelState.snap}
-        textFormat={(v) => `${v * PanelState.tickUnit}px`}
+        textFormat={(v) => `${Math.floor(v * PanelState.tickUnit)}px`}
         snaps={[1, 2, 3]}
         digit={1}
         style={{ height: `${PanelState.offset}px`, width: "calc(100%px)" }}
@@ -125,7 +130,7 @@ export const ARuler = () => {
         font="10px"
         lockGuides={[]}
         snapThreshold={PanelState.snap}
-        textFormat={(v) => `${v * PanelState.tickUnit}px`}
+        textFormat={(v) => `${Math.floor(v * PanelState.tickUnit)}px`}
         snaps={[1, 2, 3]}
         digit={1}
         rulerStyle={{

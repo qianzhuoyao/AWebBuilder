@@ -3,10 +3,11 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useDispatch, useSelector } from "react-redux";
 import { fromEvent, Subject, repeat, withLatestFrom } from "rxjs";
 import { IPs, updatePanelTickUnit } from "../store/slice/panelSlice";
+import { AR_PANEL_DOM_ID } from "../contant";
 //快捷键
 export const useCustomHotKeys = () => {
   const dispatch = useDispatch();
-  const panelId = "Ar-Panel";
+  const panelId = AR_PANEL_DOM_ID;
 
   let scaleOb: Subject<KeyboardEvent> | null = null;
 
@@ -30,11 +31,15 @@ export const useCustomHotKeys = () => {
     wh.pipe(withLatestFrom(scaleOb)).subscribe(([w, s]) => {
       if (s.code === "KeyF") {
         if (w.deltaY > 0) {
-          dispatch(updatePanelTickUnit(PanelState.tickUnit + 0.1));
+          dispatch(
+            updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1)))
+          );
           //放大
         } else {
           //缩小
-          dispatch(updatePanelTickUnit(PanelState.tickUnit - 0.1));
+          dispatch(
+            updatePanelTickUnit(Number((PanelState.tickUnit - 0.1).toFixed(1)))
+          );
         }
       }
       console.log(w, s, "w0sss");
@@ -43,7 +48,7 @@ export const useCustomHotKeys = () => {
     return () => {
       scaleOb?.unsubscribe();
     };
-  }, []);
+  }, [PanelState]);
 
   // f 放大缩小
   useHotkeys("keyF", (e) => {

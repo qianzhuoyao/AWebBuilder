@@ -2,26 +2,26 @@ import {
   Card,
   Tabs,
   CardBody,
-  CardFooter,
   Tab,
-  Link,
-  Image,
   Tooltip,
   Popover,
   PopoverTrigger,
   PopoverContent,
   Button,
-  Input,
   Switch,
 } from "@nextui-org/react";
 import { SketchPicker } from "react-color";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { Icon } from "@iconify-icon/react";
 import { AInput } from "../comp/AInput";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { IAs } from "../store/slice/atterSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  IPs,
+  updatePanelLockTransform,
+  updatePanelLockScale,
+} from "../store/slice/panelSlice";
 
 const ColorPick = () => {
   return (
@@ -49,6 +49,12 @@ const ColorPick = () => {
 };
 
 const PanelSetting = () => {
+  const dispatch = useDispatch();
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    console.log(state, "statescvsfv");
+    return state.panelSlice;
+  });
+
   return (
     <div>
       <div className="flex items-center">
@@ -56,8 +62,11 @@ const PanelSetting = () => {
         <Switch
           size="sm"
           className="ml-2"
-          defaultSelected
           aria-label="Automatic updates"
+          checked={PanelState.lockTransform}
+          onChange={(e) => {
+            dispatch(updatePanelLockTransform(e.target.checked));
+          }}
         />
       </div>
       <div className="flex items-center  mt-2">
@@ -65,19 +74,14 @@ const PanelSetting = () => {
         <Switch
           size="sm"
           className="ml-2"
-          defaultSelected
           aria-label="Automatic updates"
+          checked={PanelState.lockScale}
+          onChange={(e) => {
+            dispatch(updatePanelLockScale(e.target.checked));
+          }}
         />
       </div>
-      <div className="flex items-center mt-2">
-        <span>缩放:</span>
-        <AInput
-          placeholder="缩放"
-          className="w-[130px] ml-2 rounded-md"
-          size="xs"
-          radius="md"
-        />
-      </div>
+
       <div className="flex items-center mt-2">
         <span>刻度颗粒度:</span>
         <AInput
@@ -241,7 +245,10 @@ export const AttrSetting = () => {
   }, [AttrState]);
 
   return (
-    <div ref={gsapContainer} className="max-w-[300px] min-w-[300px] overflow-hidden">
+    <div
+      ref={gsapContainer}
+      className="max-w-[300px] min-w-[300px] overflow-hidden"
+    >
       <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
         <CardBody>
           <div className="flex w-full flex-col">
