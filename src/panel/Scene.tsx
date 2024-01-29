@@ -152,21 +152,23 @@ const SceneLayer = () => {
             />
           </Tooltip>
           <Tooltip
-            color={"default"}
-            content={"锁定画布状态"}
+            color={PanelState.lockTransform ? "danger" : "success"}
+            content={
+              PanelState.lockTransform ? "已锁定transform" : "未锁定transform"
+            }
             placement="top"
             className="capitalize"
           >
             <Icon
-              icon="uis:lock"
+              icon={PanelState.lockTransform ? "uis:lock" : "uis:unlock"}
               className="cursor-pointer mr-2"
               height={16}
               width={16}
             />
           </Tooltip>
           <Tooltip
-            color={"default"}
-            content={"当前缩放值"}
+            color={PanelState.lockScale ? "danger" : "success"}
+            content={PanelState.lockScale ? "缩放已锁定" : "缩放已解锁"}
             placement="top"
             className="capitalize"
           >
@@ -180,7 +182,7 @@ const SceneLayer = () => {
                 />
               }
               variant="faded"
-              color="success"
+              color={PanelState.lockScale ? "danger" : "success"}
             >
               {PanelState.tickUnit}
             </Chip>
@@ -243,10 +245,10 @@ const SceneWidgetMap = () => {
       });
     } else {
       gsap.to(gsapSceneWidgetContainer.current, {
-        maxWidth: "240px",
-        minWidth: "240px",
-        width: "240px",
-        padding: "0rem 0.5rem",
+        maxWidth: "210px",
+        minWidth: "210px",
+        width: "210px",
+
         duration: 0.1,
         ease: "none",
       });
@@ -256,9 +258,9 @@ const SceneWidgetMap = () => {
   return (
     <div
       ref={gsapSceneWidgetContainer}
-      className="w-[240px] px-2 overflow-hidden"
+      className="w-[210px] px-2 overflow-hidden"
     >
-      <div ref={gsapSceneWidgetContainer} className="w-[240px] px-2">
+      <div ref={gsapSceneWidgetContainer} className="w-[210px] px-2">
         <div className="flex w-full justify-between items-center py-2">
           <small className="">组件映射</small>
           <Tabs size="sm" aria-label="Dynamic tabs" items={widgetMapTabs}>
