@@ -19,6 +19,7 @@ export const ARuler = () => {
   let scrollY = 0;
 
   const dispatch = useDispatch();
+
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     console.log(state, "statescvsfv");
     return state.panelSlice;
@@ -53,10 +54,20 @@ export const ARuler = () => {
       dispatch(updateRulerMinX(guides2.current?.scrollPos));
       console.log(guides1.current, "e-e");
     });
-    window.addEventListener("resize", () => {
+
+    const ArDomResizeObserver = new ResizeObserver(() => {
       guides1.current?.resize();
       guides2.current?.resize();
     });
+    ArDomResizeObserver.observe(dom);
+    return () => {
+      ArDomResizeObserver.unobserve(dom);
+      ArDomResizeObserver.disconnect()
+    };
+    // window.addEventListener("resize", () => {
+    //   guides1.current?.resize();
+    //   guides2.current?.resize();
+    // });
   }, []);
   return (
     <div className="page h-full relative">

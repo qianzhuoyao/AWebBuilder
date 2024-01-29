@@ -5,9 +5,14 @@ import { Link, Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AInput } from "../comp/AInput";
+import { useDispatch, useSelector } from "react-redux";
+import { IWls } from "../store/slice/widgetSlice";
+
+import { updateShow as updateWidShow } from "../store/slice/widgetSlice";
+
 export const Nav = () => {
   const [showTools, setShowTools] = useState(false);
-
+  const dispatch = useDispatch();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,6 +39,15 @@ export const Nav = () => {
     setTheme(theme === "light" ? "dark" : "light");
   }, [theme]);
 
+  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+    console.log(state, "00000state");
+    return state.widgetSlice;
+  });
+  const onHandleWidVis = () => {
+    console.log(!widgetState.show, "!widgetState.show");
+    dispatch(updateWidShow(!widgetState.show));
+  };
+
   return (
     <>
       <div className="flex justify-between m-1 border-zinc-200 border-b-[1px] pb-1 h-[44px]">
@@ -52,6 +66,10 @@ export const Nav = () => {
                   isIconOnly
                   variant="light"
                   aria-label="locale"
+                  style={{
+                    background: widgetState.show ? "#338ef7" : "",
+                  }}
+                  onClick={onHandleWidVis}
                 >
                   <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
                 </Button>
@@ -99,7 +117,10 @@ export const Nav = () => {
                     size="xs"
                     radius="md"
                     startContent={
-                      <Icon icon="fluent-mdl2:pen-workspace" className="mr-2 ml-2" />
+                      <Icon
+                        icon="fluent-mdl2:pen-workspace"
+                        className="mr-2 ml-2"
+                      />
                     }
                   />
                 </div>

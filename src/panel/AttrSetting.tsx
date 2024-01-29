@@ -6,16 +6,22 @@ import {
   Tab,
   Link,
   Image,
+  Tooltip,
   Popover,
   PopoverTrigger,
   PopoverContent,
   Button,
   Input,
+  Switch,
 } from "@nextui-org/react";
 import { SketchPicker } from "react-color";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { Icon } from "@iconify-icon/react";
 import { AInput } from "../comp/AInput";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { IAs } from "../store/slice/atterSlice";
+import { useSelector } from "react-redux";
 
 const ColorPick = () => {
   return (
@@ -39,6 +45,86 @@ const ColorPick = () => {
         )}
       </PopoverContent>
     </Popover>
+  );
+};
+
+const PanelSetting = () => {
+  return (
+    <div>
+      <div className="flex items-center">
+        <span>锁定画布位移:</span>
+        <Switch
+          size="sm"
+          className="ml-2"
+          defaultSelected
+          aria-label="Automatic updates"
+        />
+      </div>
+      <div className="flex items-center  mt-2">
+        <span>锁定画布缩放:</span>
+        <Switch
+          size="sm"
+          className="ml-2"
+          defaultSelected
+          aria-label="Automatic updates"
+        />
+      </div>
+      <div className="flex items-center mt-2">
+        <span>缩放:</span>
+        <AInput
+          placeholder="缩放"
+          className="w-[130px] ml-2 rounded-md"
+          size="xs"
+          radius="md"
+        />
+      </div>
+      <div className="flex items-center mt-2">
+        <span>刻度颗粒度:</span>
+        <AInput
+          placeholder="刻度颗粒度"
+          className="w-[130px] ml-2 rounded-md"
+          size="xs"
+          radius="md"
+        />
+      </div>
+      <div className="flex items-center mt-2">
+        <span>单位鼠标滚动缩放颗粒度:</span>
+        <AInput
+          placeholder="刻度颗粒度"
+          className="w-[130px] ml-2 rounded-md"
+          size="xs"
+          radius="md"
+        />
+      </div>
+      <div className="flex items-center mt-2">
+        <span className="flex items-center">
+          聚焦设置
+          <Tooltip
+            color={"default"}
+            content={"将视角聚焦至某点,并将其放置于左上角"}
+            placement="top"
+            className="capitalize"
+          >
+            <Icon icon="ph:question" className="cursor-pointer" />
+          </Tooltip>
+          :
+        </span>
+        <div className="flex items-center">
+          <AInput
+            placeholder="x"
+            className="w-[50px] ml-2 rounded-md"
+            size="xs"
+            radius="md"
+          />
+          <AInput
+            placeholder="y"
+            className="w-[50px] ml-2 rounded-md"
+            size="xs"
+            radius="md"
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -104,7 +190,9 @@ const ProviderSetting = () => {
       <div className="flex mt-2 items-center">
         <small className="w-[80px]">背景控制</small>
         <div className="flex">
-          <Button size="sm" className="mr-2">清除背景图片</Button>
+          <Button size="sm" className="mr-2">
+            清除背景图片
+          </Button>
           <Button size="sm">清除背景颜色</Button>
         </div>
       </div>
@@ -112,12 +200,11 @@ const ProviderSetting = () => {
   );
 };
 
-let tabs = [
+const tabs = [
   {
     id: "panel",
     label: "面板设置",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    content: <PanelSetting></PanelSetting>,
   },
   {
     id: "page",
@@ -127,21 +214,49 @@ let tabs = [
 ];
 
 export const AttrSetting = () => {
+  const gsapContainer = useRef<HTMLDivElement>(null);
+
+  const AttrState = useSelector((state: { attrSlice: IAs }) => {
+    return state.attrSlice;
+  });
+
+  useLayoutEffect(() => {
+    if (!AttrState.show) {
+      gsap.to(gsapContainer.current, {
+        width: "0px",
+        maxWidth: "0px",
+        minWidth: "0px",
+        duration: 0.1,
+        ease: "none",
+      });
+    } else {
+      gsap.to(gsapContainer.current, {
+        maxWidth: "300px",
+        minWidth: "300px",
+        width: "300px",
+        duration: 0.1,
+        ease: "none",
+      });
+    }
+  }, [AttrState]);
+
   return (
-    <Card className="max-w-[300px] min-w-[300px]  rounded-none">
-      <CardBody>
-        <div className="flex w-full flex-col">
-          <Tabs aria-label="Dynamic tabs" items={tabs}>
-            {(item) => (
-              <Tab key={item.id} title={item.label}>
-                <Card>
-                  <CardBody>{item.content}</CardBody>
-                </Card>
-              </Tab>
-            )}
-          </Tabs>
-        </div>{" "}
-      </CardBody>
-    </Card>
+    <div ref={gsapContainer} className="max-w-[300px] min-w-[300px] overflow-hidden">
+      <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
+        <CardBody>
+          <div className="flex w-full flex-col">
+            <Tabs aria-label="Dynamic tabs" items={tabs}>
+              {(item) => (
+                <Tab key={item.id} title={item.label}>
+                  <Card>
+                    <CardBody>{item.content}</CardBody>
+                  </Card>
+                </Tab>
+              )}
+            </Tabs>
+          </div>{" "}
+        </CardBody>
+      </Card>
+    </div>
   );
 };

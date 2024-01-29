@@ -19,7 +19,7 @@ export const panelSlice = createSlice({
     rulerMinY: 0,
     snap:5,
     offset:30,
-    tickUnit:4,
+    tickUnit:2,
     panelWidth: 1920,
     panelHeight: 1080,
     panelLeft: 0,

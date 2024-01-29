@@ -30,7 +30,7 @@ export const AScene = () => {
   return (
     <>
       <div
-        className="absolute w-full h-full"
+        className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
         style={{
           left: "30px",
           top: "30px",
