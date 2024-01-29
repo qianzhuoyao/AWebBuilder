@@ -72,13 +72,17 @@ export const ARuler = () => {
         textFormat={(v) => `${v * PanelState.tickUnit}px`}
         snaps={[1, 2, 3]}
         digit={1}
-        style={{ height: "30px", width: "calc(100%px)" }}
+        style={{ height: `${PanelState.offset}px`, width: "calc(100%px)" }}
         rulerStyle={{
-          left: "30px",
-          width: "calc(100% - 30px)",
+          left: `${PanelState.offset}px`,
+          width: `calc(100% - ${PanelState.offset}px)`,
           height: "100%",
         }}
-        dragPosFormat={(v) => `${v * PanelState.tickUnit +10 * PanelState.tickUnit * PanelState.snap}px`}
+        dragPosFormat={(v) =>
+          `${
+            v * PanelState.tickUnit + 10 * PanelState.tickUnit * PanelState.snap
+          }px`
+        }
         displayDragPos={true}
         displayGuidePos={true}
         guidesOffset={50}
@@ -113,7 +117,10 @@ export const ARuler = () => {
           height: "calc(100%)",
           width: "100%",
         }}
-        style={{ width: "30px", height: "calc(100% - 30px)" }}
+        style={{
+          width: `${PanelState.offset}px`,
+          height: `calc(100% - ${PanelState.offset}px)`,
+        }}
         dragPosFormat={(v) => {
           console.log(v, "cascascas");
           return `${
@@ -130,7 +137,7 @@ export const ARuler = () => {
           console.log("dragStart", e);
         }}
         onDrag={(e) => {
-          console.log("drag", guides2);
+          console.log("drag", e, guides2);
         }}
         onDragEnd={(e) => {
           console.log("dragEnd", e);

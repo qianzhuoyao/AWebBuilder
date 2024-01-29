@@ -4,6 +4,7 @@ export interface IPs {
   rulerMinX: number;
   rulerMinY: number;
   tickUnit:number,
+  offset:number;
   snap:number,
   panelWidth: number;
   panelHeight: number;
@@ -17,7 +18,7 @@ export const panelSlice = createSlice({
     rulerMinX: 0,
     rulerMinY: 0,
     snap:5,
-
+    offset:30,
     tickUnit:4,
     panelWidth: 1920,
     panelHeight: 1080,

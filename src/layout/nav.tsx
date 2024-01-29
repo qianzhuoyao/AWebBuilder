@@ -36,10 +36,10 @@ export const Nav = () => {
 
   return (
     <>
-      <div className="flex justify-between m-1">
+      <div className="flex justify-between m-1 border-zinc-200 border-b-[1px] pb-1 h-[44px]">
         <div className="flex items-center">
           <Link to={"/menu"}>
-            <Button isIconOnly variant="light" aria-label="locale">
+            <Button isIconOnly variant="light" aria-label="locale" size="sm">
               <Icon icon="ic:round-home" width={"16px"} height={"16px"} />
             </Button>
           </Link>
@@ -47,6 +47,7 @@ export const Nav = () => {
             {showTools && (
               <>
                 <Button
+                  size="sm"
                   className="ml-6"
                   isIconOnly
                   variant="light"
@@ -54,32 +55,9 @@ export const Nav = () => {
                 >
                   <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
                 </Button>
-                <Button
-                  className="ml-2"
-                  isIconOnly
-                  variant="light"
-                  aria-label="locale"
-                >
-                  <Icon
-                    icon="mingcute:layer-fill"
-                    width={"16px"}
-                    height={"16px"}
-                  />
-                </Button>
-                <Button
-                  className="ml-2"
-                  isIconOnly
-                  variant="light"
-                  aria-label="locale"
-                >
-                  <Icon
-                    icon="tabler:list-details"
-                    width={"16px"}
-                    height={"16px"}
-                  />
-                </Button>
 
                 <Button
+                  size="sm"
                   className="ml-6"
                   isIconOnly
                   variant="light"
@@ -92,6 +70,7 @@ export const Nav = () => {
                   />
                 </Button>
                 <Button
+                  size="sm"
                   className="ml-2"
                   isIconOnly
                   variant="light"
@@ -104,6 +83,7 @@ export const Nav = () => {
                   />
                 </Button>
                 <Button
+                  size="sm"
                   className="ml-6"
                   isIconOnly
                   variant="light"
@@ -112,22 +92,40 @@ export const Nav = () => {
                   <Icon icon="uil:save" width={"16px"} height={"16px"} />
                 </Button>
 
-                <div className="ml-6 flex items-center">
-                  <Icon icon="fluent-mdl2:pen-workspace" className="mr-2" />
+                <div className="ml-[60px] flex items-center">
                   <AInput
                     placeholder="工作空间"
-                    className="w-[120px] rounded-md"
+                    className="w-[240px] rounded-md"
                     size="xs"
                     radius="md"
+                    startContent={
+                      <Icon icon="fluent-mdl2:pen-workspace" className="mr-2 ml-2" />
+                    }
                   />
                 </div>
               </>
             )}
           </>
         </div>
-        <div>
+        <div className="flex items-center">
+          <Tooltip color={"primary"} content={"预览"} className="capitalize">
+            <Button
+              className="mr-2"
+              size="sm"
+              variant="light"
+              aria-label="locale"
+            >
+              预览
+            </Button>
+          </Tooltip>
           <Tooltip color={"primary"} content={"国际化"} className="capitalize">
-            <Button isIconOnly variant="light" aria-label="locale">
+            <Button
+              isIconOnly
+              className="mr-2"
+              variant="light"
+              size="sm"
+              aria-label="locale"
+            >
               <Icon
                 icon="fluent-mdl2:locale-language"
                 width={"16px"}
@@ -137,8 +135,10 @@ export const Nav = () => {
           </Tooltip>
           <Tooltip color={"primary"} content={"主题"} className="capitalize">
             <Button
+              className="mr-2"
               isIconOnly
               variant="light"
+              size="sm"
               aria-label="theme"
               onClick={onChangeTheme}
             >

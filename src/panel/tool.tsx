@@ -1,7 +1,50 @@
 import { Icon } from "@iconify-icon/react";
-import { Tabs, Tab } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody,Button } from "@nextui-org/react";
 import { AInput } from "../comp/AInput";
 import { WidgetMenu } from "./widgetMenu";
+
+const ToolHeader = () => {
+  return (
+    <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
+      {/* <div className="flex items-center p-2">
+        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
+      </div> */}
+      <div className="flex justify-between">
+        <AInput
+          placeholder="搜索组件"
+          className="w-[100%] mr-2"
+          size="sml"
+          radius={"md"}
+          startContent={
+            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
+          }
+        />
+        <Tabs size={"sm"} aria-label="Tabs sizes">
+          <Tab key="photos" title={<ZIndexIcon />} />
+          <Tab key="music" title={<ColIcon></ColIcon>} />
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+const WidgetTabs = [
+  {
+    id: "view",
+    label: "视图",
+    content: (
+      <>
+        <ToolHeader></ToolHeader>
+        <WidgetMenu></WidgetMenu>
+      </>
+    ),
+  },
+  {
+    id: "logic",
+    label: "逻辑",
+    content: <>12</>,
+  },
+];
 
 const ColIcon = () => {
   return (
@@ -56,36 +99,44 @@ const ZIndexIcon = () => {
   );
 };
 
-const ToolHeader = () => {
-  return (
-    <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
-      <div className="flex items-center p-2">
-        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
-      </div>
-      <div className="flex">
-        <AInput
-          placeholder="搜索组件"
-          className="w-[100px] mr-2"
-          size="sml"
-          radius={"md"}
-          startContent={
-            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
-          }
-        />
-        <Tabs size={"sm"} aria-label="Tabs sizes">
-          <Tab key="photos" title={<ZIndexIcon />} />
-          <Tab key="music" title={<ColIcon></ColIcon>} />
-        </Tabs>
-      </div>
-    </div>
-  );
-};
-
 export const Tools = () => {
   return (
-    <div className="w-[300px] min-w-[300px] h-full">
-      <ToolHeader></ToolHeader>
-      <WidgetMenu></WidgetMenu>
+    <div className="w-[300px] min-w-[300px] h-full relative">
+      <div className="absolute right-[10px] top-[1px]">
+        <Button className="ml-2" isIconOnly size="sm" variant="light" aria-label="locale">
+          <Icon icon="mingcute:layer-fill" width={"16px"} height={"16px"} />
+        </Button>
+        <Button className="ml-2" isIconOnly size="sm" variant="light" aria-label="locale">
+          <Icon icon="tabler:list-details" width={"16px"} height={"16px"} />
+        </Button>
+      </div>
+      <div className="h-[calc(100%_-_40px)]">
+        <Tabs
+          aria-label="lv tabs"
+          items={WidgetTabs}
+          radius="md"
+          size={"sm"}
+          classNames={{
+            tab: "",
+            tabList: "mb-1 w-[192px]",
+            panel: "p-0 h-[100%] w-[100%]",
+            cursor: "",
+            base: "w-[100%] bg-zinc500",
+          }}
+        >
+          {(item: {
+            id: string;
+            label: React.ReactNode | string;
+            content: React.ReactNode | string;
+          }) => (
+            <Tab key={item.id} title={item.label}>
+              <Card className="rounded-md h-[100%]">
+                <CardBody className="p-0">{item.content}</CardBody>
+              </Card>
+            </Tab>
+          )}
+        </Tabs>
+      </div>
     </div>
   );
 };
