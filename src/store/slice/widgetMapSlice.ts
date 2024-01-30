@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface IWs {
   show?: boolean;
   providerShow: boolean;
+  //0 大预览 1 小缩略
+  contentImageShowType: 0 | 1;
 }
 
 export const widgetMapSlice = createSlice({
@@ -10,6 +12,7 @@ export const widgetMapSlice = createSlice({
   initialState: {
     show: undefined,
     providerShow: false,
+    contentImageShowType: 0,
   },
   reducers: {
     updateProviderShow: (state, action) => {
@@ -18,9 +21,13 @@ export const widgetMapSlice = createSlice({
     updateWidgetMapShow: (state, action) => {
       state.show = action.payload;
     },
+    updateContentImageShowType: (state, action) => {
+      state.contentImageShowType = action.payload;
+    },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
-export const { updateWidgetMapShow, updateProviderShow } = widgetMapSlice.actions;
+export const { updateWidgetMapShow, updateProviderShow,updateContentImageShowType } =
+  widgetMapSlice.actions;
 
 export default widgetMapSlice.reducer;

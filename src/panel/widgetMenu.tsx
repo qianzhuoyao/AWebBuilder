@@ -211,17 +211,16 @@ const LineMap = () => {
 
 const BarMap = () => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap justify-between">
       {SRC_ICON.bar.map((bar) => {
         return (
-          <div key={bar.id}>
-            <WidgetIconTemp
-              classify="chart"
-              typeId={bar.id}
-              src={bar.src}
-              name={bar.name}
-            ></WidgetIconTemp>
-          </div>
+          <WidgetIconTemp
+            key={bar.id}
+            classify="chart"
+            typeId={bar.id}
+            src={bar.src}
+            name={bar.name}
+          ></WidgetIconTemp>
         );
       })}
     </div>

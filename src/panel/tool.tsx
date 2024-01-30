@@ -5,11 +5,20 @@ import gsap from "gsap";
 import { WidgetMenu } from "./widgetMenu";
 import { useSelector, useDispatch } from "react-redux";
 import { IAs, updateAttrShow } from "../store/slice/atterSlice";
-import { IWs, updateProviderShow } from "../store/slice/widgetMapSlice";
+import {
+  IWs,
+  updateContentImageShowType,
+  updateProviderShow,
+} from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { useLayoutEffect, useRef } from "react";
 
 const ToolHeader = () => {
+  const dispatch = useDispatch();
+  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+    return state.widgetMapSlice;
+  });
+
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
       {/* <div className="flex items-center p-2">
@@ -25,9 +34,18 @@ const ToolHeader = () => {
             <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
           }
         />
-        <Tabs size={"sm"} aria-label="Tabs sizes">
-          <Tab key="photos" title={<ZIndexIcon />} />
-          <Tab key="music" title={<ColIcon></ColIcon>} />
+        <Tabs
+          size={"sm"}
+          aria-label="Tabs sizes"
+          defaultSelectedKey={
+            !widgetMapState.contentImageShowType ? "zI" : "Co"
+          }
+          onSelectionChange={(e) => {
+            dispatch(updateContentImageShowType(e === "zI" ? 0 : 1));
+          }}
+        >
+          <Tab key="zI" title={<ZIndexIcon />} />
+          <Tab key="Co" title={<ColIcon></ColIcon>} />
         </Tabs>
       </div>
     </div>

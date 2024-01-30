@@ -300,7 +300,7 @@ export const Scene = () => {
 
   const onHandleOpenWidMap = useCallback(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));
-  }, [widgetMapState]);
+  }, [dispatch, widgetMapState.show]);
 
   useLayoutEffect(() => {
     const dom = document.querySelector(".map-a-left-vis");

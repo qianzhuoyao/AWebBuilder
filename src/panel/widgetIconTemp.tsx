@@ -1,12 +1,13 @@
 import { Card, Image, CardFooter } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
-import { FC, useEffect, useId, useRef } from "react";
+import { FC, useEffect, useId, useLayoutEffect, useRef } from "react";
 import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-
+import gsap from "gsap";
 import { AR_PANEL_DOM_ID, drag_size_height, drag_size_width } from "../contant";
 import { IClassify, INodeType, addNode } from "../store/slice/nodeSlice";
+import { IWs } from "../store/slice/widgetMapSlice";
 
 interface IW {
   src: string;
@@ -118,14 +119,34 @@ export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
     return () => {
       subscription?.unsubscribe();
     };
-  }, [PanelState]);
+  }, [PanelState, classify, dispatch, key, name, src, typeId]);
+
+  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+    return state.widgetMapSlice;
+  });
+
+  useLayoutEffect(() => {
+    if (widgetMapState.contentImageShowType) {
+      gsap.to(ICardRef.current, {
+        width: "44%",
+        duration: 0.1,
+        ease: "none",
+      });
+    } else {
+      gsap.to(ICardRef.current, {
+        width: "100%",
+        duration: 0.1,
+        ease: "none",
+      });
+    }
+  }, [widgetMapState]);
 
   return (
     <Card
       ref={ICardRef}
       isFooterBlurred
       radius="lg"
-      className="border-none p-1 bg-default-200 cursor-pointer"
+      className="border-none p-1 m-1 bg-default-200 cursor-pointer"
     >
       <Image
         ref={ImageRef}
@@ -137,9 +158,11 @@ export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
         src={src}
         width={"100%"}
       />
-      <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
-        <p className="text-tiny text-white/80">{name}</p>
-      </CardFooter>
+      {!widgetMapState.contentImageShowType && (
+        <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+          <p className="text-tiny text-white/80">{name}</p>
+        </CardFooter>
+      )}
     </Card>
   );
 };
