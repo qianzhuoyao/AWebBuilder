@@ -137,17 +137,16 @@ export const TextIcon = () => {
 
 const TextMap = () => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap justify-between">
       {SRC_ICON.text.map((text) => {
         return (
-          <div key={text.id}>
-            <WidgetIconTemp
-              typeId={text.id}
-              classify="text"
-              src={text.src}
-              name={text.name}
-            ></WidgetIconTemp>
-          </div>
+          <WidgetIconTemp
+            key={text.id}
+            typeId={text.id}
+            classify="text"
+            src={text.src}
+            name={text.name}
+          ></WidgetIconTemp>
         );
       })}
     </div>
@@ -156,17 +155,16 @@ const TextMap = () => {
 
 const ImageMap = () => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap justify-between">
       {SRC_ICON.Image.map((image) => {
         return (
-          <div key={image.id}>
-            <WidgetIconTemp
-              classify="dom"
-              typeId={image.id}
-              src={image.src}
-              name={image.name}
-            ></WidgetIconTemp>
-          </div>
+          <WidgetIconTemp
+            key={image.id}
+            classify="dom"
+            typeId={image.id}
+            src={image.src}
+            name={image.name}
+          ></WidgetIconTemp>
         );
       })}
     </div>
@@ -174,17 +172,16 @@ const ImageMap = () => {
 };
 const TableMap = () => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap justify-between">
       {SRC_ICON.table.map((table) => {
         return (
-          <div key={table.id}>
-            <WidgetIconTemp
-              classify="table"
-              typeId={table.id}
-              src={table.src}
-              name={table.name}
-            ></WidgetIconTemp>
-          </div>
+          <WidgetIconTemp
+            key={table.id}
+            classify="table"
+            typeId={table.id}
+            src={table.src}
+            name={table.name}
+          ></WidgetIconTemp>
         );
       })}
     </div>
@@ -192,17 +189,16 @@ const TableMap = () => {
 };
 const LineMap = () => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-wrap justify-between">
       {SRC_ICON.line.map((line) => {
         return (
-          <div key={line.id}>
-            <WidgetIconTemp
-              classify="line"
-              typeId={line.id}
-              src={line.src}
-              name={line.name}
-            ></WidgetIconTemp>
-          </div>
+          <WidgetIconTemp
+            key={line.id}
+            classify="line"
+            typeId={line.id}
+            src={line.src}
+            name={line.name}
+          ></WidgetIconTemp>
         );
       })}
     </div>
