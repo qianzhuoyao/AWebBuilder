@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 
 import { AR_PANEL_DOM_ID, drag_size_height, drag_size_width } from "../contant";
-import { addNode } from "../store/slice/nodeSlice";
+import { IClassify, INodeType, addNode } from "../store/slice/nodeSlice";
 
 interface IW {
   src: string;
   name: string;
+  typeId: INodeType;
+  classify: IClassify;
 }
 
 /**
@@ -41,8 +43,9 @@ export const transPointInScene = (
   };
 };
 
-export const WidgetIconTemp: FC<IW> = ({ src, name }) => {
+export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
   const ICardRef = useRef<HTMLDivElement>(null);
+  const ImageRef = useRef<HTMLImageElement>(null);
   const key = useId();
 
   const dispatch = useDispatch();
@@ -53,6 +56,8 @@ export const WidgetIconTemp: FC<IW> = ({ src, name }) => {
   });
 
   useEffect(() => {
+    ImageRef.current?.setAttribute("data-temp-type", name);
+    ImageRef.current?.setAttribute("data-temp-id", typeId);
     if (!ICardRef.current) {
       return;
     }
@@ -99,6 +104,10 @@ export const WidgetIconTemp: FC<IW> = ({ src, name }) => {
               h,
               z: 10,
               id: uuidv4(),
+              classify,
+              instance: {
+                type: typeId,
+              },
             })
           );
         }
@@ -119,6 +128,7 @@ export const WidgetIconTemp: FC<IW> = ({ src, name }) => {
       className="border-none p-1 bg-default-200 cursor-pointer"
     >
       <Image
+        ref={ImageRef}
         id={key}
         alt={name}
         className="object-cover"

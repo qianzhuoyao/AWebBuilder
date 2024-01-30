@@ -141,7 +141,12 @@ const TextMap = () => {
       {SRC_ICON.text.map((text) => {
         return (
           <div key={text.id}>
-            <WidgetIconTemp src={text.src} name={text.name}></WidgetIconTemp>
+            <WidgetIconTemp
+              typeId={text.id}
+              classify="text"
+              src={text.src}
+              name={text.name}
+            ></WidgetIconTemp>
           </div>
         );
       })}
@@ -155,7 +160,12 @@ const ImageMap = () => {
       {SRC_ICON.Image.map((image) => {
         return (
           <div key={image.id}>
-            <WidgetIconTemp src={image.src} name={image.name}></WidgetIconTemp>
+            <WidgetIconTemp
+              classify="dom"
+              typeId={image.id}
+              src={image.src}
+              name={image.name}
+            ></WidgetIconTemp>
           </div>
         );
       })}
@@ -168,7 +178,12 @@ const TableMap = () => {
       {SRC_ICON.table.map((table) => {
         return (
           <div key={table.id}>
-            <WidgetIconTemp src={table.src} name={table.name}></WidgetIconTemp>
+            <WidgetIconTemp
+              classify="table"
+              typeId={table.id}
+              src={table.src}
+              name={table.name}
+            ></WidgetIconTemp>
           </div>
         );
       })}
@@ -181,7 +196,12 @@ const LineMap = () => {
       {SRC_ICON.line.map((line) => {
         return (
           <div key={line.id}>
-            <WidgetIconTemp src={line.src} name={line.name}></WidgetIconTemp>
+            <WidgetIconTemp
+              classify="line"
+              typeId={line.id}
+              src={line.src}
+              name={line.name}
+            ></WidgetIconTemp>
           </div>
         );
       })}
@@ -195,7 +215,12 @@ const BarMap = () => {
       {SRC_ICON.bar.map((bar) => {
         return (
           <div key={bar.id}>
-            <WidgetIconTemp src={bar.src} name={bar.name}></WidgetIconTemp>
+            <WidgetIconTemp
+              classify="chart"
+              typeId={bar.id}
+              src={bar.src}
+              name={bar.name}
+            ></WidgetIconTemp>
           </div>
         );
       })}

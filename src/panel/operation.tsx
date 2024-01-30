@@ -1,9 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { memo, useEffect, useMemo, useRef } from "react";
-import { INs, IViewNode, updatePosition } from "../store/slice/nodeSlice";
+import { FC, memo, useEffect, useMemo, useRef } from "react";
+import {
+  INs,
+  IViewNode,
+  updatePosition,
+  updateSize,
+} from "../store/slice/nodeSlice";
 import Moveable, { OnScale } from "moveable";
 import { ATTR_TAG, Node, SCENE } from "../contant";
+import { BaseChart } from "../node/chart";
 
 const useWidth = (state: { tickUnit: number; w: number }) => {
   return useMemo(() => {
@@ -16,6 +22,28 @@ const useHeight = (state: { tickUnit: number; h: number }) => {
     const { tickUnit, h } = state;
     return h / tickUnit;
   }, [state]);
+};
+
+const Temp: FC<{ id: string }> = ({ id }) => {
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    return state.panelSlice;
+  });
+  console.log(id, NodesState, PanelState, "id[p-d-dd-d-d-d-");
+  if (NodesState.list[id].classify === "chart") {
+    return (
+      <BaseChart
+        type={NodesState.list[id].instance.type}
+        width={NodesState.list[id].w / PanelState.tickUnit}
+        height={NodesState.list[id].h / PanelState.tickUnit}
+        options={NodesState.list[id].instance.option}
+      ></BaseChart>
+    );
+  }
+
+  return <></>;
 };
 
 const NodeSlot = memo(({ node }: { node: IViewNode }) => {
@@ -46,7 +74,7 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
 
       // Enabling pinchable lets you use events that
       // can be used in draggable, resizable, scalable, and rotateable.
-
+      origin: false,
       keepRatio: false,
       // Resize, Scale Events at edges.
       edge: false,
@@ -88,6 +116,7 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
         isDragging &&
           dispatch(
             updatePosition({
+              id: node.id,
               x: parseFloat(target.style.left) * PanelState.tickUnit,
               y: parseFloat(target.style.top) * PanelState.tickUnit,
             })
@@ -99,8 +128,8 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
       .on("resizeStart", ({ target }) => {
         console.log("onResizeStart", target);
       })
-      .on("resize", ({ target, width, drag,height, delta }) => {
-        console.log("onResize",delta, target);
+      .on("resize", ({ target, width, drag, height, delta }) => {
+        console.log("onResize", delta, target);
         // delta[0] && (target!.style.width = `${width}px`);
         // delta[1] && (target!.style.height = `${height}px`);
         target.style.width = `${width}px`;
@@ -108,7 +137,19 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
         target.style.transform = drag.transform;
       })
       .on("resizeEnd", ({ target, isDrag }) => {
-        console.log("onResizeEnd", target, isDrag);
+        console.log(
+          "onResizeEnd",
+          parseFloat(target.style.width),
+          target,
+          isDrag
+        );
+        dispatch(
+          updateSize({
+            id: node.id,
+            w: parseFloat(target.style.width) * PanelState.tickUnit,
+            h: parseFloat(target.style.height) * PanelState.tickUnit,
+          })
+        );
       });
 
     /* scalable */
@@ -154,7 +195,7 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
     <div
       ref={nodeRef}
       id={node.id}
-      className="absolute bg-[red]"
+      className="absolute"
       style={{
         left: node.x / PanelState.tickUnit + "px",
         top: node.y / PanelState.tickUnit + "px",
@@ -169,7 +210,9 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
             tickUnit: PanelState.tickUnit,
           }) + "px",
       }}
-    ></div>
+    >
+      <Temp id={node.id}></Temp>
+    </div>
   );
 });
 
