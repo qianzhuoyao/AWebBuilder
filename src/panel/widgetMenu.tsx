@@ -18,7 +18,6 @@ export const ChartIcon = () => {
         width={24}
         height={24}
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 32 32"
       >
         <path
@@ -46,7 +45,6 @@ export const TableIcon = () => {
         width={24}
         height={24}
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 32 32"
       >
         <path
@@ -66,7 +64,6 @@ export const ImageIcon = () => {
         width={24}
         height={24}
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 512 512"
       >
         <rect
@@ -118,7 +115,6 @@ export const TextIcon = () => {
         width={24}
         height={24}
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 32 32"
       >
         <path
@@ -139,34 +135,33 @@ export const TextIcon = () => {
   );
 };
 
+const TextMap = () => {
+  return (
+    <div className="space-y-2">
+      {SRC_ICON.text.map((text) => {
+        return (
+          <div key={text.id}>
+            <WidgetIconTemp src={text.src} name={text.name}></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
-const TextMap =()=>{
-    return (
-        <div className="space-y-2">
-          {SRC_ICON.text.map((text) => {
-            return (
-              <div key={text.id}>
-                <WidgetIconTemp src={text.src} name={text.name}></WidgetIconTemp>
-              </div>
-            );
-          })}
-        </div>
-      );
-}
-
-const ImageMap =()=>{
-    return (
-        <div className="space-y-2">
-          {SRC_ICON.Image.map((image) => {
-            return (
-              <div key={image.id}>
-                <WidgetIconTemp src={image.src} name={image.name}></WidgetIconTemp>
-              </div>
-            );
-          })}
-        </div>
-      );
-}
+const ImageMap = () => {
+  return (
+    <div className="space-y-2">
+      {SRC_ICON.Image.map((image) => {
+        return (
+          <div key={image.id}>
+            <WidgetIconTemp src={image.src} name={image.name}></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 const TableMap = () => {
   return (
     <div className="space-y-2">
@@ -208,21 +203,21 @@ const BarMap = () => {
   );
 };
 
-export const TextTabs =[
-    {
-        id: "TextContent",
-        label: "文本",
-        content: <TextMap></TextMap>,
-      },
-]
+export const TextTabs = [
+  {
+    id: "TextContent",
+    label: "文本",
+    content: <TextMap></TextMap>,
+  },
+];
 
-export const ImageTabs=[
-    {
-        id: "PicContent",
-        label: "图片资源",
-        content: <ImageMap></ImageMap>,
-      },
-]
+export const ImageTabs = [
+  {
+    id: "PicContent",
+    label: "图片资源",
+    content: <ImageMap></ImageMap>,
+  },
+];
 
 export const TableTabs = [
   {
@@ -286,12 +281,13 @@ const tabs = [
   {
     id: "image",
     label: <ImageIcon />,
-    content: <TabSlot ele={ImageTabs}></TabSlot>,},
+    content: <TabSlot ele={ImageTabs}></TabSlot>,
+  },
   {
     id: "text",
     label: <TextIcon />,
-    content: <TabSlot ele={TextTabs}></TabSlot>
- },
+    content: <TabSlot ele={TextTabs}></TabSlot>,
+  },
 ];
 export const WidgetMenu = () => {
   return (

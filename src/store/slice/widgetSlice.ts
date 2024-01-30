@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface IWls {
-  show?: boolean;
+  show: boolean;
 }
 
 export const widgetSlice = createSlice({
   name: "widget",
   initialState: {
-    show: undefined,
+    show: false,
   },
   reducers: {
     updateShow: (state, action) => {

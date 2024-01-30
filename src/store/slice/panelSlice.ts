@@ -41,6 +41,7 @@ export const panelSlice = createSlice({
         state.tickUnit = action.payload > 1 ? action.payload : 1;
       }
     },
+ 
     updatePanelTop: (state, action) => {
       state.panelTop = action.payload;
     },
@@ -70,6 +71,7 @@ export const {
   updatePanelLockScale,
   updatePanelHeight,
   updatePanelLeft,
+
   updatePanelWidth,
   updatePanelTickUnit,
   updateRulerMinY,

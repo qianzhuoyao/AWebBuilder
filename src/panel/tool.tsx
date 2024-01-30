@@ -4,7 +4,7 @@ import { AInput } from "../comp/AInput";
 import gsap from "gsap";
 import { WidgetMenu } from "./widgetMenu";
 import { useSelector, useDispatch } from "react-redux";
-import { IAs, updateShow } from "../store/slice/atterSlice";
+import { IAs, updateAttrShow } from "../store/slice/atterSlice";
 import { IWs, updateProviderShow } from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { useLayoutEffect, useRef } from "react";
@@ -78,7 +78,6 @@ const ColIcon = () => {
       width={16}
       height={16}
       xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 512 512"
     >
       <path
@@ -106,7 +105,6 @@ const ZIndexIcon = () => {
       width={16}
       height={16}
       xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 512 512"
     >
       <path
@@ -140,7 +138,7 @@ export const Tools = () => {
   });
 
   const onHandleShowAttr = () => {
-    dispatch(updateShow(!AttrState.show));
+    dispatch(updateAttrShow(!AttrState.show));
   };
 
   const onHandleShowWidget = () => {

@@ -1,4 +1,4 @@
-import { Tooltip, Button, Card, CardBody } from "@nextui-org/react";
+import { Tooltip, Button } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify-icon/react";
 import { Link, Outlet } from "react-router-dom";
@@ -8,7 +8,7 @@ import { AInput } from "../comp/AInput";
 import { useDispatch, useSelector } from "react-redux";
 import { IWls } from "../store/slice/widgetSlice";
 
-import { updateShow as updateWidShow } from "../store/slice/widgetSlice";
+import { updateShow } from "../store/slice/widgetSlice";
 
 export const Nav = () => {
   const [showTools, setShowTools] = useState(false);
@@ -45,7 +45,7 @@ export const Nav = () => {
   });
   const onHandleWidVis = () => {
     console.log(!widgetState.show, "!widgetState.show");
-    dispatch(updateWidShow(!widgetState.show));
+    dispatch(updateShow(!widgetState.show));
   };
 
   return (

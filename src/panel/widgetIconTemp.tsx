@@ -1,16 +1,125 @@
-import { Card, Image, CardFooter, Button } from "@nextui-org/react";
+import { Card, Image, CardFooter } from "@nextui-org/react";
+import { v4 as uuidv4 } from "uuid";
+import { FC, useEffect, useId, useRef } from "react";
+import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
+import { useDispatch, useSelector } from "react-redux";
+import { IPs } from "../store/slice/panelSlice";
 
-import { FC } from "react";
+import { AR_PANEL_DOM_ID, drag_size_height, drag_size_width } from "../contant";
+import { addNode } from "../store/slice/nodeSlice";
 
 interface IW {
   src: string;
   name: string;
 }
 
+/**
+ * 转化坐标为scene坐标
+ */
+export const transPointInScene = (
+  pageX: number,
+  pageY: number,
+  rMinX: number,
+  rMinY: number,
+  tickUnit: number,
+  offset: number
+) => {
+  const SCENE = document.getElementById(AR_PANEL_DOM_ID);
+  if (!SCENE) {
+    return;
+  }
+  const { left, top } = SCENE.getBoundingClientRect();
+  console.log(
+    pageX - left - offset + rMinX,
+    rMinX,
+    { left, top, pageX, pageY, rMinX, rMinY, tickUnit },
+    "{ left, top }"
+  );
+  return {
+    x: pageX - left - offset + rMinX,
+    y: pageY - top - offset + rMinY,
+  };
+};
+
 export const WidgetIconTemp: FC<IW> = ({ src, name }) => {
+  const ICardRef = useRef<HTMLDivElement>(null);
+  const key = useId();
+
+  const dispatch = useDispatch();
+
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    console.log(state, "statescvsfv");
+    return state.panelSlice;
+  });
+
+  useEffect(() => {
+    if (!ICardRef.current) {
+      return;
+    }
+    const subscription = setWidgetStream<HTMLElement | null, undefined>(key, {
+      down: (e) => {
+        const node = createLayerSrc("img");
+        if (node) {
+          node.src = src;
+          node.style.position = "absolute";
+          node.style.width = drag_size_width + "px";
+          node.style.height = drag_size_height + "px";
+          node.style.left = e.pageX + "px";
+          node.style.top = e.pageY + "px";
+        }
+        console.log(e, "down");
+        return node;
+      },
+      move: (e, c) => {
+        console.log(e, c, "move");
+        if (c) {
+          c.style.left = e.pageX + "px";
+          c.style.top = e.pageY + "px";
+        }
+      },
+      up: (e, c) => {
+        c?.remove();
+        const pointer = transPointInScene(
+          e.pageX,
+          e.pageY,
+          PanelState.rulerMinX,
+          PanelState.rulerMinY,
+          PanelState.tickUnit,
+          PanelState.offset
+        );
+        if (pointer) {
+          const w = drag_size_width * PanelState.tickUnit;
+          const h = drag_size_height * PanelState.tickUnit;
+          const { x, y } = pointer;
+          dispatch(
+            addNode({
+              x: x * PanelState.tickUnit,
+              y: y * PanelState.tickUnit,
+              w,
+              h,
+              z: 10,
+              id: uuidv4(),
+            })
+          );
+        }
+      },
+    });
+    ICardRef.current.onselectstart = () => false;
+    ICardRef.current.ondragstart = () => false;
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [PanelState]);
+
   return (
-    <Card isFooterBlurred radius="lg" className="border-none p-1 bg-default-200">
+    <Card
+      ref={ICardRef}
+      isFooterBlurred
+      radius="lg"
+      className="border-none p-1 bg-default-200 cursor-pointer"
+    >
       <Image
+        id={key}
         alt={name}
         className="object-cover"
         height={200}

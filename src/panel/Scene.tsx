@@ -1,5 +1,5 @@
 import { ARuler } from "./ruler";
-import { useHotkeys } from "react-hotkeys-hook";
+
 import {
   Tabs,
   Tab,
@@ -8,7 +8,6 @@ import {
   Button,
   Tooltip,
   Kbd,
-  AutocompleteItem,
   Divider,
   Table,
   TableHeader,
@@ -16,8 +15,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Switch,
-  Autocomplete,
   Modal,
   ModalContent,
   ModalHeader,
@@ -37,7 +34,7 @@ import {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IWs, updateShow } from "../store/slice/widgetMapSlice";
+import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
 import { AR_PANEL_DOM_ID } from "../contant";
 import { IPs } from "../store/slice/panelSlice";
 
@@ -302,7 +299,7 @@ export const Scene = () => {
   });
 
   const onHandleOpenWidMap = useCallback(() => {
-    dispatch(updateShow(!widgetMapState.show));
+    dispatch(updateWidgetMapShow(!widgetMapState.show));
   }, [widgetMapState]);
 
   useLayoutEffect(() => {

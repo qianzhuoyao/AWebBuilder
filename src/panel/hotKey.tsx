@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useDispatch, useSelector } from "react-redux";
-import { fromEvent, Subject, repeat, withLatestFrom } from "rxjs";
+import { fromEvent, Subject, repeat, withLatestFrom, takeUntil } from "rxjs";
 import { IPs, updatePanelTickUnit } from "../store/slice/panelSlice";
 import { AR_PANEL_DOM_ID } from "../contant";
 //快捷键
@@ -27,23 +27,28 @@ export const useCustomHotKeys = () => {
     const mo = fromEvent<MouseEvent>(dom, "mousemove");
     const up = fromEvent<MouseEvent>(dom, "mouseup");
     const wh = fromEvent<WheelEvent>(dom, "mousewheel");
-
-    wh.pipe(withLatestFrom(scaleOb)).subscribe(([w, s]) => {
-      if (s.code === "KeyF") {
-        if (w.deltaY > 0) {
-          dispatch(
-            updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1)))
-          );
-          //放大
-        } else {
-          //缩小
-          dispatch(
-            updatePanelTickUnit(Number((PanelState.tickUnit - 0.1).toFixed(1)))
-          );
+    const ku = fromEvent<KeyboardEvent>(document, "keyup");
+    wh.pipe(takeUntil(ku), withLatestFrom(scaleOb), repeat()).subscribe(
+      ([w, s]) => {
+        if (s.code === "KeyF") {
+          if (w.deltaY > 0) {
+            dispatch(
+              updatePanelTickUnit(
+                Number((PanelState.tickUnit + 0.1).toFixed(1))
+              )
+            );
+            //放大
+          } else {
+            //缩小
+            dispatch(
+              updatePanelTickUnit(
+                Number((PanelState.tickUnit - 0.1).toFixed(1))
+              )
+            );
+          }
         }
       }
-      console.log(w, s, "w0sss");
-    });
+    );
 
     return () => {
       scaleOb?.unsubscribe();

@@ -15,12 +15,12 @@ export const widgetMapSlice = createSlice({
     updateProviderShow: (state, action) => {
       state.providerShow = action.payload;
     },
-    updateShow: (state, action) => {
+    updateWidgetMapShow: (state, action) => {
       state.show = action.payload;
     },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
-export const { updateShow, updateProviderShow } = widgetMapSlice.actions;
+export const { updateWidgetMapShow, updateProviderShow } = widgetMapSlice.actions;
 
 export default widgetMapSlice.reducer;

@@ -12,7 +12,7 @@ import {
 } from "../store/slice/panelSlice";
 import { useSelector } from "react-redux";
 import { useCustomHotKeys } from "./hotKey";
-import { AR_PANEL_DOM_ID } from "../contant";
+import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
 
 export const ARuler = () => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
@@ -27,14 +27,14 @@ export const ARuler = () => {
 
   const dispatch = useDispatch();
 
-  const restore = () => {
-    scrollX = 0;
-    scrollY = 0;
-    guides1.current?.scroll(0);
-    guides1.current?.scrollGuides(0);
-    guides2.current?.scroll(0);
-    guides2.current?.scrollGuides(0);
-  };
+  // const restore = () => {
+  //   scrollX = 0;
+  //   scrollY = 0;
+  //   guides1.current?.scroll(0);
+  //   guides1.current?.scrollGuides(0);
+  //   guides2.current?.scroll(0);
+  //   guides2.current?.scrollGuides(0);
+  // };
 
   useCustomHotKeys();
 
@@ -53,8 +53,11 @@ export const ARuler = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ges = new Gesto(dom);
     ges.on("drag", (e) => {
-      console.log(PanelState.lockTransform, "PanelState.lockTransform");
-      if (!PanelState.lockTransform) {
+      console.log(e, (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node, (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG), PanelState.lockTransform, "PanelState.lockTransform");
+      if (
+        !PanelState.lockTransform &&
+        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node
+      ) {
         scrollX -= e.deltaX;
         scrollY -= e.deltaY;
         guides1.current?.scrollGuides(scrollY);

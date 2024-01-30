@@ -11,12 +11,12 @@ export const attrSlice = createSlice({
     show: undefined,
   },
   reducers: {
-    updateShow: (state, action) => {
+    updateAttrShow: (state, action) => {
       state.show = action.payload;
     },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
-export const { updateShow } = attrSlice.actions;
+export const { updateAttrShow } = attrSlice.actions;
 
 export default attrSlice.reducer;
