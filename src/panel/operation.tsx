@@ -54,10 +54,21 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
+  useEffect(() => {
+    if (!nodeRef.current) {
+      return;
+    }
+    [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
+      ele.setAttribute(ATTR_TAG, Node);
+    });
+  }, [NodesState]);
 
   useEffect(() => {
     let isDragging = false;
-    nodeRef.current?.setAttribute(ATTR_TAG, Node);
+
     const dom = document.getElementById(node.id);
     const CONTAINER = document.getElementById(SCENE);
     if (!dom || !CONTAINER) {
