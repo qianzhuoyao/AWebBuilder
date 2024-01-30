@@ -43,11 +43,10 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
       resizable: true,
       scalable: true,
       rotatable: true,
-      warpable: true,
+
       // Enabling pinchable lets you use events that
       // can be used in draggable, resizable, scalable, and rotateable.
-      pinchable: true, // ["resizable", "scalable", "rotatable"]
-      origin: true,
+
       keepRatio: false,
       // Resize, Scale Events at edges.
       edge: false,
@@ -101,7 +100,7 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
         console.log("onResizeStart", target);
       })
       .on("resize", ({ target, width, height, delta }) => {
-        console.log("onResize", target);
+        console.log("onResize",delta, target);
         delta[0] && (target!.style.width = `${width}px`);
         delta[1] && (target!.style.height = `${height}px`);
       })
