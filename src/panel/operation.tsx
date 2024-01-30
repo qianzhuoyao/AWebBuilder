@@ -99,10 +99,13 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
       .on("resizeStart", ({ target }) => {
         console.log("onResizeStart", target);
       })
-      .on("resize", ({ target, width, height, delta }) => {
+      .on("resize", ({ target, width, drag,height, delta }) => {
         console.log("onResize",delta, target);
-        delta[0] && (target!.style.width = `${width}px`);
-        delta[1] && (target!.style.height = `${height}px`);
+        // delta[0] && (target!.style.width = `${width}px`);
+        // delta[1] && (target!.style.height = `${height}px`);
+        target.style.width = `${width}px`;
+        target.style.height = `${height}px`;
+        target.style.transform = drag.transform;
       })
       .on("resizeEnd", ({ target, isDrag }) => {
         console.log("onResizeEnd", target, isDrag);
