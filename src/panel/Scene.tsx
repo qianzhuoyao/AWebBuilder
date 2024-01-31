@@ -4,6 +4,7 @@ import {
   Tabs,
   Tab,
   Card,
+  CardFooter,
   CardBody,
   Button,
   Tooltip,
@@ -37,6 +38,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
 import { AR_PANEL_DOM_ID } from "../contant";
 import { IPs } from "../store/slice/panelSlice";
+import { INs, IViewNode } from "../store/slice/nodeSlice";
+import { NodeSlot } from "./operation";
 
 const View = () => {
   return (
@@ -244,6 +247,9 @@ const widgetMapTabs = [
 const SceneWidgetMap = () => {
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
 
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
   const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
     return state.widgetMapSlice;
   });
@@ -290,6 +296,41 @@ const SceneWidgetMap = () => {
           </Tabs>
         </div>
         <Divider className="my-1" />
+        <div className="w-full">
+          {[...Object.values(NodesState.list)].map((node: IViewNode) => {
+            return (
+              <Card
+                shadow="sm"
+                key={node.id}
+                isPressable
+                className="w-full my-1"
+                style={{
+                  border: NodesState.targets.includes(node.id)
+                    ? "1px solid #006FEE"
+                    : "1px solid #18181b",
+                }}
+                onPress={() => console.log("item pressed")}
+              >
+                <CardBody className="overflow-visible p-0">
+                  <NodeSlot node={node} isTemp={true}></NodeSlot>
+                </CardBody>
+                <CardFooter className="text-small justify-between">
+                  <small className="text-default-500 m-[auto]">{node.alias}</small>
+                </CardFooter>
+              </Card>
+              // <div
+              //   key={node.id}
+              //   style={{
+              //     border: NodesState.targets.includes(node.id)
+              //       ? "1px solid red"
+              //       : "",
+              //   }}
+              // >
+              //   <NodeSlot node={node} isTemp={true}></NodeSlot>
+              // </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

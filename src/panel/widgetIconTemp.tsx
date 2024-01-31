@@ -106,6 +106,7 @@ export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
               z: 10,
               id: uuidv4(),
               classify,
+              alias: name + typeId,
               instance: {
                 type: typeId,
               },

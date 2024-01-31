@@ -52,6 +52,10 @@ export interface IViewNode {
   w: number;
   h: number;
   z: number;
+  //别名
+  alias: string;
+  //说明
+  desc: string;
   classify: IClassify;
   instance: IIstance;
 }
@@ -59,7 +63,8 @@ export interface IViewNode {
 type nodeId = string;
 export interface INs {
   isSelection: boolean;
-  targets: Array<HTMLElement | SVGElement>;
+  targets:string[];
+
   list: Record<nodeId, IViewNode>;
 }
 
@@ -68,6 +73,7 @@ export const viewNodesSlice = createSlice({
   initialState: {
     list: {},
     targets: [],
+
     isSelection: false,
   },
   reducers: {

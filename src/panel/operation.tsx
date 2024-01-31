@@ -1,14 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 
-import {
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import { FC, memo, useCallback, useEffect, useRef } from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
 import {
@@ -21,20 +14,7 @@ import {
 import { ATTR_TAG, Node, SCENE } from "../contant";
 import { BaseChart } from "../node/chart";
 
-const useWidth = (state: { tickUnit: number; w: number }) => {
-  return useMemo(() => {
-    const { tickUnit, w } = state;
-    return w / tickUnit;
-  }, [state]);
-};
-const useHeight = (state: { tickUnit: number; h: number }) => {
-  return useMemo(() => {
-    const { tickUnit, h } = state;
-    return h / tickUnit;
-  }, [state]);
-};
-
-const Temp: FC<{ id: string }> = ({ id }) => {
+const Temp: FC<{ id: string; isTemp?: boolean }> = ({ id, isTemp }) => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
@@ -46,8 +26,8 @@ const Temp: FC<{ id: string }> = ({ id }) => {
     return (
       <BaseChart
         type={NodesState.list[id].instance.type}
-        width={NodesState.list[id].w / PanelState.tickUnit}
-        height={NodesState.list[id].h / PanelState.tickUnit}
+        width={isTemp ? 205 : NodesState.list[id].w / PanelState.tickUnit}
+        height={isTemp ? 100 : NodesState.list[id].h / PanelState.tickUnit}
         options={NodesState.list[id].instance.option}
       ></BaseChart>
     );
@@ -56,61 +36,69 @@ const Temp: FC<{ id: string }> = ({ id }) => {
   return <></>;
 };
 
-const NodeSlot = memo(({ node }: { node: IViewNode }) => {
-  const nodeRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  useEffect(() => {
-    if (!nodeRef.current) {
-      return;
-    }
-    [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
-      ele.setAttribute(ATTR_TAG, Node);
+export const NodeSlot = memo(
+  ({ node, isTemp }: { node: IViewNode; isTemp: boolean }) => {
+    const nodeRef = useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch();
+    const PanelState = useSelector((state: { panelSlice: IPs }) => {
+      return state.panelSlice;
     });
-  }, [NodesState]);
+    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+      return state.viewNodesSlice;
+    });
+    useEffect(() => {
+      if (!nodeRef.current) {
+        return;
+      }
+      [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
+        ele.setAttribute(ATTR_TAG, Node);
+      });
+    }, [NodesState]);
 
-  const onHandleSelectedCurrent = useCallback(() => {
-    dispatch(updateTargets(nodeRef.current));
-  }, [dispatch]);
+    const onHandleSelectedCurrent = useCallback(() => {
+      //如果不是模板 就选中，否则映射至对应组件
 
-  console.log(node, "node-snode");
-  return (
-    <div
-      ref={nodeRef}
-      id={node.id}
-      className="absolute target"
-      onClick={onHandleSelectedCurrent}
-      style={{
-        left: node.x / PanelState.tickUnit + "px",
-        top: node.y / PanelState.tickUnit + "px",
-        width:
-          useWidth({
-            tickUnit: PanelState.tickUnit,
-            w: node.w,
-          }) + "px",
-        height:
-          useHeight({
-            h: node.h,
-            tickUnit: PanelState.tickUnit,
-          }) + "px",
-      }}
-    >
-      <Temp id={node.id}></Temp>
-    </div>
-  );
-});
+      if (isTemp) {
+        const mapNode = document.getElementById(node.id);
+        console.log(mapNode, "mapNode");
+        dispatch(updateTargets([node.id]));
+      } else {
+        dispatch(updateTargets([nodeRef.current?.id]));
+      }
+    }, [dispatch, isTemp, node.id]);
+
+    console.log(node, "node-snode");
+    return (
+      <div
+        ref={nodeRef}
+        id={isTemp ? node.id + "-Map" : node.id}
+        className={isTemp ? "" : "absolute target"}
+        onClick={onHandleSelectedCurrent}
+        style={
+          isTemp
+            ? {
+                width: "100%",
+                height: "100%",
+              }
+            : {
+                left: node.x / PanelState.tickUnit + "px",
+                top: node.y / PanelState.tickUnit + "px",
+                width: node.w / PanelState.tickUnit + "px",
+                height: node.h / PanelState.tickUnit + "px",
+              }
+        }
+      >
+        <Temp id={node.id} isTemp={isTemp}></Temp>
+      </div>
+    );
+  }
+);
 
 const NodeContainer = () => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
 
   const dispatch = useDispatch();
- 
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
@@ -125,7 +113,7 @@ const NodeContainer = () => {
         ref={moveableRef}
         origin={false}
         keepRatio={false}
-        target={NodesState.targets}
+        target={NodesState.targets.map((id) => document.getElementById(id))}
         draggable={true}
         resizable={true}
         scalable={true}
@@ -173,13 +161,14 @@ const NodeContainer = () => {
           ratio={0}
           keyContainer={window}
           onDragStart={(e) => {
-            console.log(e, "ererererererre");
             const target = e.inputEvent.target;
             if (
               moveableRef.current!.isMoveableElement(target) ||
-              NodesState.targets!.some(
-                (t) => t === target || t.contains(target)
-              )
+              NodesState.targets
+                .map((id) => {
+                  return document.getElementById(id);
+                })!
+                .some((t) => t === target || t?.contains(target))
             ) {
               e.stop();
             }
@@ -198,14 +187,14 @@ const NodeContainer = () => {
                 moveableRef.current!.dragStart(e.inputEvent);
               });
             }
-            dispatch(updateTargets(e.selected));
+            dispatch(updateTargets(e.selected.map((node) => node.id)));
           }}
         />
       )}
       <div className="empty elements"></div>
       <div className="relative w-full h-full elements">
         {[...Object.values(NodesState.list)].map((node) => {
-          return <NodeSlot key={node.id} node={node}></NodeSlot>;
+          return <NodeSlot key={node.id} node={node} isTemp={false}></NodeSlot>;
         })}
       </div>
     </>

@@ -9,6 +9,7 @@ import {
   IWs,
   updateContentImageShowType,
   updateProviderShow,
+  updateWidgetMapShow,
 } from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { useLayoutEffect, useRef } from "react";
@@ -161,6 +162,7 @@ export const Tools = () => {
 
   const onHandleShowWidget = () => {
     dispatch(updateProviderShow(!widgetMapState.providerShow));
+    dispatch(updateWidgetMapShow(!widgetMapState.providerShow));
   };
 
   const gsapToolContainer = useRef<HTMLDivElement>(null);
@@ -216,16 +218,6 @@ export const Tools = () => {
           >
             <Icon icon="mingcute:layer-fill" width={"16px"} height={"16px"} />
           </Button>
-          {/* <Button
-          className="ml-2"
-          isIconOnly
-          size="sm"
-          variant="light"
-          aria-label="locale"
-          onClick={onHandleWidVis}
-        >
-          <Icon icon="mdi:arrow-collapse-left" width={"16px"} height={"16px"} />
-        </Button> */}
         </div>
         <div className="h-[calc(100%_-_40px)]">
           <Tabs
