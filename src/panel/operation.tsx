@@ -13,6 +13,7 @@ import {
 } from "../store/slice/nodeSlice";
 import { ATTR_TAG, Node, SCENE } from "../contant";
 import { BaseChart } from "../node/chart";
+import { useSceneContext } from "../menu/context";
 
 const Temp: FC<{ id: string; isTemp?: boolean }> = ({ id, isTemp }) => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
@@ -36,6 +37,8 @@ const Temp: FC<{ id: string; isTemp?: boolean }> = ({ id, isTemp }) => {
   return <></>;
 };
 
+
+
 export const NodeSlot = memo(
   ({ node, isTemp }: { node: IViewNode; isTemp: boolean }) => {
     const nodeRef = useRef<HTMLDivElement>(null);
@@ -46,6 +49,7 @@ export const NodeSlot = memo(
     const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
       return state.viewNodesSlice;
     });
+    const { view, show } = useSceneContext();
     useEffect(() => {
       if (!nodeRef.current) {
         return;
@@ -74,6 +78,12 @@ export const NodeSlot = memo(
         id={isTemp ? node.id + "-Map" : node.id}
         className={isTemp ? "" : "absolute target"}
         onClick={onHandleSelectedCurrent}
+        onContextMenu={(e) => {
+          show({
+            event: e,
+            props: node,
+          });
+        }}
         style={
           isTemp
             ? {
@@ -89,6 +99,11 @@ export const NodeSlot = memo(
         }
       >
         <Temp id={node.id} isTemp={isTemp}></Temp>
+        {view(
+          ["a", "2"].map((value) => {
+            return <div key={value}>{value}</div>;
+          })
+        )}
       </div>
     );
   }
@@ -106,6 +121,14 @@ const NodeContainer = () => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
+
+useEffect(()=>{
+  const box = moveableRef.current?.getControlBoxElement()
+  if(box){
+    box.style.zIndex = '9'
+  }
+  
+},[])
 
   return (
     <>
