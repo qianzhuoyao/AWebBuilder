@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 
-import { FC, memo, useCallback, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
 import {
@@ -15,7 +15,7 @@ import { ATTR_TAG, Node, SCENE } from "../contant";
 import { BaseChart } from "../node/chart";
 import { useSceneContext } from "../menu/context";
 
-const Temp: FC<{ id: string; isTemp?: boolean }> = ({ id, isTemp }) => {
+const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
@@ -35,9 +35,7 @@ const Temp: FC<{ id: string; isTemp?: boolean }> = ({ id, isTemp }) => {
   }
 
   return <></>;
-};
-
-
+});
 
 export const NodeSlot = memo(
   ({ node, isTemp }: { node: IViewNode; isTemp: boolean }) => {
@@ -109,7 +107,7 @@ export const NodeSlot = memo(
   }
 );
 
-const NodeContainer = () => {
+const NodeContainer = memo(() => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
 
@@ -122,13 +120,12 @@ const NodeContainer = () => {
     return state.viewNodesSlice;
   });
 
-useEffect(()=>{
-  const box = moveableRef.current?.getControlBoxElement()
-  if(box){
-    box.style.zIndex = '9'
-  }
-  
-},[])
+  useEffect(() => {
+    const box = moveableRef.current?.getControlBoxElement();
+    if (box) {
+      box.style.zIndex = "9";
+    }
+  }, []);
 
   return (
     <>
@@ -222,9 +219,9 @@ useEffect(()=>{
       </div>
     </>
   );
-};
+});
 
-export const AScene = () => {
+export const AScene = memo(() => {
   const SCENE_REF = useRef<HTMLDivElement>(null);
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
@@ -232,29 +229,45 @@ export const AScene = () => {
 
   return (
     <>
-      <div
-        className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
-        style={{
-          left: "30px",
-          top: "30px",
-        }}
-      >
-        <div id="container" className="relative w-full h-full overflow-hidden">
+      {useMemo(
+        () => (
           <div
-            ref={SCENE_REF}
-            id={SCENE}
-            className="absolute bg-[#232324] overflow-hidden"
+            className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
             style={{
-              left: PanelState.panelLeft - PanelState.rulerMinX + "px",
-              top: PanelState.panelTop - PanelState.rulerMinY + "px",
-              width: PanelState.panelWidth / PanelState.tickUnit + "px",
-              height: PanelState.panelHeight / PanelState.tickUnit + "px",
+              left: "30px",
+              top: "30px",
             }}
           >
-            <NodeContainer></NodeContainer>
+            <div
+              id="container"
+              className="relative w-full h-full overflow-hidden"
+            >
+              <div
+                ref={SCENE_REF}
+                id={SCENE}
+                className="absolute bg-[#232324] overflow-hidden"
+                style={{
+                  left: PanelState.panelLeft - PanelState.rulerMinX + "px",
+                  top: PanelState.panelTop - PanelState.rulerMinY + "px",
+                  width: PanelState.panelWidth / PanelState.tickUnit + "px",
+                  height: PanelState.panelHeight / PanelState.tickUnit + "px",
+                }}
+              >
+                <NodeContainer></NodeContainer>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        ),
+        [
+          PanelState.panelHeight,
+          PanelState.panelLeft,
+          PanelState.panelTop,
+          PanelState.panelWidth,
+          PanelState.rulerMinX,
+          PanelState.rulerMinY,
+          PanelState.tickUnit,
+        ]
+      )}
     </>
   );
-};
+});

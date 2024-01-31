@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { useCustomHotKeys } from "./hotKey";
 import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
 
-export const ARuler = () => {
+export const ARuler = React.memo(() => {
   const [force, setForce] = useState(false);
 
   useHotkeys("q", () => setForce(true), { keyup: false, keydown: true });
@@ -184,4 +184,4 @@ export const ARuler = () => {
       <AScene></AScene>
     </div>
   );
-};
+});

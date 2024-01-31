@@ -14,7 +14,7 @@ import { SketchPicker } from "react-color";
 import gsap from "gsap";
 import { Icon } from "@iconify-icon/react";
 import { AInput } from "../comp/AInput";
-import { useLayoutEffect, useRef } from "react";
+import { memo, useLayoutEffect, useRef } from "react";
 import { IAs } from "../store/slice/atterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,7 +23,7 @@ import {
   updatePanelLockScale,
 } from "../store/slice/panelSlice";
 
-const ColorPick = () => {
+const ColorPick = memo(() => {
   return (
     <Popover placement="bottom" showArrow offset={10}>
       <PopoverTrigger>
@@ -46,9 +46,9 @@ const ColorPick = () => {
       </PopoverContent>
     </Popover>
   );
-};
+});
 
-const PanelSetting = () => {
+const PanelSetting = memo(() => {
   const dispatch = useDispatch();
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     console.log(state, "statescvsfv");
@@ -130,9 +130,9 @@ const PanelSetting = () => {
       </div>
     </div>
   );
-};
+});
 
-const ProviderSetting = () => {
+const ProviderSetting =memo( () => {
   return (
     <div>
       <div className="flex">
@@ -202,7 +202,7 @@ const ProviderSetting = () => {
       </div>
     </div>
   );
-};
+});
 
 const tabs = [
   {
@@ -217,7 +217,7 @@ const tabs = [
   },
 ];
 
-export const AttrSetting = () => {
+export const AttrSetting =memo( () => {
   const gsapContainer = useRef<HTMLDivElement>(null);
 
   const AttrState = useSelector((state: { attrSlice: IAs }) => {
@@ -261,9 +261,9 @@ export const AttrSetting = () => {
                 </Tab>
               )}
             </Tabs>
-          </div>{" "}
+          </div>
         </CardBody>
       </Card>
     </div>
   );
-};
+});

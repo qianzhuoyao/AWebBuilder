@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { AInput } from "../comp/AInput";
 import { MenuContent } from "./content";
-
 import { Button, Pagination } from "@nextui-org/react";
-export const Proj = () => {
+
+export const Proj = memo(() => {
   return (
     <div>
       <div className="flex mb-4 justify-between">
@@ -18,4 +19,4 @@ export const Proj = () => {
      </div>
     </div>
   );
-};
+});

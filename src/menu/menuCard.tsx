@@ -1,11 +1,5 @@
-import {
-  Card,
-
-  Tabs,
-  CardBody,
-
-  Tab,
-} from "@nextui-org/react";
+import { Card, Tabs, CardBody, Tab } from "@nextui-org/react";
+import { memo } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 const tabs = [
@@ -21,7 +15,7 @@ const tabs = [
   },
 ];
 
-export const MenuCard = () => {
+export const MenuCard = memo(() => {
   return (
     <div className="h-[calc(100vh_-_40px)]">
       <div>
@@ -43,27 +37,7 @@ export const MenuCard = () => {
             </Tab>
           )}
         </Tabs>
-        {/* <Card className="w-[240px]">
-          <CardHeader className="flex gap-3">项目</CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
-              <Listbox
-                variant="flat"
-                aria-label="Listbox menu with descriptions"
-              >
-                <ListboxItem key="proj" startContent={"icon1"}>
-                  <Link to={"/menu/proj"}>我的项目</Link>
-                </ListboxItem>
-
-                <ListboxItem key="temp" startContent={"icon2"}>
-                  <Link to={"/menu/temp"}>我的模板</Link>
-                </ListboxItem>
-              </Listbox>
-            </div>
-          </CardBody>
-        </Card> */}
       </div>
     </div>
   );
-};
+});

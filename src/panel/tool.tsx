@@ -12,9 +12,9 @@ import {
   updateWidgetMapShow,
 } from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
-import { useLayoutEffect, useRef } from "react";
+import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
-const ToolHeader = () => {
+const ToolHeader = memo(() => {
   const dispatch = useDispatch();
   const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
     return state.widgetMapSlice;
@@ -51,47 +51,9 @@ const ToolHeader = () => {
       </div>
     </div>
   );
-};
+});
 
-const WidgetTabs = [
-  {
-    id: "view",
-    label: (
-      <div className="flex items-center">
-        <Icon
-          icon="material-symbols:view-in-ar-outline"
-          width={14}
-          height={14}
-          className="mr-1"
-        />
-        <span>视图组件</span>
-      </div>
-    ),
-    content: (
-      <>
-        <ToolHeader></ToolHeader>
-        <WidgetMenu></WidgetMenu>
-      </>
-    ),
-  },
-  {
-    id: "logic",
-    label: (
-      <div className="flex items-center">
-        <Icon
-          icon="carbon:logical-partition"
-          width={14}
-          height={14}
-          className="mr-1"
-        />
-        <span>逻辑元件</span>
-      </div>
-    ),
-    content: <>12</>,
-  },
-];
-
-const ColIcon = () => {
+const ColIcon = memo(() => {
   return (
     <svg
       width={16}
@@ -117,8 +79,8 @@ const ColIcon = () => {
       ></path>
     </svg>
   );
-};
-const ZIndexIcon = () => {
+});
+const ZIndexIcon = memo(() => {
   return (
     <svg
       width={16}
@@ -140,9 +102,49 @@ const ZIndexIcon = () => {
       ></path>
     </svg>
   );
-};
+});
 
-export const Tools = () => {
+export const Tools = memo(() => {
+  const WidgetTabs = useMemo(
+    () => [
+      {
+        id: "view",
+        label: (
+          <div className="flex items-center">
+            <Icon
+              icon="material-symbols:view-in-ar-outline"
+              width={14}
+              height={14}
+              className="mr-1"
+            />
+            <span>视图组件</span>
+          </div>
+        ),
+        content: (
+          <>
+            <ToolHeader></ToolHeader>
+            <WidgetMenu></WidgetMenu>
+          </>
+        ),
+      },
+      {
+        id: "logic",
+        label: (
+          <div className="flex items-center">
+            <Icon
+              icon="carbon:logical-partition"
+              width={14}
+              height={14}
+              className="mr-1"
+            />
+            <span>逻辑元件</span>
+          </div>
+        ),
+        content: <>12</>,
+      },
+    ],
+    []
+  );
   const dispatch = useDispatch();
   const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
     return state.widgetMapSlice;
@@ -156,14 +158,14 @@ export const Tools = () => {
     return state.attrSlice;
   });
 
-  const onHandleShowAttr = () => {
+  const onHandleShowAttr = useCallback(() => {
     dispatch(updateAttrShow(!AttrState.show));
-  };
+  }, [AttrState.show, dispatch]);
 
-  const onHandleShowWidget = () => {
+  const onHandleShowWidget = useCallback(() => {
     dispatch(updateProviderShow(!widgetMapState.providerShow));
     dispatch(updateWidgetMapShow(!widgetMapState.providerShow));
-  };
+  }, [dispatch, widgetMapState.providerShow]);
 
   const gsapToolContainer = useRef<HTMLDivElement>(null);
 
@@ -220,33 +222,38 @@ export const Tools = () => {
           </Button>
         </div>
         <div className="h-[calc(100%_-_40px)]">
-          <Tabs
-            aria-label="lv tabs"
-            items={WidgetTabs}
-            radius="md"
-            size={"sm"}
-            classNames={{
-              tab: "",
-              tabList: "mb-1 w-[192px]",
-              panel: "p-0 h-[100%] w-[100%]",
-              cursor: "",
-              base: "w-[100%] bg-zinc500",
-            }}
-          >
-            {(item: {
-              id: string;
-              label: React.ReactNode | string;
-              content: React.ReactNode | string;
-            }) => (
-              <Tab key={item.id} title={item.label}>
-                <Card className="rounded-md h-[100%]">
-                  <CardBody className="p-0">{item.content}</CardBody>
-                </Card>
-              </Tab>
-            )}
-          </Tabs>
+          {useMemo(
+            () => (
+              <Tabs
+                aria-label="lv tabs"
+                items={WidgetTabs}
+                radius="md"
+                size={"sm"}
+                classNames={{
+                  tab: "",
+                  tabList: "mb-1 w-[192px]",
+                  panel: "p-0 h-[100%] w-[100%]",
+                  cursor: "",
+                  base: "w-[100%] bg-zinc500",
+                }}
+              >
+                {(item: {
+                  id: string;
+                  label: React.ReactNode | string;
+                  content: React.ReactNode | string;
+                }) => (
+                  <Tab key={item.id} title={item.label}>
+                    <Card className="rounded-md h-[100%]">
+                      <CardBody className="p-0">{item.content}</CardBody>
+                    </Card>
+                  </Tab>
+                )}
+              </Tabs>
+            ),
+            [WidgetTabs]
+          )}
         </div>
       </div>
     </div>
   );
-};
+});

@@ -28,6 +28,7 @@ import {
 import gsap from "gsap";
 import { Icon } from "@iconify-icon/react";
 import {
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -46,13 +47,13 @@ import {
 } from "../store/slice/nodeSlice";
 import { NodeSlot } from "./operation";
 
-const View = () => {
+const View = memo(() => {
   return (
     <div id={AR_PANEL_DOM_ID} className="w-full h-full">
       <ARuler></ARuler>
     </div>
   );
-};
+});
 
 export const STabs = [
   {
@@ -67,7 +68,7 @@ export const STabs = [
   },
 ];
 
-const HotKeyModal = ({ open }: { open: boolean }) => {
+const HotKeyModal = memo(({ open }: { open: boolean }) => {
   useEffect(() => {
     open ? onOpen() : onClose();
   }, [open]);
@@ -132,9 +133,9 @@ const HotKeyModal = ({ open }: { open: boolean }) => {
       </ModalContent>
     </Modal>
   );
-};
+});
 
-const SceneLayer = () => {
+const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
@@ -236,7 +237,7 @@ const SceneLayer = () => {
       <HotKeyModal open={hotKeyOpen}></HotKeyModal>
     </>
   );
-};
+});
 
 const widgetMapTabs = [
   {
@@ -249,7 +250,7 @@ const widgetMapTabs = [
   },
 ];
 
-const SceneWidgetMap = () => {
+const SceneWidgetMap = memo(() => {
   const dispatch = useDispatch();
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
 
@@ -380,16 +381,16 @@ const SceneWidgetMap = () => {
       </div>
     </div>
   );
-};
+});
 
-const AContent = () => {
+const AContent = memo(() => {
   return (
     <div className="w-full h-full flex">
       <SceneWidgetMap></SceneWidgetMap>
       <SceneLayer></SceneLayer>
     </div>
   );
-};
+});
 
 const SLayerTabs = [
   {
@@ -403,7 +404,7 @@ const SLayerTabs = [
     content: <SceneLayer></SceneLayer>,
   },
 ];
-export const Scene = () => {
+export const Scene = memo(() => {
   const dispatch = useDispatch();
 
   const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
@@ -412,11 +413,12 @@ export const Scene = () => {
 
   const onHandleOpenWidMap = useCallback(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));
-  }, [dispatch, widgetMapState.show]);
+  }, [dispatch, widgetMapState]);
 
   useLayoutEffect(() => {
     const dom = document.querySelector(".map-a-left-vis");
     const tab = document.querySelector(".map-a-left-vis-tab");
+
     if (!widgetMapState.providerShow) {
       if (!dom || !tab) {
         return;
@@ -503,4 +505,4 @@ export const Scene = () => {
       </Tabs>
     </div>
   );
-};
+});

@@ -1,7 +1,7 @@
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { WidgetIconTemp } from "./widgetIconTemp";
 import { SRC_ICON } from "./picList";
-import React from "react";
+import React, { memo, useMemo } from "react";
 
 interface ITs {
   ele: {
@@ -11,7 +11,7 @@ interface ITs {
   }[];
 }
 
-export const ChartIcon = () => {
+export const ChartIcon = memo(() => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <svg
@@ -36,9 +36,9 @@ export const ChartIcon = () => {
       <span className="text-center">图表</span>
     </div>
   );
-};
+});
 
-export const TableIcon = () => {
+export const TableIcon = memo(() => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <svg
@@ -55,9 +55,9 @@ export const TableIcon = () => {
       <span>表格</span>
     </div>
   );
-};
+});
 
-export const ImageIcon = () => {
+export const ImageIcon = memo(() => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <svg
@@ -107,8 +107,8 @@ export const ImageIcon = () => {
       <span>资源</span>
     </div>
   );
-};
-export const TextIcon = () => {
+});
+export const TextIcon = memo(() => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <svg
@@ -133,9 +133,9 @@ export const TextIcon = () => {
       <span>文本</span>
     </div>
   );
-};
+});
 
-const TextMap = () => {
+const TextMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.text.map((text) => {
@@ -151,9 +151,9 @@ const TextMap = () => {
       })}
     </div>
   );
-};
+});
 
-const ImageMap = () => {
+const ImageMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.Image.map((image) => {
@@ -169,8 +169,8 @@ const ImageMap = () => {
       })}
     </div>
   );
-};
-const TableMap = () => {
+});
+const TableMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.table.map((table) => {
@@ -186,8 +186,8 @@ const TableMap = () => {
       })}
     </div>
   );
-};
-const LineMap = () => {
+});
+const LineMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.line.map((line) => {
@@ -203,9 +203,9 @@ const LineMap = () => {
       })}
     </div>
   );
-};
+});
 
-const BarMap = () => {
+const BarMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.bar.map((bar) => {
@@ -221,7 +221,7 @@ const BarMap = () => {
       })}
     </div>
   );
-};
+});
 
 export const TextTabs = [
   {
@@ -244,19 +244,6 @@ export const TableTabs = [
     id: "TableChartContent",
     label: "表格",
     content: <TableMap></TableMap>,
-  },
-];
-
-export const ChartTabs = [
-  {
-    id: "bXChartContent",
-    label: "柱状图",
-    content: <BarMap></BarMap>,
-  },
-  {
-    id: "lChartContent",
-    label: "折线图",
-    content: <LineMap></LineMap>,
   },
 ];
 
@@ -287,29 +274,48 @@ const TabSlot: React.FC<ITs> = ({ ele }) => {
   );
 };
 
-const tabs = [
-  {
-    id: "chart",
-    label: <ChartIcon />,
-    content: <TabSlot ele={ChartTabs}></TabSlot>,
-  },
-  {
-    id: "table",
-    label: <TableIcon />,
-    content: <TabSlot ele={TableTabs}></TabSlot>,
-  },
-  {
-    id: "image",
-    label: <ImageIcon />,
-    content: <TabSlot ele={ImageTabs}></TabSlot>,
-  },
-  {
-    id: "text",
-    label: <TextIcon />,
-    content: <TabSlot ele={TextTabs}></TabSlot>,
-  },
-];
-export const WidgetMenu = () => {
+export const WidgetMenu = memo(() => {
+  const ChartTabs = useMemo(
+    () => [
+      {
+        id: "bXChartContent",
+        label: "柱状图",
+        content: <BarMap></BarMap>,
+      },
+      {
+        id: "lChartContent",
+        label: "折线图",
+        content: <LineMap></LineMap>,
+      },
+    ],
+    []
+  );
+  const tabs = useMemo(
+    () => [
+      {
+        id: "chart",
+        label: <ChartIcon />,
+        content: <TabSlot ele={ChartTabs}></TabSlot>,
+      },
+      {
+        id: "table",
+        label: <TableIcon />,
+        content: <TabSlot ele={TableTabs}></TabSlot>,
+      },
+      {
+        id: "image",
+        label: <ImageIcon />,
+        content: <TabSlot ele={ImageTabs}></TabSlot>,
+      },
+      {
+        id: "text",
+        label: <TextIcon />,
+        content: <TabSlot ele={TextTabs}></TabSlot>,
+      },
+    ],
+    []
+  );
+
   return (
     <div className="flex h-[100%]">
       <Tabs
@@ -335,4 +341,4 @@ export const WidgetMenu = () => {
       </Tabs>
     </div>
   );
-};
+});

@@ -2,7 +2,7 @@ import { Tooltip, Button } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify-icon/react";
 import { Link, Outlet } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AInput } from "../comp/AInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +10,7 @@ import { IWls } from "../store/slice/widgetSlice";
 
 import { updateShow } from "../store/slice/widgetSlice";
 
-export const Nav = () => {
+export const Nav = memo(() => {
   const [showTools, setShowTools] = useState(false);
   const dispatch = useDispatch();
   const { theme, setTheme } = useTheme();
@@ -32,21 +32,22 @@ export const Nav = () => {
     ) {
       navigate("/menu/proj");
     }
-  }, []);
+  }, [location, navigate]);
 
   const onChangeTheme = useCallback(() => {
     console.log(theme, "theme");
     setTheme(theme === "light" ? "dark" : "light");
-  }, [theme]);
+  }, [setTheme, theme]);
 
   const widgetState = useSelector((state: { widgetSlice: IWls }) => {
     console.log(state, "00000state");
     return state.widgetSlice;
   });
-  const onHandleWidVis = () => {
+
+  const onHandleWidVis = useCallback(() => {
     console.log(!widgetState.show, "!widgetState.show");
     dispatch(updateShow(!widgetState.show));
-  };
+  }, [dispatch, widgetState.show]);
 
   return (
     <>
@@ -176,4 +177,4 @@ export const Nav = () => {
       <Outlet />
     </>
   );
-};
+});

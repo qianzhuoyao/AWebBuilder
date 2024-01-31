@@ -1,6 +1,13 @@
 import { Card, Image, CardFooter } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
-import { FC, useEffect, useId, useLayoutEffect, useRef } from "react";
+import {
+  memo,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
@@ -24,7 +31,6 @@ export const transPointInScene = (
   pageY: number,
   rMinX: number,
   rMinY: number,
-  tickUnit: number,
   offset: number
 ) => {
   const SCENE = document.getElementById(AR_PANEL_DOM_ID);
@@ -32,19 +38,14 @@ export const transPointInScene = (
     return;
   }
   const { left, top } = SCENE.getBoundingClientRect();
-  console.log(
-    pageX - left - offset + rMinX,
-    rMinX,
-    { left, top, pageX, pageY, rMinX, rMinY, tickUnit },
-    "{ left, top }"
-  );
+
   return {
     x: pageX - left - offset + rMinX,
     y: pageY - top - offset + rMinY,
   };
 };
 
-export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
+export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
   const ICardRef = useRef<HTMLDivElement>(null);
   const ImageRef = useRef<HTMLImageElement>(null);
   const key = useId();
@@ -90,7 +91,6 @@ export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
           e.pageY,
           PanelState.rulerMinX,
           PanelState.rulerMinY,
-          PanelState.tickUnit,
           PanelState.offset
         );
         if (pointer) {
@@ -143,27 +143,34 @@ export const WidgetIconTemp: FC<IW> = ({ src, name, typeId, classify }) => {
   }, [widgetMapState]);
 
   return (
-    <Card
-      ref={ICardRef}
-      isFooterBlurred
-      radius="lg"
-      className="border-none p-1 m-1 bg-default-200 cursor-pointer"
-    >
-      <Image
-        ref={ImageRef}
-        id={key}
-        alt={name}
-        className="object-cover"
-        height={200}
-        isZoomed
-        src={src}
-        width={"100%"}
-      />
-      {!widgetMapState.contentImageShowType && (
-        <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
-          <p className="text-tiny text-white/80">{name}</p>
-        </CardFooter>
+    <>
+      {useMemo(
+        () => (
+          <Card
+            ref={ICardRef}
+            isFooterBlurred
+            radius="lg"
+            className="border-none p-1 m-1 bg-default-200 cursor-pointer"
+          >
+            <Image
+              ref={ImageRef}
+              id={key}
+              alt={name}
+              className="object-cover"
+              height={200}
+              isZoomed
+              src={src}
+              width={"100%"}
+            />
+            {!widgetMapState.contentImageShowType && (
+              <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+                <p className="text-tiny text-white/80">{name}</p>
+              </CardFooter>
+            )}
+          </Card>
+        ),
+        [key, name, src, widgetMapState.contentImageShowType]
       )}
-    </Card>
+    </>
   );
-};
+});

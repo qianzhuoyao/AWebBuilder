@@ -28,7 +28,7 @@ interface IBaseChart {
 export const BaseChart = memo((chartParams: IBaseChart) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartId = useId();
-  console.log(chartParams, "chartParams");
+  
   useEffect(() => {
     //销毁指向
     const CRvar = chartRef.current;
