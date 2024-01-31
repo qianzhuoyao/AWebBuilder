@@ -1,12 +1,9 @@
 import {
   Card,
-  CardHeader,
-  Listbox,
-  ListboxItem,
+
   Tabs,
   CardBody,
-  Spacer,
-  Divider,
+
   Tab,
 } from "@nextui-org/react";
 import { Link, Outlet } from "react-router-dom";

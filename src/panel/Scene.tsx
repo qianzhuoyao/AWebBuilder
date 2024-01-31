@@ -87,10 +87,28 @@ const HotKeyModal = ({ open }: { open: boolean }) => {
                   <TableRow key="1">
                     <TableCell>放大缩小</TableCell>
                     <TableCell>
-                      <Kbd keys={[]}>KeyF</Kbd>
+                      <Kbd keys={[]}>KeyF+Wheel</Kbd>
                     </TableCell>
                     <TableCell>
-                      <Kbd keys={[]}>KeyF</Kbd>
+                      <Kbd keys={[]}>KeyF+Wheel</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="1">
+                    <TableCell>多选</TableCell>
+                    <TableCell>
+                      <Kbd keys={[]}>KeyQ+Mouse1Down</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={[]}>KeyQ+Mouse1Down</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="1">
+                    <TableCell>延续多选</TableCell>
+                    <TableCell>
+                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -260,7 +278,14 @@ const SceneWidgetMap = () => {
       <div ref={gsapSceneWidgetContainer} className="w-[210px] px-2">
         <div className="flex w-full justify-between items-center py-2">
           <small className="">组件映射</small>
-          <Tabs size="sm" aria-label="Dynamic tabs" items={widgetMapTabs}>
+          <Tabs
+            size="sm"
+            aria-label="Dynamic tabs"
+            items={widgetMapTabs}
+            classNames={{
+              tabList: "",
+            }}
+          >
             {(item) => <Tab key={item.id} title={item.label}></Tab>}
           </Tabs>
         </div>

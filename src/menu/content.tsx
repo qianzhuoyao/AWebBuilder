@@ -2,10 +2,9 @@ import {
   Card,
   Spacer,
   CardFooter,
-  CardHeader,
-  Chip,
+
   CardBody,
-  Avatar,
+
   Image,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";

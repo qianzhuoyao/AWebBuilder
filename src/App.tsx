@@ -8,7 +8,7 @@ import {
 import { Nav } from "./layout/nav";
 import { MenuCard } from "./menu/menuCard";
 import { Panel } from "./panel/panel";
-import { useCustomHotKeys } from "./panel/hotKey";
+
 
 interface MessagesData {
   messages: string[];

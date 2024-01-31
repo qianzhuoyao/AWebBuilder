@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { FC, memo, useEffect, useMemo, useRef } from "react";
+import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
+import Moveable from "react-moveable";
+import Selecto from "react-selecto";
 import {
   INs,
   IViewNode,
   updatePosition,
   updateSize,
 } from "../store/slice/nodeSlice";
-import Moveable, { OnScale } from "moveable";
 import { ATTR_TAG, Node, SCENE } from "../contant";
 import { BaseChart } from "../node/chart";
 
@@ -49,8 +50,6 @@ const Temp: FC<{ id: string }> = ({ id }) => {
 const NodeSlot = memo(({ node }: { node: IViewNode }) => {
   const nodeRef = useRef<HTMLDivElement>(null);
 
-  const dispatch = useDispatch();
-
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
@@ -66,147 +65,12 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
     });
   }, [NodesState]);
 
-  useEffect(() => {
-    let isDragging = false;
-
-    const dom = document.getElementById(node.id);
-    const CONTAINER = document.getElementById(SCENE);
-    if (!dom || !CONTAINER) {
-      return;
-    }
-    const moveable = new Moveable(CONTAINER, {
-      target: dom,
-      // If the container is null, the position is fixed. (default: parentElement(document.body))
-      container: CONTAINER,
-      draggable: true,
-      resizable: true,
-      scalable: true,
-      rotatable: true,
-
-      // Enabling pinchable lets you use events that
-      // can be used in draggable, resizable, scalable, and rotateable.
-      origin: false,
-      keepRatio: false,
-      // Resize, Scale Events at edges.
-      edge: false,
-      throttleDrag: 0,
-      throttleResize: 0,
-      throttleScale: 0,
-      throttleRotate: 0,
-    });
-    moveable
-      .on("dragStart", ({ target }) => {
-        console.log("onDragStart", target);
-        isDragging = false;
-      })
-      .on(
-        "drag",
-        ({
-          target,
-
-          left,
-          top,
-        }) => {
-          console.log("onDrag left, top", left, top);
-          target!.style.left = `${left}px`;
-          target!.style.top = `${top}px`;
-          isDragging = true;
-          // console.log("onDrag translate", dist);
-          // target!.style.transform = transform;
-        }
-      )
-      .on("dragEnd", ({ target }) => {
-        console.log(
-          "onDragEnd",
-          PanelState,
-          target.getBoundingClientRect().left,
-          target,
-          parseFloat(target.style.left) * PanelState.tickUnit,
-          parseFloat(target.style.top) * PanelState.tickUnit
-        );
-        isDragging &&
-          dispatch(
-            updatePosition({
-              id: node.id,
-              x: parseFloat(target.style.left) * PanelState.tickUnit,
-              y: parseFloat(target.style.top) * PanelState.tickUnit,
-            })
-          );
-      });
-
-    /* resizable */
-    moveable
-      .on("resizeStart", ({ target }) => {
-        console.log("onResizeStart", target);
-      })
-      .on("resize", ({ target, width, drag, height, delta }) => {
-        console.log("onResize", delta, target);
-        // delta[0] && (target!.style.width = `${width}px`);
-        // delta[1] && (target!.style.height = `${height}px`);
-        target.style.width = `${width}px`;
-        target.style.height = `${height}px`;
-        target.style.transform = drag.transform;
-      })
-      .on("resizeEnd", ({ target, isDrag }) => {
-        console.log(
-          "onResizeEnd",
-          parseFloat(target.style.width),
-          target,
-          isDrag
-        );
-        dispatch(
-          updateSize({
-            id: node.id,
-            w: parseFloat(target.style.width) * PanelState.tickUnit,
-            h: parseFloat(target.style.height) * PanelState.tickUnit,
-          })
-        );
-      });
-
-    /* scalable */
-    moveable
-      .on("scaleStart", ({ target }) => {
-        console.log("onScaleStart", target);
-      })
-      .on(
-        "scale",
-        ({
-          target,
-          scale,
-
-          transform,
-        }: OnScale) => {
-          console.log("onScale scale", scale);
-          target!.style.transform = transform;
-        }
-      )
-      .on("scaleEnd", ({ target, isDrag }) => {
-        console.log("onScaleEnd", target, isDrag);
-      });
-
-    /* rotatable */
-    moveable
-      .on("rotateStart", ({ target }) => {
-        console.log("onRotateStart", target);
-      })
-      .on("rotate", ({ target, dist, transform }) => {
-        console.log("onRotate", dist);
-        target!.style.transform = transform;
-      })
-      .on("rotateEnd", ({ target, isDrag }) => {
-        console.log("onRotateEnd", target, isDrag);
-      });
-    return () => {
-      moveable.destroy();
-    };
-  }, [PanelState, dispatch, node.id]);
-
   console.log(node, "node-snode");
   return (
     <div
       ref={nodeRef}
       id={node.id}
-      className="absolute"
+      className="absolute target"
       style={{
         left: node.x / PanelState.tickUnit + "px",
         top: node.y / PanelState.tickUnit + "px",
@@ -227,11 +91,102 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
   );
 });
 
-export const AScene = () => {
+const NodeContainer = () => {
+  const moveableRef = useRef<Moveable>(null);
+  const selectoRef = useRef<Selecto>(null);
+  const dispatch = useDispatch();
+  const [targets, setTargets] = useState<Array<HTMLElement | SVGElement>>([]);
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    return state.panelSlice;
+  });
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
 
+  return (
+    <>
+      <Moveable
+        ref={moveableRef}
+        origin={false}
+        keepRatio={false}
+        target={targets}
+        draggable={true}
+        resizable={true}
+        scalable={true}
+        rotatable={true}
+        onClickGroup={(e) => {
+          selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
+        }}
+        onRender={(e) => {
+          e.target.style.cssText += e.cssText;
+        }}
+        onResizeEnd={(e) => {
+          dispatch(
+            updateSize({
+              id: e.target.id,
+              w: parseFloat(e.target.style.width) * PanelState.tickUnit,
+              h: parseFloat(e.target.style.height) * PanelState.tickUnit,
+            })
+          );
+        }}
+        onDragEnd={(e) => {
+          console.log(e, "e-e-e-e-e-e-ecc");
+          dispatch(
+            updatePosition({
+              id: e.target.id,
+              x: parseFloat(e.target.style.left) * PanelState.tickUnit,
+              y: parseFloat(e.target.style.top) * PanelState.tickUnit,
+            })
+          );
+        }}
+        onRenderGroup={(e) => {
+          e.events.forEach((ev) => {
+            ev.target.style.cssText += ev.cssText;
+          });
+        }}
+      />
+      <Selecto
+        ref={selectoRef}
+        dragContainer={".elements"}
+        selectableTargets={[".target"]}
+        hitRate={0}
+        selectByClick={true}
+        selectFromInside={false}
+        toggleContinueSelect={["shift"]}
+        ratio={0}
+        keyContainer={window}
+        onDragStart={(e) => {
+          console.log(e, "ererererererre");
+          const target = e.inputEvent.target;
+          if (
+            moveableRef.current!.isMoveableElement(target) ||
+            targets!.some((t) => t === target || t.contains(target))
+          ) {
+            e.stop();
+          }
+        }}
+        onSelectEnd={(e) => {
+          if (e.isDragStartEnd) {
+            e.inputEvent.preventDefault();
+            moveableRef.current!.waitToChangeTarget().then(() => {
+              moveableRef.current!.dragStart(e.inputEvent);
+            });
+          }
+          setTargets(e.selected);
+        }}
+      />
+      <div className="empty elements"></div>
+      <div className="relative w-full h-full elements">
+        {[...Object.values(NodesState.list)].map((node) => {
+          return <NodeSlot key={node.id} node={node}></NodeSlot>;
+        })}
+      </div>
+    </>
+  );
+};
+
+export const AScene = () => {
+  const SCENE_REF = useRef<HTMLDivElement>(null);
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
@@ -247,6 +202,7 @@ export const AScene = () => {
       >
         <div id="container" className="relative w-full h-full overflow-hidden">
           <div
+            ref={SCENE_REF}
             id={SCENE}
             className="absolute bg-[#232324] overflow-hidden"
             style={{
@@ -256,11 +212,7 @@ export const AScene = () => {
               height: PanelState.panelHeight / PanelState.tickUnit + "px",
             }}
           >
-            <div className="relative w-full h-full">
-              {[...Object.values(NodesState.list)].map((node) => {
-                return <NodeSlot key={node.id} node={node}></NodeSlot>;
-              })}
-            </div>
+            <NodeContainer></NodeContainer>
           </div>
         </div>
       </div>
