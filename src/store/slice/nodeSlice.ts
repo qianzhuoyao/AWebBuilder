@@ -56,6 +56,8 @@ export interface IViewNode {
   alias: string;
   //说明
   desc: string;
+  //拷贝自
+  copyBy: string;
   classify: IClassify;
   instance: IIstance;
 }
@@ -63,7 +65,7 @@ export interface IViewNode {
 type nodeId = string;
 export interface INs {
   isSelection: boolean;
-  targets:string[];
+  targets: string[];
 
   list: Record<nodeId, IViewNode>;
 }
@@ -77,6 +79,18 @@ export const viewNodesSlice = createSlice({
     isSelection: false,
   },
   reducers: {
+    deleteListItem: (state, action) => {
+      const { idList } = action.payload;
+      if (Array.isArray(idList)) {
+        const newList: Record<nodeId, IViewNode> = {};
+        Object.keys(state.list).map((key) => {
+          if (!idList.includes(key)) {
+            newList[key] = (state.list as Record<string, IViewNode>)[key];
+          }
+        });
+        state.list = newList;
+      }
+    },
     updateIsSelection: (state, action) => {
       state.isSelection = action.payload;
     },
@@ -121,6 +135,7 @@ export const {
   updateIsSelection,
   updateTargets,
   updatePosition,
+  deleteListItem,
   updateSize,
 } = viewNodesSlice.actions;
 

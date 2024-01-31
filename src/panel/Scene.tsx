@@ -38,7 +38,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
 import { AR_PANEL_DOM_ID } from "../contant";
 import { IPs } from "../store/slice/panelSlice";
-import { INs, IViewNode } from "../store/slice/nodeSlice";
+import {
+  INs,
+  IViewNode,
+  addNode,
+  deleteListItem,
+} from "../store/slice/nodeSlice";
 import { NodeSlot } from "./operation";
 
 const View = () => {
@@ -245,6 +250,7 @@ const widgetMapTabs = [
 ];
 
 const SceneWidgetMap = () => {
+  const dispatch = useDispatch();
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
 
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
@@ -275,6 +281,26 @@ const SceneWidgetMap = () => {
       });
     }
   }, [widgetMapState]);
+
+  const onHandleRemove = useCallback(
+    (id: string) => {
+      console.log(id, "ssss");
+      dispatch(deleteListItem({ idList: [id] }));
+    },
+    [dispatch]
+  );
+
+  const onHandleCopy = useCallback(
+    (id: string) => {
+      const clone = NodesState.list[id];
+      if (clone) {
+        dispatch(
+          addNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" })
+        );
+      }
+    },
+    [NodesState.list, dispatch]
+  );
 
   return (
     <div
@@ -314,20 +340,40 @@ const SceneWidgetMap = () => {
                 <CardBody className="overflow-visible p-0">
                   <NodeSlot node={node} isTemp={true}></NodeSlot>
                 </CardBody>
-                <CardFooter className="text-small justify-between">
-                  <small className="text-default-500 m-[auto]">{node.alias}</small>
+                <CardFooter className="text-small justify-between items-center">
+                  <small className="text-default-500">{node.alias}</small>
+                  <p>
+                    <Tooltip
+                      color={"default"}
+                      content={"复制"}
+                      placement="top"
+                      className="capitalize"
+                    >
+                      <Icon
+                        className="text-default-500 mr-2"
+                        icon="ph:copy-fill"
+                        width={13}
+                        height={13}
+                        onClick={() => onHandleCopy(node.id)}
+                      />
+                    </Tooltip>
+                    <Tooltip
+                      color={"default"}
+                      content={"删除"}
+                      placement="top"
+                      className="capitalize"
+                    >
+                      <Icon
+                        className="text-default-500"
+                        icon="pajamas:remove"
+                        width={13}
+                        height={13}
+                        onClick={() => onHandleRemove(node.id)}
+                      />
+                    </Tooltip>
+                  </p>
                 </CardFooter>
               </Card>
-              // <div
-              //   key={node.id}
-              //   style={{
-              //     border: NodesState.targets.includes(node.id)
-              //       ? "1px solid red"
-              //       : "",
-              //   }}
-              // >
-              //   <NodeSlot node={node} isTemp={true}></NodeSlot>
-              // </div>
             );
           })}
         </div>
