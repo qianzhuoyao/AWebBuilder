@@ -58,6 +58,8 @@ export interface IViewNode {
 
 type nodeId = string;
 export interface INs {
+  isSelection: boolean;
+  targets: Array<HTMLElement | SVGElement>;
   list: Record<nodeId, IViewNode>;
 }
 
@@ -65,8 +67,16 @@ export const viewNodesSlice = createSlice({
   name: "nodes",
   initialState: {
     list: {},
+    targets: [],
+    isSelection: false,
   },
   reducers: {
+    updateIsSelection: (state, action) => {
+      state.isSelection = action.payload;
+    },
+    updateTargets: (state, action) => {
+      state.targets = action.payload;
+    },
     updateSize: (state, action) => {
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
@@ -100,6 +110,12 @@ export const viewNodesSlice = createSlice({
   },
 });
 
-export const { addNode, updatePosition, updateSize } = viewNodesSlice.actions;
+export const {
+  addNode,
+  updateIsSelection,
+  updateTargets,
+  updatePosition,
+  updateSize,
+} = viewNodesSlice.actions;
 
 export default viewNodesSlice.reducer;

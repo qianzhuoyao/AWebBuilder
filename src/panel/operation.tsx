@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useMemo, useRef } from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
 import {
@@ -8,6 +8,7 @@ import {
   IViewNode,
   updatePosition,
   updateSize,
+  updateTargets,
 } from "../store/slice/nodeSlice";
 import { ATTR_TAG, Node, SCENE } from "../contant";
 import { BaseChart } from "../node/chart";
@@ -49,7 +50,7 @@ const Temp: FC<{ id: string }> = ({ id }) => {
 
 const NodeSlot = memo(({ node }: { node: IViewNode }) => {
   const nodeRef = useRef<HTMLDivElement>(null);
-
+  const dispatch = useDispatch();
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
@@ -65,12 +66,17 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
     });
   }, [NodesState]);
 
+  const onHandleSelectedCurrent = useCallback(() => {
+    dispatch(updateTargets(nodeRef.current));
+  }, [dispatch]);
+
   console.log(node, "node-snode");
   return (
     <div
       ref={nodeRef}
       id={node.id}
       className="absolute target"
+      onClick={onHandleSelectedCurrent}
       style={{
         left: node.x / PanelState.tickUnit + "px",
         top: node.y / PanelState.tickUnit + "px",
@@ -95,7 +101,6 @@ const NodeContainer = () => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
   const dispatch = useDispatch();
-  const [targets, setTargets] = useState<Array<HTMLElement | SVGElement>>([]);
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
@@ -109,7 +114,7 @@ const NodeContainer = () => {
         ref={moveableRef}
         origin={false}
         keepRatio={false}
-        target={targets}
+        target={NodesState.targets}
         draggable={true}
         resizable={true}
         scalable={true}
@@ -145,36 +150,47 @@ const NodeContainer = () => {
           });
         }}
       />
-      <Selecto
-        ref={selectoRef}
-        dragContainer={".elements"}
-        selectableTargets={[".target"]}
-        hitRate={0}
-        selectByClick={true}
-        selectFromInside={false}
-        toggleContinueSelect={["shift"]}
-        ratio={0}
-        keyContainer={window}
-        onDragStart={(e) => {
-          console.log(e, "ererererererre");
-          const target = e.inputEvent.target;
-          if (
-            moveableRef.current!.isMoveableElement(target) ||
-            targets!.some((t) => t === target || t.contains(target))
-          ) {
-            e.stop();
-          }
-        }}
-        onSelectEnd={(e) => {
-          if (e.isDragStartEnd) {
-            e.inputEvent.preventDefault();
-            moveableRef.current!.waitToChangeTarget().then(() => {
-              moveableRef.current!.dragStart(e.inputEvent);
-            });
-          }
-          setTargets(e.selected);
-        }}
-      />
+      {NodesState.isSelection && (
+        <Selecto
+          ref={selectoRef}
+          dragContainer={".elements"}
+          selectableTargets={[".target"]}
+          hitRate={0}
+          selectByClick={true}
+          selectFromInside={false}
+          toggleContinueSelect={["shift"]}
+          ratio={0}
+          keyContainer={window}
+          onDragStart={(e) => {
+            console.log(e, "ererererererre");
+            const target = e.inputEvent.target;
+            if (
+              moveableRef.current!.isMoveableElement(target) ||
+              NodesState.targets!.some(
+                (t) => t === target || t.contains(target)
+              )
+            ) {
+              e.stop();
+            }
+          }}
+          onSelectEnd={(e) => {
+            setTimeout(() => {
+              [...document.querySelectorAll(".moveable-area")].forEach(
+                (node) => {
+                  node.setAttribute(ATTR_TAG, Node);
+                }
+              );
+            }, 0);
+            if (e.isDragStartEnd) {
+              e.inputEvent.preventDefault();
+              moveableRef.current!.waitToChangeTarget().then(() => {
+                moveableRef.current!.dragStart(e.inputEvent);
+              });
+            }
+            dispatch(updateTargets(e.selected));
+          }}
+        />
+      )}
       <div className="empty elements"></div>
       <div className="relative w-full h-full elements">
         {[...Object.values(NodesState.list)].map((node) => {

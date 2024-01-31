@@ -49,6 +49,7 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
       R.observe(CRvar);
 
       return () => {
+        ChartInstance.dispose()
         CRvar && R.unobserve(CRvar);
         R.disconnect();
       };
