@@ -94,7 +94,7 @@ const HotKeyModal = ({ open }: { open: boolean }) => {
                     </TableCell>
                   </TableRow>
                   <TableRow key="1">
-                    <TableCell>多选</TableCell>
+                    <TableCell>锚定面板</TableCell>
                     <TableCell>
                       <Kbd keys={[]}>KeyQ+Mouse1Down</Kbd>
                     </TableCell>

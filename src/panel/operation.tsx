@@ -1,6 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { FC, memo, useCallback, useEffect, useMemo, useRef } from "react";
+
+import {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
 import {
@@ -100,7 +108,10 @@ const NodeSlot = memo(({ node }: { node: IViewNode }) => {
 const NodeContainer = () => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
+
   const dispatch = useDispatch();
+ 
+
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });

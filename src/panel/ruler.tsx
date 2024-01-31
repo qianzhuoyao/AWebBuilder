@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import * as React from "react";
-
+import { useHotkeys } from "react-hotkeys-hook";
 import Guides from "@scena/react-guides";
 import Gesto from "gesto";
 import { useDispatch } from "react-redux";
@@ -15,6 +15,11 @@ import { useCustomHotKeys } from "./hotKey";
 import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
 
 export const ARuler = () => {
+  const [force, setForce] = useState(false);
+
+  useHotkeys("q", () => setForce(true), { keyup: false, keydown: true });
+  useHotkeys("q", () => setForce(false), { keyup: true, keydown: false });
+
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     console.log(state, "statescvsfv");
     return state.panelSlice;
@@ -53,10 +58,17 @@ export const ARuler = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ges = new Gesto(dom);
     ges.on("drag", (e) => {
-      console.log(e, (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node, (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG), PanelState.lockTransform, "PanelState.lockTransform");
+      console.log(
+        e,
+        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node,
+        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG),
+        PanelState.lockTransform,
+        "PanelState.lockTransform"
+      );
       if (
         !PanelState.lockTransform &&
-        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node
+        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node &&
+        !force
       ) {
         scrollX -= e.deltaX;
         scrollY -= e.deltaY;
@@ -80,7 +92,7 @@ export const ARuler = () => {
       ArDomResizeObserver.unobserve(dom);
       ArDomResizeObserver.disconnect();
     };
-  }, [PanelState.lockTransform]);
+  }, [PanelState.lockTransform, force]);
   return (
     <div className="page h-full relative">
       {/* <div className="box" onClick={restore}></div> */}

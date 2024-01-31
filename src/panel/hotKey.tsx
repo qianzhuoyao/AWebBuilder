@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fromEvent, filter, switchMap, zip, map, takeUntil, take } from "rxjs";
 import {
   IPs,
-  updatePanelLockTransform,
   updatePanelTickUnit,
 } from "../store/slice/panelSlice";
 import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
@@ -88,18 +87,16 @@ const useSelectionKeyEvent = () => {
     const mousedown$ = createMouseDown();
 
     const S$ = keyDown$.pipe(
-      take(1),
       map(() => {
-        dispatch(updatePanelLockTransform(true));
+        // dispatch(updatePanelLockTransform(true));
         dispatch(updateIsSelection(true));
       }),
       switchMap(() =>
         mousedown$.pipe(
           takeUntil(
             keyUp$.pipe(
-              take(1),
               map(() => {
-                dispatch(updatePanelLockTransform(false));
+                // dispatch(updatePanelLockTransform(false));
                 dispatch(updateIsSelection(false));
               })
             )
@@ -108,7 +105,7 @@ const useSelectionKeyEvent = () => {
       )
     );
 
-    const subscription = zip(keyDown$, S$).subscribe();
+    const subscription = zip(keyDown$, S$).pipe(take(1)).subscribe();
 
     return () => {
       subscription.unsubscribe();
