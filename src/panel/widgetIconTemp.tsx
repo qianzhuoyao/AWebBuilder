@@ -48,12 +48,12 @@ const ViewCard = memo(
   ({
     name,
     typeId,
-    key,
+    id,
     src,
   }: {
     name: string;
     typeId: INodeType;
-    key: string;
+    id: string;
     src: string;
   }) => {
     const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
@@ -80,7 +80,7 @@ const ViewCard = memo(
             >
               <Image
                 ref={ImageRef}
-                id={key}
+                id={id}
                 alt={name}
                 className="object-cover"
                 height={200}
@@ -96,7 +96,7 @@ const ViewCard = memo(
               )}
             </Card>
           ),
-          [key, name, src, widgetMapState.contentImageShowType]
+          [id, name, src, widgetMapState.contentImageShowType]
         )}
       </>
     );
@@ -163,13 +163,13 @@ const LogicCard = memo(
   ({
     name,
     typeId,
-    key,
+    id,
     src,
     tips,
   }: {
     name: string;
     typeId: INodeType;
-    key: string;
+    id: string;
     src: string;
     tips?: string;
   }) => {
@@ -194,7 +194,7 @@ const LogicCard = memo(
               <Card ref={ICardRef} className="cursor-pointer">
                 <CardHeader className="flex gap-3">
                   <Image
-                    id={key}
+                    id={id}
                     ref={ImageRef}
                     alt="logo"
                     height={30}
@@ -212,7 +212,7 @@ const LogicCard = memo(
               </Card>
             </>
           ),
-          [key, name, src, tips]
+          [id, name, src, tips]
         )}
       </>
     );
@@ -304,11 +304,11 @@ export const WidgetIconTemp = memo(
     return (
       <>
         {nodeType === "VIEW" ? (
-          <ViewCard key={key} name={name} typeId={typeId} src={src} />
+          <ViewCard id={key} name={name} typeId={typeId} src={src} />
         ) : (
           <LogicCard
             name={name}
-            key={key}
+            id={key}
             typeId={typeId}
             src={src}
             tips={tips}
