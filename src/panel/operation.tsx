@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 
-import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
 import {
@@ -120,6 +120,8 @@ const NodeContainer = memo(() => {
     return state.viewNodesSlice;
   });
 
+  console.log(PanelState, "PanelState-PanelState");
+
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
     if (box) {
@@ -169,7 +171,7 @@ const NodeContainer = memo(() => {
           });
         }}
       />
-      {NodesState.isSelection && (
+      {PanelState.isSelection && (
         <Selecto
           ref={selectoRef}
           dragContainer={".elements"}
@@ -211,6 +213,7 @@ const NodeContainer = memo(() => {
           }}
         />
       )}
+      {JSON.stringify(PanelState.isSelection)}
       <div className="empty elements"></div>
       <div className="relative w-full h-full elements">
         {[...Object.values(NodesState.list)].map((node) => {
@@ -229,45 +232,29 @@ export const AScene = memo(() => {
 
   return (
     <>
-      {useMemo(
-        () => (
+      <div
+        className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
+        style={{
+          left: "30px",
+          top: "30px",
+        }}
+      >
+        <div id="container" className="relative w-full h-full overflow-hidden">
           <div
-            className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
+            ref={SCENE_REF}
+            id={SCENE}
+            className="absolute bg-[#232324] overflow-hidden"
             style={{
-              left: "30px",
-              top: "30px",
+              left: PanelState.panelLeft - PanelState.rulerMinX + "px",
+              top: PanelState.panelTop - PanelState.rulerMinY + "px",
+              width: PanelState.panelWidth / PanelState.tickUnit + "px",
+              height: PanelState.panelHeight / PanelState.tickUnit + "px",
             }}
           >
-            <div
-              id="container"
-              className="relative w-full h-full overflow-hidden"
-            >
-              <div
-                ref={SCENE_REF}
-                id={SCENE}
-                className="absolute bg-[#232324] overflow-hidden"
-                style={{
-                  left: PanelState.panelLeft - PanelState.rulerMinX + "px",
-                  top: PanelState.panelTop - PanelState.rulerMinY + "px",
-                  width: PanelState.panelWidth / PanelState.tickUnit + "px",
-                  height: PanelState.panelHeight / PanelState.tickUnit + "px",
-                }}
-              >
-                <NodeContainer></NodeContainer>
-              </div>
-            </div>
+            <NodeContainer></NodeContainer>
           </div>
-        ),
-        [
-          PanelState.panelHeight,
-          PanelState.panelLeft,
-          PanelState.panelTop,
-          PanelState.panelWidth,
-          PanelState.rulerMinX,
-          PanelState.rulerMinY,
-          PanelState.tickUnit,
-        ]
-      )}
+        </div>
+      </div>
     </>
   );
 });

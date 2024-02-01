@@ -58,13 +58,6 @@ export const ARuler = React.memo(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ges = new Gesto(dom);
     ges.on("drag", (e) => {
-      console.log(
-        e,
-        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node,
-        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG),
-        PanelState.lockTransform,
-        "PanelState.lockTransform"
-      );
       if (
         !PanelState.lockTransform &&
         (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node &&

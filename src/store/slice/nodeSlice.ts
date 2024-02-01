@@ -64,7 +64,6 @@ export interface IViewNode {
 
 type nodeId = string;
 export interface INs {
-  isSelection: boolean;
   targets: string[];
 
   list: Record<nodeId, IViewNode>;
@@ -75,8 +74,6 @@ export const viewNodesSlice = createSlice({
   initialState: {
     list: {},
     targets: [],
-
-    isSelection: false,
   },
   reducers: {
     deleteListItem: (state, action) => {
@@ -91,9 +88,7 @@ export const viewNodesSlice = createSlice({
         state.list = newList;
       }
     },
-    updateIsSelection: (state, action) => {
-      state.isSelection = action.payload;
-    },
+
     updateTargets: (state, action) => {
       state.targets = action.payload;
     },
@@ -132,7 +127,6 @@ export const viewNodesSlice = createSlice({
 
 export const {
   addNode,
-  updateIsSelection,
   updateTargets,
   updatePosition,
   deleteListItem,

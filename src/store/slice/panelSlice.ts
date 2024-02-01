@@ -4,6 +4,7 @@ export interface IPs {
   rulerMinX: number;
   rulerMinY: number;
   tickUnit: number;
+  isSelection: boolean;
   offset: number;
   lockScale: boolean;
   lockTransform: boolean;
@@ -20,6 +21,7 @@ export const panelSlice = createSlice({
     rulerMinX: 0,
     lockTransform: false,
     lockScale: false,
+    isSelection: false,
     rulerMinY: 0,
     snap: 5,
     offset: 30,
@@ -30,6 +32,10 @@ export const panelSlice = createSlice({
     panelTop: 0,
   },
   reducers: {
+    updateIsSelection: (state, action) => {
+      console.log(action,'action-action')
+      state.isSelection = action.payload;
+    },
     updatePanelLockTransform: (state, action) => {
       state.lockTransform = action.payload;
     },
@@ -41,7 +47,7 @@ export const panelSlice = createSlice({
         state.tickUnit = action.payload > 1 ? action.payload : 1;
       }
     },
- 
+
     updatePanelTop: (state, action) => {
       state.panelTop = action.payload;
     },
@@ -71,7 +77,7 @@ export const {
   updatePanelLockScale,
   updatePanelHeight,
   updatePanelLeft,
-
+  updateIsSelection,
   updatePanelWidth,
   updatePanelTickUnit,
   updateRulerMinY,

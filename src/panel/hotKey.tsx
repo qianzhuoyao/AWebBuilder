@@ -1,12 +1,23 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fromEvent, filter, switchMap, zip, map, takeUntil, take } from "rxjs";
+import {
+  fromEvent,
+  filter,
+  merge,
+  repeat,
+  switchMap,
+  zip,
+  map,
+  takeUntil,
+  take,
+} from "rxjs";
 import {
   IPs,
+  updateIsSelection,
   updatePanelTickUnit,
 } from "../store/slice/panelSlice";
 import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
-import { updateIsSelection, updateTargets } from "../store/slice/nodeSlice";
+import { updateTargets } from "../store/slice/nodeSlice";
 
 const scroll = <T,>(filter: (e: WheelEvent) => T) => {
   return fromEvent<WheelEvent>(document, "mousewheel").pipe(
@@ -17,6 +28,13 @@ const scroll = <T,>(filter: (e: WheelEvent) => T) => {
 };
 const createMouseDown = <T,>(filter?: (e: MouseEvent) => T) => {
   return fromEvent<MouseEvent>(document, "mousedown").pipe(
+    map((ev) => {
+      return filter && filter(ev);
+    })
+  );
+};
+const createMouseUp = <T,>(filter?: (e: MouseEvent) => T) => {
+  return fromEvent<MouseEvent>(document, "mouseup").pipe(
     map((ev) => {
       return filter && filter(ev);
     })
@@ -85,6 +103,7 @@ const useSelectionKeyEvent = () => {
     const keyDown$ = createKeyDown("q");
     const keyUp$ = createKeyUp();
     const mousedown$ = createMouseDown();
+    const mouseup$ = createMouseUp();
 
     const S$ = keyDown$.pipe(
       map(() => {
@@ -94,9 +113,8 @@ const useSelectionKeyEvent = () => {
       switchMap(() =>
         mousedown$.pipe(
           takeUntil(
-            keyUp$.pipe(
+            merge(mouseup$, keyUp$).pipe(
               map(() => {
-                // dispatch(updatePanelLockTransform(false));
                 dispatch(updateIsSelection(false));
               })
             )
@@ -105,7 +123,7 @@ const useSelectionKeyEvent = () => {
       )
     );
 
-    const subscription = zip(keyDown$, S$).pipe(take(1)).subscribe();
+    const subscription = zip(keyDown$, S$).pipe(take(1), repeat()).subscribe();
 
     return () => {
       subscription.unsubscribe();
