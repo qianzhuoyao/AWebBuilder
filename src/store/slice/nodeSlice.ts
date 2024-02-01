@@ -23,6 +23,8 @@ export const pix_BLine = "pixBLine" as const;
 export const logic_D_get = "logic_D_get" as const;
 //逻辑 提交数据
 export const logic_U_get = "logic_U_get" as const;
+//缓存器
+export const logic_Cache_set = "logic_Cache_set" as const;
 
 export type INodeType =
   | typeof pix_BLine
@@ -34,7 +36,8 @@ export type INodeType =
   | typeof pic_Img
   | typeof pix_Text
   | typeof logic_D_get
-  | typeof logic_U_get;
+  | typeof logic_U_get
+  | typeof logic_Cache_set;
 
 interface IChartInstance {
   option?: Echart.EChartsOption;
@@ -50,7 +53,14 @@ export type IIstance = IChartInstance;
 
 enableMapSet();
 
-export type IClassify = "chart" | "table" | "dom" | "text" | "line";
+export type IClassify =
+  | "chart"
+  | "table"
+  | "dom"
+  | "text"
+  | "line"
+  | "remote"
+  | "cache";
 
 export interface IViewNode {
   //标识

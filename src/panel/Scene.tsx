@@ -241,12 +241,12 @@ const SceneLayer = memo(() => {
 
 const widgetMapTabs = [
   {
-    id: "col",
-    label: "缩略",
+    id: "logic_map_list",
+    label: "逻辑",
   },
   {
-    id: "list",
-    label: "列表",
+    id: "view_map_list",
+    label: "视图",
   },
 ];
 

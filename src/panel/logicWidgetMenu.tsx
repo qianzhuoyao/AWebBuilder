@@ -135,6 +135,26 @@ export const TextIcon = memo(() => {
   );
 });
 
+const CacheMap = memo(() => {
+  return (
+    <div className="space-y-2">
+      {LOGIC_SRC_ICON.cache.map((cache) => {
+        return (
+          <div key={cache.id}>
+            <WidgetIconTemp
+              tips={cache.tips}
+              nodeType="LOGIC"
+              classify="cache"
+              typeId={cache.id}
+              src={cache.src}
+              name={cache.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 const RemoteMap = memo(() => {
   return (
     <div className="space-y-2">
@@ -144,7 +164,7 @@ const RemoteMap = memo(() => {
             <WidgetIconTemp
               tips={remote.tips}
               nodeType="LOGIC"
-              classify="line"
+              classify="remote"
               typeId={remote.id}
               src={remote.src}
               name={remote.name}
@@ -165,7 +185,7 @@ const LogicData = [
   {
     id: "logic_cache_data",
     label: "缓存",
-    content: <RemoteMap></RemoteMap>,
+    content: <CacheMap></CacheMap>,
   },
   {
     id: "logic_filter_data",
@@ -274,7 +294,7 @@ const ViewIcon = memo(() => {
           d="M2.024 44.969h19.334c1.186 0 1.93-.745 1.93-1.885c0-1.117-.744-1.861-1.93-1.861H5.863v-.117l9.097-8.84c5.537-5.375 7.165-8.167 7.165-11.75c0-5.327-4.722-9.399-11.027-9.399c-4.956 0-9.19 2.676-10.61 6.77C.21 18.68.1 19.33.1 19.912c0 1.163.691 1.93 1.831 1.93c1.094 0 1.559-.511 1.908-1.674c.186-.722.442-1.373.814-1.978c1.233-2.07 3.537-3.397 6.445-3.397c3.769 0 6.77 2.653 6.77 5.956c0 2.676-1.093 4.49-5.7 9.027L1.28 40.595C.303 41.572 0 42.154 0 43.015c0 1.21.791 1.954 2.024 1.954m27.989-.047h9.538C49.974 44.922 56 38.71 56 28.217c0-10.492-6.026-16.565-16.449-16.565h-9.539c-1.28 0-2.093.838-2.093 2.14v28.966c0 1.326.814 2.164 2.093 2.164m2.117-3.815V15.42h7.119c8.003 0 12.447 4.654 12.447 12.82c0 8.212-4.444 12.865-12.447 12.865Z"
         />
       </svg>
-      <span className="text-center">视图</span>
+      <span className="text-center">应用</span>
     </div>
   );
 });

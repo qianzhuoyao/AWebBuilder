@@ -26,7 +26,7 @@ interface IW {
   tips?: string;
 }
 
-export const isInPanel = (e: MouseEvent): boolean => {
+const isInPanel = (e: MouseEvent): boolean => {
   const { pageX, pageY } = e;
 
   const dom = document.getElementById(AR_PANEL_DOM_ID);
@@ -44,10 +44,69 @@ export const isInPanel = (e: MouseEvent): boolean => {
   );
 };
 
+const ViewCard = memo(
+  ({
+    name,
+    typeId,
+    key,
+    src,
+  }: {
+    name: string;
+    typeId: INodeType;
+    key: string;
+    src: string;
+  }) => {
+    const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+      return state.widgetMapSlice;
+    });
+    const ICardRef = useRef<HTMLDivElement>(null);
+    const ImageRef = useRef<HTMLImageElement>(null);
+    useCardDefaultSetting(
+      ICardRef,
+      ImageRef,
+      name,
+      typeId,
+      widgetMapState.contentImageShowType
+    );
+    return (
+      <>
+        {useMemo(
+          () => (
+            <Card
+              ref={ICardRef}
+              isFooterBlurred
+              radius="lg"
+              className="border-none p-1 m-1 bg-default-200 cursor-pointer"
+            >
+              <Image
+                ref={ImageRef}
+                id={key}
+                alt={name}
+                className="object-cover"
+                height={200}
+                isZoomed
+                src={src}
+                width={"100%"}
+              />
+
+              {!widgetMapState.contentImageShowType && (
+                <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+                  <p className="text-tiny text-white/80">{name}</p>
+                </CardFooter>
+              )}
+            </Card>
+          ),
+          [key, name, src, widgetMapState.contentImageShowType]
+        )}
+      </>
+    );
+  }
+);
+
 /**
  * 转化坐标为scene坐标
  */
-export const transPointInScene = (
+const transPointInScene = (
   pageX: number,
   pageY: number,
   rMinX: number,
@@ -99,6 +158,66 @@ const useCardDefaultSetting = (
     }
   }, [ICardRef, contentImageShowType]);
 };
+
+const LogicCard = memo(
+  ({
+    name,
+    typeId,
+    key,
+    src,
+    tips,
+  }: {
+    name: string;
+    typeId: INodeType;
+    key: string;
+    src: string;
+    tips?: string;
+  }) => {
+    const logicState = useSelector((state: { logicSlice: ILs }) => {
+      return state.logicSlice;
+    });
+    const ICardRef = useRef<HTMLDivElement>(null);
+    const ImageRef = useRef<HTMLImageElement>(null);
+    useCardDefaultSetting(
+      ICardRef,
+      ImageRef,
+      name,
+      typeId,
+      logicState.contentImageShowType
+    );
+
+    return (
+      <>
+        {useMemo(
+          () => (
+            <>
+              <Card ref={ICardRef} className="cursor-pointer">
+                <CardHeader className="flex gap-3">
+                  <Image
+                    id={key}
+                    ref={ImageRef}
+                    alt="logo"
+                    height={30}
+                    radius="sm"
+                    src={src}
+                    width={30}
+                  />
+                  <div className="flex flex-col w-[70px]">
+                    <p className="text-small">{name}</p>
+                    <p className="text-small text-default-500 truncate">
+                      {tips}
+                    </p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </>
+          ),
+          [key, name, src, tips]
+        )}
+      </>
+    );
+  }
+);
 
 export const WidgetIconTemp = memo(
   ({ src, name, typeId, classify, nodeType, tips }: IW) => {
@@ -168,101 +287,34 @@ export const WidgetIconTemp = memo(
       return () => {
         subscription?.unsubscribe();
       };
-    }, [PanelState, classify, dispatch, key, name, nodeType, src, typeId]);
+    }, [
+      PanelState.offset,
+      PanelState.rulerMinX,
+      PanelState.rulerMinY,
+      PanelState.tickUnit,
+      classify,
+      dispatch,
+      key,
+      name,
+      nodeType,
+      src,
+      typeId,
+    ]);
 
-    const LogicCard = () => {
-      const logicState = useSelector((state: { logicSlice: ILs }) => {
-        return state.logicSlice;
-      });
-      const ICardRef = useRef<HTMLDivElement>(null);
-      const ImageRef = useRef<HTMLImageElement>(null);
-      useCardDefaultSetting(
-        ICardRef,
-        ImageRef,
-        name,
-        typeId,
-        logicState.contentImageShowType
-      );
-
-      return (
-        <>
-          {useMemo(
-            () => (
-              <>
-                <Card ref={ICardRef} className="cursor-pointer">
-                  <CardHeader className="flex gap-3">
-                    <Image
-                      id={key}
-                      ref={ImageRef}
-                      alt="logo"
-                      height={30}
-                      radius="sm"
-                      src={src}
-                      width={30}
-                    />
-                    <div className="flex flex-col w-[70px]">
-                      <p className="text-md">{name}</p>
-                      <p className="text-small text-default-500 truncate">
-                        {tips}
-                      </p>
-                    </div>
-                  </CardHeader>
-                </Card>
-              </>
-            ),
-            []
-          )}
-        </>
-      );
-    };
-
-    const ViewCard = () => {
-      const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-        return state.widgetMapSlice;
-      });
-      const ICardRef = useRef<HTMLDivElement>(null);
-      const ImageRef = useRef<HTMLImageElement>(null);
-      useCardDefaultSetting(
-        ICardRef,
-        ImageRef,
-        name,
-        typeId,
-        widgetMapState.contentImageShowType
-      );
-      return (
-        <>
-          {useMemo(
-            () => (
-              <Card
-                ref={ICardRef}
-                isFooterBlurred
-                radius="lg"
-                className="border-none p-1 m-1 bg-default-200 cursor-pointer"
-              >
-                <Image
-                  ref={ImageRef}
-                  id={key}
-                  alt={name}
-                  className="object-cover"
-                  height={200}
-                  isZoomed
-                  src={src}
-                  width={"100%"}
-                />
-
-                {!widgetMapState.contentImageShowType && (
-                  <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
-                    <p className="text-tiny text-white/80">{name}</p>
-                  </CardFooter>
-                )}
-              </Card>
-            ),
-            [widgetMapState.contentImageShowType]
-          )}
-        </>
-      );
-    };
-
-    return <>{nodeType === "VIEW" ? <ViewCard /> : <LogicCard />}</>;
+    return (
+      <>
+        {nodeType === "VIEW" ? (
+          <ViewCard key={key} name={name} typeId={typeId} src={src} />
+        ) : (
+          <LogicCard
+            name={name}
+            key={key}
+            typeId={typeId}
+            src={src}
+            tips={tips}
+          />
+        )}
+      </>
+    );
   }
 );
