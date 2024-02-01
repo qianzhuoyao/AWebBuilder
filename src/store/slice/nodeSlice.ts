@@ -46,26 +46,35 @@ enableMapSet();
 export type IClassify = "chart" | "table" | "dom" | "text" | "line";
 
 export interface IViewNode {
+  //标识
   id: string;
+  //基于面板的横坐标
   x: number;
+  //基于面板的纵坐标
   y: number;
+  //基于面板的长度
   w: number;
+  //基于面板的高度
   h: number;
+  //基于面板的层级
   z: number;
+  //基于面板的旋转度
+  r: number;
   //别名
   alias: string;
   //说明
   desc: string;
   //拷贝自
-  copyBy: string;
+  copyBy?: string;
+  //分类
   classify: IClassify;
+  //实例容器
   instance: IIstance;
 }
 
 type nodeId = string;
 export interface INs {
   targets: string[];
-
   list: Record<nodeId, IViewNode>;
 }
 

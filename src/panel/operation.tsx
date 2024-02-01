@@ -143,6 +143,9 @@ const NodeContainer = memo(() => {
         onClickGroup={(e) => {
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
+        onRotateEnd={e=>{
+          console.log(e,'eeeonRotateEndeeee')
+        }}
         onRender={(e) => {
           e.target.style.cssText += e.cssText;
         }}
@@ -213,7 +216,6 @@ const NodeContainer = memo(() => {
           }}
         />
       )}
-      {JSON.stringify(PanelState.isSelection)}
       <div className="empty elements"></div>
       <div className="relative w-full h-full elements">
         {[...Object.values(NodesState.list)].map((node) => {

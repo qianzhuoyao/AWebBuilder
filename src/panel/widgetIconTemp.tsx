@@ -53,7 +53,6 @@ export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
   const dispatch = useDispatch();
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
     return state.panelSlice;
   });
 
@@ -74,11 +73,10 @@ export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
           node.style.left = e.pageX + "px";
           node.style.top = e.pageY + "px";
         }
-        console.log(e, "down");
+
         return node;
       },
       move: (e, c) => {
-        console.log(e, c, "move");
         if (c) {
           c.style.left = e.pageX + "px";
           c.style.top = e.pageY + "px";

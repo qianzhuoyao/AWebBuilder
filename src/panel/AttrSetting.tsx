@@ -132,7 +132,7 @@ const PanelSetting = memo(() => {
   );
 });
 
-const ProviderSetting =memo( () => {
+const ProviderSetting = memo(() => {
   return (
     <div>
       <div className="flex">
@@ -200,6 +200,32 @@ const ProviderSetting =memo( () => {
           <Button size="sm">清除背景颜色</Button>
         </div>
       </div>
+      <div className="flex mt-2 items-center">
+        <small className="w-[80px]">边界控制</small>
+        <div className="flex">
+          <Tabs
+            size={"sm"}
+            aria-label="Tabs sizes"
+            defaultSelectedKey={"bound"}
+          >
+            <Tab key="bound" title="控制覆盖" />
+            <Tab key="over" title="溢出隐藏" />
+          </Tabs>
+        </div>
+      </div>
+      {/* <div className="flex mt-2 items-center">
+        <small className="w-[80px]">自动布局</small>
+        <div className="flex">
+          <Tabs
+            size={"sm"}
+            aria-label="Tabs sizes"
+            defaultSelectedKey={"bound"}
+          >
+            <Tab key="bound" title="控制覆盖" />
+            <Tab key="over" title="溢出隐藏" />
+          </Tabs>
+        </div>
+      </div> */}
     </div>
   );
 });
@@ -217,7 +243,7 @@ const tabs = [
   },
 ];
 
-export const AttrSetting =memo( () => {
+export const AttrSetting = memo(() => {
   const gsapContainer = useRef<HTMLDivElement>(null);
 
   const AttrState = useSelector((state: { attrSlice: IAs }) => {
