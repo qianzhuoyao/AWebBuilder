@@ -22,6 +22,7 @@ import {
   updatePanelLockTransform,
   updatePanelLockScale,
 } from "../store/slice/panelSlice";
+import { INs } from "../store/slice/nodeSlice";
 
 const ColorPick = memo(() => {
   return (
@@ -132,6 +133,26 @@ const PanelSetting = memo(() => {
   );
 });
 
+const DefaultPanelSetting = memo(() => {
+  return (
+    <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
+      <CardBody>
+        <div className="flex w-full flex-col">
+          <Tabs aria-label="Dynamic tabs" items={tabs}>
+            {(item) => (
+              <Tab key={item.id} title={item.label}>
+                <Card>
+                  <CardBody>{item.content}</CardBody>
+                </Card>
+              </Tab>
+            )}
+          </Tabs>
+        </div>
+      </CardBody>
+    </Card>
+  );
+});
+
 const ProviderSetting = memo(() => {
   return (
     <div>
@@ -213,23 +234,37 @@ const ProviderSetting = memo(() => {
           </Tabs>
         </div>
       </div>
-      {/* <div className="flex mt-2 items-center">
-        <small className="w-[80px]">自动布局</small>
-        <div className="flex">
-          <Tabs
-            size={"sm"}
-            aria-label="Tabs sizes"
-            defaultSelectedKey={"bound"}
-          >
-            <Tab key="bound" title="控制覆盖" />
-            <Tab key="over" title="溢出隐藏" />
-          </Tabs>
-        </div>
-      </div> */}
     </div>
   );
 });
 
+const nodeTabs = [
+  {
+    id: "panel",
+    label: "组件设置",
+    content: <PanelSetting></PanelSetting>,
+  },
+];
+
+const DefaultNodeSetting = memo(() => {
+  return (
+    <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
+      <CardBody>
+        <div className="flex w-full flex-col">
+          <Tabs aria-label="Dynamic tabs" items={nodeTabs}>
+            {(item) => (
+              <Tab key={item.id} title={item.label}>
+                <Card>
+                  <CardBody>{item.content}</CardBody>
+                </Card>
+              </Tab>
+            )}
+          </Tabs>
+        </div>
+      </CardBody>
+    </Card>
+  );
+});
 const tabs = [
   {
     id: "panel",
@@ -245,6 +280,10 @@ const tabs = [
 
 export const AttrSetting = memo(() => {
   const gsapContainer = useRef<HTMLDivElement>(null);
+
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
 
   const AttrState = useSelector((state: { attrSlice: IAs }) => {
     return state.attrSlice;
@@ -275,21 +314,11 @@ export const AttrSetting = memo(() => {
       ref={gsapContainer}
       className="max-w-[300px] min-w-[300px] overflow-hidden"
     >
-      <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
-        <CardBody>
-          <div className="flex w-full flex-col">
-            <Tabs aria-label="Dynamic tabs" items={tabs}>
-              {(item) => (
-                <Tab key={item.id} title={item.label}>
-                  <Card>
-                    <CardBody>{item.content}</CardBody>
-                  </Card>
-                </Tab>
-              )}
-            </Tabs>
-          </div>
-        </CardBody>
-      </Card>
+      {NodesState.targets?.length ? (
+        <DefaultNodeSetting></DefaultNodeSetting>
+      ) : (
+        <DefaultPanelSetting></DefaultPanelSetting>
+      )}
     </div>
   );
 });

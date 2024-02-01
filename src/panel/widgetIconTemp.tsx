@@ -23,6 +23,24 @@ interface IW {
   classify: IClassify;
 }
 
+export const isInPanel = (e: MouseEvent): boolean => {
+  const { pageX, pageY } = e;
+
+  const dom = document.getElementById(AR_PANEL_DOM_ID);
+  if (!dom) {
+    return false;
+  }
+
+  const { left, top, width, height } = dom.getBoundingClientRect();
+
+  return (
+    pageX >= left &&
+    pageX <= left + width &&
+    pageY >= top &&
+    pageY <= top + height
+  );
+};
+
 /**
  * 转化坐标为scene坐标
  */
@@ -77,6 +95,7 @@ export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
         return node;
       },
       move: (e, c) => {
+        console.log(e, "streams");
         if (c) {
           c.style.left = e.pageX + "px";
           c.style.top = e.pageY + "px";
@@ -91,7 +110,7 @@ export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
           PanelState.rulerMinY,
           PanelState.offset
         );
-        if (pointer) {
+        if (pointer && isInPanel(e)) {
           const w = drag_size_width * PanelState.tickUnit;
           const h = drag_size_height * PanelState.tickUnit;
           const { x, y } = pointer;

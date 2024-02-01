@@ -137,7 +137,7 @@ export const Tools = memo(() => {
               height={14}
               className="mr-1"
             />
-            <span>逻辑元件</span>
+            <span>自动化元件</span>
           </div>
         ),
         content: <>12</>,
