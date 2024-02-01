@@ -19,15 +19,22 @@ export const pix_BY = "pixBY" as const;
 //折现柱状图
 export const pix_BLine = "pixBLine" as const;
 
+//关于信号的说明，0/1 当存在型号时，信号边为1 否则为0
 //逻辑 数据获取器
 export const logic_D_get = "logic_D_get" as const;
 //逻辑 提交数据
 export const logic_U_get = "logic_U_get" as const;
 //缓存器
 export const logic_Cache_set = "logic_Cache_set" as const;
-
+//清理所有缓存
+export const logic_Cache_clear = "logic_Cache_clear" as const;
+//校验器 当信号输入值与设置值相等时通过，否则拦截
+export const logic_P_get = "logic_P_set" as const;
+//信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
+export const logic_TM_get = "logic_TM_get" as const;
 export type INodeType =
   | typeof pix_BLine
+  | typeof logic_TM_get
   | typeof pix_Table
   | typeof pix_BY
   | typeof pix_BX
@@ -35,9 +42,11 @@ export type INodeType =
   | typeof pix_Line
   | typeof pic_Img
   | typeof pix_Text
+  | typeof logic_Cache_clear
   | typeof logic_D_get
   | typeof logic_U_get
-  | typeof logic_Cache_set;
+  | typeof logic_Cache_set
+  | typeof logic_P_get;
 
 interface IChartInstance {
   option?: Echart.EChartsOption;

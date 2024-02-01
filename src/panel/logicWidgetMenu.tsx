@@ -155,6 +155,27 @@ const CacheMap = memo(() => {
     </div>
   );
 });
+
+const FilterMap = memo(() => {
+  return (
+    <div className="space-y-2">
+      {LOGIC_SRC_ICON.filter.map((filter) => {
+        return (
+          <div key={filter.id}>
+            <WidgetIconTemp
+              tips={filter.tips}
+              nodeType="LOGIC"
+              classify="remote"
+              typeId={filter.id}
+              src={filter.src}
+              name={filter.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 const RemoteMap = memo(() => {
   return (
     <div className="space-y-2">
@@ -190,7 +211,12 @@ const LogicData = [
   {
     id: "logic_filter_data",
     label: "过滤",
-    content: <RemoteMap></RemoteMap>,
+    content: <FilterMap></FilterMap>,
+  },
+  {
+    id: "logic_mix_data",
+    label: "装饰",
+    content: <FilterMap></FilterMap>,
   },
 ];
 
