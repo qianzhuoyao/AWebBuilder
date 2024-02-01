@@ -13,6 +13,44 @@ import {
 } from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { ILs } from "../store/slice/logicSlice";
+import { LogicWidgetMenu } from "./logicWidgetMenu";
+
+const LogicToolHeader = memo(() => {
+  const dispatch = useDispatch();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  return (
+    <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
+      {/* <div className="flex items-center p-2">
+        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
+      </div> */}
+      <div className="flex justify-between">
+        <AInput
+          placeholder="搜索组件"
+          className="w-[100%] mr-2"
+          size="sml"
+          radius={"md"}
+          startContent={
+            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
+          }
+        />
+        <Tabs
+          size={"sm"}
+          aria-label="Tabs sizes"
+          defaultSelectedKey={!logicState.contentImageShowType ? "zI" : "Co"}
+          onSelectionChange={(e) => {
+            dispatch(updateContentImageShowType(e === "zI" ? 0 : 1));
+          }}
+        >
+          <Tab key="zI" title={<ZIndexIcon />} />
+          <Tab key="Co" title={<ColIcon></ColIcon>} />
+        </Tabs>
+      </div>
+    </div>
+  );
+});
 
 const ToolHeader = memo(() => {
   const dispatch = useDispatch();
@@ -140,7 +178,12 @@ export const Tools = memo(() => {
             <span>自动化元件</span>
           </div>
         ),
-        content: <>12</>,
+        content: (
+          <>
+            <LogicToolHeader></LogicToolHeader>
+            <LogicWidgetMenu></LogicWidgetMenu>
+          </>
+        ),
       },
     ],
     []
@@ -231,7 +274,7 @@ export const Tools = memo(() => {
                 size={"sm"}
                 classNames={{
                   tab: "",
-                  tabList: "mb-1 w-[192px]",
+                  tabList: "mb-1 w-[212px]",
                   panel: "p-0 h-[100%] w-[100%]",
                   cursor: "",
                   base: "w-[100%] bg-zinc500",

@@ -1,4 +1,4 @@
-import { Card, Image, CardFooter } from "@nextui-org/react";
+import { Card, Image, CardFooter, CardHeader } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
 import {
   memo,
@@ -15,12 +15,15 @@ import gsap from "gsap";
 import { AR_PANEL_DOM_ID, drag_size_height, drag_size_width } from "../contant";
 import { IClassify, INodeType, addNode } from "../store/slice/nodeSlice";
 import { IWs } from "../store/slice/widgetMapSlice";
+import { ILs } from "../store/slice/logicSlice";
 
 interface IW {
+  nodeType: "LOGIC" | "VIEW";
   src: string;
   name: string;
   typeId: INodeType;
   classify: IClassify;
+  tips?: string;
 }
 
 export const isInPanel = (e: MouseEvent): boolean => {
@@ -63,88 +66,25 @@ export const transPointInScene = (
   };
 };
 
-export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
-  const ICardRef = useRef<HTMLDivElement>(null);
-  const ImageRef = useRef<HTMLImageElement>(null);
-  const key = useId();
-
-  const dispatch = useDispatch();
-
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
-
+const useCardDefaultSetting = (
+  ICardRef: React.RefObject<HTMLDivElement>,
+  ImageRef: React.RefObject<HTMLImageElement>,
+  name: string,
+  typeId: INodeType,
+  contentImageShowType: number
+) => {
+  ImageRef.current?.setAttribute("data-temp-type", name);
+  ImageRef.current?.setAttribute("data-temp-id", typeId);
   useEffect(() => {
-    ImageRef.current?.setAttribute("data-temp-type", name);
-    ImageRef.current?.setAttribute("data-temp-id", typeId);
     if (!ICardRef.current) {
       return;
     }
-    const subscription = setWidgetStream<HTMLElement | null, undefined>(key, {
-      down: (e) => {
-        const node = createLayerSrc("img");
-        if (node) {
-          node.src = src;
-          node.style.position = "absolute";
-          node.style.width = drag_size_width + "px";
-          node.style.height = drag_size_height + "px";
-          node.style.left = e.pageX + "px";
-          node.style.top = e.pageY + "px";
-        }
-
-        return node;
-      },
-      move: (e, c) => {
-        console.log(e, "streams");
-        if (c) {
-          c.style.left = e.pageX + "px";
-          c.style.top = e.pageY + "px";
-        }
-      },
-      up: (e, c) => {
-        c?.remove();
-        const pointer = transPointInScene(
-          e.pageX,
-          e.pageY,
-          PanelState.rulerMinX,
-          PanelState.rulerMinY,
-          PanelState.offset
-        );
-        if (pointer && isInPanel(e)) {
-          const w = drag_size_width * PanelState.tickUnit;
-          const h = drag_size_height * PanelState.tickUnit;
-          const { x, y } = pointer;
-          dispatch(
-            addNode({
-              x: x * PanelState.tickUnit,
-              y: y * PanelState.tickUnit,
-              w,
-              h,
-              z: 10,
-              id: uuidv4(),
-              classify,
-              alias: name + typeId,
-              instance: {
-                type: typeId,
-              },
-            })
-          );
-        }
-      },
-    });
     ICardRef.current.onselectstart = () => false;
     ICardRef.current.ondragstart = () => false;
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [PanelState, classify, dispatch, key, name, src, typeId]);
-
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
-  });
+  }, [ICardRef]);
 
   useLayoutEffect(() => {
-    if (widgetMapState.contentImageShowType) {
+    if (contentImageShowType) {
       gsap.to(ICardRef.current, {
         width: "44%",
         duration: 0.1,
@@ -152,42 +92,177 @@ export const WidgetIconTemp = memo(({ src, name, typeId, classify }: IW) => {
       });
     } else {
       gsap.to(ICardRef.current, {
-        width: "100%",
+        width: "auto",
         duration: 0.1,
         ease: "none",
       });
     }
-  }, [widgetMapState]);
+  }, [ICardRef, contentImageShowType]);
+};
 
-  return (
-    <>
-      {useMemo(
-        () => (
-          <Card
-            ref={ICardRef}
-            isFooterBlurred
-            radius="lg"
-            className="border-none p-1 m-1 bg-default-200 cursor-pointer"
-          >
-            <Image
-              ref={ImageRef}
-              id={key}
-              alt={name}
-              className="object-cover"
-              height={200}
-              isZoomed
-              src={src}
-              width={"100%"}
-            />
-            {!widgetMapState.contentImageShowType && (
-              <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
-                <p className="text-tiny text-white/80">{name}</p>
-              </CardFooter>
-            )}
-          </Card>
-        ),
-        [key, name, src, widgetMapState.contentImageShowType]
-      )}
-    </>
-  );
-});
+export const WidgetIconTemp = memo(
+  ({ src, name, typeId, classify, nodeType, tips }: IW) => {
+    const key = useId();
+
+    const dispatch = useDispatch();
+
+    const PanelState = useSelector((state: { panelSlice: IPs }) => {
+      return state.panelSlice;
+    });
+
+    useEffect(() => {
+      const subscription = setWidgetStream<HTMLElement | null, undefined>(key, {
+        down: (e) => {
+          const node = createLayerSrc("img");
+          if (node) {
+            node.src = src;
+            node.style.position = "absolute";
+            node.style.width = drag_size_width + "px";
+            node.style.height = drag_size_height + "px";
+            node.style.left = e.pageX + "px";
+            node.style.top = e.pageY + "px";
+          }
+
+          return node;
+        },
+        move: (e, c) => {
+          console.log(e, "streams");
+          if (c) {
+            c.style.left = e.pageX + "px";
+            c.style.top = e.pageY + "px";
+          }
+        },
+        up: (e, c) => {
+          c?.remove();
+          const pointer = transPointInScene(
+            e.pageX,
+            e.pageY,
+            PanelState.rulerMinX,
+            PanelState.rulerMinY,
+            PanelState.offset
+          );
+          if (pointer && isInPanel(e)) {
+            const w = drag_size_width * PanelState.tickUnit;
+            const h = drag_size_height * PanelState.tickUnit;
+            const { x, y } = pointer;
+            dispatch(
+              addNode({
+                x: x * PanelState.tickUnit,
+                y: y * PanelState.tickUnit,
+                w,
+                h,
+                z: 10,
+                id: uuidv4(),
+                classify,
+                nodeType,
+                alias: name + typeId,
+                instance: {
+                  type: typeId,
+                },
+              })
+            );
+          }
+        },
+      });
+
+      return () => {
+        subscription?.unsubscribe();
+      };
+    }, [PanelState, classify, dispatch, key, name, nodeType, src, typeId]);
+
+    const LogicCard = () => {
+      const logicState = useSelector((state: { logicSlice: ILs }) => {
+        return state.logicSlice;
+      });
+      const ICardRef = useRef<HTMLDivElement>(null);
+      const ImageRef = useRef<HTMLImageElement>(null);
+      useCardDefaultSetting(
+        ICardRef,
+        ImageRef,
+        name,
+        typeId,
+        logicState.contentImageShowType
+      );
+
+      return (
+        <>
+          {useMemo(
+            () => (
+              <>
+                <Card ref={ICardRef} className="cursor-pointer">
+                  <CardHeader className="flex gap-3">
+                    <Image
+                      id={key}
+                      ref={ImageRef}
+                      alt="logo"
+                      height={30}
+                      radius="sm"
+                      src={src}
+                      width={30}
+                    />
+                    <div className="flex flex-col w-[70px]">
+                      <p className="text-md">{name}</p>
+                      <p className="text-small text-default-500 truncate">
+                        {tips}
+                      </p>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </>
+            ),
+            []
+          )}
+        </>
+      );
+    };
+
+    const ViewCard = () => {
+      const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+        return state.widgetMapSlice;
+      });
+      const ICardRef = useRef<HTMLDivElement>(null);
+      const ImageRef = useRef<HTMLImageElement>(null);
+      useCardDefaultSetting(
+        ICardRef,
+        ImageRef,
+        name,
+        typeId,
+        widgetMapState.contentImageShowType
+      );
+      return (
+        <>
+          {useMemo(
+            () => (
+              <Card
+                ref={ICardRef}
+                isFooterBlurred
+                radius="lg"
+                className="border-none p-1 m-1 bg-default-200 cursor-pointer"
+              >
+                <Image
+                  ref={ImageRef}
+                  id={key}
+                  alt={name}
+                  className="object-cover"
+                  height={200}
+                  isZoomed
+                  src={src}
+                  width={"100%"}
+                />
+
+                {!widgetMapState.contentImageShowType && (
+                  <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+                    <p className="text-tiny text-white/80">{name}</p>
+                  </CardFooter>
+                )}
+              </Card>
+            ),
+            [widgetMapState.contentImageShowType]
+          )}
+        </>
+      );
+    };
+
+    return <>{nodeType === "VIEW" ? <ViewCard /> : <LogicCard />}</>;
+  }
+);

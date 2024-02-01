@@ -141,6 +141,7 @@ const TextMap = memo(() => {
       {SRC_ICON.text.map((text) => {
         return (
           <WidgetIconTemp
+            nodeType="VIEW"
             key={text.id}
             typeId={text.id}
             classify="text"
@@ -159,6 +160,7 @@ const ImageMap = memo(() => {
       {SRC_ICON.Image.map((image) => {
         return (
           <WidgetIconTemp
+          nodeType="VIEW"
             key={image.id}
             classify="dom"
             typeId={image.id}
@@ -176,6 +178,7 @@ const TableMap = memo(() => {
       {SRC_ICON.table.map((table) => {
         return (
           <WidgetIconTemp
+          nodeType="VIEW"
             key={table.id}
             classify="table"
             typeId={table.id}
@@ -193,6 +196,7 @@ const LineMap = memo(() => {
       {SRC_ICON.line.map((line) => {
         return (
           <WidgetIconTemp
+          nodeType="VIEW"
             key={line.id}
             classify="line"
             typeId={line.id}
@@ -211,6 +215,7 @@ const BarMap = memo(() => {
       {SRC_ICON.bar.map((bar) => {
         return (
           <WidgetIconTemp
+          nodeType="VIEW"
             key={bar.id}
             classify="chart"
             typeId={bar.id}
@@ -324,7 +329,7 @@ export const WidgetMenu = memo(() => {
         items={tabs}
         radius="none"
         classNames={{
-          tab: "h-[80px]",
+          tab: "h-[70px]",
           tabList: "flex flex-col",
           panel: "p-0 bg-default-100 h-[100%] w-[100%]",
           cursor: "rounded-md",

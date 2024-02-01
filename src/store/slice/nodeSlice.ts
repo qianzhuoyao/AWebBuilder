@@ -19,6 +19,11 @@ export const pix_BY = "pixBY" as const;
 //折现柱状图
 export const pix_BLine = "pixBLine" as const;
 
+//逻辑 数据获取器
+export const logic_D_get = "logic_D_get" as const;
+//逻辑 提交数据
+export const logic_U_get = "logic_U_get" as const;
+
 export type INodeType =
   | typeof pix_BLine
   | typeof pix_Table
@@ -27,7 +32,9 @@ export type INodeType =
   | typeof pix_GLine
   | typeof pix_Line
   | typeof pic_Img
-  | typeof pix_Text;
+  | typeof pix_Text
+  | typeof logic_D_get
+  | typeof logic_U_get;
 
 interface IChartInstance {
   option?: Echart.EChartsOption;
@@ -70,6 +77,7 @@ export interface IViewNode {
   classify: IClassify;
   //实例容器
   instance: IIstance;
+  nodeType: "VIEW" | "LOGIC";
 }
 
 type nodeId = string;
