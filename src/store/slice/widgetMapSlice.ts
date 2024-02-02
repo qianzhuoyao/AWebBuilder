@@ -26,7 +26,6 @@ export const widgetMapSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
 export const { updateWidgetMapShow, updateProviderShow,updateContentImageShowType } =
   widgetMapSlice.actions;
 
