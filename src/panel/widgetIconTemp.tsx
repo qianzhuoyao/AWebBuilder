@@ -12,10 +12,18 @@ import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 import gsap from "gsap";
-import { AR_PANEL_DOM_ID, drag_size_height, drag_size_width } from "../contant";
+import {
+  AR_PANEL_DOM_ID,
+  LOGIC_PANEL_DOM_ID,
+  NODE_TYPE_IN_ELE,
+  NODE_TYPE_IN_ELE_LOGIC,
+  NODE_TYPE_IN_ELE_VIEW,
+  drag_size_height,
+  drag_size_width,
+} from "../contant";
 import { IClassify, INodeType, addNode } from "../store/slice/nodeSlice";
 import { IWs } from "../store/slice/widgetMapSlice";
-import { ILs } from "../store/slice/logicSlice";
+import { ILs, addLogicNode } from "../store/slice/logicSlice";
 
 interface IW {
   nodeType: "LOGIC" | "VIEW";
@@ -26,10 +34,13 @@ interface IW {
   tips?: string;
 }
 
-const isInPanel = (e: MouseEvent): boolean => {
+const isInPanel = (
+  e: MouseEvent,
+  parentDomId: typeof AR_PANEL_DOM_ID | typeof LOGIC_PANEL_DOM_ID
+): boolean => {
   const { pageX, pageY } = e;
 
-  const dom = document.getElementById(AR_PANEL_DOM_ID);
+  const dom = document.getElementById(parentDomId);
   if (!dom) {
     return false;
   }
@@ -68,6 +79,11 @@ const ViewCard = memo(
       typeId,
       widgetMapState.contentImageShowType
     );
+
+    useEffect(() => {
+      ImageRef.current?.setAttribute(NODE_TYPE_IN_ELE, NODE_TYPE_IN_ELE_VIEW);
+    }, []);
+
     return (
       <>
         {useMemo(
@@ -185,7 +201,9 @@ const LogicCard = memo(
       typeId,
       logicState.contentImageShowType
     );
-
+    useEffect(() => {
+      ImageRef.current?.setAttribute(NODE_TYPE_IN_ELE, NODE_TYPE_IN_ELE_LOGIC);
+    }, []);
     return (
       <>
         {useMemo(
@@ -230,59 +248,97 @@ export const WidgetIconTemp = memo(
     });
 
     useEffect(() => {
-      const subscription = setWidgetStream<HTMLElement | null, undefined>(key, {
-        down: (e) => {
-          const node = createLayerSrc("img");
-          if (node) {
-            node.src = src;
-            node.style.position = "absolute";
-            node.style.width = drag_size_width + "px";
-            node.style.height = drag_size_height + "px";
-            node.style.left = e.pageX + "px";
-            node.style.top = e.pageY + "px";
-          }
+      const subscription = setWidgetStream<HTMLImageElement | null, undefined>(
+        key,
+        {
+          down: (e) => {
+            console.log(e, "downe");
+            const node = createLayerSrc("img");
+            if (node) {
+              node.src = src;
+              node.style.position = "absolute";
+              node.style.width = drag_size_width + "px";
+              node.style.height = drag_size_height + "px";
+              node.style.left = e.pageX + "px";
+              node.style.top = e.pageY + "px";
+              if (e.target instanceof HTMLElement) {
+                node.setAttribute(
+                  NODE_TYPE_IN_ELE,
+                  e.target.getAttribute(NODE_TYPE_IN_ELE) || "isError"
+                );
+              }
+            }
 
-          return node;
-        },
-        move: (e, c) => {
-          console.log(e, "streams");
-          if (c) {
-            c.style.left = e.pageX + "px";
-            c.style.top = e.pageY + "px";
-          }
-        },
-        up: (e, c) => {
-          c?.remove();
-          const pointer = transPointInScene(
-            e.pageX,
-            e.pageY,
-            PanelState.rulerMinX,
-            PanelState.rulerMinY,
-            PanelState.offset
-          );
-          if (pointer && isInPanel(e)) {
-            const w = drag_size_width * PanelState.tickUnit;
-            const h = drag_size_height * PanelState.tickUnit;
-            const { x, y } = pointer;
-            dispatch(
-              addNode({
-                x: x * PanelState.tickUnit,
-                y: y * PanelState.tickUnit,
-                w,
-                h,
-                z: 10,
-                id: uuidv4(),
-                classify,
-                nodeType,
-                alias: name + typeId,
-                instance: {
-                  type: typeId,
-                },
-              })
-            );
-          }
-        },
-      });
+            return node;
+          },
+          move: (e, c) => {
+            console.log(e, "streams");
+            if (c) {
+              c.style.left = e.pageX + "px";
+              c.style.top = e.pageY + "px";
+            }
+          },
+          up: (e, c) => {
+            if (c?.getAttribute(NODE_TYPE_IN_ELE) === NODE_TYPE_IN_ELE_VIEW) {
+              c?.remove();
+              const pointer = transPointInScene(
+                e.pageX,
+                e.pageY,
+                PanelState.rulerMinX,
+                PanelState.rulerMinY,
+                PanelState.offset
+              );
+              if (pointer && isInPanel(e, AR_PANEL_DOM_ID)) {
+                const w = drag_size_width * PanelState.tickUnit;
+                const h = drag_size_height * PanelState.tickUnit;
+                const { x, y } = pointer;
+                dispatch(
+                  addNode({
+                    x: x * PanelState.tickUnit,
+                    y: y * PanelState.tickUnit,
+                    w,
+                    h,
+                    z: 10,
+                    id: uuidv4(),
+                    classify,
+                    nodeType,
+                    alias: name + typeId,
+                    instance: {
+                      type: typeId,
+                    },
+                  })
+                );
+              }
+            } else if (
+              c?.getAttribute(NODE_TYPE_IN_ELE) === NODE_TYPE_IN_ELE_LOGIC
+            ) {
+              if (isInPanel(e, LOGIC_PANEL_DOM_ID)) {
+                console.log(e, "isMod");
+                const LOGIC_CONTAINER =
+                  document.getElementById(LOGIC_PANEL_DOM_ID);
+                if (!LOGIC_CONTAINER) {
+                  return;
+                }
+                const { left, top } = LOGIC_CONTAINER.getBoundingClientRect();
+                dispatch(
+                  addLogicNode({
+                    x: e.pageX - left,
+                    y: e.pageY - top,
+                    shape: "image",
+                    width: 40,
+                    height: 40,
+                    id: uuidv4(),
+                    imageUrl: c.src,
+                  })
+                );
+              }
+              c?.remove();
+            } else {
+              throw new Error("handler htmlELe is unknown");
+            }
+          },
+        }
+      );
 
       return () => {
         subscription?.unsubscribe();

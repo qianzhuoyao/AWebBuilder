@@ -46,6 +46,7 @@ import {
   deleteListItem,
 } from "../store/slice/nodeSlice";
 import { NodeSlot } from "./operation";
+import { LogicGraph } from "./logicGraph";
 
 const View = memo(() => {
   return (
@@ -64,7 +65,7 @@ export const STabs = [
   {
     id: "logic",
     label: "逻辑",
-    content: <>123</>,
+    content: <LogicGraph></LogicGraph>,
   },
 ];
 
