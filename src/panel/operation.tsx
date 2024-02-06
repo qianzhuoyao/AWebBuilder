@@ -1,19 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
-import { IPs } from "../store/slice/panelSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import { IPs } from '../store/slice/panelSlice';
 
-import { memo, useCallback, useEffect, useRef } from "react";
-import Moveable from "react-moveable";
-import Selecto from "react-selecto";
+import { memo, useCallback, useEffect, useRef } from 'react';
+import Moveable from 'react-moveable';
+import Selecto from 'react-selecto';
 import {
   INs,
   IViewNode,
   updatePosition,
   updateSize,
   updateTargets,
-} from "../store/slice/nodeSlice";
-import { ATTR_TAG, Node, SCENE } from "../contant";
-import { BaseChart } from "../node/chart";
-import { useSceneContext } from "../menu/context";
+} from '../store/slice/nodeSlice';
+import { ATTR_TAG, Node, SCENE } from '../contant';
+import { BaseChart } from '../node/chart';
+import { useSceneContext } from '../menu/context';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
@@ -22,8 +22,8 @@ const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
-  console.log(id, NodesState, PanelState, "id[p-d-dd-d-d-d-");
-  if (NodesState.list[id].classify === "chart") {
+  console.log(id, NodesState, PanelState, 'id[p-d-dd-d-d-d-');
+  if (NodesState.list[id].classify === 'chart') {
     return (
       <BaseChart
         type={NodesState.list[id].instance.type}
@@ -52,7 +52,7 @@ export const NodeSlot = memo(
       if (!nodeRef.current) {
         return;
       }
-      [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
+      [...nodeRef.current.getElementsByTagName('*')].forEach((ele) => {
         ele.setAttribute(ATTR_TAG, Node);
       });
     }, [NodesState]);
@@ -62,19 +62,19 @@ export const NodeSlot = memo(
 
       if (isTemp) {
         const mapNode = document.getElementById(node.id);
-        console.log(mapNode, "mapNode");
+        console.log(mapNode, 'mapNode');
         dispatch(updateTargets([node.id]));
       } else {
         dispatch(updateTargets([nodeRef.current?.id]));
       }
     }, [dispatch, isTemp, node.id]);
 
-    console.log(node, "node-snode");
+    console.log(node, 'node-snode');
     return (
       <div
         ref={nodeRef}
-        id={isTemp ? node.id + "-Map" : node.id}
-        className={isTemp ? "" : "absolute target"}
+        id={isTemp ? node.id + '-Map' : node.id}
+        className={isTemp ? '' : 'absolute target'}
         onClick={onHandleSelectedCurrent}
         onContextMenu={(e) => {
           show({
@@ -85,26 +85,26 @@ export const NodeSlot = memo(
         style={
           isTemp
             ? {
-                width: "100%",
-                height: "100%",
-              }
+              width: '100%',
+              height: '100%',
+            }
             : {
-                left: node.x / PanelState.tickUnit + "px",
-                top: node.y / PanelState.tickUnit + "px",
-                width: node.w / PanelState.tickUnit + "px",
-                height: node.h / PanelState.tickUnit + "px",
-              }
+              left: node.x / PanelState.tickUnit + 'px',
+              top: node.y / PanelState.tickUnit + 'px',
+              width: node.w / PanelState.tickUnit + 'px',
+              height: node.h / PanelState.tickUnit + 'px',
+            }
         }
       >
         <Temp id={node.id} isTemp={isTemp}></Temp>
         {view(
-          ["a", "2"].map((value) => {
+          ['a', '2'].map((value) => {
             return <div key={value}>{value}</div>;
-          })
+          }),
         )}
       </div>
     );
-  }
+  },
 );
 
 const NodeContainer = memo(() => {
@@ -120,12 +120,11 @@ const NodeContainer = memo(() => {
     return state.viewNodesSlice;
   });
 
-  console.log(PanelState, "PanelState-PanelState");
 
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
     if (box) {
-      box.style.zIndex = "9";
+      box.style.zIndex = '9';
     }
   }, []);
 
@@ -143,8 +142,8 @@ const NodeContainer = memo(() => {
         onClickGroup={(e) => {
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
-        onRotateEnd={e=>{
-          console.log(e,'eeeonRotateEndeeee')
+        onRotateEnd={e => {
+          console.log(e, 'eeeonRotateEndeeee');
         }}
         onRender={(e) => {
           e.target.style.cssText += e.cssText;
@@ -155,17 +154,17 @@ const NodeContainer = memo(() => {
               id: e.target.id,
               w: parseFloat(e.target.style.width) * PanelState.tickUnit,
               h: parseFloat(e.target.style.height) * PanelState.tickUnit,
-            })
+            }),
           );
         }}
         onDragEnd={(e) => {
-          console.log(e, "e-e-e-e-e-e-ecc");
+          console.log(e, 'e-e-e-e-e-e-ecc');
           dispatch(
             updatePosition({
               id: e.target.id,
               x: parseFloat(e.target.style.left) * PanelState.tickUnit,
               y: parseFloat(e.target.style.top) * PanelState.tickUnit,
-            })
+            }),
           );
         }}
         onRenderGroup={(e) => {
@@ -177,12 +176,12 @@ const NodeContainer = memo(() => {
       {PanelState.isSelection && (
         <Selecto
           ref={selectoRef}
-          dragContainer={".elements"}
-          selectableTargets={[".target"]}
+          dragContainer={'.elements'}
+          selectableTargets={['.target']}
           hitRate={0}
           selectByClick={true}
           selectFromInside={false}
-          toggleContinueSelect={["shift"]}
+          toggleContinueSelect={['shift']}
           ratio={0}
           keyContainer={window}
           onDragStart={(e) => {
@@ -200,10 +199,10 @@ const NodeContainer = memo(() => {
           }}
           onSelectEnd={(e) => {
             setTimeout(() => {
-              [...document.querySelectorAll(".moveable-area")].forEach(
+              [...document.querySelectorAll('.moveable-area')].forEach(
                 (node) => {
                   node.setAttribute(ATTR_TAG, Node);
-                }
+                },
               );
             }, 0);
             if (e.isDragStartEnd) {
@@ -237,8 +236,8 @@ export const AScene = memo(() => {
       <div
         className="absolute w-[calc(100%_-_40px)] h-[calc(100%_-_40px)]"
         style={{
-          left: "30px",
-          top: "30px",
+          left: '30px',
+          top: '30px',
         }}
       >
         <div id="container" className="relative w-full h-full overflow-hidden">
@@ -247,10 +246,10 @@ export const AScene = memo(() => {
             id={SCENE}
             className="absolute bg-[#232324] overflow-hidden"
             style={{
-              left: PanelState.panelLeft - PanelState.rulerMinX + "px",
-              top: PanelState.panelTop - PanelState.rulerMinY + "px",
-              width: PanelState.panelWidth / PanelState.tickUnit + "px",
-              height: PanelState.panelHeight / PanelState.tickUnit + "px",
+              left: PanelState.panelLeft - PanelState.rulerMinX + 'px',
+              top: PanelState.panelTop - PanelState.rulerMinY + 'px',
+              width: PanelState.panelWidth / PanelState.tickUnit + 'px',
+              height: PanelState.panelHeight / PanelState.tickUnit + 'px',
             }}
           >
             <NodeContainer></NodeContainer>

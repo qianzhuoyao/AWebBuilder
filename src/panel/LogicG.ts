@@ -9,8 +9,5 @@
  * 
  */
 export class LogicG {
-  constructor() {
-    this.vertexes = []; // 存储顶点
-    this.adjList = []
-  }
+
 }
