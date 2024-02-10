@@ -195,25 +195,25 @@ export default class WeightedDirectedGraph<T, M> {
   }
 
   /**
-   * 更新边
-   * @param from
-   * @param to
-   * @param newWeight
-   * @param message
+   * 更新边,如果边不存在，则不操作
+   * @param newEdge
    */
-  updateEdge(from: T, to: T, newWeight: number, message: M): void {
+  updateEdge(newEdge: {
+    from: T, to: T, newWeight?: number, message?: M
+  }): void {
+    const { from, to, newWeight, message } = newEdge;
     const edges = this.adjacencyList.get(from);
-    if (edges) {
-      const edge = edges.find(edge => edge.target === to);
-      if (edge) {
+    if (!edges) {
+      return;
+    }
+    const edge = edges.find(edge => edge.target === to);
+    if (edge) {
+      if (newWeight) {
         edge.weight = newWeight;
-      } else {
-        // Edge does not exist, create a new one
-        this.addEdge(from, to, message, newWeight);
       }
-    } else {
-      // No edges from 'from' vertex, create a new one
-      this.addEdge(from, to, message, newWeight);
+      if (message) {
+        edge.message = message;
+      }
     }
   }
 
