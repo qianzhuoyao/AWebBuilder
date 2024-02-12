@@ -5,12 +5,14 @@ import { useSelector } from "react-redux";
 import { ILs } from "../store/slice/logicSlice";
 import ReactDOM from "react-dom";
 
+
 interface GraphPanel {
   G: Graph | null;
   mountedIdList: Map<string, Node | undefined>;
 }
 
-export const LogicGraph = () => {
+export const LogicPanel = () => {
+
   const containerRef = useRef<HTMLDivElement>(null);
   const GRef = useRef<GraphPanel>({ G: null, mountedIdList: new Map([]) });
 

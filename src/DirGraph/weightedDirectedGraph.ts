@@ -4,12 +4,15 @@ type Vertex<V> = {
   inDegree: V[] | null;
 };
 
+type  IEdgeMessage = Record<string, string>
+
 type Edge<T, M> = {
   target: T;
   source: T;
   message: M
   weight: number;
 };
+
 type Path<T, M> = {
   edges: Edge<T, M>[];
 };
@@ -31,6 +34,14 @@ type Path<T, M> = {
 export default class WeightedDirectedGraph<T, M> {
   private adjacencyList: Map<T, Edge<T, M>[]>;
   private degree: Map<T, Vertex<T>>;
+  private static instance: WeightedDirectedGraph<unknown, unknown>;
+
+  public static getInstance() {
+    if (!WeightedDirectedGraph.instance) {
+      WeightedDirectedGraph.instance = new WeightedDirectedGraph();
+    }
+    return WeightedDirectedGraph.instance;
+  }
 
   constructor() {
     this.adjacencyList = new Map();
@@ -66,6 +77,12 @@ export default class WeightedDirectedGraph<T, M> {
     const visited: Map<T, boolean> = new Map();
     const paths: Path<T, M>[] = [];
 
+    /**
+     * dfs search
+     * @param current
+     * @param target
+     * @param path
+     */
     const dfs = (current: T, target: T, path: Path<T, M>): void => {
       if (current === target) {
         paths.push({ ...path });
@@ -234,3 +251,11 @@ export default class WeightedDirectedGraph<T, M> {
     return this.adjacencyList.get(vertex) || [];
   }
 }
+
+const WdClass = WeightedDirectedGraph<string, IEdgeMessage>;
+
+const instance = WdClass.getInstance() as WeightedDirectedGraph<string, IEdgeMessage>;
+
+export const getWDGraph = (): WeightedDirectedGraph<string, IEdgeMessage> => {
+  return instance;
+};

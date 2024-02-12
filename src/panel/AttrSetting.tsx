@@ -9,20 +9,20 @@ import {
   PopoverContent,
   Button,
   Switch,
-} from "@nextui-org/react";
-import { SketchPicker } from "react-color";
-import gsap from "gsap";
-import { Icon } from "@iconify-icon/react";
-import { AInput } from "../comp/AInput";
-import { memo, useLayoutEffect, useRef } from "react";
-import { IAs } from "../store/slice/atterSlice";
-import { useDispatch, useSelector } from "react-redux";
+} from '@nextui-org/react';
+import { SketchPicker } from 'react-color';
+import gsap from 'gsap';
+import { Icon } from '@iconify-icon/react';
+import { AInput } from '../comp/AInput';
+import { memo, useLayoutEffect, useRef } from 'react';
+import { IAs } from '../store/slice/atterSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   IPs,
   updatePanelLockTransform,
   updatePanelLockScale,
-} from "../store/slice/panelSlice";
-import { INs } from "../store/slice/nodeSlice";
+} from '../store/slice/panelSlice';
+import { INs } from '../store/slice/nodeSlice';
 
 const ColorPick = memo(() => {
   return (
@@ -52,7 +52,7 @@ const ColorPick = memo(() => {
 const PanelSetting = memo(() => {
   const dispatch = useDispatch();
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
+    console.log(state, 'statescvsfv');
     return state.panelSlice;
   });
 
@@ -105,8 +105,8 @@ const PanelSetting = memo(() => {
         <span className="flex items-center">
           聚焦设置
           <Tooltip
-            color={"default"}
-            content={"将视角聚焦至某点,并将其放置于左上角"}
+            color={'default'}
+            content={'将视角聚焦至某点,并将其放置于左上角'}
             placement="top"
             className="capitalize"
           >
@@ -225,9 +225,9 @@ const ProviderSetting = memo(() => {
         <small className="w-[80px]">边界控制</small>
         <div className="flex">
           <Tabs
-            size={"sm"}
+            size={'sm'}
             aria-label="Tabs sizes"
-            defaultSelectedKey={"bound"}
+            defaultSelectedKey={'bound'}
           >
             <Tab key="bound" title="控制覆盖" />
             <Tab key="over" title="溢出隐藏" />
@@ -240,8 +240,8 @@ const ProviderSetting = memo(() => {
 
 const nodeTabs = [
   {
-    id: "panel",
-    label: "组件设置",
+    id: 'panel',
+    label: '组件设置',
     content: <PanelSetting></PanelSetting>,
   },
 ];
@@ -267,13 +267,13 @@ const DefaultNodeSetting = memo(() => {
 });
 const tabs = [
   {
-    id: "panel",
-    label: "面板设置",
+    id: 'panel',
+    label: '面板设置',
     content: <PanelSetting></PanelSetting>,
   },
   {
-    id: "page",
-    label: "容器配置",
+    id: 'page',
+    label: '容器配置',
     content: <ProviderSetting></ProviderSetting>,
   },
 ];
@@ -281,30 +281,37 @@ const tabs = [
 export const AttrSetting = memo(() => {
   const gsapContainer = useRef<HTMLDivElement>(null);
 
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
+  const { NodesState, AttrState } = useSelector((state: { viewNodesSlice: INs, attrSlice: IAs }) => {
+    return {
+      NodesState: state.viewNodesSlice,
+      AttrState: state.attrSlice,
+    };
   });
 
-  const AttrState = useSelector((state: { attrSlice: IAs }) => {
-    return state.attrSlice;
-  });
+  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+  //   return state.viewNodesSlice;
+  // });
+  //
+  // const AttrState = useSelector((state: { attrSlice: IAs }) => {
+  //   return state.attrSlice;
+  // });
 
   useLayoutEffect(() => {
     if (!AttrState.show) {
       gsap.to(gsapContainer.current, {
-        width: "0px",
-        maxWidth: "0px",
-        minWidth: "0px",
+        width: '0px',
+        maxWidth: '0px',
+        minWidth: '0px',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     } else {
       gsap.to(gsapContainer.current, {
-        maxWidth: "300px",
-        minWidth: "300px",
-        width: "300px",
+        maxWidth: '300px',
+        minWidth: '300px',
+        width: '300px',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     }
   }, [AttrState]);

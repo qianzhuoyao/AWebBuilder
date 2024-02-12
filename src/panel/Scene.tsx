@@ -1,4 +1,4 @@
-import { ARuler } from "./ruler";
+import { ARuler } from './ruler';
 
 import {
   Tabs,
@@ -23,10 +23,10 @@ import {
   ModalFooter,
   Chip,
   useDisclosure,
-} from "@nextui-org/react";
+} from '@nextui-org/react';
 
-import gsap from "gsap";
-import { Icon } from "@iconify-icon/react";
+import gsap from 'gsap';
+import { Icon } from '@iconify-icon/react';
 import {
   memo,
   useCallback,
@@ -34,19 +34,19 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
-import { AR_PANEL_DOM_ID } from "../contant";
-import { IPs } from "../store/slice/panelSlice";
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { IWs, updateWidgetMapShow } from '../store/slice/widgetMapSlice';
+import { AR_PANEL_DOM_ID } from '../contant';
+import { IPs } from '../store/slice/panelSlice';
 import {
   INs,
   IViewNode,
   addNode,
   deleteListItem,
-} from "../store/slice/nodeSlice";
-import { NodeSlot } from "./operation";
-import { LogicGraph } from "./logicGraph";
+} from '../store/slice/nodeSlice';
+import { NodeSlot } from './operation';
+import { LogicPanel } from './logicPanel.tsx';
 
 const View = memo(() => {
   return (
@@ -58,14 +58,14 @@ const View = memo(() => {
 
 export const STabs = [
   {
-    id: "view",
-    label: "视图",
+    id: 'view',
+    label: '视图',
     content: <View></View>,
   },
   {
-    id: "logic",
-    label: "逻辑",
-    content: <LogicGraph></LogicGraph>,
+    id: 'logic',
+    label: '逻辑',
+    content: <LogicPanel></LogicPanel>,
   },
 ];
 
@@ -77,7 +77,7 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Modal
-      size={"2xl"}
+      size={'2xl'}
       isOpen={isOpen}
       onClose={onClose}
       scrollBehavior="inside"
@@ -115,10 +115,10 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                   <TableRow key="1">
                     <TableCell>延续多选</TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
+                      <Kbd keys={['shift']}>KeyQ+Shift+Mouse1Down</Kbd>
                     </TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
+                      <Kbd keys={['shift']}>KeyQ+Shift+Mouse1Down</Kbd>
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -140,7 +140,7 @@ const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
+    console.log(state, 'statescvsfv');
     return state.panelSlice;
   });
 
@@ -161,8 +161,8 @@ const SceneLayer = memo(() => {
         </div>
         <div className="absolute bottom-[5px] right-[5px]">
           <Tooltip
-            color={"default"}
-            content={"快捷键"}
+            color={'default'}
+            content={'快捷键'}
             placement="top"
             className="capitalize"
           >
@@ -177,23 +177,23 @@ const SceneLayer = memo(() => {
             />
           </Tooltip>
           <Tooltip
-            color={PanelState.lockTransform ? "danger" : "success"}
+            color={PanelState.lockTransform ? 'danger' : 'success'}
             content={
-              PanelState.lockTransform ? "已锁定transform" : "未锁定transform"
+              PanelState.lockTransform ? '已锁定transform' : '未锁定transform'
             }
             placement="top"
             className="capitalize"
           >
             <Icon
-              icon={PanelState.lockTransform ? "uis:lock" : "uis:unlock"}
+              icon={PanelState.lockTransform ? 'uis:lock' : 'uis:unlock'}
               className="cursor-pointer mr-2"
               height={16}
               width={16}
             />
           </Tooltip>
           <Tooltip
-            color={PanelState.lockScale ? "danger" : "success"}
-            content={PanelState.lockScale ? "缩放已锁定" : "缩放已解锁"}
+            color={PanelState.lockScale ? 'danger' : 'success'}
+            content={PanelState.lockScale ? '缩放已锁定' : '缩放已解锁'}
             placement="top"
             className="capitalize"
           >
@@ -207,7 +207,7 @@ const SceneLayer = memo(() => {
                 />
               }
               variant="faded"
-              color={PanelState.lockScale ? "danger" : "success"}
+              color={PanelState.lockScale ? 'danger' : 'success'}
             >
               {PanelState.tickUnit}
             </Chip>
@@ -219,11 +219,11 @@ const SceneLayer = memo(() => {
           items={STabs}
           radius="md"
           classNames={{
-            tab: "",
-            tabList: "w-[120px]",
-            panel: "p-0 bg-default-100 h-[calc(100%)] w-[100%]",
-            cursor: "rounded-md",
-            base: "bg-default-200 p-1 flex justify-center",
+            tab: '',
+            tabList: 'w-[120px]',
+            panel: 'p-0 bg-default-100 h-[calc(100%)] w-[100%]',
+            cursor: 'rounded-md',
+            base: 'bg-default-200 p-1 flex justify-center',
           }}
         >
           {(item) => (
@@ -242,12 +242,12 @@ const SceneLayer = memo(() => {
 
 const widgetMapTabs = [
   {
-    id: "logic_map_list",
-    label: "逻辑",
+    id: 'logic_map_list',
+    label: '逻辑',
   },
   {
-    id: "view_map_list",
-    label: "视图",
+    id: 'view_map_list',
+    label: '视图',
   },
 ];
 
@@ -255,41 +255,49 @@ const SceneWidgetMap = memo(() => {
   const dispatch = useDispatch();
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
 
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
+  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+  //   return state.viewNodesSlice;
+  // });
+  // const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+  //   return state.widgetMapSlice;
+  // });
+
+
+  const { NodesState, widgetMapState } = useSelector((state: { viewNodesSlice: INs, widgetMapSlice: IWs }) => {
+    return {
+      widgetMapState: state.widgetMapSlice,
+      NodesState: state.viewNodesSlice,
+    };
   });
 
   useLayoutEffect(() => {
     if (!widgetMapState.show) {
       gsap.to(gsapSceneWidgetContainer.current, {
-        width: "0px",
-        maxWidth: "0px",
-        minWidth: "0px",
+        width: '0px',
+        maxWidth: '0px',
+        minWidth: '0px',
         duration: 0.1,
-        padding: "0rem",
-        ease: "none",
+        padding: '0rem',
+        ease: 'none',
       });
     } else {
       gsap.to(gsapSceneWidgetContainer.current, {
-        maxWidth: "210px",
-        minWidth: "210px",
-        width: "210px",
+        maxWidth: '210px',
+        minWidth: '210px',
+        width: '210px',
 
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     }
   }, [widgetMapState]);
 
   const onHandleRemove = useCallback(
     (id: string) => {
-      console.log(id, "ssss");
+      console.log(id, 'ssss');
       dispatch(deleteListItem({ idList: [id] }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onHandleCopy = useCallback(
@@ -297,11 +305,11 @@ const SceneWidgetMap = memo(() => {
       const clone = NodesState.list[id];
       if (clone) {
         dispatch(
-          addNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" })
+          addNode({ ...clone, copyBy: clone.id, id: clone.id + '-clone' }),
         );
       }
     },
-    [NodesState.list, dispatch]
+    [NodesState.list, dispatch],
   );
 
   return (
@@ -317,7 +325,7 @@ const SceneWidgetMap = memo(() => {
             aria-label="Dynamic tabs"
             items={widgetMapTabs}
             classNames={{
-              tabList: "",
+              tabList: '',
             }}
           >
             {(item) => <Tab key={item.id} title={item.label}></Tab>}
@@ -334,10 +342,10 @@ const SceneWidgetMap = memo(() => {
                 className="w-full my-1"
                 style={{
                   border: NodesState.targets.includes(node.id)
-                    ? "1px solid #006FEE"
-                    : "1px solid #18181b",
+                    ? '1px solid #006FEE'
+                    : '1px solid #18181b',
                 }}
-                onPress={() => console.log("item pressed")}
+                onPress={() => console.log('item pressed')}
               >
                 <CardBody className="overflow-visible p-0">
                   <NodeSlot node={node} isTemp={true}></NodeSlot>
@@ -346,8 +354,8 @@ const SceneWidgetMap = memo(() => {
                   <small className="text-default-500">{node.alias}</small>
                   <p>
                     <Tooltip
-                      color={"default"}
-                      content={"复制"}
+                      color={'default'}
+                      content={'复制'}
                       placement="top"
                       className="capitalize"
                     >
@@ -360,8 +368,8 @@ const SceneWidgetMap = memo(() => {
                       />
                     </Tooltip>
                     <Tooltip
-                      color={"default"}
-                      content={"删除"}
+                      color={'default'}
+                      content={'删除'}
                       placement="top"
                       className="capitalize"
                     >
@@ -395,13 +403,13 @@ const AContent = memo(() => {
 
 const SLayerTabs = [
   {
-    id: "layer1",
-    label: "图层1",
+    id: 'layer1',
+    label: '图层1',
     content: <AContent></AContent>,
   },
   {
-    id: "layer-Create",
-    label: "图层2",
+    id: 'layer-Create',
+    label: '图层2',
     content: <SceneLayer></SceneLayer>,
   },
 ];
@@ -417,35 +425,35 @@ export const Scene = memo(() => {
   }, [dispatch, widgetMapState]);
 
   useLayoutEffect(() => {
-    const dom = document.querySelector(".map-a-left-vis");
-    const tab = document.querySelector(".map-a-left-vis-tab");
+    const dom = document.querySelector('.map-a-left-vis');
+    const tab = document.querySelector('.map-a-left-vis-tab');
 
     if (!widgetMapState.providerShow) {
       if (!dom || !tab) {
         return;
       }
       gsap.to(tab, {
-        visibility: "hidden",
+        visibility: 'hidden',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
       gsap.to(dom, {
-        width: "0px",
-        padding: "0rem",
+        width: '0px',
+        padding: '0rem',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     } else {
       gsap.to(tab, {
-        visibility: "visible",
+        visibility: 'visible',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
       gsap.to(dom, {
-        width: "72px",
-        padding: "0.25rem",
+        width: '72px',
+        padding: '0.25rem',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     }
   }, [widgetMapState]);
@@ -464,8 +472,8 @@ export const Scene = memo(() => {
           <Icon
             icon={
               widgetMapState.show
-                ? "mdi:arrow-collapse-left"
-                : "mdi:arrow-collapse-right"
+                ? 'mdi:arrow-collapse-left'
+                : 'mdi:arrow-collapse-right'
             }
           />
         </Button>
@@ -489,11 +497,11 @@ export const Scene = memo(() => {
         color="primary"
         radius="md"
         classNames={{
-          tab: "",
-          tabList: "map-a-left-vis-tab flex flex-col mt-[80px]",
-          panel: "p-0 bg-default-100 h-[calc(100%)] w-[100%]",
-          cursor: "rounded-md",
-          base: "map-a-left-vis bg-default-50 p-1 flex justify-center",
+          tab: '',
+          tabList: 'map-a-left-vis-tab flex flex-col mt-[80px]',
+          panel: 'p-0 bg-default-100 h-[calc(100%)] w-[100%]',
+          cursor: 'rounded-md',
+          base: 'map-a-left-vis bg-default-50 p-1 flex justify-center',
         }}
       >
         {(item) => (

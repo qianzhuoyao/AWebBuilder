@@ -3,7 +3,7 @@ import { WidgetIconTemp } from "./widgetIconTemp";
 import { SRC_ICON } from "./picList";
 import React, { memo, useMemo } from "react";
 
-interface ITs {
+export interface ITs {
   ele: {
     id: string;
     label: string;

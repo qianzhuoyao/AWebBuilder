@@ -23,9 +23,6 @@ const LogicToolHeader = memo(() => {
   });
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
-      {/* <div className="flex items-center p-2">
-        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
-      </div> */}
       <div className="flex justify-between">
         <AInput
           placeholder="搜索组件"
@@ -60,9 +57,7 @@ const ToolHeader = memo(() => {
 
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
-      {/* <div className="flex items-center p-2">
-        <Icon icon="mdi:widget-tree" width={"16px"} height={"16px"} />
-      </div> */}
+
       <div className="flex justify-between">
         <AInput
           placeholder="搜索组件"
@@ -189,17 +184,27 @@ export const Tools = memo(() => {
     []
   );
   const dispatch = useDispatch();
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
+
+  const { widgetMapState,widgetState,AttrState } = useSelector((state: { widgetMapSlice: IWs,widgetSlice: IWls,attrSlice: IAs }) => {
+    return {
+      widgetMapState: state.widgetMapSlice,
+      widgetState:state.widgetSlice,
+      AttrState:state.attrSlice
+    };
   });
 
-  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    return state.widgetSlice;
-  });
 
-  const AttrState = useSelector((state: { attrSlice: IAs }) => {
-    return state.attrSlice;
-  });
+  // const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+  //   return state.widgetMapSlice;
+  // });
+  //
+  // const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+  //   return state.widgetSlice;
+  // });
+  //
+  // const AttrState = useSelector((state: { attrSlice: IAs }) => {
+  //   return state.attrSlice;
+  // });
 
   const onHandleShowAttr = useCallback(() => {
     dispatch(updateAttrShow(!AttrState.show));

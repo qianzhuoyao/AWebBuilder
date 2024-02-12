@@ -16,11 +16,18 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
+  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+  //   return state.viewNodesSlice;
+  // });
+  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
+  //   return state.panelSlice;
+  // });
+
+  const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+    return {
+      PanelState: state.panelSlice,
+      NodesState: state.viewNodesSlice,
+    };
   });
   console.log(id, NodesState, PanelState, 'id[p-d-dd-d-d-d-');
   if (NodesState.list[id].classify === 'chart') {
@@ -41,12 +48,20 @@ export const NodeSlot = memo(
   ({ node, isTemp }: { node: IViewNode; isTemp: boolean }) => {
     const nodeRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
-    const PanelState = useSelector((state: { panelSlice: IPs }) => {
-      return state.panelSlice;
+
+    const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+      return {
+        PanelState: state.panelSlice,
+        NodesState: state.viewNodesSlice,
+      };
     });
-    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-      return state.viewNodesSlice;
-    });
+
+    // const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    //   return state.panelSlice;
+    // });
+    // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    //   return state.viewNodesSlice;
+    // });
     const { view, show } = useSceneContext();
     useEffect(() => {
       if (!nodeRef.current) {
@@ -113,12 +128,19 @@ const NodeContainer = memo(() => {
 
   const dispatch = useDispatch();
 
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
+  const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+    return {
+      PanelState: state.panelSlice,
+      NodesState: state.viewNodesSlice,
+    };
   });
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+
+  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
+  //   return state.panelSlice;
+  // });
+  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+  //   return state.viewNodesSlice;
+  // });
 
 
   useEffect(() => {

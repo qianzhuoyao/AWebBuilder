@@ -1,139 +1,10 @@
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import { WidgetIconTemp } from "./widgetIconTemp";
-import React, { memo } from "react";
-import { LOGIC_SRC_ICON } from "./logicSrcList";
+import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
+import { WidgetIconTemp } from './widgetIconTemp';
+import { memo } from 'react';
+import { LOGIC_SRC_ICON } from './logicSrcList';
+import { ITs } from './widgetMenu.tsx';
 
-interface ITs {
-  ele: {
-    id: string;
-    label: string;
-    content: React.ReactNode;
-  }[];
-}
 
-export const ChartIcon = memo(() => {
-  return (
-    <div className="flex flex-col items-center space-y-2">
-      <svg
-        width={24}
-        height={24}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 32 32"
-      >
-        <path
-          d="M12 30H4a2.002 2.002 0 0 1-2-2v-4a2.002 2.002 0 0 1 2-2h8a2.002 2.002 0 0 1 2 2v4a2.002 2.002 0 0 1-2 2zm-8-6v4h8v-4z"
-          fill="currentColor"
-        ></path>
-        <path
-          d="M28 20H12a2.002 2.002 0 0 1-2-2v-4a2.002 2.002 0 0 1 2-2h16a2.002 2.002 0 0 1 2 2v4a2.002 2.002 0 0 1-2 2zm-16-6v4h16v-4z"
-          fill="currentColor"
-        ></path>
-        <path
-          d="M16 10H4a2.002 2.002 0 0 1-2-2V4a2.002 2.002 0 0 1 2-2h12a2.002 2.002 0 0 1 2 2v4a2.002 2.002 0 0 1-2 2zM4 4v4h12V4z"
-          fill="currentColor"
-        ></path>
-      </svg>
-      <span className="text-center">图表</span>
-    </div>
-  );
-});
-
-export const TableIcon = memo(() => {
-  return (
-    <div className="flex flex-col items-center space-y-2">
-      <svg
-        width={24}
-        height={24}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 32 32"
-      >
-        <path
-          d="M27 3H5a2 2 0 0 0-2 2v22a2 2 0 0 0 2 2h22a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 2v4H5V5zm-10 6h10v7H17zm-2 7H5v-7h10zM5 20h10v7H5zm12 7v-7h10v7z"
-          fill="currentColor"
-        ></path>
-      </svg>
-      <span>表格</span>
-    </div>
-  );
-});
-
-export const ImageIcon = memo(() => {
-  return (
-    <div className="flex flex-col items-center space-y-2">
-      <svg
-        width={24}
-        height={24}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <rect
-          x="48"
-          y="80"
-          width="416"
-          height="352"
-          rx="48"
-          ry="48"
-          fill="none"
-          stroke="currentColor"
-          stroke-linejoin="round"
-          stroke-width="32"
-        ></rect>
-        <circle
-          cx="336"
-          cy="176"
-          r="32"
-          fill="none"
-          stroke="currentColor"
-          stroke-miterlimit="10"
-          stroke-width="32"
-        ></circle>
-        <path
-          d="M304 335.79l-90.66-90.49a32 32 0 0 0-43.87-1.3L48 352"
-          fill="none"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="32"
-        ></path>
-        <path
-          d="M224 432l123.34-123.34a32 32 0 0 1 43.11-2L464 368"
-          fill="none"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="32"
-        ></path>
-      </svg>
-      <span>资源</span>
-    </div>
-  );
-});
-export const TextIcon = memo(() => {
-  return (
-    <div className="flex flex-col items-center space-y-2">
-      <svg
-        width={24}
-        height={24}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 32 32"
-      >
-        <path
-          d="M20 22h2l-5-12h-2l-5 12h2l1.24-3h5.53zm-5.93-5l1.82-4.42h.25L18 17z"
-          fill="currentColor"
-        ></path>
-        <path
-          d="M12 28H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v11h-2V6H6v20h6z"
-          fill="currentColor"
-        ></path>
-        <path
-          d="M23 27.18l-2.59-2.59L19 26l4 4l7-7l-1.41-1.41L23 27.18z"
-          fill="currentColor"
-        ></path>
-      </svg>
-      <span>文本</span>
-    </div>
-  );
-});
 
 const CacheMap = memo(() => {
   return (
@@ -199,39 +70,28 @@ const RemoteMap = memo(() => {
 
 const LogicData = [
   {
-    id: "logic_remote_data",
-    label: "远程",
+    id: 'logic_remote_data',
+    label: '远程',
     content: <RemoteMap></RemoteMap>,
   },
   {
-    id: "logic_cache_data",
-    label: "缓存",
+    id: 'logic_cache_data',
+    label: '缓存',
     content: <CacheMap></CacheMap>,
   },
   {
-    id: "logic_filter_data",
-    label: "过滤",
+    id: 'logic_filter_data',
+    label: '过滤',
     content: <FilterMap></FilterMap>,
   },
   {
-    id: "logic_mix_data",
-    label: "装饰",
+    id: 'logic_mix_data',
+    label: '装饰',
     content: <FilterMap></FilterMap>,
   },
 ];
 
-export const ChartTabs = [
-  {
-    id: "bXChartContent",
-    label: "柱状图",
-    content: <RemoteMap></RemoteMap>,
-  },
-  {
-    id: "lChartContent",
-    label: "折线图",
-    content: <RemoteMap></RemoteMap>,
-  },
-];
+
 
 const TabSlot = memo(({ ele }: ITs) => {
   return (
@@ -242,10 +102,10 @@ const TabSlot = memo(({ ele }: ITs) => {
         color="primary"
         radius="none"
         classNames={{
-          tabList: "flex flex-col",
-          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
-          cursor: "rounded-md",
-          base: "bg-default-100",
+          tabList: 'flex flex-col',
+          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
+          cursor: 'rounded-md',
+          base: 'bg-default-100',
         }}
       >
         {(item) => (
@@ -334,7 +194,8 @@ const TimeIcon = memo(() => {
         viewBox="0 0 24 24"
       >
         <g fill="none">
-          <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
+          <path
+            d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
           <path
             fill="currentColor"
             d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16m0 2a1 1 0 0 1 .993.883L13 7v4.586l2.707 2.707a1 1 0 0 1-1.32 1.497l-.094-.083l-3-3a1 1 0 0 1-.284-.576L11 12V7a1 1 0 0 1 1-1"
@@ -383,7 +244,8 @@ const DebuggerIcon = memo(() => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="m3.5 10.5l1.3-1.3M4.5 7H3m7.5-3.5L9.2 4.8M9.5 7H11m-4.5-.5h3M.5 7a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0m11.096 4.596L2.404 2.404" />
+          <path
+            d="m3.5 10.5l1.3-1.3M4.5 7H3m7.5-3.5L9.2 4.8M9.5 7H11m-4.5-.5h3M.5 7a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0m11.096 4.596L2.404 2.404" />
           <path d="M4.804 4.804A2.5 2.5 0 0 1 9.5 6v2a2.5 2.5 0 0 1-.304 1.196M4.5 7v1a2.5 2.5 0 0 0 3.172 2.408" />
         </g>
       </svg>
@@ -414,37 +276,37 @@ const BrowseIcon = memo(() => {
 
 const tabs = [
   {
-    id: "data_logic",
+    id: 'data_logic',
     label: <LogicDataIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "time_logic",
+    id: 'time_logic',
     label: <TimeIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "view_logic",
+    id: 'view_logic',
     label: <ViewIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "life_logic",
+    id: 'life_logic',
     label: <LifeIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "event_logic",
+    id: 'event_logic',
     label: <EventIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "browse_logic",
+    id: 'browse_logic',
     label: <BrowseIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: "debugger_logic",
+    id: 'debugger_logic',
     label: <DebuggerIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
@@ -458,11 +320,11 @@ export const LogicWidgetMenu = memo(() => {
         items={tabs}
         radius="none"
         classNames={{
-          tab: "h-[70px]",
-          tabList: "flex flex-col",
-          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
-          cursor: "rounded-md",
-          base: "bg-default-100",
+          tab: 'h-[70px]',
+          tabList: 'flex flex-col',
+          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
+          cursor: 'rounded-md',
+          base: 'bg-default-100',
         }}
       >
         {(item) => (
