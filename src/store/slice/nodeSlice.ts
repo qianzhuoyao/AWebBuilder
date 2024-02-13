@@ -1,37 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
-import * as Echart from "echarts";
-import { enableMapSet } from "immer";
+import { createSlice } from '@reduxjs/toolkit';
+import * as Echart from 'echarts';
+import { enableMapSet } from 'immer';
 
 //pixTable
-export const pix_Table = "pixTable" as const;
+export const pix_Table = 'pixTable' as const;
 //文本
-export const pix_Text = "pixText" as const;
+export const pix_Text = 'pixText' as const;
 //图片资源
-export const pic_Img = "pic" as const;
+export const pic_Img = 'pic' as const;
 //条形图
-export const pix_Line = "pixLine" as const;
+export const pix_Line = 'pixLine' as const;
 //面积图
-export const pix_GLine = "pixGLine" as const;
+export const pix_GLine = 'pixGLine' as const;
 //普通柱状图
-export const pix_BX = "pixBX" as const;
+export const pix_BX = 'pixBX' as const;
 //横向柱状图
-export const pix_BY = "pixBY" as const;
+export const pix_BY = 'pixBY' as const;
 //折现柱状图
-export const pix_BLine = "pixBLine" as const;
+export const pix_BLine = 'pixBLine' as const;
 
 //关于信号的说明，0/1 当存在型号时，信号边为1 否则为0
 //逻辑 数据获取器
-export const logic_D_get = "logic_D_get" as const;
+export const logic_D_get = 'logic_D_get' as const;
 //逻辑 提交数据
-export const logic_U_get = "logic_U_get" as const;
+export const logic_U_get = 'logic_U_get' as const;
 //缓存器
-export const logic_Cache_set = "logic_Cache_set" as const;
+export const logic_Cache_set = 'logic_Cache_set' as const;
 //清理所有缓存
-export const logic_Cache_clear = "logic_Cache_clear" as const;
+export const logic_Cache_clear = 'logic_Cache_clear' as const;
 //校验器 当信号输入值与设置值相等时通过，否则拦截
-export const logic_P_get = "logic_P_set" as const;
+export const logic_P_get = 'logic_P_set' as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
-export const logic_TM_get = "logic_TM_get" as const;
+export const logic_TM_get = 'logic_TM_get' as const;
+
+
+export type ILogicType = typeof logic_Cache_clear
+  | typeof logic_D_get
+  | typeof logic_U_get
+  | typeof logic_Cache_set
+  | typeof logic_P_get
+
 export type INodeType =
   | typeof pix_BLine
   | typeof logic_TM_get
@@ -42,11 +50,7 @@ export type INodeType =
   | typeof pix_Line
   | typeof pic_Img
   | typeof pix_Text
-  | typeof logic_Cache_clear
-  | typeof logic_D_get
-  | typeof logic_U_get
-  | typeof logic_Cache_set
-  | typeof logic_P_get;
+  | ILogicType;
 
 interface IChartInstance {
   option?: Echart.EChartsOption;
@@ -63,13 +67,13 @@ export type IIstance = IChartInstance;
 enableMapSet();
 
 export type IClassify =
-  | "chart"
-  | "table"
-  | "dom"
-  | "text"
-  | "line"
-  | "remote"
-  | "cache";
+  | 'chart'
+  | 'table'
+  | 'dom'
+  | 'text'
+  | 'line'
+  | 'remote'
+  | 'cache';
 
 export interface IViewNode {
   //标识
@@ -96,17 +100,18 @@ export interface IViewNode {
   classify: IClassify;
   //实例容器
   instance: IIstance;
-  nodeType: "VIEW" | "LOGIC";
+  nodeType: 'VIEW' | 'LOGIC';
 }
 
 type nodeId = string;
+
 export interface INs {
   targets: string[];
   list: Record<nodeId, IViewNode>;
 }
 
 export const viewNodesSlice = createSlice({
-  name: "nodes",
+  name: 'nodes',
   initialState: {
     list: {},
     targets: [],
@@ -130,8 +135,8 @@ export const viewNodesSlice = createSlice({
     },
     updateSize: (state, action) => {
       const findNode = (state.list as Record<string, IViewNode>)[
-        action.payload.id || ""
-      ];
+      action.payload.id || ''
+        ];
       if (findNode) {
         const newNode = {
           ...findNode,
@@ -143,8 +148,8 @@ export const viewNodesSlice = createSlice({
     },
     updatePosition: (state, action) => {
       const findNode = (state.list as Record<string, IViewNode>)[
-        action.payload.id || ""
-      ];
+      action.payload.id || ''
+        ];
       if (findNode) {
         const newNode = {
           ...findNode,

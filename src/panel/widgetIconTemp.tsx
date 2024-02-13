@@ -1,5 +1,5 @@
-import { Card, Image, CardFooter, CardHeader } from "@nextui-org/react";
-import { v4 as uuidv4 } from "uuid";
+import { Card, Image, CardFooter, CardHeader } from '@nextui-org/react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   memo,
   useEffect,
@@ -7,11 +7,11 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-} from "react";
-import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
-import { useDispatch, useSelector } from "react-redux";
-import { IPs } from "../store/slice/panelSlice";
-import gsap from "gsap";
+} from 'react';
+import { createLayerSrc, setWidgetStream } from './createWidgetPipe';
+import { useDispatch, useSelector } from 'react-redux';
+import { IPs } from '../store/slice/panelSlice';
+import gsap from 'gsap';
 import {
   AR_PANEL_DOM_ID,
   LOGIC_PANEL_DOM_ID,
@@ -20,13 +20,14 @@ import {
   NODE_TYPE_IN_ELE_VIEW,
   drag_size_height,
   drag_size_width,
-} from "../contant";
-import { IClassify, INodeType, addNode } from "../store/slice/nodeSlice";
-import { IWs } from "../store/slice/widgetMapSlice";
-import { ILs, addLogicNode } from "../store/slice/logicSlice";
+} from '../contant';
+import { IClassify, INodeType, addNode } from '../store/slice/nodeSlice';
+import { IWs } from '../store/slice/widgetMapSlice';
+import { ILs, addLogicNode } from '../store/slice/logicSlice';
+import { toast } from 'react-toastify';
 
 interface IW {
-  nodeType: "LOGIC" | "VIEW";
+  nodeType: 'LOGIC' | 'VIEW';
   src: string;
   name: string;
   typeId: INodeType;
@@ -36,7 +37,7 @@ interface IW {
 
 const isInPanel = (
   e: MouseEvent,
-  parentDomId: typeof AR_PANEL_DOM_ID | typeof LOGIC_PANEL_DOM_ID
+  parentDomId: typeof AR_PANEL_DOM_ID | typeof LOGIC_PANEL_DOM_ID,
 ): boolean => {
   const { pageX, pageY } = e;
 
@@ -57,11 +58,11 @@ const isInPanel = (
 
 const ViewCard = memo(
   ({
-    name,
-    typeId,
-    id,
-    src,
-  }: {
+     name,
+     typeId,
+     id,
+     src,
+   }: {
     name: string;
     typeId: INodeType;
     id: string;
@@ -77,7 +78,7 @@ const ViewCard = memo(
       ImageRef,
       name,
       typeId,
-      widgetMapState.contentImageShowType
+      widgetMapState.contentImageShowType,
     );
 
     useEffect(() => {
@@ -102,21 +103,22 @@ const ViewCard = memo(
                 height={200}
                 isZoomed
                 src={src}
-                width={"100%"}
+                width={'100%'}
               />
 
               {!widgetMapState.contentImageShowType && (
-                <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+                <CardFooter
+                  className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
                   <p className="text-tiny text-white/80">{name}</p>
                 </CardFooter>
               )}
             </Card>
           ),
-          [id, name, src, widgetMapState.contentImageShowType]
+          [id, name, src, widgetMapState.contentImageShowType],
         )}
       </>
     );
-  }
+  },
 );
 
 /**
@@ -127,7 +129,7 @@ const transPointInScene = (
   pageY: number,
   rMinX: number,
   rMinY: number,
-  offset: number
+  offset: number,
 ) => {
   const SCENE = document.getElementById(AR_PANEL_DOM_ID);
   if (!SCENE) {
@@ -146,10 +148,10 @@ const useCardDefaultSetting = (
   ImageRef: React.RefObject<HTMLImageElement>,
   name: string,
   typeId: INodeType,
-  contentImageShowType: number
+  contentImageShowType: number,
 ) => {
-  ImageRef.current?.setAttribute("data-temp-type", name);
-  ImageRef.current?.setAttribute("data-temp-id", typeId);
+  ImageRef.current?.setAttribute('data-temp-type', name);
+  ImageRef.current?.setAttribute('data-temp-id', typeId);
   useEffect(() => {
     if (!ICardRef.current) {
       return;
@@ -161,15 +163,15 @@ const useCardDefaultSetting = (
   useLayoutEffect(() => {
     if (contentImageShowType) {
       gsap.to(ICardRef.current, {
-        width: "44%",
+        width: '44%',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     } else {
       gsap.to(ICardRef.current, {
-        width: "auto",
+        width: 'auto',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     }
   }, [ICardRef, contentImageShowType]);
@@ -177,12 +179,12 @@ const useCardDefaultSetting = (
 
 const LogicCard = memo(
   ({
-    name,
-    typeId,
-    id,
-    src,
-    tips,
-  }: {
+     name,
+     typeId,
+     id,
+     src,
+     tips,
+   }: {
     name: string;
     typeId: INodeType;
     id: string;
@@ -199,7 +201,7 @@ const LogicCard = memo(
       ImageRef,
       name,
       typeId,
-      logicState.contentImageShowType
+      logicState.contentImageShowType,
     );
     useEffect(() => {
       ImageRef.current?.setAttribute(NODE_TYPE_IN_ELE, NODE_TYPE_IN_ELE_LOGIC);
@@ -230,11 +232,11 @@ const LogicCard = memo(
               </Card>
             </>
           ),
-          [id, name, src, tips]
+          [id, name, src, tips],
         )}
       </>
     );
-  }
+  },
 );
 
 export const WidgetIconTemp = memo(
@@ -252,19 +254,19 @@ export const WidgetIconTemp = memo(
         key,
         {
           down: (e) => {
-            console.log(e, "downe");
-            const node = createLayerSrc("img");
+            console.log(e, 'downe');
+            const node = createLayerSrc('img');
             if (node) {
               node.src = src;
-              node.style.position = "absolute";
-              node.style.width = drag_size_width + "px";
-              node.style.height = drag_size_height + "px";
-              node.style.left = e.pageX + "px";
-              node.style.top = e.pageY + "px";
+              node.style.position = 'absolute';
+              node.style.width = drag_size_width + 'px';
+              node.style.height = drag_size_height + 'px';
+              node.style.left = e.pageX + 'px';
+              node.style.top = e.pageY + 'px';
               if (e.target instanceof HTMLElement) {
                 node.setAttribute(
                   NODE_TYPE_IN_ELE,
-                  e.target.getAttribute(NODE_TYPE_IN_ELE) || "isError"
+                  e.target.getAttribute(NODE_TYPE_IN_ELE) || 'isError',
                 );
               }
             }
@@ -272,10 +274,10 @@ export const WidgetIconTemp = memo(
             return node;
           },
           move: (e, c) => {
-            console.log(e, "streams");
+            console.log(e, 'streams');
             if (c) {
-              c.style.left = e.pageX + "px";
-              c.style.top = e.pageY + "px";
+              c.style.left = e.pageX + 'px';
+              c.style.top = e.pageY + 'px';
             }
           },
           up: (e, c) => {
@@ -286,7 +288,7 @@ export const WidgetIconTemp = memo(
                 e.pageY,
                 PanelState.rulerMinX,
                 PanelState.rulerMinY,
-                PanelState.offset
+                PanelState.offset,
               );
               if (pointer && isInPanel(e, AR_PANEL_DOM_ID)) {
                 const w = drag_size_width * PanelState.tickUnit;
@@ -306,38 +308,56 @@ export const WidgetIconTemp = memo(
                     instance: {
                       type: typeId,
                     },
-                  })
+                  }),
                 );
+              }else {
+                toast.error('目标面板应该是视图层');
               }
             } else if (
               c?.getAttribute(NODE_TYPE_IN_ELE) === NODE_TYPE_IN_ELE_LOGIC
             ) {
               if (isInPanel(e, LOGIC_PANEL_DOM_ID)) {
-                console.log(e, "isMod");
                 const LOGIC_CONTAINER =
                   document.getElementById(LOGIC_PANEL_DOM_ID);
                 if (!LOGIC_CONTAINER) {
+                  toast.error('逻辑面板不存在,请刷新');
                   return;
                 }
                 const { left, top } = LOGIC_CONTAINER.getBoundingClientRect();
+                console.log(c,typeId,'e-e-e');
                 dispatch(
                   addLogicNode({
+                    ports:[{
+                      type:'in',
+                      tag:0,
+                      portType:'',
+                      pointStatus:0,
+                    },{
+                      type:'out',
+                      tag:0,
+                      portType:'',
+                      pointStatus:0,
+                    }],
+                    typeId,
+
                     x: e.pageX - left,
                     y: e.pageY - top,
-                    shape: "image",
+                    shape: 'image',
                     width: 40,
                     height: 40,
                     id: uuidv4(),
                     imageUrl: c.src,
-                  })
+                  }),
                 );
+              }else{
+                toast.error('目标面板应该是逻辑层');
               }
               c?.remove();
             } else {
-              throw new Error("handler htmlELe is unknown");
+              throw new Error('handler htmlELe is unknown');
             }
           },
-        }
+        },
       );
 
       return () => {
@@ -359,7 +379,7 @@ export const WidgetIconTemp = memo(
 
     return (
       <>
-        {nodeType === "VIEW" ? (
+        {nodeType === 'VIEW' ? (
           <ViewCard id={key} name={name} typeId={typeId} src={src} />
         ) : (
           <LogicCard
@@ -372,5 +392,5 @@ export const WidgetIconTemp = memo(
         )}
       </>
     );
-  }
+  },
 );

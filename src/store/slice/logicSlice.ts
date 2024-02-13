@@ -1,14 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
+import { ILogicType } from './nodeSlice.ts';
+
 
 export interface ILogicNode {
   id: string;
+  typeId: ILogicType;
   shape: string;
+
   x: number;
   y: number;
   width: number;
   height: number;
   imageUrl: string;
+  /**
+   * 对端句柄
+
+   */
+  ports: {
+    type: 'in' | 'out',
+    tag: number,
+    pointStatus: 0|1|2; // 0 无连接 1 信号存在时异常或者无信号 2 信号存在时正常
+  }[];
 }
 
 
@@ -48,6 +61,35 @@ export const logicSlice = createSlice({
       }
     },
 
+    updateLogicPortsNode: (state, action) => {
+      const { id, connected, tag ,portType} = action.payload;
+      console.log(tag,'tagtagtagtag');
+      (state.logicNodes as Record<string, ILogicNode>)[id] =
+        {
+          ...(state.logicNodes as Record<string, ILogicNode>)[id]
+          , ...{
+            ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
+              if (port.tag === tag && port.type===portType) {
+                return {
+                  ...port,
+                  pointStatus: connected,
+                };
+              } else {
+                return port;
+              }
+            }),
+          },
+        };
+
+    },
+
+    updateLogicNode: (state, action) => {
+      const { id } = action.payload;
+      (state.logicNodes as Record<string, ILogicNode>)[id] =
+        { ...(state.logicNodes as Record<string, ILogicNode>)[id], ...action.payload };
+
+    },
+
     addLogicNode: (state, action) => {
 
       (state.logicNodes as Record<string, ILogicNode>)[action.payload.id] =
@@ -61,6 +103,6 @@ export const logicSlice = createSlice({
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
-export const { updateLogicContentImageShowType, addLogicNode } = logicSlice.actions;
+export const { updateLogicPortsNode,updateLogicNode, addLogicEdge, updateLogicContentImageShowType, addLogicNode } = logicSlice.actions;
 
 export default logicSlice.reducer;

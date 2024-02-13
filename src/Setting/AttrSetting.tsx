@@ -13,16 +13,16 @@ import {
 import { SketchPicker } from 'react-color';
 import gsap from 'gsap';
 import { Icon } from '@iconify-icon/react';
-import { AInput } from '../comp/AInput';
+import { AInput } from '../comp/AInput.tsx';
 import { memo, useLayoutEffect, useRef } from 'react';
-import { IAs } from '../store/slice/atterSlice';
+import { IAs } from '../store/slice/atterSlice.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IPs,
   updatePanelLockTransform,
   updatePanelLockScale,
-} from '../store/slice/panelSlice';
-import { INs } from '../store/slice/nodeSlice';
+} from '../store/slice/panelSlice.ts';
+import { INs } from '../store/slice/nodeSlice.ts';
 
 const ColorPick = memo(() => {
   return (
@@ -288,13 +288,6 @@ export const AttrSetting = memo(() => {
     };
   });
 
-  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-  //   return state.viewNodesSlice;
-  // });
-  //
-  // const AttrState = useSelector((state: { attrSlice: IAs }) => {
-  //   return state.attrSlice;
-  // });
 
   useLayoutEffect(() => {
     if (!AttrState.show) {

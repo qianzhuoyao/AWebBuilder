@@ -16,12 +16,7 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
-  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-  //   return state.viewNodesSlice;
-  // });
-  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
-  //   return state.panelSlice;
-  // });
+
 
   const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
     return {
