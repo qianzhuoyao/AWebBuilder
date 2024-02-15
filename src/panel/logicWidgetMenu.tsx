@@ -1,15 +1,20 @@
 import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { LOGIC_SRC_ICON } from './logicSrcList';
 import { ITs } from './widgetMenu.tsx';
-
+import { genLogicNodeMenuItems } from '../Logic/base.ts';
+import { nodeBuilder } from '../Logic/nodes';
 
 
 const CacheMap = memo(() => {
+
+  const cache = genLogicNodeMenuItems();
+
+
   return (
     <div className="space-y-2">
-      {LOGIC_SRC_ICON.cache.map((cache) => {
+      {cache.logicNodeMenuItems.get('cache')?.map((cache) => {
         return (
           <div key={cache.id}>
             <WidgetIconTemp
@@ -48,9 +53,12 @@ const FilterMap = memo(() => {
   );
 });
 const RemoteMap = memo(() => {
+  const remote = genLogicNodeMenuItems();
+
+
   return (
     <div className="space-y-2">
-      {LOGIC_SRC_ICON.remote.map((remote) => {
+      {remote.logicNodeMenuItems.get('remote')?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -90,7 +98,6 @@ const LogicData = [
     content: <FilterMap></FilterMap>,
   },
 ];
-
 
 
 const TabSlot = memo(({ ele }: ITs) => {
@@ -312,6 +319,11 @@ const tabs = [
   },
 ];
 export const LogicWidgetMenu = memo(() => {
+
+  useEffect(() => {
+    nodeBuilder();
+  }, []);
+
   return (
     <div className="flex h-[calc(100%_-_44px)]">
       <Tabs

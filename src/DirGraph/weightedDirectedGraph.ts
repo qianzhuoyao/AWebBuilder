@@ -60,6 +60,7 @@ export default class WeightedDirectedGraph<T, M> {
   }
 
 
+
   removeVertex(vertex: T) {
     this.degree.delete(vertex);
     this.adjacencyList.delete(vertex);
