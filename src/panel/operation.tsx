@@ -18,11 +18,12 @@ import { useSceneContext } from '../menu/context';
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
 
 
-  const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
-    return {
-      PanelState: state.panelSlice,
-      NodesState: state.viewNodesSlice,
-    };
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    return state.panelSlice;
+  });
+
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
   });
   console.log(id, NodesState, PanelState, 'id[p-d-dd-d-d-d-');
   if (NodesState.list[id].classify === 'chart') {
@@ -123,11 +124,13 @@ const NodeContainer = memo(() => {
 
   const dispatch = useDispatch();
 
-  const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
-    return {
-      PanelState: state.panelSlice,
-      NodesState: state.viewNodesSlice,
-    };
+  const PanelState = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+    return state.panelSlice;
+  });
+
+
+  const NodesState = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
   });
 
   // const PanelState = useSelector((state: { panelSlice: IPs }) => {

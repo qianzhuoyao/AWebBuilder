@@ -46,7 +46,7 @@ import {
   deleteListItem,
 } from '../store/slice/nodeSlice';
 import { NodeSlot } from './operation';
-import { LogicPanel } from './logicPanel.tsx';
+import {  LogicPanel } from './logicPanel.tsx';
 
 const View = memo(() => {
   return (
@@ -255,20 +255,13 @@ const SceneWidgetMap = memo(() => {
   const dispatch = useDispatch();
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
 
-  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-  //   return state.viewNodesSlice;
-  // });
-  // const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-  //   return state.widgetMapSlice;
-  // });
-
-
-  const { NodesState, widgetMapState } = useSelector((state: { viewNodesSlice: INs, widgetMapSlice: IWs }) => {
-    return {
-      widgetMapState: state.widgetMapSlice,
-      NodesState: state.viewNodesSlice,
-    };
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
   });
+  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+    return state.widgetMapSlice;
+  });
+
 
   useLayoutEffect(() => {
     if (!widgetMapState.show) {
@@ -424,6 +417,8 @@ export const Scene = memo(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));
   }, [dispatch, widgetMapState]);
 
+
+
   useLayoutEffect(() => {
     const dom = document.querySelector('.map-a-left-vis');
     const tab = document.querySelector('.map-a-left-vis-tab');
@@ -459,7 +454,7 @@ export const Scene = memo(() => {
   }, [widgetMapState]);
 
   return (
-    <div className="w-full h-full flex relative">
+    <div className="w-full h-full flex relative overflow-hidden">
       <div className="absolute left-[14px]">
         <Button
           isIconOnly

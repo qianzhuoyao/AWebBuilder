@@ -1,20 +1,20 @@
-import { Icon } from "@iconify-icon/react";
-import { Tabs, Tab, Card, CardBody, Button } from "@nextui-org/react";
-import { AInput } from "../comp/AInput";
-import gsap from "gsap";
-import { WidgetMenu } from "./widgetMenu";
-import { useSelector, useDispatch } from "react-redux";
-import { IAs, updateAttrShow } from "../store/slice/atterSlice";
+import { Icon } from '@iconify-icon/react';
+import { Tabs, Tab, Card, CardBody, Button } from '@nextui-org/react';
+import { AInput } from '../comp/AInput';
+import gsap from 'gsap';
+import { WidgetMenu } from './widgetMenu';
+import { useSelector, useDispatch } from 'react-redux';
+import { IAs, updateAttrShow } from '../store/slice/atterSlice';
 import {
   IWs,
   updateContentImageShowType,
   updateProviderShow,
   updateWidgetMapShow,
-} from "../store/slice/widgetMapSlice";
-import { IWls } from "../store/slice/widgetSlice";
-import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { ILs } from "../store/slice/logicSlice";
-import { LogicWidgetMenu } from "./logicWidgetMenu";
+} from '../store/slice/widgetMapSlice';
+import { IWls } from '../store/slice/widgetSlice';
+import { memo, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { ILs } from '../store/slice/logicSlice';
+import { LogicWidgetMenu } from './logicWidgetMenu';
 
 const LogicToolHeader = memo(() => {
   const dispatch = useDispatch();
@@ -28,17 +28,17 @@ const LogicToolHeader = memo(() => {
           placeholder="搜索组件"
           className="w-[100%] mr-2"
           size="sml"
-          radius={"md"}
+          radius={'md'}
           startContent={
-            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
+            <Icon icon="ic:round-search" width={'20px'} height={'20px'} />
           }
         />
         <Tabs
-          size={"sm"}
+          size={'sm'}
           aria-label="Tabs sizes"
-          defaultSelectedKey={!logicState.contentImageShowType ? "zI" : "Co"}
+          defaultSelectedKey={!logicState.contentImageShowType ? 'zI' : 'Co'}
           onSelectionChange={(e) => {
-            dispatch(updateContentImageShowType(e === "zI" ? 0 : 1));
+            dispatch(updateContentImageShowType(e === 'zI' ? 0 : 1));
           }}
         >
           <Tab key="zI" title={<ZIndexIcon />} />
@@ -63,19 +63,19 @@ const ToolHeader = memo(() => {
           placeholder="搜索组件"
           className="w-[100%] mr-2"
           size="sml"
-          radius={"md"}
+          radius={'md'}
           startContent={
-            <Icon icon="ic:round-search" width={"20px"} height={"20px"} />
+            <Icon icon="ic:round-search" width={'20px'} height={'20px'} />
           }
         />
         <Tabs
-          size={"sm"}
+          size={'sm'}
           aria-label="Tabs sizes"
           defaultSelectedKey={
-            !widgetMapState.contentImageShowType ? "zI" : "Co"
+            !widgetMapState.contentImageShowType ? 'zI' : 'Co'
           }
           onSelectionChange={(e) => {
-            dispatch(updateContentImageShowType(e === "zI" ? 0 : 1));
+            dispatch(updateContentImageShowType(e === 'zI' ? 0 : 1));
           }}
         >
           <Tab key="zI" title={<ZIndexIcon />} />
@@ -141,7 +141,7 @@ export const Tools = memo(() => {
   const WidgetTabs = useMemo(
     () => [
       {
-        id: "view",
+        id: 'view',
         label: (
           <div className="flex items-center">
             <Icon
@@ -161,7 +161,7 @@ export const Tools = memo(() => {
         ),
       },
       {
-        id: "logic",
+        id: 'logic',
         label: (
           <div className="flex items-center">
             <Icon
@@ -181,32 +181,25 @@ export const Tools = memo(() => {
         ),
       },
     ],
-    []
+    [],
   );
   const dispatch = useDispatch();
 
-  const { widgetMapState,widgetState,AttrState } = useSelector((state: { widgetMapSlice: IWs,widgetSlice: IWls,attrSlice: IAs }) => {
-    return {
-      widgetMapState: state.widgetMapSlice,
-      widgetState:state.widgetSlice,
-      AttrState:state.attrSlice
-    };
+
+  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
+    return state.widgetMapSlice;
   });
 
+  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+    return state.widgetSlice;
+  });
 
-  // const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-  //   return state.widgetMapSlice;
-  // });
-  //
-  // const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-  //   return state.widgetSlice;
-  // });
-  //
-  // const AttrState = useSelector((state: { attrSlice: IAs }) => {
-  //   return state.attrSlice;
-  // });
+  const AttrState = useSelector((state: { attrSlice: IAs }) => {
+    return state.attrSlice;
+  });
 
   const onHandleShowAttr = useCallback(() => {
+    console.log(AttrState, 'AttrState');
     dispatch(updateAttrShow(!AttrState.show));
   }, [AttrState.show, dispatch]);
 
@@ -220,17 +213,17 @@ export const Tools = memo(() => {
   useLayoutEffect(() => {
     if (!widgetState.show) {
       gsap.to(gsapToolContainer.current, {
-        width: "0px",
-        minWidth: "0px",
+        width: '0px',
+        minWidth: '0px',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     } else {
       gsap.to(gsapToolContainer.current, {
-        minWidth: "300px",
-        width: "300px",
+        minWidth: '300px',
+        width: '300px',
         duration: 0.1,
-        ease: "none",
+        ease: 'none',
       });
     }
   }, [widgetState]);
@@ -249,11 +242,11 @@ export const Tools = memo(() => {
             variant="light"
             aria-label="locale"
             style={{
-              background: AttrState.show ? "#338ef7" : "",
+              background: AttrState.show ? '#338ef7' : '',
             }}
             onClick={onHandleShowAttr}
           >
-            <Icon icon="tabler:list-details" width={"16px"} height={"16px"} />
+            <Icon icon="tabler:list-details" width={'16px'} height={'16px'} />
           </Button>
           <Button
             isIconOnly
@@ -262,11 +255,11 @@ export const Tools = memo(() => {
             aria-label="locale"
             className="m-1"
             style={{
-              background: widgetMapState.providerShow ? "#338ef7" : "",
+              background: widgetMapState.providerShow ? '#338ef7' : '',
             }}
             onClick={onHandleShowWidget}
           >
-            <Icon icon="mingcute:layer-fill" width={"16px"} height={"16px"} />
+            <Icon icon="mingcute:layer-fill" width={'16px'} height={'16px'} />
           </Button>
         </div>
         <div className="h-[calc(100%_-_40px)]">
@@ -276,13 +269,13 @@ export const Tools = memo(() => {
                 aria-label="lv tabs"
                 items={WidgetTabs}
                 radius="md"
-                size={"sm"}
+                size={'sm'}
                 classNames={{
-                  tab: "",
-                  tabList: "mb-1 w-[212px]",
-                  panel: "p-0 h-[100%] w-[100%]",
-                  cursor: "",
-                  base: "w-[100%] bg-zinc500",
+                  tab: '',
+                  tabList: 'mb-1 w-[212px]',
+                  panel: 'p-0 h-[100%] w-[100%]',
+                  cursor: '',
+                  base: 'w-[100%] bg-zinc500',
                 }}
               >
                 {(item: {
@@ -298,7 +291,7 @@ export const Tools = memo(() => {
                 )}
               </Tabs>
             ),
-            [WidgetTabs]
+            [WidgetTabs],
           )}
         </div>
       </div>

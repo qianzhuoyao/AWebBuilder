@@ -92,6 +92,8 @@ export interface IViewNode {
   r: number;
   //别名
   alias: string;
+  //所属分类id
+  typeId: string;
   //说明
   desc: string;
   //拷贝自

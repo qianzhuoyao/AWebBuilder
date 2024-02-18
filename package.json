@@ -30,6 +30,8 @@
     "crypto-js": "^4.1.1",
     "dayjs": "1.11.6",
     "default-passive-events": "^2.0.0",
+    "dexie": "^3.2.5",
+    "dexie-react-hooks": "^1.1.7",
     "dom-helpers": "^5.2.1",
     "echarts": "^5.3.2",
     "framer-motion": "^11.0.3",
