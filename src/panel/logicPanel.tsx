@@ -318,7 +318,7 @@ export const LogicPanel = memo(() => {
         });
       }
     });
-  }, [logicState.logicNodes, logicState.logicEdges]);
+  }, [logicState.logicNodes, logicState.logicEdges, dispatch, NodeShow, show]);
 
 
   return (<>

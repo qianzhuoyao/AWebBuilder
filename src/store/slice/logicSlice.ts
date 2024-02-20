@@ -2,9 +2,23 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
 import { ILogicType } from './nodeSlice.ts';
 
+export type IProtocol = 'https' | 'http';
+
+export interface IRemoteReqInfo {
+
+
+  url: string;
+  protocol: IProtocol;
+  params: Record<string, string> | string; // kv or JSON
+  desc?:string
+  method:'post'|'get'
+}
+
+export type IInfo = IRemoteReqInfo
 
 export interface ILogicConfig {
   target: string[];
+
 }
 
 export interface ILogicNode {
@@ -17,6 +31,8 @@ export interface ILogicNode {
   width: number;
   height: number;
   imageUrl: string;
+  //节点配置信息
+  configInfo?: IInfo;
   /**
    * 对端句柄
 
@@ -55,6 +71,12 @@ export const logicSlice = createSlice({
     contentImageShowType: 0,
   } as ILs,
   reducers: {
+
+    updateNodeConfigInfo: (state, action) => {
+      const { id, configInfo } = action.payload;
+      console.log(action.payload, 'e>)[id]');
+      (state.logicNodes as Record<string, ILogicNode>)[id].configInfo = configInfo;
+    },
 
     setLogicTarget: (state, action) => {
       if (Array.isArray(action.payload)) {
@@ -139,6 +161,7 @@ export const {
   addLogicEdge,
   deleteNode,
   setLogicTarget,
+  updateNodeConfigInfo,
   updateLogicContentImageShowType,
   addLogicNode,
 } = logicSlice.actions;

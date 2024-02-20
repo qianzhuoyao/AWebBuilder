@@ -16,7 +16,7 @@ import gsap from 'gsap';
 // import { AInput } from '../comp/AInput.tsx';
 import { memo, useEffect, useLayoutEffect, useRef } from 'react';
 import { IAs } from '../store/slice/atterSlice.ts';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 // import {
 //   IPs,
 //   updatePanelLockTransform,
@@ -340,10 +340,6 @@ export const AttrSetting = memo(() => {
   }, []);
 
   const gsapContainer = useRef<HTMLDivElement>(null);
-
-  // const NodesState = useSelector((state: { viewNodesSlice: INs, attrSlice: IAs }) => {
-  //   return state.viewNodesSlice;
-  // });
 
 
   const AttrState = useSelector((state: { viewNodesSlice: INs, attrSlice: IAs }) => {

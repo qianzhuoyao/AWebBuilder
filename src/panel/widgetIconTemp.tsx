@@ -339,7 +339,10 @@ export const WidgetIconTemp = memo(
                       pointStatus:0,
                     }],
                     typeId,
-
+                    configInfo:{
+                      protocol:'http',
+                      method:'post'
+                    },
                     x: e.pageX - left,
                     y: e.pageY - top,
                     shape: 'image',
