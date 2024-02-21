@@ -8,6 +8,9 @@ import {
 import { Nav } from './layout/nav';
 import { MenuCard } from './menu/menuCard';
 import { Panel } from './panel/panel';
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from './fetch/client.ts';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 
 interface MessagesData {
@@ -97,12 +100,15 @@ if (import.meta.hot) {
   import.meta.hot.dispose(() => router.dispose());
 }
 
-function App() {
 
+function App() {
 
   return (
     <>
-      <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import { LOGIC_SRC_ICON } from './logicSrcList';
 import { ITs } from './widgetMenu.tsx';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
@@ -318,12 +318,8 @@ const tabs = [
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
 ];
+nodeBuilder();
 export const LogicWidgetMenu = memo(() => {
-
-  useEffect(() => {
-    nodeBuilder();
-  }, []);
-
   return (
     <div className="flex h-[calc(100%_-_44px)]">
       <Tabs

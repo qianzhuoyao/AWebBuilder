@@ -15,7 +15,7 @@ export const buildDataReqNode = () => {
     tips: '获取来自服务器上的数据',
     name: '获取器',
   });
-  dataReq.signalIn('port-in-0', ({ fromNodes }) => {
+  dataReq.signalIn('logic_D_get-port-in-0', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });

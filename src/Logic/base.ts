@@ -114,9 +114,9 @@ type  IBuildInPort<T> = (streamData: IStreamData) => Promise<T>
 /**
  * 输出端，接收多个输入端返回的信号并传递给下一个节点的输入端
  */
-type IBuildOutPort<T, K> = (streamData: T[]) => Promise<K>
+export type IBuildOutPort<T, K> = (streamData: T[]) => Promise<K>
 
-interface INodeInfo<I, O> {
+export interface INodeInfo<I, O> {
   id: ILogicType;
   src: string;
   tips: string;
@@ -194,9 +194,17 @@ export const signalLogicNode = <I, O>({
 
   const signalIn = (portName: string, buildInPort: IBuildInPort<I>) => {
 
+    if (portName.indexOf('#') > -1) {
+      throw new Error('端口名称不允许存在#');
+    }
+
     const curNodes = temps.logicNodeMenuItems.get(type);
+    console.log(curNodes, id, 'node222');
+
 
     const newCurNodes = curNodes?.map(node => {
+
+
       if (node.id === id) {
         return {
           ...node,

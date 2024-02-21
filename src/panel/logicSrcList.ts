@@ -9,9 +9,19 @@ import {
   logic_TM_get,
 } from '../store/slice/nodeSlice';
 
-
+// | 'chart'
+// | 'table'
+// | 'dom'
+// | 'text'
+// | 'line'
+// | 'remote'
+// | 'cache';
 export const LOGIC_TYPE_LIST = [
   'remote',
+  'chart',
+  'dom',
+  'text',
+  'line',
   'cache',
   'filter',
 ] as const;

@@ -373,11 +373,6 @@ export const AttrSetting = memo(() => {
       className="max-w-[300px] min-w-[300px] overflow-hidden"
     >
       <SettingTemp></SettingTemp>
-      {/*{NodesState.targets?.length ? (*/}
-      {/*  <DefaultNodeSetting></DefaultNodeSetting>*/}
-      {/*) : (*/}
-      {/*  <DefaultPanelSetting></DefaultPanelSetting>*/}
-      {/*)}*/}
     </div>
   );
 });

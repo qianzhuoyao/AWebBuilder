@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { useSceneContext } from '../menu/context.tsx';
 import { ItemParams, TriggerEvent } from 'react-contexify';
+import { useSignalMsg } from '../comp/msg.tsx';
 
 
 interface GraphPanel {
@@ -27,7 +28,9 @@ const colorSet = (color: 0 | 1 | 2) => {
   return color === 0 ? '#e1e1e1' : color === 1 ? 'red' : 'green';
 };
 
+
 const nodeProp = (node: ILogicNode) => {
+
   return {
     shape: node.shape,
     x: node.x,
@@ -67,7 +70,7 @@ const nodeProp = (node: ILogicNode) => {
       },
       items: node.ports.map((item) => {
         return {
-          id: item.type + item.tag,
+          id: item.type + item.tag + '#' + item.portName,
           tag: item.tag,
           group: 'group1',
           // 通过 args 指定绝对位置
@@ -127,6 +130,7 @@ export const LogicPanel = memo(() => {
     return state.logicSlice;
   });
 
+  console.log(useSignalMsg(Object.keys(logicState.logicNodes)[0]), 'useSignalMsg(Object.keys(logicState.logicNodes)[0])');
 
   const removeNode = useCallback((params: ItemParams) => {
     console.log(params, 'params-0');
@@ -180,11 +184,14 @@ export const LogicPanel = memo(() => {
       },
       connecting: {
         validateEdge(args) {
+          console.log((args.edge.getSourcePortId() || '').indexOf('out') > -1 &&
+            (args.edge.getTargetPortId() || '').indexOf('in') > -1, args.edge.getSourcePortId(), args.edge.getTargetPortId(), 's-sf');
           if (
-            (args.edge.getSourcePortId() || '').indexOf('out') > -1 &&
-            (args.edge.getTargetPortId() || '').indexOf('in') > -1
+            (args.edge.getSourcePortId()?.split('#')[0] || '').indexOf('out') > -1 &&
+            (args.edge.getTargetPortId()?.split('#')[0] || '').indexOf('in') > -1
           ) {
             try {
+              console.log(args, '0o0o0');
               dispatch(
                 addLogicEdge({
                   fromPort: args.edge.getSourcePortId(),
@@ -198,7 +205,7 @@ export const LogicPanel = memo(() => {
               dispatch(
                 updateLogicPortsNode({
                   id: args.edge.getSourceNode()?.getProp().nodeGId,
-                  tag: Number(args.edge.getSourcePortId()?.replace('out', '')),
+                  tag: args.edge.getSourcePortId(),
                   portType: 'out',
                   connected: 1,
                 }),
@@ -206,7 +213,7 @@ export const LogicPanel = memo(() => {
               dispatch(
                 updateLogicPortsNode({
                   id: args.edge.getTargetNode()?.getProp().nodeGId,
-                  tag: Number(args.edge.getTargetPortId()?.replace('in', '')),
+                  tag: args.edge.getTargetPortId(),
                   portType: 'in',
                   connected: 1,
                 }),
@@ -271,8 +278,15 @@ export const LogicPanel = memo(() => {
     GRef.current.G?.on('blank:click', () => {
       dispatch(setLogicTarget([]));
     });
-    GRef.current.G?.on('edge:added', () => {
+    GRef.current.G?.on('edge:added', ({ edge }) => {
       console.log(GRef.current.G?.getEdges(), 'edge:added');
+      //连接后，默认无信号
+      edge.setAttrs({
+        line: {
+          stroke: '#f5222d',
+          targetMarker: 'classic',
+        },
+      });
     });
     GRef.current.G?.on('node:mouseup', (args) => {
       console.log(args.node.getProp(), 'mouseup');

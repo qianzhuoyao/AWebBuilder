@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as Echart from 'echarts';
 import { enableMapSet } from 'immer';
+import { ILogicTypeList } from '../../panel/logicSrcList.ts';
 
 //pixTable
 export const pix_Table = 'pixTable' as const;
@@ -66,14 +67,7 @@ export type IIstance = IChartInstance;
 
 enableMapSet();
 
-export type IClassify =
-  | 'chart'
-  | 'table'
-  | 'dom'
-  | 'text'
-  | 'line'
-  | 'remote'
-  | 'cache';
+export type IClassify = ILogicTypeList
 
 export interface IViewNode {
   //标识

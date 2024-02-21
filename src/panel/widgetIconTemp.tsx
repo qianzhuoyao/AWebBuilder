@@ -25,6 +25,7 @@ import { IClassify, INodeType, addNode } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
+import { mapNodeBindPort } from '../comp/mapNodePort.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -310,7 +311,7 @@ export const WidgetIconTemp = memo(
                     },
                   }),
                 );
-              }else {
+              } else {
                 toast.error('目标面板应该是视图层');
               }
             } else if (
@@ -324,25 +325,45 @@ export const WidgetIconTemp = memo(
                   return;
                 }
                 const { left, top } = LOGIC_CONTAINER.getBoundingClientRect();
-                console.log(c,typeId,'e-e-e');
+                console.log(c, typeId, 'e-e-e');
+
+                //映射端点
+                const Tem = mapNodeBindPort({
+                  belongClass: classify,
+                  typeId,
+                });
+
+                const ports = Tem.ports.map((port, index) => {
+                  if (port.type === 'isIn') {
+                    return {
+                      type: 'in',
+                      tag: index,
+                      portType: '',
+                      portName: port.portName,
+                      pointStatus: 0,
+
+                    };
+                  } else {
+                    return {
+                      type: 'out',
+                      tag: index,
+                      portType: '',
+                      portName: port.portName,
+                      pointStatus: 0,
+
+                    };
+                  }
+                });
+
                 dispatch(
                   addLogicNode({
-                    ports:[{
-                      type:'in',
-                      tag:0,
-                      portType:'',
-                      pointStatus:0,
-                    },{
-                      type:'out',
-                      tag:0,
-                      portType:'',
-                      pointStatus:0,
-                    }],
+                    ports,
                     typeId,
-                    configInfo:{
-                      protocol:'http',
-                      method:'post'
+                    configInfo: {
+                      protocol: 'http',
+                      method: 'post',
                     },
+                    belongClass: classify,
                     x: e.pageX - left,
                     y: e.pageY - top,
                     shape: 'image',
@@ -352,7 +373,7 @@ export const WidgetIconTemp = memo(
                     imageUrl: c.src,
                   }),
                 );
-              }else{
+              } else {
                 toast.error('目标面板应该是逻辑层');
               }
               c?.remove();

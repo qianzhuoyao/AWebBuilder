@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
-import { ILogicType } from './nodeSlice.ts';
+import { INodeType } from './nodeSlice.ts';
+import { ILogicTypeList } from '../../panel/logicSrcList.ts';
+
 
 export type IProtocol = 'https' | 'http';
 
@@ -10,8 +12,8 @@ export interface IRemoteReqInfo {
   url: string;
   protocol: IProtocol;
   params: Record<string, string> | string; // kv or JSON
-  desc?:string
-  method:'post'|'get'
+  desc?: string;
+  method: 'post' | 'get';
 }
 
 export type IInfo = IRemoteReqInfo
@@ -23,8 +25,9 @@ export interface ILogicConfig {
 
 export interface ILogicNode {
   id: string;
-  typeId: ILogicType;
+  typeId: INodeType;
   config: ILogicConfig;
+  belongClass: ILogicTypeList;
   shape: string;
   x: number;
   y: number;
@@ -39,6 +42,7 @@ export interface ILogicNode {
    */
   ports: {
     type: 'in' | 'out',
+    portName: string,
     tag: number,
     pointStatus: 0 | 1 | 2; // 0 无连接 1 信号存在时异常或者无信号 2 信号存在时正常
   }[];
@@ -96,7 +100,7 @@ export const logicSlice = createSlice({
           toPort,
         };
         state.logicEdges.push(edge);
-        getWDGraph().addEdge(from, to, {}, weight);
+        getWDGraph().addEdge(from, to, {}, weight, fromPort, toPort);
       } else {
         throw TypeError('type error');
       }
@@ -104,13 +108,13 @@ export const logicSlice = createSlice({
 
     updateLogicPortsNode: (state, action) => {
       const { id, connected, tag, portType } = action.payload;
-      console.log(tag, action.payload, 'tagtagtagtag');
+      console.log(tag, state, action.payload, 'tagtagtagtag');
       (state.logicNodes as Record<string, ILogicNode>)[id] =
         {
           ...(state.logicNodes as Record<string, ILogicNode>)[id]
           , ...{
             ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
-              if (port.tag === tag && port.type === portType) {
+              if ((port.type + port.tag + '#' + port.portName)=== tag && port.type === portType) {
                 return {
                   ...port,
                   pointStatus: connected,

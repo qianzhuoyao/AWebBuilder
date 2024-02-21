@@ -8,6 +8,8 @@ type  IEdgeMessage = Record<string, string>
 
 type Edge<T, M> = {
   target: T;
+  targetPort: T;
+  sourcePort: T;
   source: T;
   message: M
   weight: number;
@@ -60,7 +62,6 @@ export default class WeightedDirectedGraph<T, M> {
   }
 
 
-
   removeVertex(vertex: T) {
     this.degree.delete(vertex);
     this.adjacencyList.delete(vertex);
@@ -71,10 +72,11 @@ export default class WeightedDirectedGraph<T, M> {
    * 路径集合按照降序排列
    * 遍历过程中记录了最近一次的路径集合 lastPath。当遍历完成后，如果存在路径集合，则返回该集合；否则返回空数组。
    * 如果存在环，则返回进入环前的路径集合
+   * 如果to 不传 则查找至最后一个点
    * @param from
    * @param to
    */
-  findAllPaths(from: T, to: T): Path<T, M>[] {
+  findAllPaths(from: T, to?: T): Path<T, M>[] {
     const visited: Map<T, boolean> = new Map();
     const paths: Path<T, M>[] = [];
 
@@ -84,12 +86,15 @@ export default class WeightedDirectedGraph<T, M> {
      * @param target
      * @param path
      */
-    const dfs = (current: T, target: T, path: Path<T, M>): void => {
+    const dfs = (current: T, target: T | undefined, path: Path<T, M>): void => {
       if (current === target) {
         paths.push({ ...path });
         return;
       }
-
+      if (!this.getEdges(current).length && target === undefined) {
+        paths.push({ ...path });
+        return;
+      }
       visited.set(current, true);
       const edges = this.adjacencyList.get(current);
       if (edges) {
@@ -178,8 +183,10 @@ export default class WeightedDirectedGraph<T, M> {
    * @param target
    * @param message
    * @param weight
+   * @param sport
+   * @param tport
    */
-  addEdge(source: T, target: T, message: M, weight: number) {
+  addEdge(source: T, target: T, message: M, weight: number, sport: T, tport: T) {
 
     if (this.hasEdge(source, target)) {
       throw new Error('边已经存在，如要修改边信息 请使用updateEdge方法');
@@ -193,8 +200,8 @@ export default class WeightedDirectedGraph<T, M> {
     }
     this.addDegree(source, target);
     this.adjacencyList.get(source)?.push({
-      source, target,
-      weight, message,
+      source, target, sourcePort: sport,
+      weight, message, targetPort: tport,
     });
   }
 

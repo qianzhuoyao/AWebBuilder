@@ -1,4 +1,5 @@
 import { Formik, Form, FieldArray, FormikProps, Field } from 'formik';
+import { Icon } from '@iconify-icon/react';
 import {
   Card,
   CardBody,
@@ -18,15 +19,18 @@ import {
   Tabs,
 } from '@nextui-org/react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ILs, IProtocol, updateNodeConfigInfo } from '../../store/slice/logicSlice.ts';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { arrayToGenObj, objToGenArray } from '../../comp/computeTools.ts';
+import { ILs, IProtocol, updateNodeConfigInfo } from '../../../store/slice/logicSlice.ts';
+import { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { arrayToGenObj, objToGenArray } from '../../../comp/computeTools.ts';
 import ReactJson from 'react-json-view';
 import { useTheme } from 'next-themes';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 import beautify_js from 'js-beautify';
+import { CopyBlock } from 'react-code-blocks';
+import { initialState, TestRemoteContext, TestRemoteReducer } from './RemoteReducer.ts';
+import { useQuery } from 'react-query';
 
 interface IInitValueType {
   params: {
@@ -354,6 +358,7 @@ export const RemoteUrl = memo(() => {
   return <>
     <>
       <Input
+        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.url}
         classNames={{
           base: 'w-full',
           mainWrapper: 'w-full',
@@ -405,6 +410,7 @@ export const RemoteUrl = memo(() => {
         labelPlacement={'outside-left'}
         placeholder="关于本次远程通讯的描述"
         className="max-w-xs mt-1"
+        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.desc}
         onChange={e => {
           updateDesc(e.target.value);
         }}
@@ -424,36 +430,53 @@ export const RemoteUrl = memo(() => {
 });
 
 
-const RemoteTestParams = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+const RemoteTestResponse = memo(() => {
+  const TestCTX = useContext(TestRemoteContext);
+  const { theme } = useTheme();
+  console.log(TestCTX.response, 'TestCTX');
   return <>
-    <p className={'border-t-1 border-default-100'}>
-         <span>
-            <small>protocol:</small>
-           <small>{logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol}</small>
-         </span>
-    </p>
-    <p>
-         <span>
-            <small>url:</small>
-           <small>{logicState.logicNodes[logicState.target[0]]?.configInfo?.url}</small>
-         </span>
-    </p>
-    <p>
-         <span>
-            <small>params:</small>
-           <code>{JSON.stringify(logicState.logicNodes[logicState.target[0]]?.configInfo?.params)}</code>
-         </span>
-    </p>
+    {
+      TestCTX.response?.isError ? <>
+        <div className={'flex items-center'}>
+          <Icon className={'w-[20px] h-[20px] relative top-[3px]'} icon="material-symbols:error" />
+          <small className={'ml-3'}>请求错误</small>
+        </div>
+        <CopyBlock
+          text={beautify_js(JSON.stringify(TestCTX.response?.error?.message), { indent_size: 2 })}
+          language={'javascript'}
+          theme={{
+            mode: theme === 'dark' ? 'dark' : 'light',
+          }}
 
-    <p className={'border-b-1 border-default-100'}>
-         <span>
-            <small>method:</small>
-           <small>{logicState.logicNodes[logicState.target[0]]?.configInfo?.method}</small>
-         </span>
-    </p></>;
+          copied={false}
+          showLineNumbers={false}
+        />
+      </> : <></>
+    }
+  </>;
+});
+
+const RemoteTestParams = memo(() => {
+  const TestCTX = useContext(TestRemoteContext);
+  // const logicState = useSelector((state: { logicSlice: ILs }) => {
+  //   return state.logicSlice;
+  // });
+  const { theme } = useTheme();
+  const requestParams = TestCTX.request;
+
+  return <>
+    <p className={'border-y-1 border-default-100'}>
+      <CopyBlock
+        text={beautify_js(JSON.stringify(requestParams), { indent_size: 2 })}
+        language={'json'}
+        theme={{
+          mode: theme === 'dark' ? 'dark' : 'light',
+        }}
+
+        showLineNumbers={true}
+      />
+    </p>
+  </>;
 });
 
 const RemoteTestParamsRes = memo(() => {
@@ -467,7 +490,7 @@ const RemoteTestParamsRes = memo(() => {
     }, {
       id: 'response',
       label: 'response',
-      content: '',
+      content: <RemoteTestResponse></RemoteTestResponse>,
     },
   ], []);
 
@@ -486,49 +509,98 @@ const RemoteTestParamsRes = memo(() => {
   </div>;
 });
 
+
 export const RemoteTest = memo(() => {
+
+
+  const [state, dispatch] = useReducer(TestRemoteReducer, initialState);
+
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
-  const [loading, setLoading] = useState(false);
+  const [sendTime, setSendTime] = useState(0);
+
+  useEffect(() => {
+    dispatch({
+      type: 'req',
+      payload: {
+        protocol: logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || '-',
+        url: logicState.logicNodes[logicState.target[0]]?.configInfo?.url || '-',
+        params: logicState.logicNodes[logicState.target[0]]?.configInfo?.params || '-',
+        method: logicState.logicNodes[logicState.target[0]]?.configInfo?.method || '-',
+      },
+    });
+  }, [logicState.logicNodes, logicState.target]);
+
+  const URL = useMemo(() =>
+      (logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || '') + '://' + (logicState.logicNodes[logicState.target[0]]?.configInfo?.url || '')
+    , [logicState.logicNodes, logicState.target]);
+
+  const query = () => fetch(URL, {
+    method: logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || 'post',
+    body: JSON.stringify(logicState.logicNodes[logicState.target[0]]?.configInfo?.params || {}),
+  }).then((res) => res.json());
+
+  const { isLoading, isError, error, data, isFetching } =
+    useQuery([sendTime], () => query(), {
+      retry: 0,
+      enabled: !!sendTime,
+    });
+
+  useEffect(() => {
+    dispatch({
+      type: 'resp',
+      payload: {
+        isLoading, isError, error, data,
+      },
+    });
+  }, [isLoading, isError, error, data]);
+
   return <>
-    <Card className="max-w-[340px]">
-      <CardHeader className="justify-between">
-        <div className="flex gap-5">
-          <Avatar isBordered radius="full" size="md" src="/avatars/avatar-1.png" />
-          <div className="flex flex-col gap-1 items-start justify-center">
-            <h4 className="text-small font-semibold leading-none text-default-600">remote</h4>
-            <h5 className="text-small tracking-tight text-default-400">@admin</h5>
+    <TestRemoteContext.Provider value={{ ...state }}>
+      <Card className="max-w-[340px]">
+        <CardHeader className="justify-between">
+          <div className="flex gap-5">
+            <Avatar isBordered radius="full" size="md" name={'remote'} />
+            <div className="flex flex-col gap-1 items-start justify-center">
+              <h4 className="text-small font-semibold leading-none text-default-600">remote</h4>
+              <h5 className="text-small tracking-tight text-default-400">@admin</h5>
+            </div>
           </div>
-        </div>
-        <Button
-          className={loading ? 'bg-transparent text-foreground border-default-200' : ''}
-          color="primary"
-          radius="full"
-          size="sm"
-          variant={loading ? 'bordered' : 'solid'}
-          onPress={() => setLoading(!loading)}
-        >
-          {loading ? '重新发送' : '发送'}
-        </Button>
-      </CardHeader>
-      <CardBody className="px-3 py-0 text-small text-default-400">
-        <p>
-          {logicState.logicNodes[logicState.target[0]]?.configInfo?.desc || '暂无描述'}
-        </p>
-        <RemoteTestParamsRes></RemoteTestParamsRes>
-      </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">请求状态</p>
-          <p className=" text-default-400 text-small">暂未发起</p>
-        </div>
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">请求次数</p>
-          <p className=" text-default-400 text-small">0</p>
-        </div>
-      </CardFooter>
-    </Card>
+          <Button
+            className={''}
+            color="primary"
+            radius="full"
+            size="sm"
+            isLoading={isFetching}
+            variant={'solid'}
+            onPress={() => {
+              setSendTime(sendTime + 1);
+            }}
+          >
+            {sendTime ? '重新发送' : '发送'}
+          </Button>
+        </CardHeader>
+        <CardBody className="px-3 py-0 text-small text-default-400">
+          <p className={'mb-1'}>
+            {logicState.logicNodes[logicState.target[0]]?.configInfo?.desc || '暂无描述'}
+          </p>
+          <RemoteTestParamsRes></RemoteTestParamsRes>
+        </CardBody>
+        <CardFooter className="gap-3">
+          <div className="flex gap-1">
+            <p className="font-semibold text-default-400 text-small">请求状态</p>
+            <p className=" text-default-400 text-small">{
+              sendTime ? isFetching ? '发送中' : '发送完毕' : '暂未发起'
+            }</p>
+          </div>
+          <div className="flex gap-1">
+            <p className="font-semibold text-default-400 text-small">请求次数</p>
+            <p className=" text-default-400 text-small">{sendTime}</p>
+          </div>
+        </CardFooter>
+      </Card>
+    </TestRemoteContext.Provider>
   </>;
 });
 export const RemoteBuilder = memo(() => {

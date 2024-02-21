@@ -6,7 +6,7 @@ import {
   CardBody,
   Card,
 } from '@nextui-org/react';
-import { RemoteBuilder, RemoteTest, RemoteUrl } from '../form/RemoteReqForm.tsx';
+import { RemoteBuilder, RemoteTest, RemoteUrl } from '../form/remoteReq/RemoteReqForm.tsx';
 
 
 const tabs = [

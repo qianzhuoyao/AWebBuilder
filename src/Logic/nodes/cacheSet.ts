@@ -15,7 +15,7 @@ export const buildCacheSetNode = () => {
     tips: '获取来自服务器上的数据',
     name: '缓存设置器',
   });
-  CacheSet.signalIn('port-in-0', ({ fromNodes }) => {
+  CacheSet.signalIn('logic_Cache_set-port-in-0', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });
