@@ -14,7 +14,6 @@ import { toast } from 'react-toastify';
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { useSceneContext } from '../menu/context.tsx';
 import { ItemParams, TriggerEvent } from 'react-contexify';
-import { useSignalMsg } from '../comp/msg.tsx';
 
 
 interface GraphPanel {
@@ -25,7 +24,7 @@ interface GraphPanel {
 
 
 const colorSet = (color: 0 | 1 | 2) => {
-  return color === 0 ? '#e1e1e1' : color === 1 ? 'red' : 'green';
+  return color === 0 ? '#e1e1e1' : color === 1 ? 'red' : '#22F576FF';
 };
 
 
@@ -103,6 +102,57 @@ export const LogicPanel = memo(() => {
   const GRef = useRef<GraphPanel>({ G: null, mountedIdList: new Map([]) });
 
   const dispatch = useDispatch();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+
+
+  useEffect(() => {
+    GRef.current.G?.getEdges().map(edge => {
+      console.log(edge.getSourceCell()?.getProp(), logicState.signalSet, 'edge-edge');
+      if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
+        && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
+      ) {
+        dispatch(updateLogicPortsNode({
+          id: edge.getSourceNode()?.getProp().nodeGId,
+          tag: edge.getSourcePortId(),
+          portType: 'out',
+          connected: 2,
+        }));
+        dispatch(updateLogicPortsNode({
+          id: edge.getTargetNode()?.getProp().nodeGId,
+          tag: edge.getTargetPortId(),
+          portType: 'in',
+          connected: 2,
+        }));
+        edge.setAttrs({
+          line: {
+            stroke: '#22F576FF',
+            targetMarker: 'classic',
+          },
+        });
+      } else {
+        dispatch(updateLogicPortsNode({
+          id: edge.getSourceNode()?.getProp().nodeGId,
+          tag: edge.getSourcePortId(),
+          portType: 'out',
+          connected: 1,
+        }));
+        dispatch(updateLogicPortsNode({
+          id: edge.getTargetNode()?.getProp().nodeGId,
+          tag: edge.getTargetPortId(),
+          portType: 'in',
+          connected: 1,
+        }));
+        edge.setAttrs({
+          line: {
+            stroke: '#f5222d',
+            targetMarker: 'classic',
+          },
+        });
+      }
+    });
+  }, [logicState.signalSet]);
 
 
   const { view: NodeView, show: NodeShow } = useSceneContext(
@@ -125,12 +175,6 @@ export const LogicPanel = memo(() => {
   );
   const containerRef = useRef<HTMLDivElement>(null);
 
-
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-
-  console.log(useSignalMsg(Object.keys(logicState.logicNodes)[0]), 'useSignalMsg(Object.keys(logicState.logicNodes)[0])');
 
   const removeNode = useCallback((params: ItemParams) => {
     console.log(params, 'params-0');
@@ -167,10 +211,6 @@ export const LogicPanel = memo(() => {
       }),
     );
   }, [dispatch]);
-
-  useEffect(() => {
-    console.log(logicState.logicEdges, 'logicState.logicEdges');
-  }, [logicState.logicEdges]);
 
 
   useEffect(() => {
@@ -281,12 +321,24 @@ export const LogicPanel = memo(() => {
     GRef.current.G?.on('edge:added', ({ edge }) => {
       console.log(GRef.current.G?.getEdges(), 'edge:added');
       //连接后，默认无信号
-      edge.setAttrs({
-        line: {
-          stroke: '#f5222d',
-          targetMarker: 'classic',
-        },
-      });
+      if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
+        && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
+      ) {
+        edge.setAttrs({
+          line: {
+            stroke: '#22F576FF',
+            targetMarker: 'classic',
+          },
+        });
+      } else {
+        edge.setAttrs({
+          line: {
+            stroke: '#f5222d',
+            targetMarker: 'classic',
+          },
+        });
+      }
+
     });
     GRef.current.G?.on('node:mouseup', (args) => {
       console.log(args.node.getProp(), 'mouseup');

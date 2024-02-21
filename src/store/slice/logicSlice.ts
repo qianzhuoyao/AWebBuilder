@@ -64,6 +64,7 @@ export interface ILs {
   logicNodes: Record<string, ILogicNode>;
   logicEdges: ILogicEdge[];
   target: string[];
+  signalSet: string[];
 }
 
 export const logicSlice = createSlice({
@@ -72,9 +73,14 @@ export const logicSlice = createSlice({
     target: [],
     logicEdges: [],
     logicNodes: {},
+    signalSet:[],
     contentImageShowType: 0,
   } as ILs,
   reducers: {
+
+    updateSignalSet:(state, action) =>{
+      state.signalSet = action.payload
+    },
 
     updateNodeConfigInfo: (state, action) => {
       const { id, configInfo } = action.payload;
@@ -164,6 +170,7 @@ export const {
   updateLogicNode,
   addLogicEdge,
   deleteNode,
+  updateSignalSet,
   setLogicTarget,
   updateNodeConfigInfo,
   updateLogicContentImageShowType,

@@ -574,6 +574,7 @@ export const RemoteTest = memo(() => {
             size="sm"
             isLoading={isFetching}
             variant={'solid'}
+            isDisabled={!logicState.logicNodes[logicState.target[0]]?.configInfo?.url}
             onPress={() => {
               setSendTime(sendTime + 1);
             }}

@@ -1,7 +1,6 @@
 import { remoteGetConfig } from './remoteGetConfig.tsx';
 import { signalLogicNodeAttrConfig } from '../signalNodeConfig.ts';
 import { CacheSetConfig } from './cacheSetConfig.tsx';
-import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
 import { useSelector } from 'react-redux';
 import { ILs } from '../../store/slice/logicSlice.ts';
 import { genLogicNodeMenuItems } from '../../Logic/base.ts';
@@ -14,12 +13,18 @@ export const setDefaultLogicConfig = () => {
     const logicState = useSelector((state: { logicSlice: ILs }) => {
       return state.logicSlice;
     });
-    console.log(logicState,genLogicNodeMenuItems(),'cascascascascasc');
-    return <>333333</>;
+
+    const { go } = useSignalMsg(Object.keys(logicState.logicNodes)[0]);
+    const handleClick = () => {
+      go();
+    };
+
+    console.log(logicState, genLogicNodeMenuItems(), 'cascascascascasc');
+    return <div onClick={handleClick}>333333</div>;
   });
 };
 
 export const AttrConfigInit = () => {
   remoteGetConfig();
-  CacheSetConfig()
+  CacheSetConfig();
 };

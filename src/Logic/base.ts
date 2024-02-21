@@ -110,7 +110,7 @@ interface IStreamData {
  /**
  * 输入端，接收输入的信号，并生成新信号传输给输出端
  */
-type  IBuildInPort<T> = (streamData: IStreamData) => Promise<T>
+export type  IBuildInPort<T> = (streamData: IStreamData) => Promise<T>
 /**
  * 输出端，接收多个输入端返回的信号并传递给下一个节点的输入端
  */

@@ -18,7 +18,7 @@ export const buildDataReqNode = () => {
   dataReq.signalIn('logic_D_get-port-in-0', ({ fromNodes }) => {
     console.log({
       fromNodes,
-    });
+    }, 'fromNodessss');
     return new Promise(resolve => {
       resolve({
         data: 12,
@@ -27,13 +27,16 @@ export const buildDataReqNode = () => {
   });
 
   dataReq.signalOut((params) => {
-    console.log({
-      params,
-    });
+
     return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
+      setTimeout(() => {
+        console.log({
+          params,
+        }, 'fromNodessss=1');
+        resolve({
+          data: 12,
+        });
+      }, 2000);
     });
   });
 
