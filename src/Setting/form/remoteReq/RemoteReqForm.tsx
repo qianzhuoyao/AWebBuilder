@@ -1,5 +1,6 @@
 import { Formik, Form, FieldArray, FormikProps, Field } from 'formik';
-import { Icon } from '@iconify-icon/react';
+// import { Icon } from '@iconify-icon/react';
+import type { SVGProps } from 'react';
 import {
   Card,
   CardBody,
@@ -430,6 +431,13 @@ export const RemoteUrl = memo(() => {
 });
 
 
+export function BxsError(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M12.884 2.532c-.346-.654-1.422-.654-1.768 0l-9 17A.999.999 0 0 0 3 21h18a.998.998 0 0 0 .883-1.467zM13 18h-2v-2h2zm-2-4V9h2l.001 5z"></path>
+  </svg>);
+}
+
 const RemoteTestResponse = memo(() => {
   const TestCTX = useContext(TestRemoteContext);
   const { theme } = useTheme();
@@ -438,7 +446,8 @@ const RemoteTestResponse = memo(() => {
     {
       TestCTX.response?.isError ? <>
         <div className={'flex items-center'}>
-          <Icon className={'w-[20px] h-[20px] relative top-[3px]'} icon="material-symbols:error" />
+          <BxsError className={'w-[20px] h-[20px] relative top-[3px]'}></BxsError>
+          {/*<Icon className={'w-[20px] h-[20px] relative top-[3px]'} icon="material-symbols:error" />*/}
           <small className={'ml-3'}>请求错误</small>
         </div>
         <CopyBlock

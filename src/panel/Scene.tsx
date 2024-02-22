@@ -26,7 +26,7 @@ import {
 } from '@nextui-org/react';
 
 import gsap from 'gsap';
-import { Icon } from '@iconify-icon/react';
+// import { Icon } from '@iconify-icon/react';
 import {
   memo,
   useCallback,
@@ -46,7 +46,84 @@ import {
   deleteListItem,
 } from '../store/slice/nodeSlice';
 import { NodeSlot } from './operation';
-import {  LogicPanel } from './logicPanel.tsx';
+import { LogicPanel } from './logicPanel.tsx';
+import type { SVGProps } from 'react';
+
+
+export function MaterialSymbolsCreateNewFolderOutline(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M14 16h2v-2h2v-2h-2v-2h-2v2h-2v2h2zM4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20zm0-2h16V8h-8.825l-2-2H4zm0 0V6z"></path>
+  </svg>);
+}
+
+export function MdiArrowCollapseRight(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M12.08 4.08L20 12l-7.92 7.92l-1.41-1.42l5.5-5.5H2v-2h14.17l-5.5-5.5zM20 12v10h2V2h-2z"></path>
+  </svg>);
+}
+
+export function MdiArrowCollapseLeft(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M11.92 19.92L4 12l7.92-7.92l1.41 1.42l-5.5 5.5H22v2H7.83l5.51 5.5zM4 12V2H2v20h2z"></path>
+  </svg>);
+}
+
+export function PajamasRemove(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="13px" height="13px" viewBox="0 0 16 16" {...props}>
+    <path fill="currentColor" fillRule="evenodd"
+          d="M5.75 3V1.5h4.5V3zm-1.5 0V1a1 1 0 0 1 1-1h5.5a1 1 0 0 1 1 1v2h2.5a.75.75 0 0 1 0 1.5h-.365l-.743 9.653A2 2 0 0 1 11.148 16H4.852a2 2 0 0 1-1.994-1.847L2.115 4.5H1.75a.75.75 0 0 1 0-1.5zm-.63 1.5h8.76l-.734 9.538a.5.5 0 0 1-.498.462H4.852a.5.5 0 0 1-.498-.462z"
+          clipRule="evenodd"></path>
+  </svg>);
+}
+
+export function MingcuteCopyFill(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="13px" height="13px" viewBox="0 0 24 24" {...props}>
+    <g fill="none">
+      <path
+        d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"></path>
+      <path fill="currentColor"
+            d="M19 2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2V4a2 2 0 0 1 2-2zm-9 13H8a1 1 0 0 0-.117 1.993L8 17h2a1 1 0 0 0 .117-1.993zm9-11H9v2h6a2 2 0 0 1 2 2v8h2zm-7 7H8a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2"></path>
+    </g>
+  </svg>);
+}
+
+export function CarbonIntentRequestScaleIn(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 32 32" {...props}>
+    <path fill="currentColor"
+          d="m28.6 30l1.4-1.4l-7.6-7.6H29v-2H19v10h2v-6.6zM2 28.6L3.4 30l7.6-7.6V29h2V19H3v2h6.6zM17 2h-2v10.2l-4.6-4.6L9 9l7 7l7-7l-1.4-1.4l-4.6 4.6z"></path>
+  </svg>);
+}
+
+export function FeUnlock(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor" fillRule="evenodd"
+          d="M7 10V7a5 5 0 1 1 10 0c0 .55-.45 1-1 1s-1-.45-1-1a3 3 0 0 0-6 0v3h9a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm-1 2v8h12v-8zm8 2h2v4h-2z"></path>
+  </svg>);
+}
+
+export function IcRoundLock(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2m-6 9c-1.1 0-2-.9-2-2s.9-2 2-2s2 .9 2 2s-.9 2-2 2M9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2z"></path>
+  </svg>);
+}
+
+export function IcBaselineKeyboard(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m-9 3h2v2h-2zm0 3h2v2h-2zM8 8h2v2H8zm0 3h2v2H8zm-1 2H5v-2h2zm0-3H5V8h2zm9 7H8v-2h8zm0-4h-2v-2h2zm0-3h-2V8h2zm3 3h-2v-2h2zm0-3h-2V8h2z"></path>
+  </svg>);
+}
+
+export function MdiHistory(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" {...props}>
+    <path fill="currentColor"
+          d="M13.5 8H12v5l4.28 2.54l.72-1.21l-3.5-2.08zM13 3a9 9 0 0 0-9 9H1l3.96 4.03L9 12H6a7 7 0 0 1 7-7a7 7 0 0 1 7 7a7 7 0 0 1-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.896 8.896 0 0 0 13 21a9 9 0 0 0 9-9a9 9 0 0 0-9-9"></path>
+  </svg>);
+}
 
 const View = memo(() => {
   return (
@@ -150,7 +227,7 @@ const SceneLayer = memo(() => {
         <div className="absolute bottom-[5px] left-[5px]">
           <Chip
             startContent={
-              <Icon icon="material-symbols:history" height={16} width={16} />
+              <MdiHistory></MdiHistory>
             }
             variant="faded"
             radius="sm"
@@ -159,22 +236,26 @@ const SceneLayer = memo(() => {
             <small>操作历史</small>
           </Chip>
         </div>
-        <div className="absolute bottom-[5px] right-[5px]">
+        <div className="absolute bottom-[5px] right-[5px] flex items-center">
           <Tooltip
             color={'default'}
             content={'快捷键'}
             placement="top"
             className="capitalize"
           >
-            <Icon
-              icon="material-symbols:keyboard"
-              className="cursor-pointer mr-2"
-              height={16}
-              width={16}
-              onClick={() => {
-                setHotKeyOpen(!hotKeyOpen);
-              }}
-            />
+            <div>
+              <IcBaselineKeyboard className="cursor-pointer mr-2"
+                                  onClick={() => setHotKeyOpen(!hotKeyOpen)}></IcBaselineKeyboard>
+            </div>
+            {/*<Icon*/}
+            {/*  icon="material-symbols:keyboard"*/}
+            {/*  className="cursor-pointer mr-2"*/}
+            {/*  height={16}*/}
+            {/*  width={16}*/}
+            {/*  onClick={() => {*/}
+            {/*    setHotKeyOpen(!hotKeyOpen);*/}
+            {/*  }}*/}
+            {/*/>*/}
           </Tooltip>
           <Tooltip
             color={PanelState.lockTransform ? 'danger' : 'success'}
@@ -184,12 +265,20 @@ const SceneLayer = memo(() => {
             placement="top"
             className="capitalize"
           >
-            <Icon
-              icon={PanelState.lockTransform ? 'uis:lock' : 'uis:unlock'}
-              className="cursor-pointer mr-2"
-              height={16}
-              width={16}
-            />
+            <div>
+              <>
+                {
+                  PanelState.lockTransform ? <IcRoundLock className="cursor-pointer mr-2"></IcRoundLock>
+                    : <FeUnlock className="cursor-pointer mr-2"></FeUnlock>
+                }
+              </>
+            </div>
+            {/*<Icon*/}
+            {/*  icon={PanelState.lockTransform ? 'uis:lock' : 'uis:unlock'}*/}
+            {/*  className="cursor-pointer mr-2"*/}
+            {/*  height={16}*/}
+            {/*  width={16}*/}
+            {/*/>*/}
           </Tooltip>
           <Tooltip
             color={PanelState.lockScale ? 'danger' : 'success'}
@@ -199,12 +288,13 @@ const SceneLayer = memo(() => {
           >
             <Chip
               startContent={
-                <Icon
-                  icon="carbon:intent-request-scale-in"
-                  className="cursor-pointer mx-1"
-                  height={16}
-                  width={16}
-                />
+                <CarbonIntentRequestScaleIn className="cursor-pointer mx-1" />
+                // <Icon
+                //   icon="carbon:intent-request-scale-in"
+                //   className="cursor-pointer mx-1"
+                //   height={16}
+                //   width={16}
+                // />
               }
               variant="faded"
               color={PanelState.lockScale ? 'danger' : 'success'}
@@ -352,13 +442,15 @@ const SceneWidgetMap = memo(() => {
                       placement="top"
                       className="capitalize"
                     >
-                      <Icon
-                        className="text-default-500 mr-2"
-                        icon="ph:copy-fill"
-                        width={13}
-                        height={13}
-                        onClick={() => onHandleCopy(node.id)}
-                      />
+                      <MingcuteCopyFill className="text-default-500 mr-2"
+                                        onClick={() => onHandleCopy(node.id)}></MingcuteCopyFill>
+                      {/*<Icon*/}
+                      {/*  className="text-default-500 mr-2"*/}
+                      {/*  icon="ph:copy-fill"*/}
+                      {/*  width={13}*/}
+                      {/*  height={13}*/}
+                      {/*  onClick={() => onHandleCopy(node.id)}*/}
+                      {/*/>*/}
                     </Tooltip>
                     <Tooltip
                       color={'default'}
@@ -366,13 +458,15 @@ const SceneWidgetMap = memo(() => {
                       placement="top"
                       className="capitalize"
                     >
-                      <Icon
-                        className="text-default-500"
-                        icon="pajamas:remove"
-                        width={13}
-                        height={13}
-                        onClick={() => onHandleRemove(node.id)}
-                      />
+                      <PajamasRemove className="text-default-500"
+                                     onClick={() => onHandleRemove(node.id)}></PajamasRemove>
+                      {/*<Icon*/}
+                      {/*  className="text-default-500"*/}
+                      {/*  icon="pajamas:remove"*/}
+                      {/*  width={13}*/}
+                      {/*  height={13}*/}
+                      {/*  onClick={() => onHandleRemove(node.id)}*/}
+                      {/*/>*/}
                     </Tooltip>
                   </p>
                 </CardFooter>
@@ -416,7 +510,6 @@ export const Scene = memo(() => {
   const onHandleOpenWidMap = useCallback(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));
   }, [dispatch, widgetMapState]);
-
 
 
   useLayoutEffect(() => {
@@ -464,13 +557,15 @@ export const Scene = memo(() => {
           className="m-1"
           onClick={onHandleOpenWidMap}
         >
-          <Icon
-            icon={
-              widgetMapState.show
-                ? 'mdi:arrow-collapse-left'
-                : 'mdi:arrow-collapse-right'
-            }
-          />
+          {/*<Icon*/}
+          {/*  icon={*/}
+          {/*    widgetMapState.show*/}
+          {/*      ? 'mdi:arrow-collapse-left'*/}
+          {/*      : 'mdi:arrow-collapse-right'*/}
+          {/*  }*/}
+          {/*/>*/}
+          {widgetMapState.show ? <MdiArrowCollapseLeft></MdiArrowCollapseLeft> :
+            <MdiArrowCollapseRight></MdiArrowCollapseRight>}
         </Button>
       </div>
 
@@ -482,7 +577,8 @@ export const Scene = memo(() => {
           aria-label="locale"
           className="m-1"
         >
-          <Icon icon="gridicons:create" />
+          {/*<Icon icon="gridicons:create" />*/}
+          <MaterialSymbolsCreateNewFolderOutline></MaterialSymbolsCreateNewFolderOutline>
         </Button>
       </div>
       <Tabs
