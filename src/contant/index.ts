@@ -8,3 +8,5 @@ export const NODE_TYPE_IN_ELE_VIEW = "NODE_TYPE_IN_ELE_VIEW" as const;
 export const NODE_TYPE_IN_ELE_LOGIC = "NODE_TYPE_IN_ELE_LOGIC" as const;
 export const ATTR_TAG = "DATA-WIDGET-TYPE" as const;
 export const Node = "IS_A_NODE" as const;
+
+export const MAIN_CONTAINER='MAIN_CONTAINER' as const;

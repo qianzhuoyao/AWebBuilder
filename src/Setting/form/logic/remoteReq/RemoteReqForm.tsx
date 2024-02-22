@@ -20,9 +20,9 @@ import {
   Tabs,
 } from '@nextui-org/react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ILs, IProtocol, updateNodeConfigInfo } from '../../../store/slice/logicSlice.ts';
+import { ILs, IProtocol, updateNodeConfigInfo } from '../../../../store/slice/logicSlice.ts';
 import { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { arrayToGenObj, objToGenArray } from '../../../comp/computeTools.ts';
+import { arrayToGenObj, objToGenArray } from '../../../../comp/computeTools.ts';
 import ReactJson from 'react-json-view';
 import { useTheme } from 'next-themes';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';

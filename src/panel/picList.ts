@@ -43,29 +43,25 @@ export const SRC_ICON = {
     {
       id: pix_Line,
       src: pixLine,
-      name: "条形图",
+      name: "line线状",
     },
-    {
-      id: pix_GLine,
-      src: pixGLine,
-      name: "面积图",
-    },
+
   ],
   bar: [
     {
       id: pix_BX,
       src: pixBX,
-      name: "普通柱状图",
+      name: "bar柱状",
     },
-    {
-      id: pix_BY,
-      src: pixBY,
-      name: "横向柱状图",
-    },
-    {
-      id: pix_BLine,
-      src: pixBLine,
-      name: "折现柱状图",
-    },
+    // {
+    //   id: pix_BY,
+    //   src: pixBY,
+    //   name: "横向柱状图",
+    // },
+    // {
+    //   id: pix_BLine,
+    //   src: pixBLine,
+    //   name: "折现柱状图",
+    // },
   ],
 };

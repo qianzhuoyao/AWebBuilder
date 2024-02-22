@@ -37,7 +37,7 @@ import {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IWs, updateWidgetMapShow } from '../store/slice/widgetMapSlice';
-import { AR_PANEL_DOM_ID } from '../contant';
+import { AR_PANEL_DOM_ID, MAIN_CONTAINER } from '../contant';
 import { IPs, updateCurrentSTab } from '../store/slice/panelSlice';
 import {
   INs,
@@ -555,7 +555,7 @@ export const Scene = memo(() => {
   }, [widgetMapState]);
 
   return (
-    <div className="w-full h-full flex relative overflow-hidden">
+    <div id={MAIN_CONTAINER} className="w-full h-full flex relative overflow-hidden">
       <div className="absolute left-[14px]">
         <Button
           isIconOnly

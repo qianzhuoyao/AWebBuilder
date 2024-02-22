@@ -26,6 +26,7 @@ import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
 import { mapNodeBindPort } from '../comp/mapNodePort.ts';
+import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -308,6 +309,7 @@ export const WidgetIconTemp = memo(
                     alias: name + typeId,
                     instance: {
                       type: typeId,
+                      option:setDefaultChartOption(typeId)
                     },
                   }),
                 );
