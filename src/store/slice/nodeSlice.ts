@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as Echart from 'echarts';
 import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
+import { viewNodeTypeIdList } from '../../panel/picList.ts';
 
 //pixTable
 export const pix_Table = 'pixTable' as const;
@@ -113,6 +114,18 @@ export const viewNodesSlice = createSlice({
     targets: [],
   },
   reducers: {
+    updateInstance: (state, action) => {
+      const { type, id, option } = action.payload;
+      const viewNodeTypeIdList = [
+        pix_Table,
+        pix_Text,
+        pix_BX,
+      ];
+      //是视图
+      if (viewNodeTypeIdList.includes(type)) {
+        (state.list as Record<string, IViewNode>)[id].instance.option = option;
+      }
+    },
     deleteListItem: (state, action) => {
       const { idList } = action.payload;
       if (Array.isArray(idList)) {
@@ -163,6 +176,7 @@ export const viewNodesSlice = createSlice({
 });
 
 export const {
+  updateInstance,
   addNode,
   updateTargets,
   updatePosition,
