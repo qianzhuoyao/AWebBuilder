@@ -22,6 +22,7 @@ import {
 } from '../../../store/slice/panelSlice.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { DEFAULT_PANEL_COLOR } from '../../../contant';
+import { toast } from 'react-toastify';
 
 export function IconParkOutlineUploadWeb(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="130px" height="130px" viewBox="0 0 48 48" {...props}>
@@ -76,11 +77,20 @@ export const ProviderSetting = memo(() => {
   }, [dispatch]);
 
   const onHandleUpdatePanelLeft = useCallback((x: string) => {
-    Number(x) && dispatch(updatePanelLeft(Number(x)));
+    if (x !== '0') {
+      Number(x) ? dispatch(updatePanelLeft(Number(x))) : toast.error('x点输入不合法');
+    } else {
+      dispatch(updatePanelLeft(0));
+    }
+
   }, []);
 
   const onHandleUpdatePanelTop = useCallback((y: string) => {
-    Number(y) && dispatch(updatePanelTop(Number(y)));
+    if (y !== '0') {
+      Number(y) ? dispatch(updatePanelTop(Number(y))) : toast.error('y点输入不合法');
+    } else {
+      dispatch(updatePanelLeft(0));
+    }
   }, []);
 
   const onHandleUpdatePanelWidth = useCallback((w: string) => {
