@@ -27,7 +27,7 @@ export const PixBXChartConfig = () => {
     if (nodeInfo.target.length > 0) {
       return <>
         <div className="flex w-full flex-col px-1">
-          <Tabs aria-label="Dynamic tabs" items={chartTabs} classNames={{
+          <Tabs aria-label="chart config" items={chartTabs} classNames={{
             panel: 'p-1',
             base: 'px-1',
           }}>

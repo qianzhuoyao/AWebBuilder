@@ -209,7 +209,7 @@ const PanelSetting = memo(() => {
         <Switch
           size="sm"
           className="ml-2"
-          aria-label="Automatic updates"
+          aria-label="PanelSetting"
           checked={PanelState.lockTransform}
           onChange={(e) => {
             dispatch(updatePanelLockTransform(e.target.checked));
@@ -296,7 +296,7 @@ export const DefaultPanelSetting = memo(() => {
     <Card className="max-w-[300px] min-w-[300px]  rounded-none overflow-hidden h-full">
       <CardBody>
         <div className="flex w-full flex-col">
-          <Tabs aria-label="Dynamic tabs" items={tabs}>
+          <Tabs aria-label="panelset" items={tabs}>
             {(item) => (
               <Tab key={item.id} title={item.label}>
                 <Card>

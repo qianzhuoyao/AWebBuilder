@@ -5,8 +5,9 @@ import { memo, useCallback, useEffect, useRef } from 'react';
 import Moveable from 'react-moveable';
 import Selecto from 'react-selecto';
 import {
+  deleteListItem,
   INs,
-  IViewNode,
+  IViewNode, moveNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -15,6 +16,7 @@ import { ATTR_TAG, Node, PANEL_MAIN_BG, SCENE } from '../contant';
 import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
+import { ItemParams } from 'react-contexify';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
 
@@ -46,12 +48,13 @@ export const NodeSlot = memo(
     const nodeRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
-    const { PanelState, NodesState } = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
-      return {
-        PanelState: state.panelSlice,
-        NodesState: state.viewNodesSlice,
-      };
+    const PanelState = useSelector((state: { panelSlice: IPs }) => {
+      return state.panelSlice;
     });
+    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+      return state.viewNodesSlice;
+    });
+
 
     useEffect(() => {
 
@@ -68,14 +71,12 @@ export const NodeSlot = memo(
           );
           nodeRef.current.style.left = node.x / PanelState.tickUnit + 'px';
           nodeRef.current.style.top = node.y / PanelState.tickUnit + 'px';
-        } else {
-          throw new Error('初次计算失败');
         }
 
       }
     }, []);
 
-    const { view, show } = useSceneContext();
+
     useEffect(() => {
       if (!nodeRef.current) {
         return;
@@ -101,12 +102,7 @@ export const NodeSlot = memo(
         id={isTemp ? node.id + '-Map' : node.id}
         className={isTemp ? '' : 'absolute target'}
         onClick={onHandleSelectedCurrent}
-        onContextMenu={(e) => {
-          show({
-            event: e,
-            props: node,
-          });
-        }}
+
         style={
           isTemp
             ? {
@@ -122,11 +118,7 @@ export const NodeSlot = memo(
         }
       >
         <Temp id={node.id} isTemp={isTemp}></Temp>
-        {view(
-          ['a', '2'].map((value) => {
-            return <div key={value}>{value}</div>;
-          }),
-        )}
+
       </div>
     );
   },
@@ -136,6 +128,17 @@ const NodeContainer = memo(() => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
 
+  const removeViewNode = useCallback((params: ItemParams) => {
+    console.log(params, ';params');
+    dispatch(deleteListItem({ idList: [params.props.id] }));
+  }, []);
+
+  const { view, show } = useSceneContext('viewNode', params => {
+    switch ((params.event.target as HTMLElement)?.innerText) {
+      case '删除':
+        return removeViewNode(params);
+    }
+  });
   const dispatch = useDispatch();
 
   const PanelState = useSelector((state: { panelSlice: IPs, }) => {
@@ -147,6 +150,30 @@ const NodeContainer = memo(() => {
     return state.viewNodesSlice;
   });
 
+
+  useEffect(() => {
+    if (NodesState.moveTo.length) {
+      console.log(NodesState.moveTo, moveableRef.current, ' NodesState.moveTo');
+      NodesState.moveTo.map(willMoveNode => {
+        const nodeDom = document.getElementById(willMoveNode.id);
+        if (nodeDom && moveableRef.current) {
+          nodeDom.style.left = willMoveNode.newX / PanelState.tickUnit + 'px';
+          nodeDom.style.top = willMoveNode.newY / PanelState.tickUnit + 'px';
+          moveableRef.current!.moveable.updateTarget();
+          dispatch(
+            updatePosition({
+              id: willMoveNode.id,
+              x: willMoveNode.newX,
+              y: willMoveNode.newY,
+            }),
+          );
+        }
+      });
+      //重置位移任务
+      dispatch(moveNode([]));
+    }
+
+  }, [NodesState.moveTo, PanelState.tickUnit]);
 
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
@@ -252,9 +279,24 @@ const NodeContainer = memo(() => {
         background: PanelState.panelColor,
       }}>
         {[...Object.values(NodesState.list)].map((node) => {
-          return <NodeSlot key={node.id} node={node} isTemp={false}></NodeSlot>;
+          return <div
+            onContextMenu={(e) => {
+              console.log(e, 'sdefffffffff');
+              show({
+                event: e,
+                props: node,
+              });
+            }}
+          >
+            <NodeSlot key={node.id} node={node} isTemp={false}></NodeSlot>
+          </div>;
         })}
       </div>
+      {view(
+        ['删除'].map((value) => {
+          return <div key={value}>{value}</div>;
+        }),
+      )}
     </>
   );
 });

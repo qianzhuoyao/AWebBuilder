@@ -156,6 +156,7 @@ export const LogicPanel = memo(() => {
 
 
   const { view: NodeView, show: NodeShow } = useSceneContext(
+    'NODE',
     params => {
       switch ((params.event.target as HTMLElement)?.innerText) {
         case '删除点':
@@ -165,6 +166,7 @@ export const LogicPanel = memo(() => {
   );
 
   const { view, show } = useSceneContext(
+    'LINE',
     params => {
       console.log(params, (params.event.target as HTMLElement)?.innerText, params.props.edge.getSourceNode()?.getProp(), 'params');
       switch ((params.event.target as HTMLElement)?.innerText) {

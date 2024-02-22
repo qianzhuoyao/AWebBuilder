@@ -103,6 +103,12 @@ type nodeId = string;
 
 export interface INs {
   targets: string[];
+  //在下一个执行任务执行完毕后更新位置
+  moveTo: {
+    id: string,
+    newX: number,
+    newY: number
+  }[];
   list: Record<nodeId, IViewNode>;
 }
 
@@ -110,9 +116,13 @@ export const viewNodesSlice = createSlice({
   name: 'nodes',
   initialState: {
     list: {},
+    moveTo: [],
     targets: [],
   },
   reducers: {
+    moveNode: (state, action) => {
+      state.moveTo = action.payload;
+    },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
       const viewNodeTypeIdList = [
@@ -161,8 +171,8 @@ export const viewNodesSlice = createSlice({
       if (findNode) {
         const newNode = {
           ...findNode,
-          x: action.payload.x,
-          y: action.payload.y,
+          x: action.payload.x ?? findNode.x,
+          y: action.payload.y ?? findNode.y,
         };
         state.list = { ...state.list, [action.payload.id]: newNode };
       }
@@ -175,6 +185,7 @@ export const viewNodesSlice = createSlice({
 });
 
 export const {
+  moveNode,
   updateInstance,
   addNode,
   updateTargets,

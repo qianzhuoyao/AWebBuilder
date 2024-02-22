@@ -48,6 +48,7 @@ import {
 import { NodeSlot } from './operation';
 import { LogicPanel } from './logicPanel.tsx';
 import type { SVGProps } from 'react';
+import { ILs } from '../store/slice/logicSlice.ts';
 
 
 export function MaterialSymbolsCreateNewFolderOutline(props: SVGProps<SVGSVGElement>) {
@@ -351,7 +352,12 @@ const widgetMapTabs = [
 
 const SceneWidgetMap = memo(() => {
   const dispatch = useDispatch();
+  const [currentType, setCurrentType] = useState<'logic_map_list' | 'view_map_list'>('view_map_list');
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
+
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
 
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
@@ -413,10 +419,13 @@ const SceneWidgetMap = memo(() => {
           <small className="">组件映射</small>
           <Tabs
             size="sm"
-            aria-label="Dynamic tabs"
+            aria-label="comMap"
             items={widgetMapTabs}
             classNames={{
               tabList: '',
+            }}
+            onSelectionChange={key => {
+              setCurrentType(key as 'logic_map_list' | 'view_map_list');
             }}
           >
             {(item) => <Tab key={item.id} title={item.label}></Tab>}
@@ -424,63 +433,75 @@ const SceneWidgetMap = memo(() => {
         </div>
         <Divider className="my-1" />
         <div className="w-full">
-          {[...Object.values(NodesState.list)].map((node: IViewNode) => {
-            return (
-              <Card
-                shadow="sm"
-                key={node.id}
-                isPressable
-                className="w-full my-1"
-                style={{
-                  border: NodesState.targets.includes(node.id)
-                    ? '1px solid #006FEE'
-                    : '1px solid #18181b',
-                }}
-                onPress={() => console.log('item pressed')}
-              >
-                <CardBody className="overflow-visible p-0">
-                  <NodeSlot node={node} isTemp={true}></NodeSlot>
-                </CardBody>
-                <CardFooter className="text-small justify-between items-center">
-                  <small className="text-default-500">{node.alias}</small>
-                  <p>
-                    <Tooltip
-                      color={'default'}
-                      content={'复制'}
-                      placement="top"
-                      className="capitalize"
-                    >
-                      <MingcuteCopyFill className="text-default-500 mr-2"
-                                        onClick={() => onHandleCopy(node.id)}></MingcuteCopyFill>
-                      {/*<Icon*/}
-                      {/*  className="text-default-500 mr-2"*/}
-                      {/*  icon="ph:copy-fill"*/}
-                      {/*  width={13}*/}
-                      {/*  height={13}*/}
-                      {/*  onClick={() => onHandleCopy(node.id)}*/}
-                      {/*/>*/}
-                    </Tooltip>
-                    <Tooltip
-                      color={'default'}
-                      content={'删除'}
-                      placement="top"
-                      className="capitalize"
-                    >
-                      <PajamasRemove className="text-default-500"
-                                     onClick={() => onHandleRemove(node.id)}></PajamasRemove>
-                      {/*<Icon*/}
-                      {/*  className="text-default-500"*/}
-                      {/*  icon="pajamas:remove"*/}
-                      {/*  width={13}*/}
-                      {/*  height={13}*/}
-                      {/*  onClick={() => onHandleRemove(node.id)}*/}
-                      {/*/>*/}
-                    </Tooltip>
-                  </p>
-                </CardFooter>
-              </Card>
-            );
-          })}
+          {currentType === 'logic_map_list' ? <>{
+              [...Object.values(logicState.logicNodes)].map(node => {
+                return <>
+                  <Card
+                    shadow="sm"
+                    key={node.id}
+                    isPressable
+                    className="w-full my-1"
+                    style={{
+                      border: logicState.target.includes(node.id)
+                        ? '1px solid #006FEE'
+                        : '1px solid #18181b',
+                    }}
+                    onPress={() => console.log('item pressed')}
+                  >
+                    <CardBody className="overflow-visible p-0">
+                      <img src={node.imageUrl} alt="" className={'w-full h-[55px]'} />
+                    </CardBody>
+                    <CardFooter className="text-small justify-center items-center">
+                      <small>{node.belongClass}</small>
+                    </CardFooter>
+                  </Card></>;
+              })
+            }</>
+            :
+            <>{[...Object.values(NodesState.list)].map((node: IViewNode) => {
+              return (
+                <Card
+                  shadow="sm"
+                  key={node.id}
+                  isPressable
+                  className="w-full my-1"
+                  style={{
+                    border: NodesState.targets.includes(node.id)
+                      ? '1px solid #006FEE'
+                      : '1px solid #18181b',
+                  }}
+                  onPress={() => console.log('item pressed')}
+                >
+                  <CardBody className="overflow-visible p-0">
+                    <NodeSlot node={node} isTemp={true}></NodeSlot>
+                  </CardBody>
+                  <CardFooter className="text-small justify-between items-center">
+                    <small className="text-default-500">{node.alias}</small>
+                    <p className={'flex'}>
+                      <Tooltip
+                        color={'default'}
+                        content={'复制'}
+                        placement="top"
+                        className="capitalize"
+                      >
+                        <MingcuteCopyFill className="text-default-500 mr-2"
+                                          onClick={() => onHandleCopy(node.id)}></MingcuteCopyFill>
+                      </Tooltip>
+                      <Tooltip
+                        color={'default'}
+                        content={'删除'}
+                        placement="top"
+                        className="capitalize"
+                      >
+                        <PajamasRemove className="text-default-500"
+                                       onClick={() => onHandleRemove(node.id)}></PajamasRemove>
+                      </Tooltip>
+                    </p>
+                  </CardFooter>
+                </Card>
+              );
+            })}</>}
+
         </div>
       </div>
     </div>
