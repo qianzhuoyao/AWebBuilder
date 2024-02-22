@@ -11,9 +11,10 @@ import {
   updateSize,
   updateTargets,
 } from '../store/slice/nodeSlice';
-import { ATTR_TAG, Node, SCENE } from '../contant';
+import { ATTR_TAG, Node, PANEL_MAIN_BG, SCENE } from '../contant';
 import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
+import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
 
@@ -51,6 +52,28 @@ export const NodeSlot = memo(
         NodesState: state.viewNodesSlice,
       };
     });
+
+    useEffect(() => {
+
+      if (nodeRef.current) {
+        const pos = computeActPositionNodeByRuler(nodeRef.current, PanelState.tickUnit);
+
+        if (pos) {
+          dispatch(
+            updatePosition({
+              id: nodeRef.current.id,
+              x: pos.x,
+              y: pos.y,
+            }),
+          );
+          nodeRef.current.style.left = node.x / PanelState.tickUnit + 'px';
+          nodeRef.current.style.top = node.y / PanelState.tickUnit + 'px';
+        } else {
+          throw new Error('初次计算失败');
+        }
+
+      }
+    }, []);
 
     const { view, show } = useSceneContext();
     useEffect(() => {
@@ -91,8 +114,8 @@ export const NodeSlot = memo(
               height: '100%',
             }
             : {
-              left: node.x / PanelState.tickUnit + 'px',
-              top: node.y / PanelState.tickUnit + 'px',
+              // left: node.x / PanelState.tickUnit + 'px',
+              // top: node.y / PanelState.tickUnit + 'px',
               width: node.w / PanelState.tickUnit + 'px',
               height: node.h / PanelState.tickUnit + 'px',
             }
@@ -115,12 +138,12 @@ const NodeContainer = memo(() => {
 
   const dispatch = useDispatch();
 
-  const PanelState = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+  const PanelState = useSelector((state: { panelSlice: IPs, }) => {
     return state.panelSlice;
   });
 
 
-  const NodesState = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
 
@@ -162,14 +185,19 @@ const NodeContainer = memo(() => {
           );
         }}
         onDragEnd={(e) => {
-          console.log(e, 'e-e-e-e-e-e-ecc');
-          dispatch(
-            updatePosition({
-              id: e.target.id,
-              x: parseFloat(e.target.style.left) * PanelState.tickUnit,
-              y: parseFloat(e.target.style.top) * PanelState.tickUnit,
-            }),
-          );
+          const pos = computeActPositionNodeByRuler(e.target, PanelState.tickUnit);
+          console.log(e, moveableRef, pos, 'e-e-e-e-e-e-ecc');
+          if (pos) {
+            dispatch(
+              updatePosition({
+                id: e.target.id,
+                x: pos.x,
+                y: pos.y,
+              }),
+            );
+          } else {
+            throw new Error('computeActPositionNodeByRuler error');
+          }
         }}
         onRenderGroup={(e) => {
           e.events.forEach((ev) => {
@@ -220,7 +248,9 @@ const NodeContainer = memo(() => {
         />
       )}
       <div className="empty elements"></div>
-      <div className="relative w-full h-full elements">
+      <div id={PANEL_MAIN_BG} className="relative w-full h-full elements" style={{
+        background: PanelState.panelColor,
+      }}>
         {[...Object.values(NodesState.list)].map((node) => {
           return <NodeSlot key={node.id} node={node} isTemp={false}></NodeSlot>;
         })}

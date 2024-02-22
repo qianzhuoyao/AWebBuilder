@@ -9,14 +9,14 @@ import { PixBXChartConfigForm } from '../../form/view/BXChartConfigForm.tsx';
 const chartTabs = [
   {
     id: 'codeView',
-    label: '代码',
+    label: '图表配置',
     content: <>
       <PixBXChartConfigCode />
     </>,
   },
   {
     id: 'config',
-    label: '配置',
+    label: '组件配置',
     content: < PixBXChartConfigForm />,
   },
 ];

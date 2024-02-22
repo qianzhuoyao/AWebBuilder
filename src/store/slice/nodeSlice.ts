@@ -2,8 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as Echart from 'echarts';
 import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
-import { viewNodeTypeIdList } from '../../panel/picList.ts';
-
 //pixTable
 export const pix_Table = 'pixTable' as const;
 //文本
@@ -85,6 +83,7 @@ export interface IViewNode {
   z: number;
   //基于面板的旋转度
   r: number;
+
   //别名
   alias: string;
   //所属分类id

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { DEFAULT_PANEL_COLOR } from '../../contant';
 
 export interface IPs {
   //操作面板指向是逻辑还是视图 STABS
@@ -11,6 +12,7 @@ export interface IPs {
   lockScale: boolean;
   lockTransform: boolean;
   snap: number;
+  panelColor: string,
   panelWidth: number;
   panelHeight: number;
   panelLeft: number;
@@ -27,6 +29,7 @@ export const panelSlice = createSlice({
     isSelection: false,
     rulerMinY: 0,
     snap: 5,
+    panelColor: DEFAULT_PANEL_COLOR,
     offset: 30,
     tickUnit: 2,
     panelWidth: 1920,
@@ -35,6 +38,9 @@ export const panelSlice = createSlice({
     panelTop: 0,
   },
   reducers: {
+    updatePanelColor: (state, action) => {
+      state.panelColor = action.payload;
+    },
     updateCurrentSTab: (state, action) => {
       state.currentSTab = action.payload;
     },
@@ -77,6 +83,7 @@ export const panelSlice = createSlice({
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
+  updatePanelColor,
   updateCurrentSTab,
   updateRulerMinX,
   updatePanelLockTransform,

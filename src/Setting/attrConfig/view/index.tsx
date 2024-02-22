@@ -3,6 +3,7 @@ import { signalViewNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { useSelector } from 'react-redux';
 import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
 import { INs } from '../../../store/slice/nodeSlice.ts';
+import { DefaultPanelSetting } from './panelSet.tsx';
 
 
 export const setDefaultPanelViewConfig = () => {
@@ -13,7 +14,7 @@ export const setDefaultPanelViewConfig = () => {
     });
 
     console.log(NodesState, genLogicNodeMenuItems(), 'cascascascascasc');
-    return <div>viewww</div>;
+    return <><DefaultPanelSetting /></>;
   });
 };
 
