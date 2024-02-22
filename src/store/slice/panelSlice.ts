@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface IPs {
+  //操作面板指向是逻辑还是视图 STABS
+  currentSTab: 'logic' | 'view',
   rulerMinX: number;
   rulerMinY: number;
   tickUnit: number;
@@ -16,8 +18,9 @@ export interface IPs {
 }
 
 export const panelSlice = createSlice({
-  name: "panel",
+  name: 'panel',
   initialState: {
+    currentSTab: 'view',
     rulerMinX: 0,
     lockTransform: false,
     lockScale: false,
@@ -32,8 +35,11 @@ export const panelSlice = createSlice({
     panelTop: 0,
   },
   reducers: {
+    updateCurrentSTab: (state, action) => {
+      state.currentSTab = action.payload;
+    },
     updateIsSelection: (state, action) => {
-      console.log(action,'action-action')
+      console.log(action, 'action-action');
       state.isSelection = action.payload;
     },
     updatePanelLockTransform: (state, action) => {
@@ -64,13 +70,14 @@ export const panelSlice = createSlice({
       state.rulerMinX = action.payload;
     },
     updateRulerMinY: (state, action) => {
-      console.log(action, "actionsss");
+      console.log(action, 'actionsss');
       state.rulerMinY = action.payload;
     },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
+  updateCurrentSTab,
   updateRulerMinX,
   updatePanelLockTransform,
   updatePanelTop,

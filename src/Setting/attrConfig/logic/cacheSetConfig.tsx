@@ -1,5 +1,5 @@
-import { signalLogicNodeAttrConfig } from '../signalNodeConfig.ts';
-import { logic_Cache_set } from '../../store/slice/nodeSlice.ts';
+import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
+import { logic_Cache_set } from '../../../store/slice/nodeSlice.ts';
 
 
 export const CacheSetConfig = () => {

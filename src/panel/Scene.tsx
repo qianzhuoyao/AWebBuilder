@@ -38,7 +38,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { IWs, updateWidgetMapShow } from '../store/slice/widgetMapSlice';
 import { AR_PANEL_DOM_ID } from '../contant';
-import { IPs } from '../store/slice/panelSlice';
+import { IPs, updateCurrentSTab } from '../store/slice/panelSlice';
 import {
   INs,
   IViewNode,
@@ -215,12 +215,15 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
 
 const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
-
+  const dispatch = useDispatch();
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     console.log(state, 'statescvsfv');
     return state.panelSlice;
   });
 
+  const onHandleUpdateSTab = useCallback((key: string) => {
+    dispatch(updateCurrentSTab(key));
+  }, []);
   return (
     <>
       <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
@@ -307,7 +310,12 @@ const SceneLayer = memo(() => {
           aria-label="Dynamic tabs"
           size="sm"
           items={STabs}
+          selectedKey={PanelState.currentSTab}
           radius="md"
+          onSelectionChange={(key) => {
+            console.log(key, 'stabskey');
+            onHandleUpdateSTab(key as string);
+          }}
           classNames={{
             tab: '',
             tabList: 'w-[120px]',

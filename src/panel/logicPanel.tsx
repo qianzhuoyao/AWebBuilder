@@ -303,7 +303,6 @@ export const LogicPanel = memo(() => {
       });
     });
     GRef.current.G?.on('edge:contextmenu', ({ e, x, y, edge, view }) => {
-      console.log(e, x, y, edge, view);
       show({
         event: (e as unknown as TriggerEvent),
         props: {
@@ -319,7 +318,6 @@ export const LogicPanel = memo(() => {
       dispatch(setLogicTarget([]));
     });
     GRef.current.G?.on('edge:added', ({ edge }) => {
-      console.log(GRef.current.G?.getEdges(), 'edge:added');
       //连接后，默认无信号
       if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
         && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)

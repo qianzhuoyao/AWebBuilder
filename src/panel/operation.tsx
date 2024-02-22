@@ -52,12 +52,6 @@ export const NodeSlot = memo(
       };
     });
 
-    // const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    //   return state.panelSlice;
-    // });
-    // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    //   return state.viewNodesSlice;
-    // });
     const { view, show } = useSceneContext();
     useEffect(() => {
       if (!nodeRef.current) {
@@ -72,15 +66,12 @@ export const NodeSlot = memo(
       //如果不是模板 就选中，否则映射至对应组件
 
       if (isTemp) {
-        const mapNode = document.getElementById(node.id);
-        console.log(mapNode, 'mapNode');
         dispatch(updateTargets([node.id]));
       } else {
         dispatch(updateTargets([nodeRef.current?.id]));
       }
     }, [dispatch, isTemp, node.id]);
 
-    console.log(node, 'node-snode');
     return (
       <div
         ref={nodeRef}
@@ -132,13 +123,6 @@ const NodeContainer = memo(() => {
   const NodesState = useSelector((state: { panelSlice: IPs, viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
-
-  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
-  //   return state.panelSlice;
-  // });
-  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-  //   return state.viewNodesSlice;
-  // });
 
 
   useEffect(() => {

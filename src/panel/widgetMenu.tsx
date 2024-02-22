@@ -1,7 +1,7 @@
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import { WidgetIconTemp } from "./widgetIconTemp";
-import { SRC_ICON } from "./picList";
-import React, { memo, useMemo } from "react";
+import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
+import { WidgetIconTemp } from './widgetIconTemp';
+import { SRC_ICON } from './picList';
+import React, { memo, useMemo } from 'react';
 
 export interface ITs {
   ele: {
@@ -160,7 +160,7 @@ const ImageMap = memo(() => {
       {SRC_ICON.Image.map((image) => {
         return (
           <WidgetIconTemp
-          nodeType="VIEW"
+            nodeType="VIEW"
             key={image.id}
             classify="dom"
             typeId={image.id}
@@ -178,7 +178,7 @@ const TableMap = memo(() => {
       {SRC_ICON.table.map((table) => {
         return (
           <WidgetIconTemp
-          nodeType="VIEW"
+            nodeType="VIEW"
             key={table.id}
             classify="table"
             typeId={table.id}
@@ -196,7 +196,7 @@ const LineMap = memo(() => {
       {SRC_ICON.line.map((line) => {
         return (
           <WidgetIconTemp
-          nodeType="VIEW"
+            nodeType="VIEW"
             key={line.id}
             classify="line"
             typeId={line.id}
@@ -215,7 +215,7 @@ const BarMap = memo(() => {
       {SRC_ICON.bar.map((bar) => {
         return (
           <WidgetIconTemp
-          nodeType="VIEW"
+            nodeType="VIEW"
             key={bar.id}
             classify="chart"
             typeId={bar.id}
@@ -230,24 +230,24 @@ const BarMap = memo(() => {
 
 export const TextTabs = [
   {
-    id: "TextContent",
-    label: "文本",
+    id: 'TextContent',
+    label: '文本',
     content: <TextMap></TextMap>,
   },
 ];
 
 export const ImageTabs = [
   {
-    id: "PicContent",
-    label: "图片资源",
+    id: 'PicContent',
+    label: '图片资源',
     content: <ImageMap></ImageMap>,
   },
 ];
 
 export const TableTabs = [
   {
-    id: "TableChartContent",
-    label: "表格",
+    id: 'TableChartContent',
+    label: '表格',
     content: <TableMap></TableMap>,
   },
 ];
@@ -261,10 +261,10 @@ const TabSlot: React.FC<ITs> = ({ ele }) => {
         color="primary"
         radius="none"
         classNames={{
-          tabList: "flex flex-col",
-          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
-          cursor: "rounded-md",
-          base: "bg-default-100",
+          tabList: 'flex flex-col',
+          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
+          cursor: 'rounded-md',
+          base: 'bg-default-100',
         }}
       >
         {(item) => (
@@ -283,42 +283,42 @@ export const WidgetMenu = memo(() => {
   const ChartTabs = useMemo(
     () => [
       {
-        id: "bXChartContent",
-        label: "柱状图",
+        id: 'bXChartContent',
+        label: '柱状图',
         content: <BarMap></BarMap>,
       },
       {
-        id: "lChartContent",
-        label: "折线图",
+        id: 'lChartContent',
+        label: '折线图',
         content: <LineMap></LineMap>,
       },
     ],
-    []
+    [],
   );
   const tabs = useMemo(
     () => [
       {
-        id: "chart",
+        id: 'chart',
         label: <ChartIcon />,
         content: <TabSlot ele={ChartTabs}></TabSlot>,
       },
       {
-        id: "table",
+        id: 'table',
         label: <TableIcon />,
         content: <TabSlot ele={TableTabs}></TabSlot>,
       },
       {
-        id: "image",
+        id: 'image',
         label: <ImageIcon />,
         content: <TabSlot ele={ImageTabs}></TabSlot>,
       },
       {
-        id: "text",
+        id: 'text',
         label: <TextIcon />,
         content: <TabSlot ele={TextTabs}></TabSlot>,
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -329,11 +329,11 @@ export const WidgetMenu = memo(() => {
         items={tabs}
         radius="none"
         classNames={{
-          tab: "h-[70px]",
-          tabList: "flex flex-col",
-          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
-          cursor: "rounded-md",
-          base: "bg-default-100",
+          tab: 'h-[70px]',
+          tabList: 'flex flex-col',
+          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
+          cursor: 'rounded-md',
+          base: 'bg-default-100',
         }}
       >
         {(item) => (

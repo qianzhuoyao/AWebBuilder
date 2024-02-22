@@ -1,10 +1,10 @@
 import { remoteGetConfig } from './remoteGetConfig.tsx';
-import { signalLogicNodeAttrConfig } from '../signalNodeConfig.ts';
+import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { CacheSetConfig } from './cacheSetConfig.tsx';
 import { useSelector } from 'react-redux';
-import { ILs } from '../../store/slice/logicSlice.ts';
-import { genLogicNodeMenuItems } from '../../Logic/base.ts';
-import { useSignalMsg } from '../../comp/msg.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
+import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
+import { useSignalMsg } from '../../../comp/msg.tsx';
 
 
 export const setDefaultLogicConfig = () => {

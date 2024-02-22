@@ -1,12 +1,12 @@
-import { signalLogicNodeAttrConfig } from '../signalNodeConfig.ts';
-import { logic_D_get } from '../../store/slice/nodeSlice.ts';
+import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
+import { logic_D_get } from '../../../store/slice/nodeSlice.ts';
 import {
   Tabs,
   Tab,
   CardBody,
   Card,
 } from '@nextui-org/react';
-import { RemoteBuilder, RemoteTest, RemoteUrl } from '../form/remoteReq/RemoteReqForm.tsx';
+import { RemoteBuilder, RemoteTest, RemoteUrl } from '../../form/remoteReq/RemoteReqForm.tsx';
 
 
 const tabs = [

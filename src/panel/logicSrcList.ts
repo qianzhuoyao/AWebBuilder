@@ -18,6 +18,7 @@ import {
 // | 'cache';
 export const LOGIC_TYPE_LIST = [
   'remote',
+  'table',
   'chart',
   'dom',
   'text',

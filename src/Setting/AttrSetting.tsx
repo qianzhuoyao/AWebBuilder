@@ -1,31 +1,12 @@
-// import {
-//   Card,
-//   Tabs,
-//   CardBody,
-//   Tab,
-//   Tooltip,
-//   Popover,
-//   PopoverTrigger,
-//   PopoverContent,
-//   Button,
-//   Switch,
-// } from '@nextui-org/react';
-// import { SketchPicker } from 'react-color';
 import gsap from 'gsap';
-// import { Icon } from '@iconify-icon/react';
-// import { AInput } from '../comp/AInput.tsx';
-import { memo, useEffect, useLayoutEffect, useRef } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { IAs } from '../store/slice/atterSlice.ts';
 import { useSelector } from 'react-redux';
-// import {
-//   IPs,
-//   updatePanelLockTransform,
-//   updatePanelLockScale,
-// } from '../store/slice/panelSlice.ts';
 import { INs } from '../store/slice/nodeSlice.ts';
-import { AttrConfigInit, setDefaultLogicConfig } from './attrConfig';
 import { getAttrConfig, IConfig } from './signalNodeConfig.ts';
 import { ILs } from '../store/slice/logicSlice.ts';
+import { useAttrSet } from './attrConfig/useAttrSet.tsx';
+import { IPs } from '../store/slice/panelSlice.ts';
 
 // const ColorPick = memo(() => {
 //   return (
@@ -309,6 +290,53 @@ const SelectSetting = memo(() => {
   }</>;
 });
 
+const SelectSettingView = memo(() => {
+  const config = getAttrConfig();
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
+  const { targets } = NodesState;
+
+  console.log(targets, NodesState.list, 'targetsssss');
+  return <>{
+    config.viewConfig.get(NodesState.list[targets[0]]?.instance.type)
+    &&
+    (config.viewConfig.get(NodesState.list[targets[0]]?.instance.type) as IConfig)({
+      target: targets,
+    })
+  }</>;
+});
+
+
+const DefaultSettingView = memo(({
+                                   targets,
+                                 }: {
+  targets: string[]
+}) => {
+  const config = getAttrConfig();
+  return <>{
+    config.viewConfig.get('DEFAULT-VIEW-PANEL-CONFIG')
+    &&
+    (config.viewConfig.get('DEFAULT-VIEW-PANEL-CONFIG') as IConfig)({
+      target: targets,
+    })
+  }</>;
+});
+const SettingView = memo(() => {
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
+  const { targets } = NodesState;
+  return <>
+    {
+      targets.length > 0 ?
+        <SelectSettingView></SelectSettingView>
+        :
+        <DefaultSettingView targets={targets}></DefaultSettingView>
+    }
+  </>;
+});
+
 const SettingTemp = memo(() => {
   const LogicNodesState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
@@ -334,14 +362,14 @@ const SettingTemp = memo(() => {
 
 export const AttrSetting = memo(() => {
 
-  useEffect(() => {
-    setDefaultLogicConfig();
-    AttrConfigInit();
-  }, []);
+  useAttrSet();
 
   const gsapContainer = useRef<HTMLDivElement>(null);
 
-
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    console.log(state, 'statescvsfv');
+    return state.panelSlice;
+  });
   const AttrState = useSelector((state: { viewNodesSlice: INs, attrSlice: IAs }) => {
     return state.attrSlice;
   });
@@ -372,7 +400,8 @@ export const AttrSetting = memo(() => {
       ref={gsapContainer}
       className="max-w-[300px] min-w-[300px] overflow-hidden"
     >
-      <SettingTemp></SettingTemp>
+      {PanelState.currentSTab === 'logic' ? <SettingTemp /> : <SettingView />}
+
     </div>
   );
 });
