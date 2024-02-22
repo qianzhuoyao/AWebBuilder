@@ -11,6 +11,7 @@ import { Panel } from './panel/panel';
 import { QueryClientProvider } from 'react-query';
 import { queryClient } from './fetch/client.ts';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { Demo } from './layout/Demo.tsx';
 
 
 interface MessagesData {
@@ -77,12 +78,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-      {
-        //面板
-        path: '/demo',
-        loader: () => ({ message: 'Hello Data Router1111!' }),
-        element: <>2222</>,
-      },
+
       {
         //面板
         path: '/panel',
@@ -90,6 +86,12 @@ const router = createBrowserRouter([
         element: <Panel></Panel>,
       },
     ],
+  },
+  {
+    //面板
+    path: '/demo/*',
+    loader: () => ({ message: 'Hello Data Router1111!' }),
+    element: <Demo />,
   },
   {
     path: '/*',

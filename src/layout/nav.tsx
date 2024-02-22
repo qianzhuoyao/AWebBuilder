@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IWls } from '../store/slice/widgetSlice';
 import { updateShow } from '../store/slice/widgetSlice';
 import type { SVGProps } from 'react';
+import { IPs, updateWorkSpaceName } from '../store/slice/panelSlice.ts';
+import { toast } from 'react-toastify';
+import { INs } from '../store/slice/nodeSlice.ts';
 
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
@@ -104,15 +107,36 @@ export const Nav = memo(() => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   }, [setTheme, theme]);
 
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    return state.panelSlice;
+  });
+
   const widgetState = useSelector((state: { widgetSlice: IWls }) => {
     console.log(state, '00000state');
     return state.widgetSlice;
   });
-
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
   const onHandleWidVis = useCallback(() => {
     console.log(!widgetState.show, '!widgetState.show');
     dispatch(updateShow(!widgetState.show));
   }, [dispatch, widgetState.show]);
+
+  const onHandleChangeWorkSpaceName = useCallback((name: string) => {
+    if (name === '') {
+      toast.error('命名空间不可以为空,最少保留一个字符');
+    } else {
+      dispatch(updateWorkSpaceName(name));
+    }
+
+  }, []);
+
+  const onPreView = useCallback(() => {
+    window.localStorage.setItem('DEMO-NODE#', JSON.stringify(NodesState));
+    window.localStorage.setItem('DEMO-PANEL#', JSON.stringify(PanelState));
+    window.open(window.location.origin + '/demo/' + PanelState.workSpaceName);
+  }, [NodesState, PanelState]);
 
   return (
     <>
@@ -186,6 +210,10 @@ export const Nav = memo(() => {
                     className="w-[240px] rounded-md"
                     size="xs"
                     radius="md"
+                    value={PanelState.workSpaceName}
+                    onChange={e => {
+                      onHandleChangeWorkSpaceName(e.target.value);
+                    }}
                     startContent={
                       // <Icon
                       //   icon="fluent-mdl2:pen-workspace"
@@ -206,6 +234,9 @@ export const Nav = memo(() => {
               size="sm"
               variant="light"
               aria-label="locale"
+              onClick={() => {
+                onPreView();
+              }}
             >
               预览
             </Button>

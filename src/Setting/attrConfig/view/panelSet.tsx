@@ -266,7 +266,9 @@ const PanelSetting = memo(() => {
             placement="top"
             className="capitalize"
           >
-          <PhQuestion></PhQuestion>
+          <div>
+            <PhQuestion></PhQuestion>
+          </div>
           </Tooltip>
           :
         </span>

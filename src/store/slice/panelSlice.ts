@@ -17,6 +17,7 @@ export interface IPs {
   panelHeight: number;
   panelLeft: number;
   panelTop: number;
+  workSpaceName: string
 }
 
 export const panelSlice = createSlice({
@@ -32,12 +33,16 @@ export const panelSlice = createSlice({
     panelColor: DEFAULT_PANEL_COLOR,
     offset: 30,
     tickUnit: 2,
+    workSpaceName: '工作空间',
     panelWidth: 1920,
     panelHeight: 1080,
     panelLeft: 0,
     panelTop: 0,
   },
   reducers: {
+    updateWorkSpaceName: (state, action) => {
+      state.workSpaceName = action.payload;
+    },
     updatePanelColor: (state, action) => {
       state.panelColor = action.payload;
     },
@@ -85,6 +90,7 @@ export const panelSlice = createSlice({
 export const {
   updatePanelColor,
   updateCurrentSTab,
+  updateWorkSpaceName,
   updateRulerMinX,
   updatePanelLockTransform,
   updatePanelTop,
