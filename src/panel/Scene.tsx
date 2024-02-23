@@ -484,8 +484,10 @@ const SceneWidgetMap = memo(() => {
                         placement="top"
                         className="capitalize"
                       >
-                        <MingcuteCopyFill className="text-default-500 mr-2"
-                                          onClick={() => onHandleCopy(node.id)}></MingcuteCopyFill>
+                        <div>
+                          <MingcuteCopyFill className="text-default-500 mr-2"
+                                            onClick={() => onHandleCopy(node.id)}></MingcuteCopyFill>
+                        </div>
                       </Tooltip>
                       <Tooltip
                         color={'default'}
@@ -493,8 +495,10 @@ const SceneWidgetMap = memo(() => {
                         placement="top"
                         className="capitalize"
                       >
-                        <PajamasRemove className="text-default-500"
-                                       onClick={() => onHandleRemove(node.id)}></PajamasRemove>
+                        <div>
+                          <PajamasRemove className="text-default-500"
+                                         onClick={() => onHandleRemove(node.id)}></PajamasRemove>
+                        </div>
                       </Tooltip>
                     </p>
                   </CardFooter>

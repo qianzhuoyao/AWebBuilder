@@ -4,7 +4,6 @@ import { CacheSetConfig } from './cacheSetConfig.tsx';
 import { useSelector } from 'react-redux';
 import { ILs } from '../../../store/slice/logicSlice.ts';
 import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
-import { useSignalMsg } from '../../../comp/msg.tsx';
 import { handleTrigger } from './handleTrigger.tsx';
 import { viewMapping } from './viewMapping.tsx';
 
@@ -16,13 +15,9 @@ export const setDefaultLogicConfig = () => {
       return state.logicSlice;
     });
 
-    const { go } = useSignalMsg(Object.keys(logicState.logicNodes)[0]);
-    const handleClick = () => {
-      go();
-    };
 
     console.log(logicState, genLogicNodeMenuItems(), 'cascascascascasc');
-    return <div onClick={handleClick}>333333</div>;
+    return <div>-</div>;
   });
 };
 

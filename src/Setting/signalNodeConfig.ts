@@ -1,6 +1,5 @@
 //节点配置项注册
 import React from 'react';
-import { ILogicConfig } from '../store/slice/logicSlice.ts';
 import { createSingleInstance } from '../comp/createSingleInstance.ts';
 
 /**
@@ -24,7 +23,7 @@ const initConfig = () => {
 
 export const getAttrConfig = createSingleInstance(initConfig);
 
-export type IConfig = (nodeInfo: ILogicConfig) => React.ReactNode
+export type IConfig = (nodeInfo: { target: string[] }) => React.ReactNode
 //注册视图节点配置
 export const signalViewNodeAttrConfig = (nodeViewTypeId: string) => {
   const config = getAttrConfig();

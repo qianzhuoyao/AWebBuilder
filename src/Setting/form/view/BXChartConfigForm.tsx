@@ -1,14 +1,24 @@
 import { AInput } from '../../../comp/AInput.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { INs, moveNode, resizeNode, updateAlias, updateSize } from '../../../store/slice/nodeSlice.ts';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
+import { ILs } from '../../../store/slice/logicSlice.ts';
+import { Chip } from '@nextui-org/react';
 
 export const PixBXChartConfigForm = () => {
   const dispatch = useDispatch();
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  const isBind = useMemo(() => {
+    return Object.values(logicState.logicNodes).some(node => {
+      return node.configInfo?.viewMapInfo?.bindViewNodeId === NodesState.list[NodesState.targets[0]].id;
+    });
+  }, [NodesState.list, NodesState.targets, logicState.logicNodes]);
 
   const onHandleChangeY = useCallback((y: string) => {
     if (y !== '0') {
@@ -79,7 +89,27 @@ export const PixBXChartConfigForm = () => {
 
   console.log(NodesState, 'sdasdadasdsadadfffNodesState');
   return <>
-    <div className={'flex mb-1'}>
+    <div className={'flex items-center justify-between'}>
+      <div className={'flex mb-1'}>
+        <small>{
+          NodesState.targets.length === 1 ? '当前节点逻辑绑定状态' : '选中节点过多'
+        }</small>
+      </div>
+      <div className={'flex mb-1'}>
+        {isBind ? <Chip
+          variant="faded"
+          color="success"
+        >
+          已绑定
+        </Chip> : <Chip
+          variant="faded"
+          color="danger"
+        >
+          未绑定
+        </Chip>}
+      </div>
+    </div>
+    <div className={'flex mb-1 border-t-1 border-default-100'}>
       <small>{
         NodesState.targets.length === 1 ? '节点当前位置' : '选中节点过多'
       }</small>

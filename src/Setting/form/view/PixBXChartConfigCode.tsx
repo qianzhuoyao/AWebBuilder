@@ -7,7 +7,8 @@ import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from 'react-redux';
 import { INs, updateInstance } from '../../../store/slice/nodeSlice.ts';
 import { MAIN_CONTAINER } from '../../../contant';
-import { Button } from '@nextui-org/react';
+import { Button, Code, Tooltip } from '@nextui-org/react';
+import { PhQuestion } from '../../attrConfig/view/panelSet.tsx';
 
 export const PixBXChartConfigCode = () => {
   const mirrorRef = useRef<ReactCodeMirrorRef>(null);
@@ -61,13 +62,19 @@ export const PixBXChartConfigCode = () => {
 
 
   return <>
+    <div className={'h-[20px] text-[10px]'}>
+      <Tooltip content={<div className={'w-[200px]'}>配置中,可使用<Code>"$$DATA$$"</Code>字符串来指代当前节点在逻辑操作中接收到的数据。
+      </div>}>
+        <div className={'w-[fit-content]'}><PhQuestion></PhQuestion></div>
+      </Tooltip>
+    </div>
     {parseError && <div className={'h-[40px] text-[10px] text-red-500 overflow-y-scroll'}>
       {parseError}
     </div>}
     <CodeMirror
       ref={mirrorRef}
       value={codeString}
-      height={codeContainerHeight - 120 - (parseError ? 40 : 0) + 'px'}
+      height={codeContainerHeight - 140 - (parseError ? 40 : 0) + 'px'}
       lang={'json'}
       theme={theme === 'dark' ? 'dark' : 'light'}
       extensions={[json(), EditorView.lineWrapping]}
