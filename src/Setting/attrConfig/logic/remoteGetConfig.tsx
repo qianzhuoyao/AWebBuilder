@@ -7,6 +7,7 @@ import {
   Card,
 } from '@nextui-org/react';
 import { RemoteBuilder, RemoteTest, RemoteUrl } from '../../form/logic/remoteReq/RemoteReqForm.tsx';
+import { useAutoHeight } from '../../../comp/useAutoHeight.tsx';
 
 
 const tabs = [
@@ -33,9 +34,12 @@ const tabs = [
 export const remoteGetConfig = () => {
   const config = signalLogicNodeAttrConfig(logic_D_get);
   config.setConfigEle(nodeInfo => {
+
+
+
     if (nodeInfo.target.length > 0) {
       return <>
-        <div className="flex w-full flex-col px-1">
+        <div className="flex w-full flex-col px-1" >
           <Tabs aria-label="Dynamic tabs" items={tabs} classNames={{
             panel: 'p-1',
             base: 'px-1',

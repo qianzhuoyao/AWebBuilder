@@ -17,25 +17,22 @@ export const buildDataReqNode = () => {
     name: '获取器',
   });
   dataReq.signalIn('in-0', async (args, node) => {
-    try {
-      console.log(args, node, 'fromNodessss');
+    console.log(args, node, 'fromNodessss');
 
+
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
       const query = () => fetch(node?.configInfo?.remoteReqInfo?.protocol + '://' + node.configInfo?.remoteReqInfo?.url || '', {
         method: node?.configInfo?.remoteReqInfo?.method || 'post',
         body: node?.configInfo?.remoteReqInfo?.method === 'post' ? JSON.stringify(node?.configInfo?.remoteReqInfo?.params || {}) : null,
-      }).then((res) => res.json());
-
-      // eslint-disable-next-line no-async-promise-executor
-      return new Promise(async (resolve) => {
-        const res = await query();
-        resolve({
-          data: res,
-        });
+      }).then((res) => res.json()).catch(e => {
+        reject(e);
       });
-    } catch (e) {
-      toast.error(e.message);
-      throw new Error(e.message);
-    }
+      const res = await query();
+      resolve({
+        data: res,
+      });
+    });
   });
 
   dataReq.signalOut((params) => {

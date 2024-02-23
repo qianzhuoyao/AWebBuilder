@@ -32,6 +32,7 @@ import beautify_js from 'js-beautify';
 import { CopyBlock } from 'react-code-blocks';
 import { initialState, TestRemoteContext, TestRemoteReducer } from './RemoteReducer.ts';
 import { useQuery } from 'react-query';
+import { useAutoHeight } from '../../../../comp/useAutoHeight.tsx';
 
 interface IInitValueType {
   params: {
@@ -307,7 +308,7 @@ const tabs = [
 ];
 
 export const RemoteUrl = memo(() => {
-
+  const height = useAutoHeight();
   const dispatch = useDispatch();
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
@@ -385,7 +386,9 @@ export const RemoteUrl = memo(() => {
   }, [logicState.logicNodes, logicState.target]);
 
   return <>
-    <>
+    <div style={{
+      height: height - 80 + 'px',
+    }}>
       <Input
         value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url}
         classNames={{
@@ -438,6 +441,9 @@ export const RemoteUrl = memo(() => {
         labelPlacement={'outside-left'}
         placeholder="关于本次远程通讯的描述"
         className="max-w-xs mt-1"
+        classNames={{
+          innerWrapper: 'h-[200px]',
+        }}
         value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.desc}
         onChange={e => {
           updateDesc(e.target.value);
@@ -477,7 +483,7 @@ export const RemoteUrl = memo(() => {
         </Tooltip>
 
       </div>
-    </>
+    </div>
   </>;
 });
 
@@ -582,7 +588,7 @@ const RemoteTestParamsRes = memo(() => {
 
 
 export const RemoteTest = memo(() => {
-
+  const height = useAutoHeight();
 
   const [state, dispatch] = useReducer(TestRemoteReducer, initialState);
 
@@ -630,7 +636,9 @@ export const RemoteTest = memo(() => {
     });
   }, [isLoading, isError, error, data]);
 
-  return <>
+  return <div style={{
+    height: height - 80 + 'px',
+  }}>
     <TestRemoteContext.Provider value={{ ...state }}>
       <Card className="max-w-[340px]">
         <CardHeader className="justify-between">
@@ -676,10 +684,13 @@ export const RemoteTest = memo(() => {
         </CardFooter>
       </Card>
     </TestRemoteContext.Provider>
-  </>;
+  </div>;
 });
 export const RemoteBuilder = memo(() => {
-  return <div className="flex w-full flex-col px-1">
+  const height = useAutoHeight();
+  return <div className="flex w-full flex-col px-1" style={{
+    height: height - 80 + 'px',
+  }}>
     <Tabs aria-label="Dynamic tabs" items={tabs} classNames={{
       panel: 'p-1',
       base: 'px-1',

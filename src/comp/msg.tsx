@@ -1,7 +1,8 @@
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { useDispatch, useSelector } from 'react-redux';
-import { ILs, updateSignalSet } from '../store/slice/logicSlice.ts';
+import { ILogicNode, ILs, updateSignalSet } from '../store/slice/logicSlice.ts';
 import { mapNodeBindPort } from './mapNodePort.ts';
+import { toast } from 'react-toastify';
 
 
 /**
@@ -15,13 +16,26 @@ import { mapNodeBindPort } from './mapNodePort.ts';
  * task:b->c(promise)
  *
  */
+export interface IStage {
+  currentEdge: {
+    from: string
+    to: string
+    fromPort: string
+    toPort: string
+  };
+  currentNode: {
+    node: ILogicNode
+    talkStatus: 'ok' | 'error' | 'pending'
+  };
+}
 
 interface IOptions {
   isNotAutoReset?: boolean; // default false
+  onStageCallback?: (stage: IStage) => void;
 }
 
 export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallback?: (calledEdge: string[]) => void) => {
-  const { isNotAutoReset } = (options || {});
+  const { isNotAutoReset, onStageCallback } = (options || {});
   let stopStatus = false;
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
@@ -42,7 +56,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
           return e.from === edge.source && e.to === edge.target;
         });
         if (portLogicEdge) {
-          const { from, to } = portLogicEdge;
+          const { from, to, fromPort, toPort } = portLogicEdge;
 
           //如果目标无出度，则不对其边进行计算
           //
@@ -70,22 +84,165 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
           if (!stopStatus) {
 
             if (getWDGraph().getInDegree(from).length === 0) {
-              deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.source]);
-            }else{
-              deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
+              try {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.source],
+                      talkStatus: 'pending',
+                    },
+                  },
+                );
+                deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.source]);
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.source],
+                      talkStatus: 'ok',
+                    },
+                  },
+                );
+              } catch (e) {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.source],
+                      talkStatus: 'error',
+                    },
+                  },
+                );
+                toast.error(e.message);
+                console.error(e);
+              }
+
+            } else {
+              try {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'pending',
+                    },
+                  },
+                );
+                deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'ok',
+                    },
+                  },
+                );
+              } catch (e) {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'error',
+                    },
+                  },
+                );
+                toast.error(e.message);
+                console.error(e);
+              }
             }
             console.log(deParams, edge, currentToMakeTasks, toTem, 'deParams');
             for await (const inTask of currentToMakeTasks) {
               console.log(logicState.logicNodes[edge.source], getWDGraph().getInDegree(from).length, currentFromMakeTask, 'getWDGraph().getInDegree(from).length');
               //获取in节点入度
-              const res = await inTask.make({
-                fromNodes: {
-                  id: from,
-                  type: logicState.logicNodes[edge.source]?.typeId,
-                  data: deParams,
-                },
-              }, logicState.logicNodes[edge.target]);
-              initParams=res;
+              try {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'pending',
+                    },
+                  },
+                );
+                const res = await inTask.make({
+                  fromNodes: {
+                    id: from,
+                    type: logicState.logicNodes[edge.source]?.typeId,
+                    data: deParams,
+                  },
+                }, logicState.logicNodes[edge.target]);
+                initParams = res;
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'ok',
+                    },
+                  },
+                );
+              } catch (e) {
+                onStageCallback && onStageCallback(
+                  {
+                    currentEdge: {
+                      from,
+                      fromPort,
+                      to,
+                      toPort,
+                    },
+                    currentNode: {
+                      node: logicState.logicNodes[edge.target],
+                      talkStatus: 'error',
+                    },
+                  },
+                );
+                toast.error(e.message);
+                console.error(e);
+              }
+
             }
             runEdgeVis.add(to);
             // deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
