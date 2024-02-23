@@ -1,6 +1,6 @@
 import { AInput } from '../../../comp/AInput.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { INs, moveNode, updateAlias } from '../../../store/slice/nodeSlice.ts';
+import { INs, moveNode, resizeNode, updateAlias, updateSize } from '../../../store/slice/nodeSlice.ts';
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
@@ -24,6 +24,26 @@ export const PixBXChartConfigForm = () => {
         newX: NodesState.list[NodesState.targets[0]].x,
       }]));
     }
+
+  }, [NodesState.list, NodesState.targets]);
+
+  const onHandleChangeW = useCallback((w: string) => {
+    console.log(w, 'conHandleChangeX');
+    Number(w) ? dispatch(resizeNode([{
+      id: NodesState.list[NodesState.targets[0]].id,
+      newW: Number(w),
+      newH: NodesState.list[NodesState.targets[0]].h,
+    }])) : toast.error('长度输入不合法');
+
+  }, [NodesState.list, NodesState.targets]);
+
+  const onHandleChangeH = useCallback((h: string) => {
+    console.log(h, 'conHandleChangeX');
+    Number(h) ? dispatch(resizeNode([{
+      id: NodesState.list[NodesState.targets[0]].id,
+      newH: Number(h),
+      newW: NodesState.list[NodesState.targets[0]].w,
+    }])) : toast.error('宽度度输入不合法');
 
   }, [NodesState.list, NodesState.targets]);
 
@@ -64,7 +84,7 @@ export const PixBXChartConfigForm = () => {
         NodesState.targets.length === 1 ? '节点当前位置' : '选中节点过多'
       }</small>
     </div>
-    <div className={'flex'}>
+    <div className={'flex mb-1'}>
       {
         NodesState.targets.length === 1 ?
           <><AInput placeholder="x" className="w-[250px] mr-2" size="xs"
@@ -78,6 +98,28 @@ export const PixBXChartConfigForm = () => {
                       onHandleChangeY(e.target.value);
                     }}
                     value={String(Math.floor(NodesState.list[NodesState.targets[0]].y))}
+            /></> : <>-</>
+      }
+    </div>
+    <div className={'flex mb-1 border-t-1 border-default-100'}>
+      <small>{
+        NodesState.targets.length === 1 ? '节点当前大小' : '选中节点过多'
+      }</small>
+    </div>
+    <div className={'flex'}>
+      {
+        NodesState.targets.length === 1 ?
+          <><AInput placeholder="width" className="w-[250px] mr-2" size="xs"
+                    onChange={e => {
+                      onHandleChangeW(e.target.value);
+                    }}
+                    value={String(Math.floor(NodesState.list[NodesState.targets[0]].w))}
+          />
+            <AInput placeholder="height" className="w-[250px] mr-2" size="xs"
+                    onChange={e => {
+                      onHandleChangeH(e.target.value);
+                    }}
+                    value={String(Math.floor(NodesState.list[NodesState.targets[0]].h))}
             /></> : <>-</>
       }
     </div>

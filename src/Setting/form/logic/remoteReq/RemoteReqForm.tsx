@@ -17,7 +17,7 @@ import {
   Input,
   CardFooter,
   Tab,
-  Tabs,
+  Tabs, Switch, Tooltip,
 } from '@nextui-org/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ILs, IProtocol, updateNodeConfigInfo } from '../../../../store/slice/logicSlice.ts';
@@ -370,6 +370,20 @@ export const RemoteUrl = memo(() => {
       },
     }));
   }, [logicState.logicNodes, logicState.target]);
+
+
+  const onHandleChangeStrict = useCallback((checked: boolean) => {
+    console.log(checked, logicState.target[0], 'checked');
+    dispatch(updateNodeConfigInfo({
+      id: logicState.target[0],
+      infoType: 'remoteReqInfo',
+      configInfo: {
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
+        strict: checked,
+      },
+    }));
+  }, [logicState.logicNodes, logicState.target]);
+
   return <>
     <>
       <Input
@@ -419,7 +433,6 @@ export const RemoteUrl = memo(() => {
           updateUrl(e.target.value);
         }}
       />
-
       <Textarea
         label="描述"
         labelPlacement={'outside-left'}
@@ -430,21 +443,40 @@ export const RemoteUrl = memo(() => {
           updateDesc(e.target.value);
         }}
       />
-      <RadioGroup
-        className={'mt-2'}
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method}
-        orientation="horizontal"
-        onValueChange={e => {
-          console.log(e, 'erererer');
-          updateMethod(e as 'get');
-        }}
-      >
-        <Radio value="post">post</Radio>
-        <Radio value="get">get</Radio>
-        {/*<Radio value="get" disabled>get</Radio>*/}
-        {/*<Radio value="update" disabled>update</Radio>*/}
-        {/*<Radio value="patch" disabled>patch</Radio>*/}
-      </RadioGroup>
+      <div className={'flex justify-between items-center h-[60px]'}>
+        <RadioGroup
+
+          value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method}
+          orientation="horizontal"
+          onValueChange={e => {
+            console.log(e, 'erererer');
+            updateMethod(e as 'get');
+          }}
+        >
+          <Radio value="post">post</Radio>
+          <Radio value="get">get</Radio>
+          {/*<Radio value="get" disabled>get</Radio>*/}
+          {/*<Radio value="update" disabled>update</Radio>*/}
+          {/*<Radio value="patch" disabled>patch</Radio>*/}
+        </RadioGroup>
+
+        <Tooltip
+          color={'default'}
+          content={'严格模式下,公用逻辑路径将不会复用'}
+          placement="top"
+          className="capitalize"
+        >
+          <div className={'my-1 items-center flex'}>
+            <small className={'mr-1'}>严格模式</small>
+            <Switch size={'sm'}
+                    isSelected={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.strict}
+                    aria-label="strictMode" onValueChange={checked => {
+              onHandleChangeStrict(checked);
+            }} />
+          </div>
+        </Tooltip>
+
+      </div>
     </>
   </>;
 });
@@ -479,7 +511,7 @@ const RemoteTestResponse = memo(() => {
           copied={false}
           showLineNumbers={false}
         />
-      </> : <>
+      </> : <div className={'overflow-scroll max-h-[300px]'}>
         <CopyBlock
           text={beautify_js(JSON.stringify(TestCTX.response?.data), { indent_size: 2 })}
           language={'json'}
@@ -490,7 +522,7 @@ const RemoteTestResponse = memo(() => {
           copied={false}
           showLineNumbers={false}
         />
-      </>
+      </div>
     }
   </>;
 });

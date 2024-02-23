@@ -3,7 +3,6 @@ import * as Echart from 'echarts';
 import { INodeType } from '../store/slice/nodeSlice';
 
 
-
 interface IBaseChart {
   options?: Echart.EChartsOption;
   width: number;
@@ -25,12 +24,8 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
       if (chartParams.options) {
         ChartInstance.setOption(chartParams.options);
       }
-      // else {
-      //   if (chartParams.type === 'pixBX') {
-      //     ChartInstance.setOption(barDefaultOption);
-      //   }
-      // }
       const R = new ResizeObserver(() => {
+        console.log('RddddddasdaS');
         ChartInstance.resize();
       });
       R.observe(CRvar);

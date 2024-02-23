@@ -122,6 +122,12 @@ export interface INs {
     newX: number,
     newY: number
   }[];
+  //在下一个执行任务执行完毕后更新位置
+  resizeTo: {
+    id: string,
+    newW: number,
+    newH: number
+  }[];
   list: Record<nodeId, IViewNode>;
 }
 
@@ -130,12 +136,16 @@ export const viewNodesSlice = createSlice({
   initialState: {
     list: {},
     moveTo: [],
+    resizeTo:[],
     targets: [],
   },
   reducers: {
     updateAlias: (state, action) => {
       const { id, alias } = action.payload;
       (state.list as Record<string, IViewNode>)[id].alias = alias;
+    },
+    resizeNode: (state, action) => {
+      state.resizeTo = action.payload;
     },
     moveNode: (state, action) => {
       state.moveTo = action.payload;
@@ -172,12 +182,14 @@ export const viewNodesSlice = createSlice({
       const findNode = (state.list as Record<string, IViewNode>)[
       action.payload.id || ''
         ];
+      console.log(findNode,'findNode');
       if (findNode) {
         const newNode = {
           ...findNode,
-          w: action.payload.w,
-          h: action.payload.h,
-        };
+          w: action.payload.w ?? findNode.w,
+          h: action.payload.h ?? findNode.h,
+      }
+        ;
         state.list = { ...state.list, [action.payload.id]: newNode };
       }
     },
@@ -208,6 +220,7 @@ export const {
   addNode,
   updateTargets,
   updatePosition,
+  resizeNode,
   deleteListItem,
   updateSize,
 } = viewNodesSlice.actions;

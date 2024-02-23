@@ -201,6 +201,11 @@ const LogicView = [
     label: '插槽',
     content: <ViewSlotMap></ViewSlotMap>,
   },
+  {
+    id: 'logic_view_base',
+    label: '门',
+    content: <></>,
+  },
 ];
 const LogicTime = [
   {

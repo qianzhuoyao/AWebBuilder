@@ -7,7 +7,7 @@ import Selecto from 'react-selecto';
 import {
   deleteListItem,
   INs,
-  IViewNode, moveNode,
+  IViewNode, moveNode, resizeNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -150,10 +150,29 @@ const NodeContainer = memo(() => {
     return state.viewNodesSlice;
   });
 
+  useEffect(() => {
+    if (NodesState.resizeTo.length) {
+      NodesState.resizeTo.map(willResizeNode => {
+        const nodeDom = document.getElementById(willResizeNode.id);
+        if (nodeDom && moveableRef.current) {
+          nodeDom.style.width = willResizeNode.newW / PanelState.tickUnit + 'px';
+          nodeDom.style.height = willResizeNode.newH / PanelState.tickUnit + 'px';
+          moveableRef.current!.moveable.updateTarget();
+          dispatch(
+            updateSize({
+              id: willResizeNode.id,
+              w: willResizeNode.newW,
+              h: willResizeNode.newH,
+            }),
+          );
+        }
+      });
+      dispatch(resizeNode([]));
+    }
+  }, [NodesState.resizeTo, PanelState.tickUnit]);
 
   useEffect(() => {
     if (NodesState.moveTo.length) {
-      console.log(NodesState.moveTo, moveableRef.current, ' NodesState.moveTo');
       NodesState.moveTo.map(willMoveNode => {
         const nodeDom = document.getElementById(willMoveNode.id);
         if (nodeDom && moveableRef.current) {

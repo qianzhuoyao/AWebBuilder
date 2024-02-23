@@ -26,15 +26,6 @@ export const buildCacheClearReqNode = () => {
     });
   });
 
-  cacheClearReq.signalOut((params) => {
-    console.log({
-      params,
-    });
-    return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
-    });
-  });
+
 
 };

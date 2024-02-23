@@ -281,7 +281,7 @@ export const LogicPanel = memo(() => {
       },
 
       container: containerRef.current,
-      grid: false,
+      grid: true,
       virtual: true,
       onPortRendered(args) {
         const selectors = args.contentSelectors;
