@@ -118,6 +118,27 @@ const HandleTrigger = memo(() => {
     </div>
   );
 });
+const ViewSlotMap = memo(() => {
+  const ViewSlot = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {ViewSlot.logicNodeMenuItems.get('viewSlot')?.map((remote) => {
+        return (
+          <div key={remote.id}>
+            <WidgetIconTemp
+              tips={remote.tips}
+              nodeType="LOGIC"
+              classify="viewSlot"
+              typeId={remote.id}
+              src={remote.src}
+              name={remote.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 
 const TimeOutMap = memo(() => {
   const TimeOut = genLogicNodeMenuItems();
@@ -174,7 +195,13 @@ const LogicDebugger = [
 const LogicBrowse = [];
 const LogicEvent = [];
 const LogicLife = [];
-const LogicView = [];
+const LogicView = [
+  {
+    id: 'logic_view_slot',
+    label: '插槽',
+    content: <ViewSlotMap></ViewSlotMap>,
+  },
+];
 const LogicTime = [
   {
     id: 'logic_time_out',

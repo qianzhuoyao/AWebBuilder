@@ -6,9 +6,13 @@ import { ILogicTypeList } from '../../panel/logicSrcList.ts';
 
 export type IProtocol = 'https' | 'http';
 
+export interface IViewMapInfo {
+  bindViewNodeId: string;
+  type: 'IViewMapInfo',
+}
+
 export interface IRemoteReqInfo {
-
-
+  type: 'IRemoteReqInfo',
   url: string;
   protocol: IProtocol;
   params: Record<string, string> | string; // kv or JSON
@@ -16,7 +20,10 @@ export interface IRemoteReqInfo {
   method: 'post' | 'get';
 }
 
-export type IInfo = IRemoteReqInfo
+export type IInfo = {
+  remoteReqInfo?: IRemoteReqInfo
+  viewMapInfo?: IViewMapInfo
+}
 
 export interface ILogicConfig {
   target: string[];
@@ -84,9 +91,12 @@ export const logicSlice = createSlice({
     },
 
     updateNodeConfigInfo: (state, action) => {
-      const { id, configInfo } = action.payload;
+      const { id, configInfo, infoType } = action.payload;
       console.log(action.payload, 'e>)[id]');
-      (state.logicNodes as Record<string, ILogicNode>)[id].configInfo = configInfo;
+      if (!infoType) {
+        return;
+      }
+      ((state.logicNodes as Record<string, ILogicNode>)[id].configInfo as Record<string, any>)[infoType] = configInfo;
     },
 
     setLogicTarget: (state, action) => {
@@ -121,7 +131,7 @@ export const logicSlice = createSlice({
           ...(state.logicNodes as Record<string, ILogicNode>)[id]
           , ...{
             ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
-              if ((port.type + port.tag + '#' + port.portName) === tag && port.type === portType) {
+              if ((port.type + port.tag + '#' + port.id) === tag && port.type === portType) {
                 return {
                   ...port,
                   pointStatus: connected,

@@ -1,6 +1,6 @@
 import { AInput } from '../../../comp/AInput.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { INs, moveNode } from '../../../store/slice/nodeSlice.ts';
+import { INs, moveNode, updateAlias } from '../../../store/slice/nodeSlice.ts';
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
@@ -45,6 +45,18 @@ export const PixBXChartConfigForm = () => {
 
   }, [NodesState.list, NodesState.targets]);
 
+  const updateNodeAlias = useCallback((alias: string) => {
+    if (Object.values(NodesState.list).some(node => node.alias === alias)) {
+      toast.error('别名不可以重复');
+    } else {
+      dispatch(updateAlias({
+        id: NodesState.targets[0],
+        alias: alias,
+      }));
+    }
+
+  }, [NodesState.targets]);
+
   console.log(NodesState, 'sdasdadasdsadadfffNodesState');
   return <>
     <div className={'flex mb-1'}>
@@ -68,6 +80,24 @@ export const PixBXChartConfigForm = () => {
                     value={String(Math.floor(NodesState.list[NodesState.targets[0]].y))}
             /></> : <>-</>
       }
+    </div>
+    <div className={'flex my-1 border-t-1 border-default-100'}>
+      <small>{
+        NodesState.targets.length === 1 ? '别名' : '选中节点过多'
+      }</small>
+    </div>
+    <div>
+      <AInput
+        size={'xs'}
+        type="email"
+        label="别名"
+        value={NodesState.list[NodesState.targets[0]].alias}
+        placeholder="别名"
+        labelPlacement="outside"
+        onChange={(e) => {
+          updateNodeAlias(e.target.value);
+        }}
+      ></AInput>
     </div>
   </>;
 };

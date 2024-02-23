@@ -34,6 +34,8 @@ export const logic_P_get = 'logic_P_set' as const;
 export const logic_TM_get = 'logic_TM_get' as const;
 //定时器
 export const logic_TO_get = 'logic_TO_get' as const;
+//组件映射
+export const logic_View_bind = 'logic_View_bind' as const;
 //循环
 export const logic_Ring_get = 'logic_Ring_get' as const;
 
@@ -49,6 +51,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_TO_get
   | typeof logic_Dug_Trigger
   | typeof logic_Ring_get
+  | typeof logic_View_bind
 
 export type INodeType =
   | typeof pix_BLine
@@ -130,6 +133,10 @@ export const viewNodesSlice = createSlice({
     targets: [],
   },
   reducers: {
+    updateAlias: (state, action) => {
+      const { id, alias } = action.payload;
+      (state.list as Record<string, IViewNode>)[id].alias = alias;
+    },
     moveNode: (state, action) => {
       state.moveTo = action.payload;
     },
@@ -195,6 +202,7 @@ export const viewNodesSlice = createSlice({
 });
 
 export const {
+  updateAlias,
   moveNode,
   updateInstance,
   addNode,

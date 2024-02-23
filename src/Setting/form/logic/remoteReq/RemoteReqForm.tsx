@@ -61,8 +61,9 @@ const RemoteReqCodeForm = memo(() => {
 
     dispatch(updateNodeConfigInfo({
       id: logicState.target[0],
+      infoType: 'remoteReqInfo',
       configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
         params: JSON.parse(value),
       },
     }));
@@ -70,7 +71,7 @@ const RemoteReqCodeForm = memo(() => {
 
   const defaultFormValue = useMemo(() => {
     if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get') {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.params as Record<string, any>).result;
+      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
     } else {
       return '';
     }
@@ -104,8 +105,9 @@ const RemoteReqJSONForm = memo(() => {
   });
   const dispatch = useDispatch();
   const defaultFormValue = useMemo(() => {
-    if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get') {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.params as Record<string, any>).result;
+    if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get'
+    ) {
+      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
     } else {
       return '';
     }
@@ -116,8 +118,9 @@ const RemoteReqJSONForm = memo(() => {
 
     dispatch(updateNodeConfigInfo({
       id: logicState.target[0],
+      infoType: 'remoteReqInfo',
       configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
         params: newObj,
       },
     }));
@@ -167,7 +170,7 @@ const RemoteReqForm = memo(() => {
 
   const defaultFormValue = useMemo(() => {
     if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get') {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.params as Record<string, any>).result;
+      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
     } else {
       return undefined;
     }
@@ -193,14 +196,11 @@ const RemoteReqForm = memo(() => {
       } : initialValues}
       onSubmit={async (values) => {
         const JSONObj = arrayToGenObj(values.params || []);
-        console.log(JSONObj, formRef.current, logicState, {
-          ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
-          params: JSONObj,
-        }, 'JSONObj');
         dispatch(updateNodeConfigInfo({
           id: logicState.target[0],
+          infoType: 'remoteReqInfo',
           configInfo: {
-            ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+            ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
             params: JSONObj,
           },
         }));
@@ -330,9 +330,21 @@ export const RemoteUrl = memo(() => {
   const updateUrl = useCallback((url: string) => {
     dispatch(updateNodeConfigInfo({
       id: logicState.target[0],
+      infoType: 'remoteReqInfo',
       configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
         url: url,
+      },
+    }));
+  }, [logicState.logicNodes, logicState.target]);
+
+  const updateMethod = useCallback((method: 'post' | 'get') => {
+    dispatch(updateNodeConfigInfo({
+      id: logicState.target[0],
+      infoType: 'remoteReqInfo',
+      configInfo: {
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
+        method: method,
       },
     }));
   }, [logicState.logicNodes, logicState.target]);
@@ -340,8 +352,9 @@ export const RemoteUrl = memo(() => {
   const updateDesc = useCallback((desc: string) => {
     dispatch(updateNodeConfigInfo({
       id: logicState.target[0],
+      infoType: 'remoteReqInfo',
       configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
         desc: desc,
       },
     }));
@@ -350,8 +363,9 @@ export const RemoteUrl = memo(() => {
   const updateProtocol = useCallback((protocol: IProtocol) => {
     dispatch(updateNodeConfigInfo({
       id: logicState.target[0],
+      infoType: 'remoteReqInfo',
       configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo || {}),
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
         protocol: protocol,
       },
     }));
@@ -359,7 +373,7 @@ export const RemoteUrl = memo(() => {
   return <>
     <>
       <Input
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.url}
+        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url}
         classNames={{
           base: 'w-full',
           mainWrapper: 'w-full',
@@ -370,7 +384,7 @@ export const RemoteUrl = memo(() => {
               <button>
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">{
-                    `${logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol}://`
+                    `${logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol}://`
                   }</span>
                 </div>
               </button>
@@ -379,7 +393,7 @@ export const RemoteUrl = memo(() => {
               disallowEmptySelection
               selectionMode="multiple"
               selectedKeys={new Set(
-                [logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol as IProtocol],
+                [logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol as IProtocol],
               )}
               aria-label="PROTOCOL"
 
@@ -411,17 +425,22 @@ export const RemoteUrl = memo(() => {
         labelPlacement={'outside-left'}
         placeholder="关于本次远程通讯的描述"
         className="max-w-xs mt-1"
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.desc}
+        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.desc}
         onChange={e => {
           updateDesc(e.target.value);
         }}
       />
       <RadioGroup
         className={'mt-2'}
-        value={'post'}
+        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method}
         orientation="horizontal"
+        onValueChange={e => {
+          console.log(e, 'erererer');
+          updateMethod(e as 'get');
+        }}
       >
         <Radio value="post">post</Radio>
+        <Radio value="get">get</Radio>
         {/*<Radio value="get" disabled>get</Radio>*/}
         {/*<Radio value="update" disabled>update</Radio>*/}
         {/*<Radio value="patch" disabled>patch</Radio>*/}
@@ -460,7 +479,18 @@ const RemoteTestResponse = memo(() => {
           copied={false}
           showLineNumbers={false}
         />
-      </> : <></>
+      </> : <>
+        <CopyBlock
+          text={beautify_js(JSON.stringify(TestCTX.response?.data), { indent_size: 2 })}
+          language={'json'}
+          theme={{
+            mode: theme === 'dark' ? 'dark' : 'light',
+          }}
+
+          copied={false}
+          showLineNumbers={false}
+        />
+      </>
     }
   </>;
 });
@@ -533,21 +563,24 @@ export const RemoteTest = memo(() => {
     dispatch({
       type: 'req',
       payload: {
-        protocol: logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || '-',
-        url: logicState.logicNodes[logicState.target[0]]?.configInfo?.url || '-',
-        params: logicState.logicNodes[logicState.target[0]]?.configInfo?.params || '-',
-        method: logicState.logicNodes[logicState.target[0]]?.configInfo?.method || '-',
+        protocol: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol || '-',
+        url: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url || '-',
+        params: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params || '-',
+        method: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method || '-',
       },
     });
   }, [logicState.logicNodes, logicState.target]);
 
   const URL = useMemo(() =>
-      (logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || '') + '://' + (logicState.logicNodes[logicState.target[0]]?.configInfo?.url || '')
+      (logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol || '') + '://' + (logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url || '')
     , [logicState.logicNodes, logicState.target]);
 
   const query = () => fetch(URL, {
-    method: logicState.logicNodes[logicState.target[0]]?.configInfo?.protocol || 'post',
-    body: JSON.stringify(logicState.logicNodes[logicState.target[0]]?.configInfo?.params || {}),
+    method: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method || 'post',
+    body: logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method === 'post'
+      ?
+      JSON.stringify(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params || {})
+      : null,
   }).then((res) => res.json());
 
   const { isLoading, isError, error, data, isFetching } =
@@ -583,7 +616,7 @@ export const RemoteTest = memo(() => {
             size="sm"
             isLoading={isFetching}
             variant={'solid'}
-            isDisabled={!logicState.logicNodes[logicState.target[0]]?.configInfo?.url}
+            isDisabled={!logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url}
             onPress={() => {
               setSendTime(sendTime + 1);
             }}
@@ -593,7 +626,7 @@ export const RemoteTest = memo(() => {
         </CardHeader>
         <CardBody className="px-3 py-0 text-small text-default-400">
           <p className={'mb-1'}>
-            {logicState.logicNodes[logicState.target[0]]?.configInfo?.desc || '暂无描述'}
+            {logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.desc || '暂无描述'}
           </p>
           <RemoteTestParamsRes></RemoteTestParamsRes>
         </CardBody>

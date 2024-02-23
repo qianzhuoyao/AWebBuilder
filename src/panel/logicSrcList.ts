@@ -8,6 +8,7 @@
 // | 'cache';
 export const LOGIC_TYPE_LIST = [
   'remote',
+  'viewSlot',
   'table',
   'hTrigger',
   'chart',

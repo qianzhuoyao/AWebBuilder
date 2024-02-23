@@ -1,9 +1,11 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_Dug_Trigger } from '../../store/slice/nodeSlice.ts';
 import trigger from '../../assets/widgetIcon/game-icons--click.svg';
+import dayjs from 'dayjs'
+
 
 interface IDataReq {
-  data: number;
+  time: string,
 }
 
 //检查器
@@ -17,13 +19,10 @@ export const handleTrigger = () => {
     name: '触发器',
   });
 
-  HandleTrigger.signalOut((params) => {
-    console.log({
-      params,
-    });
+  HandleTrigger.signalOut(() => {
     return new Promise(resolve => {
       resolve({
-        data: 12,
+        time: dayjs().toString(),
       });
     });
   });

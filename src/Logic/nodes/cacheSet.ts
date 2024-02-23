@@ -15,10 +15,8 @@ export const buildCacheSetNode = () => {
     tips: '获取来自服务器上的数据',
     name: '缓存设置器',
   });
-  CacheSet.signalIn('in-0', ({ fromNodes }) => {
-    console.log({
-      fromNodes,
-    });
+  CacheSet.signalIn('in-0', (args) => {
+    console.log(args, 'fromNodessss===2');
     return new Promise(resolve => {
       resolve({
         data: 12,

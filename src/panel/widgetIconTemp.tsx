@@ -21,7 +21,7 @@ import {
   drag_size_height,
   drag_size_width,
 } from '../contant';
-import { IClassify, INodeType, addNode } from '../store/slice/nodeSlice';
+import { IClassify, INodeType, addNode, logic_D_get } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
@@ -217,7 +217,7 @@ const LogicCard = memo(
                 <CardHeader className="flex gap-3">
                   <Image
                     classNames={{
-                      wrapper:'w-[30px]'
+                      wrapper: 'w-[30px]',
                     }}
                     id={id}
                     ref={ImageRef}
@@ -311,7 +311,7 @@ export const WidgetIconTemp = memo(
                     id: uuidv4(),
                     classify,
                     nodeType,
-                    alias: name + typeId,
+                    alias: name + '@' + uuidv4(),
                     instance: {
                       type: typeId,
                       option: setDefaultChartOption(typeId),
@@ -340,6 +340,13 @@ export const WidgetIconTemp = memo(
                   typeId,
                 });
 
+                const defaultConfigInfo = typeId === logic_D_get ? {
+                  remoteReqInfo: {
+                    protocol: 'http',
+                    method: 'post',
+                  },
+                } : {};
+
                 const ports = Tem.ports.map((port, index) => {
                   if (port.type === 'isIn') {
                     return {
@@ -366,10 +373,7 @@ export const WidgetIconTemp = memo(
                   addLogicNode({
                     ports,
                     typeId,
-                    configInfo: {
-                      protocol: 'http',
-                      method: 'post',
-                    },
+                    configInfo: defaultConfigInfo,
                     belongClass: classify,
                     x: e.pageX - left,
                     y: e.pageY - top,

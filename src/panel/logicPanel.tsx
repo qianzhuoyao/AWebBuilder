@@ -212,7 +212,7 @@ export const LogicPanel = memo(() => {
         connected: 0,
       }),
     );
-  }, [dispatch]);
+  }, []);
 
 
   useEffect(() => {

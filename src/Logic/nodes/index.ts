@@ -7,6 +7,7 @@ import { checkPassword } from './checkPass.ts';
 import { timeOut } from './timeout.ts';
 import { timeInter } from './timeInt.ts';
 import { handleTrigger } from './handleTrigger.ts';
+import { viewLogicSlot } from './viewSlotBind.ts';
 
 export const nodeBuilder = () => {
   buildDataReqNode();
@@ -18,4 +19,5 @@ export const nodeBuilder = () => {
   timeOut();
   timeInter();
   handleTrigger();
+  viewLogicSlot();
 };
