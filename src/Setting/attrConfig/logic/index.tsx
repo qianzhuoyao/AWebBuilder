@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { ILs } from '../../../store/slice/logicSlice.ts';
 import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
 import { useSignalMsg } from '../../../comp/msg.tsx';
+import { handleTrigger } from './handleTrigger.tsx';
 
 
 export const setDefaultLogicConfig = () => {
@@ -27,4 +28,5 @@ export const setDefaultLogicConfig = () => {
 export const AttrConfigInit = () => {
   remoteGetConfig();
   CacheSetConfig();
+  handleTrigger();
 };

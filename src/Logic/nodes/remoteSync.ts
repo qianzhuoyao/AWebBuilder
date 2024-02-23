@@ -15,7 +15,7 @@ export const buildDataSyncNode = () => {
     tips: '发送一个请求到后端',
     name: '同步器',
   });
-  dataSyncReq.signalIn('logic_U_get-port-in-0', ({ fromNodes }) => {
+  dataSyncReq.signalIn('in-0', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });

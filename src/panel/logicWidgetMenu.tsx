@@ -1,7 +1,6 @@
 import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
 import { memo } from 'react';
-import { LOGIC_SRC_ICON } from './logicSrcList';
 import { ITs } from './widgetMenu.tsx';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
 import { nodeBuilder } from '../Logic/nodes';
@@ -32,16 +31,17 @@ const CacheMap = memo(() => {
   );
 });
 
-const FilterMap = memo(() => {
+const MixMap = memo(() => {
+  const mix = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {LOGIC_SRC_ICON.filter.map((filter) => {
+      {mix.logicNodeMenuItems.get('mix')?.map((filter) => {
         return (
           <div key={filter.id}>
             <WidgetIconTemp
               tips={filter.tips}
               nodeType="LOGIC"
-              classify="remote"
+              classify="mix"
               typeId={filter.id}
               src={filter.src}
               name={filter.name}
@@ -52,6 +52,95 @@ const FilterMap = memo(() => {
     </div>
   );
 });
+
+const FilterMap = memo(() => {
+  const filter = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {filter.logicNodeMenuItems.get('filter')?.map((filter) => {
+        return (
+          <div key={filter.id}>
+            <WidgetIconTemp
+              tips={filter.tips}
+              nodeType="LOGIC"
+              classify="filter"
+              typeId={filter.id}
+              src={filter.src}
+              name={filter.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+const TimeInterMap = memo(() => {
+  const TimeInter = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {TimeInter.logicNodeMenuItems.get('timeInter')?.map((remote) => {
+        return (
+          <div key={remote.id}>
+            <WidgetIconTemp
+              tips={remote.tips}
+              nodeType="LOGIC"
+              classify="timeInter"
+              typeId={remote.id}
+              src={remote.src}
+              name={remote.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+const HandleTrigger = memo(() => {
+  const HTrigger = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {HTrigger.logicNodeMenuItems.get('hTrigger')?.map((remote) => {
+        return (
+          <div key={remote.id}>
+            <WidgetIconTemp
+              tips={remote.tips}
+              nodeType="LOGIC"
+              classify="hTrigger"
+              typeId={remote.id}
+              src={remote.src}
+              name={remote.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+const TimeOutMap = memo(() => {
+  const TimeOut = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {TimeOut.logicNodeMenuItems.get('timeOut')?.map((remote) => {
+        return (
+          <div key={remote.id}>
+            <WidgetIconTemp
+              tips={remote.tips}
+              nodeType="LOGIC"
+              classify="timeOut"
+              typeId={remote.id}
+              src={remote.src}
+              name={remote.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
 const RemoteMap = memo(() => {
   const remote = genLogicNodeMenuItems();
 
@@ -75,7 +164,29 @@ const RemoteMap = memo(() => {
     </div>
   );
 });
-
+const LogicDebugger = [
+  {
+    id: 'logic_deb_trigger',
+    label: '触发',
+    content: <HandleTrigger></HandleTrigger>,
+  },
+];
+const LogicBrowse = [];
+const LogicEvent = [];
+const LogicLife = [];
+const LogicView = [];
+const LogicTime = [
+  {
+    id: 'logic_time_out',
+    label: '定时',
+    content: <TimeOutMap></TimeOutMap>,
+  },
+  {
+    id: 'logic_time_inter',
+    label: '频发',
+    content: <TimeInterMap></TimeInterMap>,
+  },
+];
 const LogicData = [
   {
     id: 'logic_remote_data',
@@ -95,7 +206,7 @@ const LogicData = [
   {
     id: 'logic_mix_data',
     label: '装饰',
-    content: <FilterMap></FilterMap>,
+    content: <MixMap></MixMap>,
   },
 ];
 
@@ -290,32 +401,32 @@ const tabs = [
   {
     id: 'time_logic',
     label: <TimeIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicTime}></TabSlot>,
   },
   {
     id: 'view_logic',
     label: <ViewIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicView}></TabSlot>,
   },
   {
     id: 'life_logic',
     label: <LifeIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicLife}></TabSlot>,
   },
   {
     id: 'event_logic',
     label: <EventIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicEvent}></TabSlot>,
   },
   {
     id: 'browse_logic',
     label: <BrowseIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicBrowse}></TabSlot>,
   },
   {
     id: 'debugger_logic',
     label: <DebuggerIcon />,
-    content: <TabSlot ele={LogicData}></TabSlot>,
+    content: <TabSlot ele={LogicDebugger}></TabSlot>,
   },
 ];
 nodeBuilder();

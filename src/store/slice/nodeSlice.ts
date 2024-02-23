@@ -32,13 +32,23 @@ export const logic_Cache_clear = 'logic_Cache_clear' as const;
 export const logic_P_get = 'logic_P_set' as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
 export const logic_TM_get = 'logic_TM_get' as const;
+//定时器
+export const logic_TO_get = 'logic_TO_get' as const;
+//循环
+export const logic_Ring_get = 'logic_Ring_get' as const;
 
+//手动触发
+export const logic_Dug_Trigger = 'logic_Dug_Trigger' as const;
 
 export type ILogicType = typeof logic_Cache_clear
   | typeof logic_D_get
   | typeof logic_U_get
   | typeof logic_Cache_set
   | typeof logic_P_get
+  | typeof logic_TM_get
+  | typeof logic_TO_get
+  | typeof logic_Dug_Trigger
+  | typeof logic_Ring_get
 
 export type INodeType =
   | typeof pix_BLine

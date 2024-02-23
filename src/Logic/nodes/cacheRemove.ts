@@ -15,7 +15,7 @@ export const buildCacheClearReqNode = () => {
     tips: '清除所有缓存以便释放内存',
     name: '缓存清理器',
   });
-  cacheClearReq.signalIn('logic_Cache_clear-port-in-0', ({ fromNodes }) => {
+  cacheClearReq.signalIn('in-0', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });

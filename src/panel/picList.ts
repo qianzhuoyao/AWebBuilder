@@ -1,17 +1,11 @@
 import pixBX from "../assets/widgetIcon/bar_x.png";
-import pixBY from "../assets/widgetIcon/bar_y.png";
-import pixBLine from "../assets/widgetIcon/bar_line.png";
 import pixLine from "../assets/widgetIcon/line.png";
-import pixGLine from "../assets/widgetIcon/line_gradient_single.png";
 import pixTable from "../assets/widgetIcon/table.png";
 import pic from "../assets/widgetIcon/photo.png";
 import pixText from "../assets/widgetIcon/text_static.png";
 import {
   pic_Img,
-  pix_BLine,
   pix_BX,
-  pix_BY,
-  pix_GLine,
   pix_Line,
   pix_Table,
   pix_Text,

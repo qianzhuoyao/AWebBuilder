@@ -122,6 +122,7 @@ export interface INodeInfo<I, O> {
   tips: string;
   name: string;
   ports: ({
+    id: string,
     portName: string,
     type: 'isIn',
     make: IBuildInPort<I>,
@@ -157,6 +158,9 @@ const initializeLogicNodeMenuItems = <I, O>(): {
   init.set('remote', []);
   init.set('cache', []);
   init.set('filter', []);
+  init.set('timeOut', []);
+  init.set('timeInter', []);
+  init.set('hTrigger', []);
   return {
     logicNodeMenuIdList: initIdList,
     logicNodeMenuItems: init,
@@ -210,6 +214,7 @@ export const signalLogicNode = <I, O>({
           ...node,
           ports: node.ports.concat([{
             type: 'isIn',
+            id: id + portName,
             portName: portName,
             make: buildInPort,
           }]),

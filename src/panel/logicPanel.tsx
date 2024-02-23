@@ -28,8 +28,8 @@ const colorSet = (color: 0 | 1 | 2) => {
 };
 
 
-const nodeProp = (node: ILogicNode) => {
-
+const renderNode = (node: ILogicNode) => {
+  console.log(node, 'nodessss');
   return {
     shape: node.shape,
     x: node.x,
@@ -67,15 +67,15 @@ const nodeProp = (node: ILogicNode) => {
           },
         },
       },
-      items: node.ports.map((item) => {
+      items: node.ports.map((item, index) => {
         return {
-          id: item.type + item.tag + '#' + item.portName,
+          id: item.type + item.tag + '#' + item.id,
           tag: item.tag,
           group: 'group1',
           // 通过 args 指定绝对位置
           args: {
             x: item.type === 'in' ? 0 : '100%',
-            y: '100%',
+            y: item.type === 'in' ? (index * 40) : '100%',
           },
           label: {
             position: {
@@ -88,7 +88,7 @@ const nodeProp = (node: ILogicNode) => {
               stroke: colorSet(item.pointStatus),
               fill: colorSet(item.pointStatus),
             },
-            text: { text: item.type },
+            text: { text: item.portName || 'out' },
           },
         };
       }),
@@ -356,13 +356,13 @@ export const LogicPanel = memo(() => {
       if (!GRef.current.mountedIdList.has(node.id)) {
         //添加
         console.log(GRef.current.G?.getNodes(), logicState.logicNodes, 'fgfgfffff');
-        const GNode = GRef.current.G?.addNode(nodeProp(node));
+        const GNode = GRef.current.G?.addNode(renderNode(node));
         GRef.current.mountedIdList.set(node.id, GNode);
       } else {
         //更新
         if (GRef.current.mountedIdList.get(node.id)) {
           (GRef.current.mountedIdList.get(node.id) as Node).setProp(
-            nodeProp(node),
+            renderNode(node),
           );
         }
       }

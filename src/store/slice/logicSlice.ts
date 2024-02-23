@@ -44,6 +44,7 @@ export interface ILogicNode {
     type: 'in' | 'out',
     portName: string,
     tag: number,
+    id: string,
     pointStatus: 0 | 1 | 2; // 0 无连接 1 信号存在时异常或者无信号 2 信号存在时正常
   }[];
 }
@@ -73,13 +74,13 @@ export const logicSlice = createSlice({
     target: [],
     logicEdges: [],
     logicNodes: {},
-    signalSet:[],
+    signalSet: [],
     contentImageShowType: 0,
   } as ILs,
   reducers: {
 
-    updateSignalSet:(state, action) =>{
-      state.signalSet = action.payload
+    updateSignalSet: (state, action) => {
+      state.signalSet = action.payload;
     },
 
     updateNodeConfigInfo: (state, action) => {
@@ -120,7 +121,7 @@ export const logicSlice = createSlice({
           ...(state.logicNodes as Record<string, ILogicNode>)[id]
           , ...{
             ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
-              if ((port.type + port.tag + '#' + port.portName)=== tag && port.type === portType) {
+              if ((port.type + port.tag + '#' + port.portName) === tag && port.type === portType) {
                 return {
                   ...port,
                   pointStatus: connected,

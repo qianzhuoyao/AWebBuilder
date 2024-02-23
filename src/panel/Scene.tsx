@@ -523,11 +523,11 @@ const SLayerTabs = [
     label: '图层1',
     content: <AContent></AContent>,
   },
-  {
-    id: 'layer-Create',
-    label: '图层2',
-    content: <SceneLayer></SceneLayer>,
-  },
+  // {
+  //   id: 'layer-Create',
+  //   label: '图层2',
+  //   content: <SceneLayer></SceneLayer>,
+  // },
 ];
 export const Scene = memo(() => {
   const dispatch = useDispatch();

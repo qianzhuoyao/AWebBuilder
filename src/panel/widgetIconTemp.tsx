@@ -1,4 +1,4 @@
-import { Card, Image, CardFooter, CardHeader } from '@nextui-org/react';
+import { Card, Image, CardFooter, CardHeader, Tooltip } from '@nextui-org/react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   memo,
@@ -216,6 +216,9 @@ const LogicCard = memo(
               <Card ref={ICardRef} className="cursor-pointer">
                 <CardHeader className="flex gap-3">
                   <Image
+                    classNames={{
+                      wrapper:'w-[30px]'
+                    }}
                     id={id}
                     ref={ImageRef}
                     alt="logo"
@@ -226,9 +229,11 @@ const LogicCard = memo(
                   />
                   <div className="flex flex-col w-[70px]">
                     <p className="text-small">{name}</p>
-                    <p className="text-small text-default-500 truncate">
-                      {tips}
-                    </p>
+                    <Tooltip color={'default'} content={tips} className="">
+                      <p className="text-small text-default-500 truncate">
+                        {tips}
+                      </p>
+                    </Tooltip>
                   </div>
                 </CardHeader>
               </Card>
@@ -309,7 +314,7 @@ export const WidgetIconTemp = memo(
                     alias: name + typeId,
                     instance: {
                       type: typeId,
-                      option:setDefaultChartOption(typeId)
+                      option: setDefaultChartOption(typeId),
                     },
                   }),
                 );
@@ -343,7 +348,7 @@ export const WidgetIconTemp = memo(
                       portType: '',
                       portName: port.portName,
                       pointStatus: 0,
-
+                      id: port.id,
                     };
                   } else {
                     return {
@@ -352,7 +357,7 @@ export const WidgetIconTemp = memo(
                       portType: '',
                       portName: port.portName,
                       pointStatus: 0,
-
+                      id: port.id,
                     };
                   }
                 });
@@ -404,6 +409,7 @@ export const WidgetIconTemp = memo(
     ]);
 
     return (
+
       <>
         {nodeType === 'VIEW' ? (
           <ViewCard id={key} name={name} typeId={typeId} src={src} />

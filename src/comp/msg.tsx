@@ -43,7 +43,6 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
         });
         if (portLogicEdge) {
           const { toPort, from, to } = portLogicEdge;
-          console.log(portLogicEdge, 'portLogicEdge');
           const fromTem = mapNodeBindPort({
             belongClass: logicState.logicNodes[edge.source]?.belongClass,
             typeId: logicState.logicNodes[edge.source]?.typeId,

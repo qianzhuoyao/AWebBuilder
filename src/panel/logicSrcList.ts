@@ -1,13 +1,3 @@
-// import remoteGet from '../assets/widgetIcon/remote_get.svg';
-// import remoteSync from '../assets/widgetIcon/remote-sync.svg';
-// import cacheSet from '../assets/widgetIcon/cache-storage.svg';
-import checkPass from '../assets/widgetIcon/check-pass.svg';
-// import cacheRemove from '../assets/widgetIcon/cache-delete.svg';
-import change from '../assets/widgetIcon/filter-change.svg';
-import {
-  logic_P_get,
-  logic_TM_get,
-} from '../store/slice/nodeSlice';
 
 // | 'chart'
 // | 'table'
@@ -19,10 +9,14 @@ import {
 export const LOGIC_TYPE_LIST = [
   'remote',
   'table',
+  'hTrigger',
   'chart',
   'dom',
   'text',
   'line',
+  'timeOut',
+  'mix',
+  'timeInter',
   'cache',
   'filter',
 ] as const;
@@ -61,17 +55,17 @@ export const LOGIC_SRC_ICON = {
     // },
   ],
   filter: [
-    {
-      id: logic_P_get,
-      src: checkPass,
-      tips: '校验信号数据并将其限制,满足条件即放行否则拦截并丢弃',
-      name: '检查器',
-    },
-    {
-      id: logic_TM_get,
-      src: change,
-      tips: '校验信号数据并将其限制,满足条件即放行否则转换为一条新的信号并下发',
-      name: '逆变器',
-    },
+    // {
+    //   id: logic_P_get,
+    //   src: checkPass,
+    //   tips: '校验信号数据并将其限制,满足条件即放行否则拦截并丢弃',
+    //   name: '检查器',
+    // },
+    // {
+    //   id: logic_TM_get,
+    //   src: change,
+    //   tips: '校验信号数据并将其限制,满足条件即放行否则转换为一条新的信号并下发',
+    //   name: '逆变器',
+    // },
   ],
 };

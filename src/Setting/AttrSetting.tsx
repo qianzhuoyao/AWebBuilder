@@ -274,20 +274,44 @@ const DefaultSetting = memo(({ target }: { target: string[] }) => {
   }</>;
 });
 
+const SelectNodeInstance = memo(({ LogicNodesState }: {
+  LogicNodesState: ILs
+}) => {
+  const config = getAttrConfig();
+  const { target, logicNodes } = LogicNodesState;
+  return <>{
+    (config.config.get(logicNodes[target[0]]?.typeId) as IConfig)({
+      target,
+    })
+  }</>;
+});
+
 const SelectSetting = memo(() => {
   const config = getAttrConfig();
   const LogicNodesState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
   const { target, logicNodes } = LogicNodesState;
-
   return <>{
     config.config.get(logicNodes[target[0]]?.typeId)
     &&
-    (config.config.get(logicNodes[target[0]]?.typeId) as IConfig)({
-      target,
-    })
+    <SelectNodeInstance LogicNodesState={LogicNodesState}></SelectNodeInstance>
   }</>;
+});
+
+
+const SelectSettingViewInstance = memo(({ NodesState }: {
+  NodesState: INs
+}) => {
+  const config = getAttrConfig();
+  const { targets } = NodesState;
+  return <>
+    {
+      (config.viewConfig.get(NodesState.list[targets[0]]?.instance.type) as IConfig)({
+        target: targets,
+      })
+    }
+  </>;
 });
 
 const SelectSettingView = memo(() => {
@@ -296,14 +320,10 @@ const SelectSettingView = memo(() => {
     return state.viewNodesSlice;
   });
   const { targets } = NodesState;
-
-  console.log(targets, NodesState.list, 'targetsssss');
   return <>{
     config.viewConfig.get(NodesState.list[targets[0]]?.instance.type)
     &&
-    (config.viewConfig.get(NodesState.list[targets[0]]?.instance.type) as IConfig)({
-      target: targets,
-    })
+    <SelectSettingViewInstance NodesState={NodesState}></SelectSettingViewInstance>
   }</>;
 });
 
