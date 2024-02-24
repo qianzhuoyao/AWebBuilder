@@ -222,6 +222,7 @@ export default class WeightedDirectedGraph<T, M> {
         ...this.degree.get(target),
         inDegree: this.degree.get(target)?.inDegree?.filter(d => d !== source),
       } as Vertex<T>);
+      console.log( this.degree,'sss this.degree');
       this.adjacencyList.set(
         source,
         edges.filter((edge) => edge.target !== target),

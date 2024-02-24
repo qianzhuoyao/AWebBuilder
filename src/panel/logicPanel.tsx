@@ -182,13 +182,62 @@ export const LogicPanel = memo(() => {
   const removeNode = useCallback((params: ItemParams) => {
     console.log(params, 'params-0');
     GRef.current.G?.removeNode(params.props.node.id);
+    //获取入度是该节点的边
+
+    const inEdge = logicState.logicEdges.filter(edge => {
+      return edge.from === params.props.nodeProp.nodeGId;
+    });
+    console.log(inEdge, logicState.logicEdges, params.props.nodeProp.nodeGId, 'inEdge');
+    inEdge.map(edge => {
+      dispatch(removeLogicEdge({
+        from: edge.from,
+        to: edge.to,
+        fromPort: edge.fromPort,
+        toPort: edge.toPort,
+      }));
+      console.log(getWDGraph().getInDegree(edge.to), 'getWDGraph().getInDegree(edge.to)');
+      if (getWDGraph().getInDegree(edge.to).length === 1 && getWDGraph().getInDegree(edge.to)[0] === params.props.nodeProp.nodeGId) {
+        dispatch(
+          updateLogicPortsNode({
+            id: edge.to,
+            portId: edge.toPort,
+            portType: 'in',
+            connected: 0,
+          }),
+        );
+      }
+      return 0;
+    });
+    const outEdge = logicState.logicEdges.filter(edge => {
+      return edge.to === params.props.nodeProp.nodeGId;
+    });
+    console.log(outEdge, 'inEdge-1');
+    outEdge.map(edge => {
+      dispatch(removeLogicEdge({
+        from: edge.from,
+        to: edge.to,
+        fromPort: edge.fromPort,
+        toPort: edge.toPort,
+      }));
+      if (getWDGraph().getOutDegree(edge.from).length === 1 && getWDGraph().getOutDegree(edge.from)[0] === params.props.nodeProp.nodeGId) {
+        dispatch(
+          updateLogicPortsNode({
+            id: edge.from,
+            portId: edge.fromPort,
+            portType: 'out',
+            connected: 0,
+          }),
+        );
+      }
+      return 0;
+    });
     getWDGraph().removeVertex(
       params.props.nodeProp.nodeGId,
     );
     dispatch(deleteNode({
       id: params.props.nodeProp.nodeGId,
     }));
-  }, [dispatch]);
+  }, [dispatch, logicState.logicEdges]);
 
   const removeEdge = useCallback((params: ItemParams) => {
 
@@ -393,16 +442,20 @@ export const LogicPanel = memo(() => {
           edge.getTargetCell()?.getProp().nodeGId === nodeB.getProp().nodeGId;
       })) {
 
-        GRef.current.G?.addEdge({
-          source: {
-            cell: nodeA.id,
-            port: logicEdgeItem.fromPort, // 链接桩 ID
-          },
-          target: {
-            cell: nodeB.id,
-            port: logicEdgeItem.toPort, // 链接桩 ID
-          },
-        });
+        if (GRef.current.G?.hasCell(nodeA.id) && GRef.current.G?.hasCell(nodeB.id)) {
+          GRef.current.G?.addEdge({
+            source: {
+              cell: nodeA.id,
+              port: logicEdgeItem.fromPort, // 链接桩 ID
+            },
+            target: {
+              cell: nodeB.id,
+              port: logicEdgeItem.toPort, // 链接桩 ID
+            },
+          });
+        }
+
+
       }
     });
   }, [logicState.logicNodes, logicState.logicEdges, dispatch, NodeShow, show]);
