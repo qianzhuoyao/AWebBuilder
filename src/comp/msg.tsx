@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
  */
 export interface IStage {
   data: any;
-  errorTipMsg?:string;
+  errorTipMsg?: string;
   currentEdge: {
     from: string
     to: string
@@ -128,7 +128,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                       to,
                       toPort,
                     },
-                    errorTipMsg:e.message,
+                    errorTipMsg: e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.source],
                       talkStatus: 'error',
@@ -137,7 +137,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
-                throw new Error(e.message)
+                break;
               }
 
             } else {
@@ -183,7 +183,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                       to,
                       toPort,
                     },
-                    errorTipMsg:e.message,
+                    errorTipMsg: e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.target],
                       talkStatus: 'error',
@@ -192,7 +192,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
-                throw new Error(e.message)
+                break;
               }
             }
             console.log(deParams, edge, currentToMakeTasks, toTem, 'deParams');
@@ -248,7 +248,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                       to,
                       toPort,
                     },
-                    errorTipMsg:e.message,
+                    errorTipMsg: e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.target],
                       talkStatus: 'error',
@@ -257,7 +257,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
-                throw new Error(e.message)
+                break;
               }
 
             }
