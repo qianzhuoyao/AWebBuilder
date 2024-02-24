@@ -1,9 +1,12 @@
-import { memo, useContext, useEffect } from 'react';
+import { memo, useCallback, useContext, useEffect } from 'react';
 import { HtContext } from '../../../attrConfig/logic/handleTriggerReducer.ts';
 import { Card, CardBody, CardFooter, CardHeader, Chip, Spinner } from '@nextui-org/react';
 import { useAutoHeight } from '../../../../comp/useAutoHeight.tsx';
 
 import type { SVGProps } from 'react';
+import ReactJson from 'react-json-view';
+import { useTheme } from 'next-themes';
+
 
 function IcSharpError(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 24 24" {...props}>
@@ -33,13 +36,26 @@ const CheckIcon = ({
     </svg>
   );
 };
+
+
+export function CarbonReset(props: SVGProps<SVGSVGElement>) {
+  return (<svg xmlns="http://www.w3.org/2000/svg" width={30} height={30} viewBox="0 0 32 32" {...props}>
+    <path fill="#a3a3a3"
+          d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z"></path>
+  </svg>);
+}
+
 export const TriggerResponse = memo(() => {
   const CTX = useContext(HtContext);
-
+  const { theme } = useTheme();
   const height = useAutoHeight();
   useEffect(() => {
-    console.log(CTX.stages, 'CTXsssss');
+    console.log(CTX, 'CTXsssss');
   }, [CTX.stages]);
+
+  const onHandleReset = useCallback(() => {
+    CTX.clear && CTX.clear();
+  }, [CTX]);
 
   return <>
     <div className={'h-full overflow-scroll'} style={{
@@ -64,17 +80,19 @@ export const TriggerResponse = memo(() => {
                 >
                   ERROR
                 </Chip></>
-            )}</>:<>暂无响应</>
+            )}</> : <>暂无响应</>
         }</>
+        <CarbonReset onClick={onHandleReset} className={'w-[20px] h-[20px] cursor-pointer'}></CarbonReset>
+
       </div>
-      {CTX.stages.map(stage => {
+      {CTX.stages.map((stage, index) => {
         return stage && <>
           <Card className="max-w-[400px] mt-1 mx-1">
 
             <CardHeader className="">
-              阶段
+              阶段 {index}
             </CardHeader>
-            <CardBody>
+            <CardBody className={'text-[10px]'}>
               <div className="">
                 <p>起始点:{stage.currentEdge.from}</p>
                 <p>目标点:{stage.currentEdge.to}</p>
@@ -86,6 +104,21 @@ export const TriggerResponse = memo(() => {
               <div className="">
                 <p>当前节点:{stage.currentNode?.node.id}</p>
                 <p>所属类型:{stage.currentNode?.node.typeId}</p>
+              </div>
+              {stage.errorTipMsg && <div className={'text-red-600'}>
+                <p>错误提示:</p>
+                <p>
+                  {stage.errorTipMsg}
+                </p>
+              </div>}
+              <div className="">
+                <p>流数据:</p>
+                <ReactJson
+                  collapsed={true}
+                  name={'streamData'}
+                  theme={theme === 'dark' ? 'solarized' : 'rjv-default'}
+                  src={stage.data || {}}
+                />
               </div>
             </CardBody>
             <CardFooter>

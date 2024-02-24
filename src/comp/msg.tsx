@@ -17,6 +17,8 @@ import { toast } from 'react-toastify';
  *
  */
 export interface IStage {
+  data: any;
+  errorTipMsg?:string;
   currentEdge: {
     from: string
     to: string
@@ -87,6 +89,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
               try {
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -102,6 +105,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.source]);
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -117,12 +121,14 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
               } catch (e) {
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
                       to,
                       toPort,
                     },
+                    errorTipMsg:e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.source],
                       talkStatus: 'error',
@@ -131,12 +137,14 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
+                throw new Error(e.message)
               }
 
             } else {
               try {
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -152,6 +160,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -167,12 +176,14 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
               } catch (e) {
                 onStageCallback && onStageCallback(
                   {
+                    data: initParams,
                     currentEdge: {
                       from,
                       fromPort,
                       to,
                       toPort,
                     },
+                    errorTipMsg:e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.target],
                       talkStatus: 'error',
@@ -181,6 +192,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
+                throw new Error(e.message)
               }
             }
             console.log(deParams, edge, currentToMakeTasks, toTem, 'deParams');
@@ -190,6 +202,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
               try {
                 onStageCallback && onStageCallback(
                   {
+                    data: deParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -212,6 +225,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 initParams = res;
                 onStageCallback && onStageCallback(
                   {
+                    data: deParams,
                     currentEdge: {
                       from,
                       fromPort,
@@ -227,12 +241,14 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
               } catch (e) {
                 onStageCallback && onStageCallback(
                   {
+                    data: deParams,
                     currentEdge: {
                       from,
                       fromPort,
                       to,
                       toPort,
                     },
+                    errorTipMsg:e.message,
                     currentNode: {
                       node: logicState.logicNodes[edge.target],
                       talkStatus: 'error',
@@ -241,6 +257,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 );
                 toast.error(e.message);
                 console.error(e);
+                throw new Error(e.message)
               }
 
             }

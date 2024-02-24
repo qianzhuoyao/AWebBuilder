@@ -38,18 +38,33 @@ export const handleTrigger = () => {
     const logicState = useSelector((state: { logicSlice: ILs }) => {
       return state.logicSlice;
     });
+
+    const value = {
+      stages: state.stages,
+      clear: () => {
+        if (stageRef.current) {
+          stageRef.current.stages = [];
+        }
+
+        dispatch({ type: 'updateStage', payload: [] });
+      },
+    };
+
     const { go } = useSignalMsg(logicState.target[0], {
       onStageCallback: e => {
-
-        stageRef.current?.stages.push(e);
-        console.log(  stageRef.current, 'efefefefakjhgfd');
-        dispatch({
-          type: 'updateStage',
-          payload: stageRef.current?.stages || [],
-        });
+        try {
+          stageRef.current?.stages.push(e);
+          console.log(stageRef.current, 'efefefefakjhgfd');
+          dispatch({
+            type: 'updateStage',
+            payload: stageRef.current?.stages || [],
+          });
+        } catch (e) {
+          console.error(e.message);
+        }
       },
     });
-    return <HtContext.Provider value={{ ...state }}>
+    return <HtContext.Provider value={value}>
       {logicState.target.length === 1 ? <div className="flex w-full flex-col px-1">
         <>
           <div className="flex w-full flex-col px-1">

@@ -8,15 +8,18 @@ interface IInitState {
 
 export const htInitialState: IInitState = {
   stages: [],
+
 };
 
 interface IAction {
-  type:'updateStage'
+  type: 'updateStage';
   payload: IStage[];
 }
 
 
-export const HtContext = createContext(htInitialState);
+export const HtContext = createContext<IInitState & {
+  clear?: () => void
+}>(htInitialState);
 
 export const htReducer = (state: IInitState, action: IAction) => {
   const { type, payload } = action;
