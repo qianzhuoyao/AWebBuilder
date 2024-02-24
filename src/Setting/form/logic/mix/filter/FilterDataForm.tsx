@@ -14,6 +14,8 @@ import clone from 'clone';
 import { Button, Modal, useDisclosure, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
 import * as mui from '@react-awesome-query-builder/mui';
 import { useTheme } from 'next-themes';
+import { useDispatch, useSelector } from 'react-redux';
+import { ILs, updateNodeConfigInfo } from '../../../../../store/slice/logicSlice.ts';
 
 const stringify = JSON.stringify;
 const {
@@ -141,6 +143,10 @@ export const FilterDataForm = memo(() => {
 
 const FilterDataBuilder = memo(() => {
   const { theme } = useTheme();
+  const dispatch = useDispatch();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
   const memo: React.MutableRefObject<DemoQueryBuilderMemo> = useRef({});
   console.log(memo, 'ccmemoc');
   const [state, setState] = useState<DemoQueryBuilderState>({
@@ -255,6 +261,19 @@ const FilterDataBuilder = memo(() => {
   }, []);
 
   const onChange = useCallback((immutableTree: ImmutableTree, config: Config, actionMeta?: ActionMeta) => {
+    const { logic, data: logicData, errors: logicErrors } = jsonLogicFormat(immutableTree, config);
+    console.log(logic, 'logicssssssfff');
+    if (logicErrors?.length) {
+      throw new Error(JSON.stringify(logicErrors));
+    }
+    dispatch(updateNodeConfigInfo({
+      id: logicState.target[0],
+      infoType: 'filterListInfo',
+      configInfo: {
+        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.filterListInfo || {}),
+        logic: JSON.stringify(logic),
+      },
+    }));
     if (actionMeta)
       console.info(actionMeta);
     memo.current.immutableTree = immutableTree;

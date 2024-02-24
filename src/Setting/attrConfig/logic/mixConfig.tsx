@@ -1,23 +1,25 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_View_bind } from '../../../store/slice/nodeSlice.ts';
+import { logic_MixData_get } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
-import { ViewMappingForm } from '../../form/logic/viewMapping/viewMappingForm.tsx';
+import { DataMixForm } from '../../form/logic/mix/filter/dataMixForm.tsx';
 
 
 const tabs = [
   {
-    id: 'bind',
-    label: '绑定',
-    content: <ViewMappingForm />,
+    id: 'map',
+    label: '映射输入',
+    content: <>
+      <DataMixForm />
+    </>,
   },
 ];
-export const viewMapping = () => {
-  const config = signalLogicNodeAttrConfig(logic_View_bind);
+export const handleMixConfig = () => {
+  const config = signalLogicNodeAttrConfig(logic_MixData_get);
 
-  config.setConfigEle(({ target }) => {
 
-    return <>
-      {target.length === 1 ? <div className="flex w-full flex-col px-1">
+  config.setConfigEle(nodeInfo => {
+    if (nodeInfo.target.length > 0) {
+      return <>
         <>
           <div className="flex w-full flex-col px-1">
             <Tabs aria-label="Dynamic tabs" items={tabs} classNames={{
@@ -37,7 +39,8 @@ export const viewMapping = () => {
           </div>
 
         </>
-      </div> : <>选中项数量不对</>}
-    </>;
+
+      </>;
+    }
   });
 };

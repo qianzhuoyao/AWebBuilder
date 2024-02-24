@@ -1,11 +1,12 @@
-import { memo, useCallback, useContext, useEffect } from 'react';
-import { HtContext } from '../../../attrConfig/logic/handleTriggerReducer.ts';
+import { memo, useCallback } from 'react';
 import { Card, CardBody, CardFooter, CardHeader, Chip, Spinner } from '@nextui-org/react';
 import { useAutoHeight } from '../../../../comp/useAutoHeight.tsx';
 
 import type { SVGProps } from 'react';
 import ReactJson from 'react-json-view';
 import { useTheme } from 'next-themes';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearStagePool, ILs } from '../../../../store/slice/logicSlice.ts';
 
 
 function IcSharpError(props: SVGProps<SVGSVGElement>) {
@@ -46,16 +47,17 @@ export function CarbonReset(props: SVGProps<SVGSVGElement>) {
 }
 
 export const TriggerResponse = memo(() => {
-  const CTX = useContext(HtContext);
+  // clearStagePool
   const { theme } = useTheme();
   const height = useAutoHeight();
-  useEffect(() => {
-    console.log(CTX, 'CTXsssss');
-  }, [CTX.stages]);
+  const dispatch = useDispatch();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
 
   const onHandleReset = useCallback(() => {
-    CTX.clear && CTX.clear();
-  }, [CTX]);
+    dispatch(clearStagePool());
+  }, [dispatch]);
 
   return <>
     <div className={'h-full overflow-scroll'} style={{
@@ -64,9 +66,9 @@ export const TriggerResponse = memo(() => {
       <div className={'flex items-center justify-between px-1'}>
         <small>result</small>
         <>{
-          CTX.stages.length >= 1 ? <> {CTX.stages[CTX.stages.length - 1]?.currentNode?.talkStatus === 'pending' ?
+          logicState.stagPool.length >= 1 ? <> {logicState.stagPool[logicState.stagPool.length - 1]?.currentNode?.talkStatus === 'pending' ?
             <Spinner /> : (
-              CTX.stages[CTX.stages.length - 1]?.currentNode?.talkStatus === 'ok' ? <> <Chip
+              logicState.stagPool[logicState.stagPool.length - 1]?.currentNode?.talkStatus === 'ok' ? <> <Chip
                 startContent={<CheckIcon size={18} />}
                 variant="faded"
                 color="success"
@@ -85,7 +87,7 @@ export const TriggerResponse = memo(() => {
         <CarbonReset onClick={onHandleReset} className={'w-[20px] h-[20px] cursor-pointer'}></CarbonReset>
 
       </div>
-      {CTX.stages.map((stage, index) => {
+      {logicState.stagPool.map((stage, index) => {
         return stage && <>
           <Card className="max-w-[400px] mt-1 mx-1">
 

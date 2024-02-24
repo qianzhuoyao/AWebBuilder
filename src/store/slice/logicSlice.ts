@@ -2,12 +2,32 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
 import { INodeType } from './nodeSlice.ts';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
+import { IStage } from '../../comp/msg.tsx';
 
 
 export type IProtocol = 'https' | 'http';
 
+
+export interface IFilterListInfo {
+  type: 'IFilterListInfo',
+  logic: string
+}
+
+export interface IMixDataFieldMap {
+  type: 'IMixDataFieldMap',
+  fieldString: string
+}
+
+export interface IBar {
+  x: string;
+  y: string;
+}
+
+export type IInstanceBind = IBar
+
 export interface IViewMapInfo {
   bindViewNodeId: string;
+  instance: IInstanceBind
   type: 'IViewMapInfo',
 }
 
@@ -24,6 +44,8 @@ export interface IRemoteReqInfo {
 export type IInfo = {
   remoteReqInfo?: IRemoteReqInfo
   viewMapInfo?: IViewMapInfo
+  mixDataFieldMap?: IMixDataFieldMap
+  filterListInfo?: IFilterListInfo
 }
 
 export interface ILogicConfig {
@@ -72,6 +94,8 @@ export interface ILs {
   contentImageShowType: 0 | 1;
   logicNodes: Record<string, ILogicNode>;
   logicEdges: ILogicEdge[];
+  //数据池
+  stagPool: IStage[];
   target: string[];
   signalSet: string[];
 }
@@ -84,9 +108,18 @@ export const logicSlice = createSlice({
     logicNodes: {},
     signalSet: [],
     contentImageShowType: 0,
+    stagPool: [],
   } as ILs,
   reducers: {
 
+
+    clearStagePool: (state) => {
+      state.stagPool = [];
+    },
+
+    pushStagPool: (state, action) => {
+      state.stagPool.push(action.payload);
+    },
 
     removeLogicEdge: (state, action) => {
       const { from, fromPort, to, toPort } = action.payload;
@@ -209,6 +242,8 @@ export const {
   addLogicEdge,
   deleteNode,
   updateSignalSet,
+  clearStagePool,
+  pushStagPool,
   setLogicTarget,
   updateNodeConfigInfo,
   updateLogicContentImageShowType,

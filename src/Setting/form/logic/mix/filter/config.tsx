@@ -358,37 +358,61 @@ export default (skin: string) => {
     //     },
     //   },
     // },
-    // bio: {
-    //   label: 'Bio',
-    //   type: 'text',
-    //   preferWidgets: ['textarea'],
-    //   fieldSettings: {
-    //     maxLength: 1000,
-    //   },
-    // },
-    results: {
-      label: '集合数据源过滤',
-      type: '!group',
-      subfields: {
-        product: {
-          type: 'select',
-          fieldSettings: {
-            listValues: ['abc', 'def', 'xyz'],
-          } as SelectFieldSettings,
-          valueSources: ['value'],
-        },
-        score: {
-          type: 'number',
-          fieldSettings: {
-            min: 0,
-            max: 100,
-          },
-          valueSources: ['value'],
-        },
+    key: {
+      label: '键',
+      type: 'text',
+      preferWidgets: ['textarea'],
+      fieldSettings: {
+        maxLength: 1000,
       },
     },
-    // cars: {
-    //   label: 'Cars',
+    valueNumber: {
+      label: '值(数字)',
+      type: 'number',
+      preferWidgets: ['number'],
+      fieldSettings: {
+        maxLength: 1000,
+      },
+    },
+    valueString: {
+      label: '值(字符串)',
+      type: 'text',
+      preferWidgets: ['textarea'],
+      fieldSettings: {
+        maxLength: 1000,
+      },
+    },
+    valueBoolean: {
+      label: '值(布尔)',
+      type: 'boolean',
+      defaultValue: true,
+      fieldSettings: {
+        maxLength: 1000,
+      },
+    },
+    // results: {
+    //   label: '集合数据源过滤',
+    //   type: '!group',
+    //   subfields: {
+    //     product: {
+    //       type: 'select',
+    //       fieldSettings: {
+    //         listValues: ['abc', 'def', 'xyz'],
+    //       } as SelectFieldSettings,
+    //       valueSources: ['value'],
+    //     },
+    //     score: {
+    //       type: 'number',
+    //       fieldSettings: {
+    //         min: 0,
+    //         max: 100,
+    //       },
+    //       valueSources: ['value'],
+    //     },
+    //   },
+    // },
+    // streamData: {
+    //   label: '集合数据',
     //   type: '!group',
     //   mode: 'array',
     //   conjunctions: ['ANDs', 'OR'],
@@ -413,19 +437,19 @@ export default (skin: string) => {
     //   initialEmptyWhere: true, // if default operator is not in config.settings.groupOperators, true - to set no children, false - to add 1 empty
     //
     //   subfields: {
-    //     vendor: {
-    //       type: 'select',
-    //       fieldSettings: {
-    //         listValues: ['Ford', 'Toyota', 'Tesla'],
-    //       } as MultiSelectFieldSettings,
+    //     key: {
+    //       type: 'text',
+    //       // fieldSettings: {
+    //       //   listValues: ['Ford', 'Toyota', 'Tesla'],
+    //       // } as MultiSelectFieldSettings,
     //       valueSources: ['value'],
     //     },
-    //     year: {
-    //       type: 'number',
-    //       fieldSettings: {
-    //         min: 1990,
-    //         max: 2021,
-    //       },
+    //     value: {
+    //       type: 'text',
+    //       // fieldSettings: {
+    //       //   min: 1990,
+    //       //   max: 2021,
+    //       // },
     //       valueSources: ['value'],
     //     },
     //   },

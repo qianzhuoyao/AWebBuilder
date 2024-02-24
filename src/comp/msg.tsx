@@ -218,6 +218,7 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                 const res = await inTask.make({
                   fromNodes: {
                     id: from,
+                    logicNode: logicState.logicNodes[edge.target],
                     type: logicState.logicNodes[edge.source]?.typeId,
                     data: deParams,
                   },

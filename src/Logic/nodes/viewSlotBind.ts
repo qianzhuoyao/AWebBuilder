@@ -17,7 +17,7 @@ export const viewLogicSlot = () => {
     name: '绑定器',
   });
   ViewLogicSlot.signalIn('in-0', (args) => {
-    console.log(args);
+    console.log(args,'viewLogicSlotsss');
     return new Promise(resolve => {
       resolve({
         data: 12,

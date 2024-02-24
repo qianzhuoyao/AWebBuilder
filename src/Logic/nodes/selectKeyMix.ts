@@ -1,6 +1,7 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_MixData_get } from '../../store/slice/nodeSlice.ts';
 import mix from '../../assets/widgetIcon/mdi--instant-mix.svg';
+import { filterObjValue } from '../../comp/filterObjValue.ts';
 
 interface IDataReq {
   data: number;
@@ -17,12 +18,16 @@ export const mapFieldMixData = () => {
     name: '映射器',
   });
   MapMixData.signalIn('in-0', ({ fromNodes }) => {
-    console.log({
-      fromNodes,
-    });
+
+
+    const res =
+      fromNodes.logicNode.configInfo?.mixDataFieldMap?.fieldString ?
+        filterObjValue(fromNodes.data.data.data, fromNodes.logicNode.configInfo?.mixDataFieldMap?.fieldString || '')
+        : fromNodes.data.data.data;
+    console.log(fromNodes,res, 'sdffffMapMixDataff');
     return new Promise(resolve => {
       resolve({
-        data: 12,
+        data: res,
       });
     });
   });
@@ -30,10 +35,10 @@ export const mapFieldMixData = () => {
   MapMixData.signalOut((params) => {
     console.log({
       params,
-    });
+    },'ccccccccscacascMapMixDataascascas');
     return new Promise(resolve => {
       resolve({
-        data: 12,
+        data: params?.data,
       });
     });
   });

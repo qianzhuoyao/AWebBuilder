@@ -7,6 +7,7 @@ import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
 import { handleTrigger } from './handleTrigger.tsx';
 import { viewMapping } from './viewMapping.tsx';
 import { FilterDataConfig } from './filterDataConfig.tsx';
+import { handleMixConfig } from './mixConfig.tsx';
 
 
 export const setDefaultLogicConfig = () => {
@@ -24,6 +25,7 @@ export const setDefaultLogicConfig = () => {
 
 export const AttrConfigInit = () => {
   remoteGetConfig();
+  handleMixConfig();
   CacheSetConfig();
   handleTrigger();
   viewMapping();

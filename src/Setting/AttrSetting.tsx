@@ -1,12 +1,13 @@
 import gsap from 'gsap';
 import { memo, useLayoutEffect, useRef } from 'react';
 import { IAs } from '../store/slice/atterSlice.ts';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { INs } from '../store/slice/nodeSlice.ts';
 import { getAttrConfig, IConfig } from './signalNodeConfig.ts';
-import { ILs } from '../store/slice/logicSlice.ts';
+import { ILs, pushStagPool } from '../store/slice/logicSlice.ts';
 import { useAttrSet } from './attrConfig/useAttrSet.tsx';
 import { IPs } from '../store/slice/panelSlice.ts';
+import { useSignalMsg } from '../comp/msg.tsx';
 
 // const ColorPick = memo(() => {
 //   return (
@@ -265,11 +266,26 @@ import { IPs } from '../store/slice/panelSlice.ts';
 
 const DefaultSetting = memo(({ target }: { target: string[] }) => {
   const config = getAttrConfig();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  const dispatch = useDispatch();
+  const { go } = useSignalMsg(logicState.target[0], {
+    onStageCallback: e => {
+      try {
+        //
+        dispatch(pushStagPool(e));
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+  });
   return <>{
     config.config.get('DEFAULT-LOGIC-PANEL-CONFIG')
     &&
     (config.config.get('DEFAULT-LOGIC-PANEL-CONFIG') as IConfig)({
       target,
+      go,
     })
   }</>;
 });
@@ -278,10 +294,25 @@ const SelectNodeInstance = memo(({ LogicNodesState }: {
   LogicNodesState: ILs
 }) => {
   const config = getAttrConfig();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  const dispatch = useDispatch();
+  const { go } = useSignalMsg(logicState.target[0], {
+    onStageCallback: e => {
+      try {
+        //
+        dispatch(pushStagPool(e));
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+  });
   const { target, logicNodes } = LogicNodesState;
   return <>{
     (config.config.get(logicNodes[target[0]]?.typeId) as IConfig)({
       target,
+      go,
     })
   }</>;
 });
@@ -305,11 +336,26 @@ const SelectSettingViewInstance = memo(({ NodesState }: {
   NodesState: INs
 }) => {
   const config = getAttrConfig();
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  const dispatch = useDispatch();
+  const { go } = useSignalMsg(logicState.target[0], {
+    onStageCallback: e => {
+      try {
+        //
+        dispatch(pushStagPool(e));
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+  });
   const { targets } = NodesState;
   return <>
     {targets &&
       (config.viewConfig.get(NodesState.list[targets[0]]?.instance.type) as IConfig)({
         target: targets,
+        go,
       })
     }
   </>;
@@ -334,12 +380,27 @@ const DefaultSettingView = memo(({
                                  }: {
   targets: string[]
 }) => {
+  const logicState = useSelector((state: { logicSlice: ILs }) => {
+    return state.logicSlice;
+  });
+  const dispatch = useDispatch();
+  const { go } = useSignalMsg(logicState.target[0], {
+    onStageCallback: e => {
+      try {
+        //
+        dispatch(pushStagPool(e));
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+  });
   const config = getAttrConfig();
   return <>{
     config.viewConfig.get('DEFAULT-VIEW-PANEL-CONFIG')
     &&
     (config.viewConfig.get('DEFAULT-VIEW-PANEL-CONFIG') as IConfig)({
       target: targets,
+      go,
     })
   }</>;
 });
@@ -350,7 +411,7 @@ const SettingView = memo(() => {
   const { targets } = NodesState;
   return <>
     {
-      targets.length > 0 ?
+      targets?.length > 0 ?
         <SelectSettingView></SelectSettingView>
         :
         <DefaultSettingView targets={targets}></DefaultSettingView>
@@ -371,7 +432,7 @@ const SettingTemp = memo(() => {
 
   return <>
     {
-      target.length > 0 ?
+      target?.length > 0 ?
         <SelectSetting></SelectSetting>
         :
         <DefaultSetting target={target}></DefaultSetting>

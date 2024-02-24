@@ -21,6 +21,7 @@ interface IStreamData {
   fromNodes: {
     id: string;
     type: string
+    logicNode: ILogicNode
     data: any;
   };
 }
