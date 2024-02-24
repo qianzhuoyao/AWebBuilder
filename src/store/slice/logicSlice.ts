@@ -15,7 +15,7 @@ export interface IRemoteReqInfo {
   type: 'IRemoteReqInfo',
   url: string;
   protocol: IProtocol;
-  strict:boolean
+  strict: boolean
   params: Record<string, string> | string; // kv or JSON
   desc?: string;
   method: 'post' | 'get';
@@ -87,6 +87,20 @@ export const logicSlice = createSlice({
   } as ILs,
   reducers: {
 
+
+    removeLogicEdge: (state, action) => {
+      const { from, fromPort, to, toPort } = action.payload;
+      state.logicEdges = state.logicEdges.filter(edge => {
+          return !(
+            edge.from === from &&
+            edge.fromPort === fromPort &&
+            edge.to === to &&
+            edge.toPort === toPort
+          );
+        },
+      );
+    },
+
     updateSignalSet: (state, action) => {
       state.signalSet = action.payload;
     },
@@ -125,20 +139,31 @@ export const logicSlice = createSlice({
     },
 
     updateLogicPortsNode: (state, action) => {
-      const { id, connected, tag, portType } = action.payload;
-      console.log(tag, state, action.payload, 'tagtagtagtag');
+      const { id, portId, connected, portType } = action.payload;
+      console.log(JSON.parse(JSON.stringify(state)), action.payload, 'tagtagtagtag');
       (state.logicNodes as Record<string, ILogicNode>)[id] =
         {
           ...(state.logicNodes as Record<string, ILogicNode>)[id]
           , ...{
             ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
-              if ((port.type + port.tag + '#' + port.id) === tag && port.type === portType) {
-                return {
-                  ...port,
-                  pointStatus: connected,
-                };
+              if (portType === 'in') {
+                if (port.id === portId.split('#')[1] && port.type === portType) {
+                  return {
+                    ...port,
+                    pointStatus: connected,
+                  };
+                } else {
+                  return port;
+                }
               } else {
-                return port;
+                if (port.type === portType) {
+                  return {
+                    ...port,
+                    pointStatus: connected,
+                  };
+                } else {
+                  return port;
+                }
               }
             }),
           },
@@ -178,6 +203,7 @@ export const logicSlice = createSlice({
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
+  removeLogicEdge,
   updateLogicPortsNode,
   updateLogicNode,
   addLogicEdge,

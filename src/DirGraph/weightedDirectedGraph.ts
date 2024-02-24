@@ -1,7 +1,7 @@
 type Vertex<V> = {
   vertex: V;
-  outDegree: V[] | null;
-  inDegree: V[] | null;
+  outDegree: V[] | null | undefined;
+  inDegree: V[] | null | undefined;
 };
 
 type  IEdgeMessage = Record<string, string>
@@ -213,6 +213,15 @@ export default class WeightedDirectedGraph<T, M> {
   removeEdge(source: T, target: T) {
     const edges = this.adjacencyList.get(source);
     if (edges) {
+      this.degree.set(source, {
+        ...this.degree.get(source),
+        outDegree: this.degree.get(source)?.outDegree?.filter(d => d !== target),
+      } as Vertex<T>);
+
+      this.degree.set(target, {
+        ...this.degree.get(target),
+        inDegree: this.degree.get(target)?.inDegree?.filter(d => d !== source),
+      } as Vertex<T>);
       this.adjacencyList.set(
         source,
         edges.filter((edge) => edge.target !== target),

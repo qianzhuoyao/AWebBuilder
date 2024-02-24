@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addLogicEdge, deleteNode,
   ILogicNode,
-  ILs, setLogicTarget,
+  ILs, removeLogicEdge, setLogicTarget,
   updateLogicNode,
   updateLogicPortsNode,
 } from '../store/slice/logicSlice';
@@ -109,19 +109,19 @@ export const LogicPanel = memo(() => {
 
   useEffect(() => {
     GRef.current.G?.getEdges().map(edge => {
-      console.log(edge.getSourceCell()?.getProp(), logicState.signalSet, 'edge-edge');
+      console.log(edge.getSourcePortId(), logicState.signalSet, 'edge-edge');
       if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
         && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
       ) {
         dispatch(updateLogicPortsNode({
           id: edge.getSourceNode()?.getProp().nodeGId,
-          tag: edge.getSourcePortId(),
+          portId: edge.getSourcePortId(),
           portType: 'out',
           connected: 2,
         }));
         dispatch(updateLogicPortsNode({
           id: edge.getTargetNode()?.getProp().nodeGId,
-          tag: edge.getTargetPortId(),
+          portId: edge.getTargetPortId(),
           portType: 'in',
           connected: 2,
         }));
@@ -134,13 +134,13 @@ export const LogicPanel = memo(() => {
       } else {
         dispatch(updateLogicPortsNode({
           id: edge.getSourceNode()?.getProp().nodeGId,
-          tag: edge.getSourcePortId(),
+          portId: edge.getSourcePortId(),
           portType: 'out',
           connected: 1,
         }));
         dispatch(updateLogicPortsNode({
           id: edge.getTargetNode()?.getProp().nodeGId,
-          tag: edge.getTargetPortId(),
+          portId: edge.getTargetPortId(),
           portType: 'in',
           connected: 1,
         }));
@@ -169,6 +169,7 @@ export const LogicPanel = memo(() => {
     'LINE',
     params => {
       console.log(params, (params.event.target as HTMLElement)?.innerText, params.props.edge.getSourceNode()?.getProp(), 'params');
+      console.log((params.event.target as HTMLElement)?.innerText, '(params.event.target as HTMLElement)?.innerText');
       switch ((params.event.target as HTMLElement)?.innerText) {
         case '删除边':
           return removeEdge(params);
@@ -192,27 +193,40 @@ export const LogicPanel = memo(() => {
   const removeEdge = useCallback((params: ItemParams) => {
 
     GRef.current.G?.removeEdge(params.props.edge.id);
+    console.log(params, params.props.edge.id, GRef.current.G?.getEdges(), params.props.sourcePortId, 'paramssss');
     getWDGraph().removeEdge(
       params.props.sourceNode.nodeGId,
       params.props.targetNode.nodeGId,
     );
-    dispatch(
-      updateLogicPortsNode({
-        id: params.props.sourceNode.nodeGId,
-        tag: Number(params.props.sourcePortId?.replace('out', '')),
-        portType: 'out',
-        connected: 0,
-      }),
-    );
-    dispatch(
-      updateLogicPortsNode({
-        id: params.props.targetNode.nodeGId,
-        tag: Number(params.props.targetPortId?.replace('in', '')),
-        portType: 'in',
-        connected: 0,
-      }),
-    );
-  }, []);
+    dispatch(removeLogicEdge({
+      from: params.props.sourceNode.nodeGId,
+      to: params.props.targetNode.nodeGId,
+      fromPort: params.props.sourcePortId,
+      toPort: params.props.targetPortId,
+    }));
+    //判断两个点是否还存在其他边
+    if (!getWDGraph().getOutDegree(params.props.sourceNode.nodeGId).length) {
+      dispatch(
+        updateLogicPortsNode({
+          id: params.props.sourceNode.nodeGId,
+          portId: params.props.sourcePortId,
+          portType: 'out',
+          connected: 0,
+        }),
+      );
+    }
+    if (!getWDGraph().getInDegree(params.props.targetNode.nodeGId).length) {
+      dispatch(
+        updateLogicPortsNode({
+          id: params.props.targetNode.nodeGId,
+          portId: params.props.targetPortId,
+          portType: 'in',
+          connected: 0,
+        }),
+      );
+    }
+
+  }, [dispatch]);
 
 
   useEffect(() => {
@@ -247,7 +261,7 @@ export const LogicPanel = memo(() => {
               dispatch(
                 updateLogicPortsNode({
                   id: args.edge.getSourceNode()?.getProp().nodeGId,
-                  tag: args.edge.getSourcePortId(),
+                  portId: args.edge.getSourcePortId(),
                   portType: 'out',
                   connected: 1,
                 }),
@@ -255,7 +269,7 @@ export const LogicPanel = memo(() => {
               dispatch(
                 updateLogicPortsNode({
                   id: args.edge.getTargetNode()?.getProp().nodeGId,
-                  tag: args.edge.getTargetPortId(),
+                  portId: args.edge.getTargetPortId(),
                   portType: 'in',
                   connected: 1,
                 }),
@@ -353,6 +367,7 @@ export const LogicPanel = memo(() => {
         }),
       );
     });
+
     Object.values(logicState.logicNodes).map((node) => {
       if (!GRef.current.mountedIdList.has(node.id)) {
         //添加
@@ -371,8 +386,13 @@ export const LogicPanel = memo(() => {
     logicState.logicEdges.map(logicEdgeItem => {
       const nodeA = GRef.current.mountedIdList.get(logicEdgeItem.from);
       const nodeB = GRef.current.mountedIdList.get(logicEdgeItem.to);
-      console.log({ nodeA, nodeB, logicEdgeItem }, 'nodeA,nodeB');
-      if (nodeA && nodeB) {
+      console.log(logicState.logicEdges, { nodeA, nodeB, logicEdgeItem }, GRef.current.G?.getEdges(), 'nodeA,nodeB');
+      if (nodeA && nodeB && !GRef.current.G?.getEdges().some(edge => {
+        console.log(edge.getSourceCell()?.getProp(), edge.getTargetCell()?.getProp(), nodeA.getProp().nodeGId, nodeB.getProp().nodeGId, 'edge.getSourceCell()?.getProp()');
+        return edge.getSourceCell()?.getProp().nodeGId === nodeA.getProp().nodeGId &&
+          edge.getTargetCell()?.getProp().nodeGId === nodeB.getProp().nodeGId;
+      })) {
+
         GRef.current.G?.addEdge({
           source: {
             cell: nodeA.id,
