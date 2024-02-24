@@ -47,26 +47,29 @@ export const TriggerResponse = memo(() => {
     }}>
       <div className={'flex items-center justify-between px-1'}>
         <small>result</small>
-        {CTX.stages[CTX.stages.length - 1].currentNode.talkStatus === 'pending' ? <Spinner /> : (
-          CTX.stages[CTX.stages.length - 1].currentNode.talkStatus === 'ok' ? <> <Chip
-            startContent={<CheckIcon size={18} />}
-            variant="faded"
-            color="success"
-          >
-            OK
-          </Chip></> : <>
-            <Chip
-              startContent={<IcSharpError />}
-              variant="faded"
-              color="danger"
-            >
-              ERROR
-            </Chip></>
-        )}
+        <>{
+          CTX.stages.length >= 1 ? <> {CTX.stages[CTX.stages.length - 1]?.currentNode?.talkStatus === 'pending' ?
+            <Spinner /> : (
+              CTX.stages[CTX.stages.length - 1]?.currentNode?.talkStatus === 'ok' ? <> <Chip
+                startContent={<CheckIcon size={18} />}
+                variant="faded"
+                color="success"
+              >
+                OK
+              </Chip></> : <>
+                <Chip
+                  startContent={<IcSharpError />}
+                  variant="faded"
+                  color="danger"
+                >
+                  ERROR
+                </Chip></>
+            )}</>:<>暂无响应</>
+        }</>
       </div>
       {CTX.stages.map(stage => {
-        return <>
-          <Card className="max-w-[400px] mt-1">
+        return stage && <>
+          <Card className="max-w-[400px] mt-1 mx-1">
 
             <CardHeader className="">
               阶段
@@ -81,14 +84,14 @@ export const TriggerResponse = memo(() => {
                 <p>目标点端口:{stage.currentEdge.toPort}</p>
               </div>
               <div className="">
-                <p>当前节点:{stage.currentNode.node.id}</p>
-                <p>所属类型:{stage.currentNode.node.typeId}</p>
+                <p>当前节点:{stage.currentNode?.node.id}</p>
+                <p>所属类型:{stage.currentNode?.node.typeId}</p>
               </div>
             </CardBody>
             <CardFooter>
-              <small>结果:{stage.currentNode.talkStatus}</small>
+              <small>结果:{stage.currentNode?.talkStatus}</small>
             </CardFooter>
-          </Card>;
+          </Card>
         </>;
       })}
     </div>

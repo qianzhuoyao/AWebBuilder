@@ -30,6 +30,11 @@ export const logic_Cache_set = 'logic_Cache_set' as const;
 export const logic_Cache_clear = 'logic_Cache_clear' as const;
 //校验器 当信号输入值与设置值相等时通过，否则拦截
 export const logic_P_get = 'logic_P_set' as const;
+
+//映射字段
+export const logic_MixData_get = 'logic_MixData_get' as const;
+//过滤数据
+export const logic_FilterData_get = 'logic_FilterData_get' as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
 export const logic_TM_get = 'logic_TM_get' as const;
 //定时器
@@ -52,6 +57,8 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_Dug_Trigger
   | typeof logic_Ring_get
   | typeof logic_View_bind
+  | typeof logic_FilterData_get
+  | typeof logic_MixData_get
 
 export type INodeType =
   | typeof pix_BLine
@@ -136,7 +143,7 @@ export const viewNodesSlice = createSlice({
   initialState: {
     list: {},
     moveTo: [],
-    resizeTo:[],
+    resizeTo: [],
     targets: [],
   },
   reducers: {
@@ -182,13 +189,13 @@ export const viewNodesSlice = createSlice({
       const findNode = (state.list as Record<string, IViewNode>)[
       action.payload.id || ''
         ];
-      console.log(findNode,'findNode');
+      console.log(findNode, 'findNode');
       if (findNode) {
         const newNode = {
-          ...findNode,
-          w: action.payload.w ?? findNode.w,
-          h: action.payload.h ?? findNode.h,
-      }
+            ...findNode,
+            w: action.payload.w ?? findNode.w,
+            h: action.payload.h ?? findNode.h,
+          }
         ;
         state.list = { ...state.list, [action.payload.id]: newNode };
       }

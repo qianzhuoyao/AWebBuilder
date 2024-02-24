@@ -293,6 +293,7 @@ const SelectSetting = memo(() => {
   });
   const { target, logicNodes } = LogicNodesState;
   return <>{
+    target &&
     config.config.get(logicNodes[target[0]]?.typeId)
     &&
     <SelectNodeInstance LogicNodesState={LogicNodesState}></SelectNodeInstance>
@@ -306,7 +307,7 @@ const SelectSettingViewInstance = memo(({ NodesState }: {
   const config = getAttrConfig();
   const { targets } = NodesState;
   return <>
-    {
+    {targets &&
       (config.viewConfig.get(NodesState.list[targets[0]]?.instance.type) as IConfig)({
         target: targets,
       })

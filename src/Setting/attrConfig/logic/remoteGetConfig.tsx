@@ -7,7 +7,6 @@ import {
   Card,
 } from '@nextui-org/react';
 import { RemoteBuilder, RemoteTest, RemoteUrl } from '../../form/logic/remoteReq/RemoteReqForm.tsx';
-import { useAutoHeight } from '../../../comp/useAutoHeight.tsx';
 
 
 const tabs = [

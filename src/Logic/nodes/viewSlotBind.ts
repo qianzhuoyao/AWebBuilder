@@ -14,7 +14,7 @@ export const viewLogicSlot = () => {
     type: 'viewSlot',
     src: mapSrc,
     tips: '将组件映射至逻辑层,与事件同与门时,触发事件',
-    name: '映射器',
+    name: '绑定器',
   });
   ViewLogicSlot.signalIn('in-0', (args) => {
     console.log(args);

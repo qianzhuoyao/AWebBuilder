@@ -444,11 +444,11 @@ const SceneWidgetMap = memo(() => {
                     style={{
                       border: logicState.target.includes(node.id)
                         ? '1px solid #006FEE'
-                        : '1px solid #18181b',
+                        : '',
                     }}
                     onPress={() => console.log('item pressed')}
                   >
-                    <CardBody className="overflow-visible p-0">
+                    <CardBody className="overflow-visible p-1">
                       <img src={node.imageUrl} alt="" className={'w-full h-[55px]'} />
                     </CardBody>
                     <CardFooter className="text-small justify-center items-center">
@@ -468,7 +468,7 @@ const SceneWidgetMap = memo(() => {
                   style={{
                     border: NodesState.targets.includes(node.id)
                       ? '1px solid #006FEE'
-                      : '1px solid #18181b',
+                      : '',
                   }}
                   onPress={() => console.log('item pressed')}
                 >

@@ -8,6 +8,8 @@ import { timeOut } from './timeout.ts';
 import { timeInter } from './timeInt.ts';
 import { handleTrigger } from './handleTrigger.ts';
 import { viewLogicSlot } from './viewSlotBind.ts';
+import { filterMixData } from './filterData.ts';
+import { mapFieldMixData } from './selectKeyMix.ts';
 
 export const nodeBuilder = () => {
   buildDataReqNode();
@@ -15,9 +17,11 @@ export const nodeBuilder = () => {
   buildCacheClearReqNode();
   buildCacheSetNode();
   changeSignal();
+  filterMixData();
   checkPassword();
   timeOut();
   timeInter();
   handleTrigger();
   viewLogicSlot();
+  mapFieldMixData();
 };

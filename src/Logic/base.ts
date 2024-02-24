@@ -111,11 +111,11 @@ interface IStreamData {
  /**
  * 输入端，接收输入的信号，并生成新信号传输给输出端
  */
-export type  IBuildInPort<T> = (streamData: IStreamData,nodeConfig:ILogicNode) => Promise<T>
+export type  IBuildInPort<T> = (streamData: IStreamData, nodeConfig: ILogicNode) => Promise<T>
 /**
  * 输出端，接收多个输入端返回的信号并传递给下一个节点的输入端
  */
-export type IBuildOutPort<T, K> = (streamData: T,nodeConfig:ILogicNode) => Promise<K>
+export type IBuildOutPort<T, K> = (streamData: T, nodeConfig: ILogicNode) => Promise<K>
 
 export interface INodeInfo<I, O> {
   id: ILogicType;
@@ -160,6 +160,7 @@ const initializeLogicNodeMenuItems = <I, O>(): {
   init.set('cache', []);
   init.set('filter', []);
   init.set('timeOut', []);
+  init.set('mix', []);
   init.set('timeInter', []);
   init.set('hTrigger', []);
   init.set('viewSlot', []);
@@ -196,7 +197,6 @@ export const signalLogicNode = <I, O>({
       ports: [],
     });
   }
-
 
 
   const signalIn = (portName: string, buildInPort: IBuildInPort<I>) => {
