@@ -49,6 +49,7 @@ import { NodeSlot } from './operation';
 import { LogicPanel } from './logicPanel.tsx';
 import type { SVGProps } from 'react';
 import { ILs } from '../store/slice/logicSlice.ts';
+import { useAutoHeight } from '../comp/useAutoHeight.tsx';
 
 
 export function MaterialSymbolsCreateNewFolderOutline(props: SVGProps<SVGSVGElement>) {
@@ -354,7 +355,7 @@ const SceneWidgetMap = memo(() => {
   const dispatch = useDispatch();
   const [currentType, setCurrentType] = useState<'logic_map_list' | 'view_map_list'>('view_map_list');
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
-
+  const height = useAutoHeight();
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
@@ -432,7 +433,9 @@ const SceneWidgetMap = memo(() => {
           </Tabs>
         </div>
         <Divider className="my-1" />
-        <div className="w-full">
+        <div className="w-full overflow-y-scroll px-1" style={{
+          height: height - 100 + 'px',
+        }}>
           {currentType === 'logic_map_list' ? <>{
               [...Object.values(logicState.logicNodes)].map(node => {
                 return <>
