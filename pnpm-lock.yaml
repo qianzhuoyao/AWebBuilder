@@ -11,6 +11,9 @@ dependencies:
   '@babel/core':
     specifier: '7'
     version: 7.23.9
+  '@codemirror/lang-javascript':
+    specifier: ^6.2.2
+    version: 6.2.2
   '@codemirror/lang-json':
     specifier: ^6.0.1
     version: 6.0.1
@@ -104,6 +107,9 @@ dependencies:
   '@uiw/react-codemirror':
     specifier: ^4.21.22
     version: 4.21.23(@babel/runtime@7.23.9)(@codemirror/autocomplete@6.12.0)(@codemirror/language@6.10.1)(@codemirror/lint@6.5.0)(@codemirror/search@6.5.6)(@codemirror/state@6.4.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.24.1)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0)
+  angular-expressions:
+    specifier: ^1.2.1
+    version: 1.2.1
   animate.css:
     specifier: ^4.1.1
     version: 4.1.1
@@ -5924,6 +5930,10 @@ packages:
       require-from-string: 2.0.2
       uri-js: 4.4.1
     dev: true
+
+  /angular-expressions@1.2.1:
+    resolution: {integrity: sha512-pUnlViwIJ0L3KXh1a5gJGuMuGvxwbTbxkGINt7F6259p5UtksRpQ9Q5GhYb6VyfVfKtR65QAJgDhml3zpgmFuA==}
+    dev: false
 
   /animate.css@4.1.1:
     resolution: {integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==}

@@ -17,7 +17,9 @@ export interface IPs {
   panelHeight: number;
   panelLeft: number;
   panelTop: number;
-  workSpaceName: string
+  workSpaceName: string;
+  //全局缓存数据池
+  dataPool: any
 }
 
 export const panelSlice = createSlice({
@@ -38,8 +40,12 @@ export const panelSlice = createSlice({
     panelHeight: 1080,
     panelLeft: 0,
     panelTop: 0,
+    dataPool: {},
   },
   reducers: {
+    setDataPool: (state, action) => {
+      (state.dataPool as Record<string, any>)[action.payload.bindId] = action.payload.data;
+    },
     updateWorkSpaceName: (state, action) => {
       state.workSpaceName = action.payload;
     },
@@ -88,6 +94,7 @@ export const panelSlice = createSlice({
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
+  setDataPool,
   updatePanelColor,
   updateCurrentSTab,
   updateWorkSpaceName,

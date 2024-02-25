@@ -27,6 +27,7 @@ export type IInstanceBind = IBar
 
 export interface IViewMapInfo {
   bindViewNodeId: string;
+  viewType:string
   instance: IInstanceBind
   type: 'IViewMapInfo',
 }

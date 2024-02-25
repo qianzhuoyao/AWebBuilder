@@ -17,11 +17,13 @@ export const ViewMappingForm = memo(() => {
 
   const onHandleUpdateBindNode = useCallback((keys: string[]) => {
     if (keys.length === 1) {
+
       dispatch(updateNodeConfigInfo({
         id: logicState.target[0],
         infoType: 'viewMapInfo',
         configInfo: {
           ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
+          viewType: NodesState.list[keys[0]].instance.type,
           bindViewNodeId: keys[0],
         },
       }));
@@ -34,6 +36,7 @@ export const ViewMappingForm = memo(() => {
       infoType: 'viewMapInfo',
       configInfo: {
         ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
+        viewType: NodesState.list[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || ''].instance.type,
         instance: {
           x,
           y: logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.y,
@@ -48,6 +51,7 @@ export const ViewMappingForm = memo(() => {
       infoType: 'viewMapInfo',
       configInfo: {
         ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
+        viewType: NodesState.list[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || ''].instance.type,
         instance: {
           y,
           x: logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.x,

@@ -73,7 +73,7 @@ export type INodeType =
   | ILogicType;
 
 interface IChartInstance {
-  option?: Echart.EChartsOption;
+  option?: string;
   type:
     | typeof pix_BLine
     | typeof pix_GLine

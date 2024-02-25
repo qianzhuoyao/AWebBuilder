@@ -8,14 +8,15 @@ import { handleTrigger } from './handleTrigger.tsx';
 import { viewMapping } from './viewMapping.tsx';
 import { FilterDataConfig } from './filterDataConfig.tsx';
 import { handleMixConfig } from './mixConfig.tsx';
+import { INs } from '../../../store/slice/nodeSlice.ts';
 
 
-export const setDefaultLogicConfig = () => {
+export const setDefaultLogicConfig = ({logicState}:{logicState:ILs}) => {
   const config = signalLogicNodeAttrConfig('DEFAULT-LOGIC-PANEL-CONFIG');
   config.setConfigEle(() => {
-    const logicState = useSelector((state: { logicSlice: ILs }) => {
-      return state.logicSlice;
-    });
+    // const logicState = useSelector((state: { logicSlice: ILs }) => {
+    //   return state.logicSlice;
+    // });
 
 
     console.log(logicState, genLogicNodeMenuItems(), 'cascascascascasc');
@@ -23,11 +24,11 @@ export const setDefaultLogicConfig = () => {
   });
 };
 
-export const AttrConfigInit = () => {
-  remoteGetConfig();
-  handleMixConfig();
-  CacheSetConfig();
-  handleTrigger();
-  viewMapping();
-  FilterDataConfig();
+export const AttrConfigInit = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
+  remoteGetConfig({NodesState,logicState});
+  handleMixConfig({NodesState,logicState});
+  CacheSetConfig({NodesState,logicState});
+  handleTrigger({NodesState,logicState});
+  viewMapping({NodesState,logicState});
+  FilterDataConfig({NodesState,logicState});
 };

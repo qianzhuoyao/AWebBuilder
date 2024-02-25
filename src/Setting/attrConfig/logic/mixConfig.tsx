@@ -1,7 +1,8 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_MixData_get } from '../../../store/slice/nodeSlice.ts';
+import { INs, logic_MixData_get } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { DataMixForm } from '../../form/logic/mix/filter/dataMixForm.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
 const tabs = [
@@ -13,7 +14,7 @@ const tabs = [
     </>,
   },
 ];
-export const handleMixConfig = () => {
+export const handleMixConfig = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
   const config = signalLogicNodeAttrConfig(logic_MixData_get);
 
 

@@ -1,5 +1,5 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_D_get } from '../../../store/slice/nodeSlice.ts';
+import { INs, logic_D_get } from '../../../store/slice/nodeSlice.ts';
 import {
   Tabs,
   Tab,
@@ -7,6 +7,7 @@ import {
   Card,
 } from '@nextui-org/react';
 import { RemoteBuilder, RemoteTest, RemoteUrl } from '../../form/logic/remoteReq/RemoteReqForm.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
 const tabs = [
@@ -30,7 +31,7 @@ const tabs = [
     </>,
   },
 ];
-export const remoteGetConfig = () => {
+export const remoteGetConfig = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
   const config = signalLogicNodeAttrConfig(logic_D_get);
   config.setConfigEle(nodeInfo => {
 

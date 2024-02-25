@@ -1,8 +1,9 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_FilterData_get } from '../../../store/slice/nodeSlice.ts';
+import { INs, logic_FilterData_get } from '../../../store/slice/nodeSlice.ts';
 import { FilterDataForm } from '../../form/logic/mix/filter/FilterDataForm.tsx';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { BuilderStruct } from '../../form/logic/mix/filter/builderStruct.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
 const tabs = [
@@ -18,7 +19,7 @@ const tabs = [
   },
 ];
 
-export const FilterDataConfig = () => {
+export const FilterDataConfig = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
 
   const config = signalLogicNodeAttrConfig(logic_FilterData_get);
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "@antv/x6": "^2.18.1",
     "@babel/core": "7",
+    "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/language": "^6.10.1",
     "@codemirror/lint": "^6.5.0",
@@ -43,6 +44,7 @@
     "@types/lodash": "^4.14.184",
     "@uiw/codemirror-extensions-langs": "^4.21.22",
     "@uiw/react-codemirror": "^4.21.22",
+    "angular-expressions": "^1.2.1",
     "animate.css": "^4.1.1",
     "axios": "^1.6.7",
     "clone": "^2.1.2",

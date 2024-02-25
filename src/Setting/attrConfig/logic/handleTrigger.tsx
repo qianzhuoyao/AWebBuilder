@@ -1,8 +1,9 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_Dug_Trigger } from '../../../store/slice/nodeSlice.ts';
+import { INs, logic_Dug_Trigger } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { TriggerOperation } from '../../form/logic/trigger/triggerOperation.tsx';
 import { TriggerResponse } from '../../form/logic/trigger/triggerResponse.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
 
@@ -20,7 +21,7 @@ const tabs = [
     </>,
   },
 ];
-export const handleTrigger = () => {
+export const handleTrigger = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
   const config = signalLogicNodeAttrConfig(logic_Dug_Trigger);
 
 

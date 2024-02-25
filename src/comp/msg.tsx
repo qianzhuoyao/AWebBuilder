@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ILogicNode, ILs, updateSignalSet } from '../store/slice/logicSlice.ts';
 import { mapNodeBindPort } from './mapNodePort.ts';
 import { toast } from 'react-toastify';
+import { IPs, setDataPool } from '../store/slice/panelSlice.ts';
+import { logic_View_bind } from '../store/slice/nodeSlice.ts';
 
 
 /**
@@ -41,6 +43,9 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
   let stopStatus = false;
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
+  });
+  const PanelState = useSelector((state: { panelSlice: IPs }) => {
+    return state.panelSlice;
   });
   const dispatch = useDispatch();
   const go = async () => {
@@ -239,6 +244,16 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                     },
                   },
                 );
+                //同步数据池
+                if (logicState.logicNodes[edge.target].typeId === logic_View_bind) {
+                  dispatch(setDataPool({
+                    bindId: logicState.logicNodes[edge.target]?.configInfo?.viewMapInfo?.bindViewNodeId || '',
+                    data: {
+                      data: deParams,
+                      config: logicState.logicNodes[edge.target].configInfo?.viewMapInfo,
+                    },
+                  }));
+                }
               } catch (e) {
                 onStageCallback && onStageCallback(
                   {

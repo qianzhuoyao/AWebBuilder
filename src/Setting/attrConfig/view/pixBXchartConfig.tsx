@@ -1,9 +1,10 @@
 //普通柱状图配置
 import { signalViewNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { pix_BX } from '../../../store/slice/nodeSlice.ts';
+import { INs, pix_BX } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { PixBXChartConfigCode } from '../../form/view/PixBXChartConfigCode.tsx';
 import { PixBXChartConfigForm } from '../../form/view/BXChartConfigForm.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
 const chartTabs = [
@@ -21,7 +22,7 @@ const chartTabs = [
   },
 ];
 
-export const PixBXChartConfig = () => {
+export const PixBXChartConfig = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
   const config = signalViewNodeAttrConfig(pix_BX);
   config.setConfigEle(nodeInfo => {
     if (nodeInfo.target.length > 0) {

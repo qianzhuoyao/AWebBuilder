@@ -1,25 +1,30 @@
 import { INodeType, pix_BX } from '../store/slice/nodeSlice.ts';
+import { defaultBuilderFn } from '../Setting/form/view/PixBXChartConfigCode.tsx';
 
-const barDefaultOption = {
-  xAxis: {
-    type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  },
-  yAxis: {
-    type: 'value',
-  },
-  series: [
-    {
-      data: [120, 200, 150, 80, 70, 110, 130],
-      type: 'bar',
-    },
-  ],
+
+export const parseFnContent = (str: string) => {
+  const value = str.match(/{([\s\S]*)}/);
+  return value ? value[0].slice(1).slice(0, -1) : '';
+};
+
+export const viewFnString = (body: string) => {
+  return `
+  ${body}
+  `;
+};
+
+export const runViewFnString = (body: string) => {
+  return `
+  function builder(params){
+  ${body}
+  }
+  `;
 };
 
 export const setDefaultChartOption = (type: INodeType) => {
   switch (type) {
     case pix_BX:
-      return barDefaultOption;
+      return defaultBuilderFn;
     default:
       return undefined;
   }

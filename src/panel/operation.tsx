@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { IPs } from '../store/slice/panelSlice';
-
-import { memo, useCallback, useEffect, useRef } from 'react';
+import expressions from 'angular-expressions';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Moveable from 'react-moveable';
 import Selecto from 'react-selecto';
 import {
   deleteListItem,
   INs,
-  IViewNode, moveNode, resizeNode,
+  IViewNode, moveNode, pix_BX, resizeNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -17,9 +17,12 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
 import { ItemParams } from 'react-contexify';
+import { runViewFnString } from '../comp/setDefaultChartOption.ts';
 
 const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
 
+
+  const [parseOption, setParseOption] = useState<any>({});
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
@@ -28,14 +31,39 @@ const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
-  console.log(id, NodesState, PanelState, 'id[p-d-dd-d-d-d-');
+
+  // useEffect(() => {
+  //
+  //   const data = PanelState.dataPool[id];
+  //   console.log(data, 'parseOpssssstion-parseOption');
+  //   if (data) {
+  //     const { viewType, instance } = data.config;
+  //     const { x, y } = instance;
+  //     if (viewType === pix_BX) {
+  //       setParseOption(data?.data?.data);
+  //     } else {
+  //       setParseOption({});
+  //     }
+  //   } else {
+  //     setParseOption(NodesState.list[id].instance.option);
+  //   }
+  //   console.log(parseOption, data, 'parseOption-parseOption');
+  // }, [NodesState.list, PanelState.dataPool, id]);
+
+  useEffect(() => {
+    console.log();
+    setParseOption(() => new Function('params', NodesState.list[id].instance.option || '')(PanelState.dataPool[id]));
+  }, [NodesState.list, PanelState.dataPool, id]);
+  console.log(id, NodesState, PanelState, runViewFnString(NodesState.list[id].instance.option || ''), 'id[p-d-dd-d-d-d-');
+
   if (NodesState.list[id].classify === 'chart') {
     return (
       <BaseChart
         type={NodesState.list[id].instance.type}
         width={isTemp ? 205 : NodesState.list[id].w / PanelState.tickUnit}
         height={isTemp ? 100 : NodesState.list[id].h / PanelState.tickUnit}
-        options={NodesState.list[id].instance.option}
+        options={parseOption}
+        //   options={NodesState.list[id].instance.option}
       ></BaseChart>
     );
   }
