@@ -11,7 +11,7 @@ import {
   updateSize,
   updateTargets,
 } from '../store/slice/nodeSlice';
-import { ATTR_TAG, Node, PANEL_MAIN_BG, SCENE } from '../contant';
+import { ATTR_TAG, Node, NODE_ID, PANEL_MAIN_BG, SCENE } from '../contant';
 import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
@@ -95,6 +95,7 @@ export const NodeSlot = memo(
       }
       [...nodeRef.current.getElementsByTagName('*')].forEach((ele) => {
         ele.setAttribute(ATTR_TAG, Node);
+        ele.setAttribute(NODE_ID, node.id);
       });
     }, [NodesState]);
 
@@ -106,14 +107,14 @@ export const NodeSlot = memo(
       } else {
         dispatch(updateTargets([nodeRef.current?.id]));
       }
-    }, [dispatch, isTemp, node.id]);
+    }, [isTemp, node.id]);
 
     return (
       <div
         ref={nodeRef}
         id={isTemp ? node.id + '-Map' : node.id}
         className={isTemp ? '' : 'absolute target'}
-        onClick={onHandleSelectedCurrent}
+        onMouseDown={onHandleSelectedCurrent}
 
         style={
           isTemp
@@ -224,7 +225,12 @@ const NodeContainer = memo(() => {
         resizable={true}
         scalable={true}
         rotatable={true}
+        onDragStart={e => {
+
+          console.log(e, 'onDragStarsst');
+        }}
         onClickGroup={(e) => {
+          console.log(e, 'onClickGroup');
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
         onRotateEnd={e => {
@@ -275,6 +281,7 @@ const NodeContainer = memo(() => {
           ratio={0}
           keyContainer={window}
           onDragStart={(e) => {
+            console.log(e, '{}ddfff');
             const target = e.inputEvent.target;
             if (
               moveableRef.current!.isMoveableElement(target) ||

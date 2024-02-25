@@ -12,6 +12,7 @@ import { QueryClientProvider } from 'react-query';
 import { queryClient } from './fetch/client.ts';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Demo } from './layout/Demo.tsx';
+import { TempA } from './menu/temp.tsx';
 
 
 interface MessagesData {
@@ -69,10 +70,10 @@ const router = createBrowserRouter([
             path: '/menu/temp',
             errorElement: <RootErrorBoundary />,
             async lazy() {
-              const { Temp } = await import('./menu/temp');
+              const { TempA } = await import('./menu/temp');
               return {
                 loader: Loading,
-                Component: Temp,
+                Component: TempA,
               };
             },
           },

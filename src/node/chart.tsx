@@ -1,7 +1,7 @@
 import { memo, useEffect, useId, useRef } from 'react';
 import * as Echart from 'echarts';
 import { INodeType } from '../store/slice/nodeSlice';
-
+import { isEqual } from 'lodash';
 
 interface IBaseChart {
   options?: Echart.EChartsOption;
@@ -12,31 +12,64 @@ interface IBaseChart {
 
 export const BaseChart = memo((chartParams: IBaseChart) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const instance = useRef<{
+    option: any
+    ChartInstance: any
+  }>({
+    option: null,
+    ChartInstance: null,
+  });
+  const size = useRef<{
+    width: number,
+    height: number,
+  }>({
+    width: 0,
+    height: 0,
+  });
   const chartId = useId();
 
   useEffect(() => {
-    //销毁指向
     const CRvar = chartRef.current;
+    instance.current.ChartInstance = instance.current.ChartInstance || Echart.init(CRvar);
+    // return () => {
+    //   instance.current.ChartInstance.dispose();
+    // };
+  }, []);
+
+  useEffect(() => {
+    const CRvar = chartRef.current;
+    console.log(CRvar,chartParams, isEqual(instance.current.option, chartParams.options), 'RdddddchartParamsdasdaS');
 
     if (CRvar) {
-      const ChartInstance = Echart.init(CRvar);
-
       if (chartParams.options) {
-        ChartInstance.setOption(chartParams.options);
+        if (!isEqual(instance.current.option, chartParams.options)) {
+          instance.current.ChartInstance.setOption(chartParams.options);
+          instance.current.option = chartParams.options;
+        }
+
       }
       const R = new ResizeObserver(() => {
-        console.log('RddddddasdaS');
-        ChartInstance.resize();
+
+        if (chartRef.current) {
+          const { height, width } = chartRef.current.getBoundingClientRect();
+          console.log(size, chartRef.current?.getBoundingClientRect(), 'RddddddasdaS');
+          if (size.current.width !== width || size.current.height !== height) {
+
+            instance.current.ChartInstance.resize();
+            size.current.width = width;
+            size.current.height = height;
+          }
+        }
       });
       R.observe(CRvar);
 
       return () => {
-        ChartInstance.dispose();
+
         CRvar && R.unobserve(CRvar);
         R.disconnect();
       };
     }
-  }, [chartParams.options, chartParams.type]);
+  }, [chartParams, chartParams.options]);
 
   return (
     <>{
