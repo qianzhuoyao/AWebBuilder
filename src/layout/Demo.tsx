@@ -2,6 +2,8 @@
 
 
 import { BaseChart } from '../node/chart.tsx';
+import { Temp } from '../panel/operation.tsx';
+
 
 export const Demo = () => {
   const previewData = window.localStorage.getItem('DEMO-NODE#');
@@ -18,12 +20,16 @@ export const Demo = () => {
       Object.values(data.list).map(node => {
         if (node.classify === 'chart') {
           return (
-            <BaseChart
-              type={node.instance.type}
-              width={node.w}
-              height={node.w}
-              options={node.instance.option}
-            ></BaseChart>
+            <Temp id={node.id}
+                  isTemp={false}
+                  PanelState={panel}
+                  NodesState={data}></Temp>
+            // <BaseChart
+            //   type={node.instance.type}
+            //   width={node.w}
+            //   height={node.w}
+            //   options={node.instance.option}
+            // ></BaseChart>
           );
         } else {
           return <>-</>;

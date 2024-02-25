@@ -1,13 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { IPs } from '../store/slice/panelSlice';
-import expressions from 'angular-expressions';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import Moveable from 'react-moveable';
 import Selecto from 'react-selecto';
 import {
   deleteListItem,
   INs,
-  IViewNode, moveNode, pix_BX, resizeNode,
+  IViewNode, moveNode, resizeNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -17,44 +16,29 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
 import { ItemParams } from 'react-contexify';
-import { runViewFnString } from '../comp/setDefaultChartOption.ts';
 
-const Temp = memo(({ id, isTemp }: { id: string; isTemp?: boolean }) => {
+export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
+  NodesState: INs,
+  id: string;
+  isTemp?: boolean,
+  PanelState: IPs
+}) => {
 
 
   const [parseOption, setParseOption] = useState<any>({});
 
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
-
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-
-  // useEffect(() => {
+  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
+  //   return state.panelSlice;
+  // });
   //
-  //   const data = PanelState.dataPool[id];
-  //   console.log(data, 'parseOpssssstion-parseOption');
-  //   if (data) {
-  //     const { viewType, instance } = data.config;
-  //     const { x, y } = instance;
-  //     if (viewType === pix_BX) {
-  //       setParseOption(data?.data?.data);
-  //     } else {
-  //       setParseOption({});
-  //     }
-  //   } else {
-  //     setParseOption(NodesState.list[id].instance.option);
-  //   }
-  //   console.log(parseOption, data, 'parseOption-parseOption');
-  // }, [NodesState.list, PanelState.dataPool, id]);
+  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+  //   return state.viewNodesSlice;
+  // });
 
   useEffect(() => {
     console.log();
     setParseOption(() => new Function('params', NodesState.list[id].instance.option || '')(PanelState.dataPool[id]));
   }, [NodesState.list, PanelState.dataPool, id]);
-  console.log(id, NodesState, PanelState, runViewFnString(NodesState.list[id].instance.option || ''), 'id[p-d-dd-d-d-d-');
 
   if (NodesState.list[id].classify === 'chart') {
     return (
@@ -145,7 +129,7 @@ export const NodeSlot = memo(
             }
         }
       >
-        <Temp id={node.id} isTemp={isTemp}></Temp>
+        <Temp id={node.id} isTemp={isTemp} PanelState={PanelState} NodesState={NodesState}></Temp>
 
       </div>
     );

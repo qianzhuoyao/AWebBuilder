@@ -1,3 +1,3 @@
-export const Temp=()=>{
+export const TempA=()=>{
     return <>1</>
 }
