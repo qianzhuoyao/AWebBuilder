@@ -1,7 +1,6 @@
 import { remoteGetConfig } from './remoteGetConfig.tsx';
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { CacheSetConfig } from './cacheSetConfig.tsx';
-import { useSelector } from 'react-redux';
 import { ILs } from '../../../store/slice/logicSlice.ts';
 import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
 import { handleTrigger } from './handleTrigger.tsx';

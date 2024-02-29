@@ -12,7 +12,7 @@ import { QueryClientProvider } from 'react-query';
 import { queryClient } from './fetch/client.ts';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Demo } from './layout/Demo.tsx';
-import { TempA } from './menu/temp.tsx';
+
 
 
 interface MessagesData {

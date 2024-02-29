@@ -8,5 +8,8 @@ export default defineConfig({
       plugins: [fixReactVirtualized],
     },
   },
+  define: {
+    _global: ({})
+  },
   plugins: [react()],
 })

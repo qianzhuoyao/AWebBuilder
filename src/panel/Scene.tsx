@@ -329,7 +329,7 @@ const SceneLayer = memo(() => {
           {(item) => (
             <Tab key={item.id} title={item.label}>
               <Card className="rounded-none h-[100%]">
-                <CardBody className="p-0">{item.content}</CardBody>
+                <CardBody className="p-0 overflow-hidden">{item.content}</CardBody>
               </Card>
             </Tab>
           )}

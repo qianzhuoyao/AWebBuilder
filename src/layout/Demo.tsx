@@ -20,10 +20,19 @@ export const Demo = () => {
       Object.values(data.list).map(node => {
         if (node.classify === 'chart') {
           return (
-            <Temp id={node.id}
-                  isTemp={false}
-                  PanelState={panel}
-                  NodesState={data}></Temp>
+            <div style={{
+              position: 'absolute',
+              left: node.x + 'px',
+              top: node.y + 'px',
+              width: node.w + 'px',
+              height: node.h + 'px',
+              zIndex: node.z,
+            }}>
+              <Temp id={node.id}
+                    isTemp={false}
+                    PanelState={panel}
+                    NodesState={data}></Temp>
+            </div>
             // <BaseChart
             //   type={node.instance.type}
             //   width={node.w}

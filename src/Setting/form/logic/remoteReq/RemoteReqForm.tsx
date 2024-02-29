@@ -625,6 +625,7 @@ export const RemoteTest = memo(() => {
     useQuery([sendTime], () => query(), {
       retry: 0,
       enabled: !!sendTime,
+
     });
 
   useEffect(() => {
