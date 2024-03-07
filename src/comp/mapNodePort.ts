@@ -1,4 +1,4 @@
-import { genLogicNodeMenuItems } from '../Logic/base.ts';
+import { genLogicNodeMenuItems, INodeInfo } from '../Logic/base.ts';
 import { ILogicNode } from '../store/slice/logicSlice.ts';
 
 /**
@@ -8,14 +8,5 @@ export const mapNodeBindPort = (node: Pick<ILogicNode, 'belongClass' | 'typeId'>
   const { belongClass, typeId } = node;
   const { logicNodeMenuItems } = genLogicNodeMenuItems();
   const classify = logicNodeMenuItems.get(belongClass);
-  let res:any= null;
-  if (classify) {
-    classify.some(classifyItem => {
-      if (classifyItem.id === typeId) {
-        res = classifyItem;
-        return true;
-      }
-    });
-  }
-  return res;
+  return classify?.find(c=>c.id===typeId)
 };

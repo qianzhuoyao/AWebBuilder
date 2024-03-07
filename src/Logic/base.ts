@@ -17,7 +17,7 @@ import { ILogicType } from '../store/slice/nodeSlice.ts';
 import { ILogicNode } from '../store/slice/logicSlice.ts';
 
 
-interface IStreamData {
+export interface IStreamData {
   fromNodes: {
     id: string;
     type: string

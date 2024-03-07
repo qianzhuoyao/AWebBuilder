@@ -466,21 +466,21 @@ export const RemoteUrl = memo(() => {
           {/*<Radio value="patch" disabled>patch</Radio>*/}
         </RadioGroup>
 
-        <Tooltip
-          color={'default'}
-          content={'严格模式下,公用逻辑路径将不会复用'}
-          placement="top"
-          className="capitalize"
-        >
-          <div className={'my-1 items-center flex'}>
-            <small className={'mr-1'}>严格模式</small>
-            <Switch size={'sm'}
-                    isSelected={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.strict}
-                    aria-label="strictMode" onValueChange={checked => {
-              onHandleChangeStrict(checked);
-            }} />
-          </div>
-        </Tooltip>
+        {/*<Tooltip*/}
+        {/*  color={'default'}*/}
+        {/*  content={'严格模式下,公用逻辑路径将不会复用'}*/}
+        {/*  placement="top"*/}
+        {/*  className="capitalize"*/}
+        {/*>*/}
+        {/*  <div className={'my-1 items-center flex'}>*/}
+        {/*    <small className={'mr-1'}>严格模式</small>*/}
+        {/*    <Switch size={'sm'}*/}
+        {/*            isSelected={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.strict}*/}
+        {/*            aria-label="strictMode" onValueChange={checked => {*/}
+        {/*      onHandleChangeStrict(checked);*/}
+        {/*    }} />*/}
+        {/*  </div>*/}
+        {/*</Tooltip>*/}
 
       </div>
     </div>

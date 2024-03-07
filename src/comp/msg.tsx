@@ -21,14 +21,14 @@ import { logic_View_bind } from '../store/slice/nodeSlice.ts';
 export interface IStage {
   data: any;
   errorTipMsg?: string;
-  currentEdge: {
+  currentEdge?: {
     from: string
     to: string
     fromPort: string
     toPort: string
   };
   currentNode: {
-    node: ILogicNode
+    node?: ILogicNode
     talkStatus: 'ok' | 'error' | 'pending'
   };
 }
@@ -49,6 +49,13 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
   });
   const dispatch = useDispatch();
   const go = async () => {
+
+    /**
+     * 路径输出节点数据缓存，
+     * 当节点存在多余两个的出度时，优先选择缓存内的节点数据并输出
+     * 存在remote时，则跳过请求，直接使用缓存输出
+     */
+    const cache:Map<string,any> = new Map()
 
     const runEdgeVis: Set<string> = new Set();
 
@@ -107,7 +114,13 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                     },
                   },
                 );
-                deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.source]);
+                if(cache.has(from+fromPort)){
+                  deParams = cache.get(from+fromPort)
+                }else{
+                  deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.source]);
+                  cache.set(from+fromPort,deParams)
+                }
+
                 onStageCallback && onStageCallback(
                   {
                     data: initParams,
@@ -162,7 +175,12 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                     },
                   },
                 );
-                deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
+                if(cache.has(from+fromPort)){
+                  deParams = cache.get(from+fromPort)
+                }else {
+                  deParams = await currentFromMakeTask.make(initParams, logicState.logicNodes[edge.target]);
+                  cache.set(from+fromPort,deParams)
+                }
                 onStageCallback && onStageCallback(
                   {
                     data: initParams,
@@ -220,15 +238,21 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
                     },
                   },
                 );
-                const res = await inTask.make({
-                  fromNodes: {
-                    id: from,
-                    logicNode: logicState.logicNodes[edge.target],
-                    type: logicState.logicNodes[edge.source]?.typeId,
-                    data: deParams,
-                  },
-                }, logicState.logicNodes[edge.target]);
-                initParams = res;
+                if(cache.has(to+toPort)){
+                  initParams = cache.get(to+toPort)
+                }else{
+                  const res = await inTask.make({
+                    fromNodes: {
+                      id: from,
+                      logicNode: logicState.logicNodes[edge.target],
+                      type: logicState.logicNodes[edge.source]?.typeId,
+                      data: deParams,
+                    },
+                  }, logicState.logicNodes[edge.target]);
+                  initParams = res;
+                  cache.set(to+toPort,res)
+                }
+
                 onStageCallback && onStageCallback(
                   {
                     data: deParams,
@@ -299,7 +323,8 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
         clearTimeout(time);
       }, 100);
     }
-
+    //执行完毕清空缓存
+    cache.clear()
     console.log(Paths, 'pathNodeIds');
 
   };
@@ -317,3 +342,4 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
     stop,
   };
 };
+

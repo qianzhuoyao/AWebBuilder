@@ -27,7 +27,7 @@ export type IInstanceBind = IBar
 
 export interface IViewMapInfo {
   bindViewNodeId: string;
-  viewType:string
+  viewType: string
   instance: IInstanceBind
   type: 'IViewMapInfo',
 }
@@ -62,6 +62,7 @@ export interface ILogicNode {
   shape: string;
   x: number;
   y: number;
+  portType: string;
   width: number;
   height: number;
   imageUrl: string;

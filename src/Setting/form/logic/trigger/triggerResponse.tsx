@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { Fragment, memo, useCallback } from 'react';
 import { Card, CardBody, CardFooter, CardHeader, Chip, Spinner } from '@nextui-org/react';
 import { useAutoHeight } from '../../../../comp/useAutoHeight.tsx';
 
@@ -88,7 +88,7 @@ export const TriggerResponse = memo(() => {
 
       </div>
       {logicState.stagPool.map((stage, index) => {
-        return stage && <>
+        return stage && <Fragment key={index}>
           <Card className="max-w-[400px] mt-1 mx-1">
 
             <CardHeader className="">
@@ -96,16 +96,16 @@ export const TriggerResponse = memo(() => {
             </CardHeader>
             <CardBody className={'text-[10px]'}>
               <div className="">
-                <p>起始点:{stage.currentEdge.from}</p>
-                <p>目标点:{stage.currentEdge.to}</p>
+                <p>起始点:{stage?.currentEdge?.from}</p>
+                <p>目标点:{stage?.currentEdge?.to}</p>
               </div>
               <div className="">
-                <p>起始点端口:{stage.currentEdge.fromPort}</p>
-                <p>目标点端口:{stage.currentEdge.toPort}</p>
+                <p>起始点端口:{stage?.currentEdge?.fromPort}</p>
+                <p>目标点端口:{stage?.currentEdge?.toPort}</p>
               </div>
               <div className="">
-                <p>当前节点:{stage.currentNode?.node.id}</p>
-                <p>所属类型:{stage.currentNode?.node.typeId}</p>
+                <p>当前节点:{stage?.currentNode?.node?.id}</p>
+                <p>所属类型:{stage?.currentNode?.node?.typeId}</p>
               </div>
               {stage.errorTipMsg && <div className={'text-red-600'}>
                 <p>错误提示:</p>
@@ -127,7 +127,7 @@ export const TriggerResponse = memo(() => {
               <small>结果:{stage.currentNode?.talkStatus}</small>
             </CardFooter>
           </Card>
-        </>;
+        </Fragment>;
       })}
     </div>
   </>;
