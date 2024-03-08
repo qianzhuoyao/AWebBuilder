@@ -67,22 +67,42 @@ interface ISignal<S> {
   effect: (effect: (ctx: S) => void) => Readonly<ISignal<S>>;
   syncWhile: <W>(waitFn: () => Promise<W>) => Readonly<ISignal<S>>;
   wait: (time: number) => Readonly<ISignal<S>>;
+  loop: <C>(interTime: number, condition: () => Promise<C>) => Readonly<ISignal<S>>;
   run: () => Promise<S>;
 }
 
+
 const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
+
+
   return {
 
+    /**
+     * 替换信号
+     * of(0).ap(of(1)) =>signal
+     *
+     * @param signal
+     */
     ap: <T, >(signal: ISignal<Promise<T>>) => {
       return signal2(() => signal.chain(signal));
     },
 
+    /**
+     * 打平
+     * of(1).chain(of(2)) =>result
+     * @param signal
+     */
     chain: <T, >(signal: ISignal<T>) => {
       return signal.map(a => a)
         .run();
     },
 
-
+    /**
+     * 副作用
+     *
+     * of(1).effect(a=>console.log(a)).run()
+     * @param effect
+     */
     effect: (effect: (ctx: O) => void) => {
       return signal2(async () => {
         const promiseObj = fn();
@@ -92,10 +112,24 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
       });
     },
 
+    /**
+     * 映射信号返回一个新型号
+     * of(1).map(a=>2)
+     * @param mapFn
+     */
     map: (mapFn: IMapFn<Promise<O>>) => {
       return signal2(() => mapFn(fn()));
     },
 
+    /**
+     * 合并信号
+     * example:
+     * of(1).merge(of(2)).run()
+     *
+     * 合并of(1) 与 of(2) 信号，生成 第三个信号参数为[of(1),of(2)]
+     *
+     * @param signal
+     */
     merge: <T, >(signal: ISignal<T>) => {
       const value0 = signal.run();
       const value1 = fn();
@@ -103,6 +137,16 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
         resolve([value0, value1]);
       }));
     },
+
+    /**
+     * 延时信号
+     *
+     * example:
+     * of(1).wait(2000).run()
+     * 两秒后发出1
+     *
+     * @param time
+     */
     wait: (time: number) => {
       return signal2(() => {
         return new Promise(resolve => {
@@ -113,6 +157,56 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
         });
       });
     },
+
+    loop: <C>(interTime: number, condition: () => Promise<C>) => {
+
+      const state = () => {
+        return {
+          stop: false,
+        };
+      };
+
+      const option = (builder: () => { stop: boolean }) => {
+        const st = builder();
+        return () => {
+          return {
+            getStop: () => st.stop,
+            setStop: (state: boolean) => {
+              st.stop = state;
+            },
+          };
+        };
+      };
+
+      const status = option(state);
+
+      condition().then(() => {
+        status().setStop(true);
+      });
+
+
+      const interval = () => {
+        return signal2(() => {
+          return new Promise<O>(resolve => {
+            setTimeout(() => {
+              if (!status().getStop()) {
+                interval().map(fn);
+              }
+              resolve(fn());
+            }, interTime);
+          });
+        });
+      };
+      return interval();
+    },
+    /**
+     * 等待信号
+     * example:
+     * of(1).syncWhile(()=>of(2).wait(4000).run()).run()
+     *
+     * 直到收到wait信号4秒后才发出1
+     * @param waitFn
+     */
     syncWhile: <W, >(waitFn: () => Promise<W>) => {
       return signal2<O>(() => {
         return new Promise<O>(resolve => {
@@ -123,6 +217,7 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
         });
       });
     },
+
     run: () => {
       return fn();
     },
@@ -130,13 +225,27 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
   };
 };
 
+/**
+ * 将输入转化为信号
+ * @param input
+ */
 export const of = <T, >(input: T) => {
   return signal2<T>(() => Promise.resolve(input));
 };
-
+/**
+ * 定时输出信号
+ * @param interTime
+ * @param input
+ * @param condition
+ */
 
 /**
- * syncWhile(1,()=>wait(2000,()=>2)).effect(() => console.log(2)).run()
+ * 发送1 直到11的信号完成才完成
  */
-of(1).syncWhile<number>(() => of(11).wait(2000).run(),
-).effect(() => console.log(2)).run();
+of(1).loop<number>(
+  1000,
+  () => of(1)
+    .wait(4000)
+    .run())
+  .effect(() => console.log(2))
+  .run();
