@@ -67,7 +67,7 @@ interface ISignal<S> {
   effect: (effect: (ctx: S) => void) => Readonly<ISignal<S>>;
   syncWhile: <W>(waitFn: () => Promise<W>) => Readonly<ISignal<S>>;
   wait: (time: number) => Readonly<ISignal<S>>;
-  loop: <C>(interTime: number, condition: () => Promise<C>) => Readonly<ISignal<S>>;
+  loopEffect: <C>(interTime: number, condition: () => Promise<C>, loopTask: (ctx: S) => void) => Readonly<ISignal<S>>;
   run: () => Promise<S>;
 }
 
@@ -158,7 +158,22 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
       });
     },
 
-    loop: <C>(interTime: number, condition: () => Promise<C>) => {
+    /**
+     * 时间维度的批次任务副作用函数
+     * 当存在需要信号需要批次处理时使用
+     *
+     * of(0).loop(1000,()=>of(1).wait(4000).run(),()=>{console.log('ing')}).run()
+     *
+     * 当外部信号执行完毕后
+     * console.log('ing')的任务会额外每1秒执行依次，它不印象外部任务，直到4000ms后结束
+     *
+     * 使用场景：
+     *  0:轮询式的订阅后端信息
+     * @param interTime
+     * @param condition
+     * @param loopTask
+     */
+    loopEffect: <C>(interTime: number, condition: () => Promise<C>, loopTask: (ctx: O) => void) => {
 
       const state = () => {
         return {
@@ -190,7 +205,11 @@ const signal2 = <O, >(fn: IState<O>): Readonly<ISignal<O>> => {
           return new Promise<O>(resolve => {
             setTimeout(() => {
               if (!status().getStop()) {
-                interval().map(fn);
+                interval()
+                  .map(fn)
+                  .effect(a => {
+                    loopTask(a);
+                  }).run();
               }
               resolve(fn());
             }, interTime);
@@ -242,10 +261,12 @@ export const of = <T, >(input: T) => {
 /**
  * 发送1 直到11的信号完成才完成
  */
-of(1).loop<number>(
+of(1).loopEffect<number>(
   1000,
   () => of(1)
     .wait(4000)
-    .run())
+    .run(),
+  (a) => console.log(a),
+)
   .effect(() => console.log(2))
   .run();
