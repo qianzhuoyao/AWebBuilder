@@ -129,6 +129,7 @@ export interface INodeInfo<I, O> {
     type: 'isIn',
     make: IBuildInPort<I>,
   } | {
+    id: string,
     type: 'isOut',
     make: IBuildOutPort<I, O>
   })[];
@@ -137,8 +138,10 @@ export interface INodeInfo<I, O> {
 type INode<I, O> = Map<ILogicTypeList, INodeInfo<I, O>[]>
 
 interface IMenu<I, O> {
-  logicNodeMenuItems: INode<I, O>,
-  logicNodeMenuIdList: Set<string>
+  logicNodeMenuItems: INode<I, O>;
+  logicNodeMenuIdList: Set<string>;
+  initLogicInMake: Map<string, IBuildInPort<any>>;
+  initLogicOutMake: Map<string, IBuildOutPort<any, any>>;
 }
 
 const createLogicMenuInstance = <I, O>(initializer: () => IMenu<I, O>): (() => IMenu<I, O>) => {
@@ -151,10 +154,7 @@ const createLogicMenuInstance = <I, O>(initializer: () => IMenu<I, O>): (() => I
   };
 };
 
-const initializeLogicNodeMenuItems = <I, O>(): {
-  logicNodeMenuItems: INode<I, O>;
-  logicNodeMenuIdList: Set<string>
-} => {
+const initializeLogicNodeMenuItems = <I, O>(): IMenu<I, O> => {
   const initIdList = new Set<string>();
   const init = new Map<ILogicTypeList, INodeInfo<I, O>[]>();
   init.set('remote', []);
@@ -165,9 +165,15 @@ const initializeLogicNodeMenuItems = <I, O>(): {
   init.set('timeInter', []);
   init.set('hTrigger', []);
   init.set('viewSlot', []);
+
+  const initLogicInMake: Map<string, IBuildInPort<any>> = new Map();
+  const initLogicOutMake: Map<string, IBuildOutPort<any, any>> = new Map();
+
   return {
     logicNodeMenuIdList: initIdList,
     logicNodeMenuItems: init,
+    initLogicInMake,
+    initLogicOutMake,
   };
 };
 
@@ -202,8 +208,8 @@ export const signalLogicNode = <I, O>({
 
   const signalIn = (portName: string, buildInPort: IBuildInPort<I>) => {
 
-    if (portName.indexOf('#') > -1) {
-      throw new Error('端口名称不允许存在#');
+    if (portName.indexOf('#') > -1 || portName.indexOf('@') > -1) {
+      throw new Error('端口名称不允许存在#@');
     }
 
     const curNodes = temps.logicNodeMenuItems.get(type);
@@ -218,7 +224,7 @@ export const signalLogicNode = <I, O>({
           ...node,
           ports: node.ports.concat([{
             type: 'isIn',
-            id: id + portName,
+            id: id + '@' + portName,
             portName: portName,
             make: buildInPort,
           }]),
@@ -226,7 +232,7 @@ export const signalLogicNode = <I, O>({
       }
       return node;
     });
-
+    temps.initLogicInMake.set(id + '@' + portName, buildInPort);
     newCurNodes && temps.logicNodeMenuItems.set(type, newCurNodes);
 
   };
@@ -240,13 +246,14 @@ export const signalLogicNode = <I, O>({
           ...node,
           ports: node.ports.concat([{
             type: 'isOut',
+            id: id + '@' + 'out0',
             make: buildOutPort,
           }]),
         };
       }
       return node;
     });
-
+    temps.initLogicOutMake.set(id + '@' + 'out0', buildOutPort);
     newCurNodes && temps.logicNodeMenuItems.set(type, newCurNodes);
     console.log(temps, genLogicNodeMenuItems(), 'temps()');
   };

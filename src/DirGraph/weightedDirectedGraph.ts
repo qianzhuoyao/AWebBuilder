@@ -1,12 +1,12 @@
-type Vertex<V> = {
+export type Vertex<V> = {
   vertex: V;
   outDegree: V[] | null | undefined;
   inDegree: V[] | null | undefined;
 };
 
-type  IEdgeMessage = Record<string, string>
+export type  IEdgeMessage = Record<string, string>
 
-type Edge<T, M> = {
+export type Edge<T, M> = {
   target: T;
   targetPort: T;
   sourcePort: T;
@@ -15,7 +15,7 @@ type Edge<T, M> = {
   weight: number;
 };
 
-type Path<T, M> = {
+export type Path<T, M> = {
   edges: Edge<T, M>[];
 };
 

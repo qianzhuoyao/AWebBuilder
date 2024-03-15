@@ -8,11 +8,11 @@ const tabs = [
     routeLink: "/menu/proj",
     label: "项目",
   },
-  {
-    id: "temp",
-    routeLink: "/menu/temp",
-    label: "模板",
-  },
+  // {
+  //   id: "temp",
+  //   routeLink: "/menu/temp",
+  //   label: "模板",
+  // },
 ];
 
 export const MenuCard = memo(() => {

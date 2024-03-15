@@ -17,7 +17,7 @@ export const timeInter = () => {
     name: '循环',
   });
 
-  TimeInter.signalIn('in-0', ({ fromNodes }) => {
+  TimeInter.signalIn('in-go', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });
@@ -28,7 +28,7 @@ export const timeInter = () => {
     });
   });
 
-  TimeInter.signalIn('in-1', ({ fromNodes }) => {
+  TimeInter.signalIn('in-stop', ({ fromNodes }) => {
     console.log({
       fromNodes,
     });
@@ -43,9 +43,11 @@ export const timeInter = () => {
       params,
     });
     return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
+     setTimeout(()=>{
+       resolve({
+         data: 12,
+       });
+     },3000)
     });
   });
 
