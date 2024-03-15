@@ -10,6 +10,7 @@ import { handleTrigger } from './handleTrigger.ts';
 import { viewLogicSlot } from './viewSlotBind.ts';
 import { filterMixData } from './filterData.ts';
 import { mapFieldMixData } from './selectKeyMix.ts';
+import { timeSetter } from './timesSet.ts';
 
 export const nodeBuilder = () => {
   buildDataReqNode();
@@ -24,4 +25,5 @@ export const nodeBuilder = () => {
   handleTrigger();
   viewLogicSlot();
   mapFieldMixData();
+  timeSetter()
 };

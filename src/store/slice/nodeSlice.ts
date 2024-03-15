@@ -43,9 +43,11 @@ export const logic_TO_get = 'logic_TO_get' as const;
 export const logic_View_bind = 'logic_View_bind' as const;
 //循环
 export const logic_Ring_get = 'logic_Ring_get' as const;
-
+//定次
+export const logic_TimesSet_get = 'logic_TimesSet_get' as const;
 //手动触发
 export const logic_Dug_Trigger = 'logic_Dug_Trigger' as const;
+
 
 export type ILogicType = typeof logic_Cache_clear
   | typeof logic_D_get
@@ -59,6 +61,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_View_bind
   | typeof logic_FilterData_get
   | typeof logic_MixData_get
+| typeof  logic_TimesSet_get
 
 export type INodeType =
   | typeof pix_BLine

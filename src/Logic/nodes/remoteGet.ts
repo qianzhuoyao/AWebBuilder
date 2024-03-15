@@ -1,7 +1,6 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_D_get } from '../../store/slice/nodeSlice.ts';
 import remoteGet from '../../assets/widgetIcon/remote_get.svg';
-import { toast } from 'react-toastify';
 
 interface IDataReq {
   data: any;

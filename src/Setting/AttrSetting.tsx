@@ -7,7 +7,7 @@ import { getAttrConfig, IConfig } from './signalNodeConfig.ts';
 import { ILs, pushStagPool } from '../store/slice/logicSlice.ts';
 import { useAttrSet } from './attrConfig/useAttrSet.tsx';
 import { IPs } from '../store/slice/panelSlice.ts';
-import { useSignalMsg } from '../comp/msg.tsx';
+import { useSignal } from '../singal/useSignal.tsx';
 
 // const ColorPick = memo(() => {
 //   return (
@@ -270,7 +270,7 @@ const DefaultSetting = memo(({ target }: { target: string[] }) => {
     return state.logicSlice;
   });
   const dispatch = useDispatch();
-  const { go } = useSignalMsg(logicState.target[0], {
+  const { go } = useSignal(logicState.target[0], {
     onStageCallback: e => {
       try {
         //
@@ -298,7 +298,7 @@ const SelectNodeInstance = memo(({ LogicNodesState }: {
     return state.logicSlice;
   });
   const dispatch = useDispatch();
-  const { go } = useSignalMsg(logicState.target[0], {
+  const { go } = useSignal(logicState.target[0], {
     onStageCallback: e => {
       try {
         //
@@ -308,6 +308,7 @@ const SelectNodeInstance = memo(({ LogicNodesState }: {
       }
     },
   });
+
   const { target, logicNodes } = LogicNodesState;
   return <>{
     (config.config.get(logicNodes[target[0]]?.typeId) as IConfig)({
@@ -340,7 +341,7 @@ const SelectSettingViewInstance = memo(({ NodesState }: {
     return state.logicSlice;
   });
   const dispatch = useDispatch();
-  const { go } = useSignalMsg(logicState.target[0], {
+  const { go } = useSignal(logicState.target[0], {
     onStageCallback: e => {
       try {
         //
@@ -384,7 +385,7 @@ const DefaultSettingView = memo(({
     return state.logicSlice;
   });
   const dispatch = useDispatch();
-  const { go } = useSignalMsg(logicState.target[0], {
+  const { go } = useSignal(logicState.target[0], {
     onStageCallback: e => {
       try {
         //

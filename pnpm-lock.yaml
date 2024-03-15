@@ -113,6 +113,9 @@ dependencies:
   animate.css:
     specifier: ^4.1.1
     version: 4.1.1
+  async:
+    specifier: ^3.2.5
+    version: 3.2.5
   axios:
     specifier: ^1.6.7
     version: 1.6.7
@@ -6016,6 +6019,10 @@ packages:
 
   /asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
+    dev: false
+
+  /async@3.2.5:
+    resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
     dev: false
 
   /asynckit@0.4.0:

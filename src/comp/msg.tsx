@@ -19,14 +19,14 @@ import { parseMakeByFromId } from './signal3.ts';
 export interface IStage {
   data: any;
   errorTipMsg?: string;
-  currentEdge: {
+  currentEdge?: {
     from: string
     to: string
     fromPort: string
     toPort: string
   };
   currentNode: {
-    node: ILogicNode
+    node?: ILogicNode
     talkStatus: 'ok' | 'error' | 'pending'
   };
 }
@@ -43,6 +43,13 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
   });
   const dispatch = useDispatch();
   const go = async () => {
+
+    /**
+     * 路径输出节点数据缓存，
+     * 当节点存在多余两个的出度时，优先选择缓存内的节点数据并输出
+     * 存在remote时，则跳过请求，直接使用缓存输出
+     */
+    const cache:Map<string,any> = new Map()
 
     const runEdgeVis: Set<string> = new Set();
     parseMakeByFromId(
@@ -95,3 +102,4 @@ export const useSignalMsg = (fromNodeId: string, options?: IOptions, callCallbac
     stop,
   };
 };
+
