@@ -1,15 +1,12 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_Ring_get } from '../../store/slice/nodeSlice.ts';
 import ring from '../../assets/widgetIcon/icon-park--cross-ring-two.svg';
+import { of, interval } from 'rxjs';
 
-interface IDataReq {
-  data: number;
-}
-
-//检查器
+//循环器
 export const timeInter = () => {
 
-  const TimeInter = signalLogicNode<IDataReq, IDataReq>({
+  const TimeInter = signalLogicNode<any>({
     id: logic_Ring_get,
     type: 'timeInter',
     src: ring,
@@ -17,38 +14,17 @@ export const timeInter = () => {
     name: '循环',
   });
 
-  TimeInter.signalIn('in-go', ({ fromNodes }) => {
-    console.log({
-      fromNodes,
-    });
-    return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
-    });
+  TimeInter.signalIn('in-go', (value) => {
+    return of(1);
   });
 
-  TimeInter.signalIn('in-stop', ({ fromNodes }) => {
-    console.log({
-      fromNodes,
-    });
-    return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
-    });
+  TimeInter.signalIn('in-stop', (value) => {
+    return of(1);
   });
-  TimeInter.signalOut((params) => {
-    console.log({
-      params,
-    });
-    return new Promise(resolve => {
-     setTimeout(()=>{
-       resolve({
-         data: 12,
-       });
-     },3000)
-    });
+
+  TimeInter.signalOut('out', (value) => {
+    return interval(1000);
   });
+
 
 };

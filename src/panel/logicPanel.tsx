@@ -403,6 +403,7 @@ export const LogicPanel = memo(() => {
         });
       }
 
+
     });
     GRef.current.G?.on('node:mouseup', (args) => {
       console.log(args.node.getProp(), 'mouseup');
@@ -458,7 +459,7 @@ export const LogicPanel = memo(() => {
 
       }
     });
-  }, [logicState.logicNodes, logicState.logicEdges, dispatch, NodeShow, show]);
+  }, [logicState.logicNodes, logicState.logicEdges, NodeShow, show, logicState.signalSet]);
 
 
   return (<>

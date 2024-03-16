@@ -100,11 +100,21 @@ export interface ILs {
   stagPool: IStage[];
   target: string[];
   signalSet: string[];
+  //正在执行任务的fromId集合
+  currentGoingIdList: string[],
+  logicPanel: {
+    //如果存在循环任务时切断逻辑链路如果时true则停止链路逻辑，否则持续执行
+    autoStop: boolean
+  };
 }
 
 export const logicSlice = createSlice({
   name: 'logic',
   initialState: {
+    currentGoingIdList: [],
+    logicPanel: {
+      autoStop: false,
+    },
     target: [],
     logicEdges: [],
     logicNodes: {},
@@ -114,6 +124,12 @@ export const logicSlice = createSlice({
   } as ILs,
   reducers: {
 
+    updateCurrentGoingId: (state, action) => {
+      const { id } = action.payload;
+      if (!state.currentGoingIdList.includes(id)) {
+        state.currentGoingIdList = state.currentGoingIdList.concat([id]);
+      }
+    },
 
     clearStagePool: (state) => {
       state.stagPool = [];
@@ -150,6 +166,7 @@ export const logicSlice = createSlice({
     },
 
     setLogicTarget: (state, action) => {
+      console.log(action.payload, 'sssaction.payload');
       if (Array.isArray(action.payload)) {
         state.target = action.payload;
       }
@@ -246,6 +263,7 @@ export const {
   updateSignalSet,
   clearStagePool,
   pushStagPool,
+  updateCurrentGoingId,
   setLogicTarget,
   updateNodeConfigInfo,
   updateLogicContentImageShowType,

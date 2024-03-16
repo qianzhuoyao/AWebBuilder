@@ -13,17 +13,17 @@ import { mapFieldMixData } from './selectKeyMix.ts';
 import { timeSetter } from './timesSet.ts';
 
 export const nodeBuilder = () => {
-  buildDataReqNode();
-  buildDataSyncNode();
-  buildCacheClearReqNode();
-  buildCacheSetNode();
-  changeSignal();
-  filterMixData();
-  checkPassword();
-  timeOut();
+  // buildDataReqNode();
+  // buildDataSyncNode();
+  // buildCacheClearReqNode();
+  // buildCacheSetNode();
+  // changeSignal();
+  // filterMixData();
+  // checkPassword();
+  // timeOut();
   timeInter();
   handleTrigger();
   viewLogicSlot();
-  mapFieldMixData();
-  timeSetter()
+  // mapFieldMixData();
+  // timeSetter()
 };
