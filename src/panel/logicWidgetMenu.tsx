@@ -1,9 +1,8 @@
 import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import { ITs } from './widgetMenu.tsx';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
-import { useNodeBuilder } from '../Logic/nodes';
 
 
 const CacheMap = memo(() => {

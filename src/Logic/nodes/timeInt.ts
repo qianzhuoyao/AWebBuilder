@@ -41,7 +41,6 @@ export const timeInter = () => {
   });
 
   TimeInter.signalOut('out', (value) => {
-    console.log(value, 'ddddds-s');
     getInitTimer().timer.set(value.id, true);
     getSyncTimeIntConfig().subject.next({
       status: true,

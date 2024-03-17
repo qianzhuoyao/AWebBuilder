@@ -27,7 +27,7 @@ import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
 import { mapNodeBindPort } from '../comp/mapNodePort.ts';
 import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
-import { genLogicConfigMap, IConfigInfo } from '../Logic/nodes/logicConfigMap.ts';
+import { genLogicConfigMap, IConfigInfo, IRemoteReqInfo } from '../Logic/nodes/logicConfigMap.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -247,6 +247,11 @@ const LogicCard = memo(
   },
 );
 
+export const defaultRemote: IRemoteReqInfo = {
+  protocol: 'http',
+  method: 'post',
+  url: '',
+};
 
 const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
 
@@ -259,14 +264,7 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
       };
     case logic_D_get:
       return {
-        remoteReqInfo: {
-          protocol: 'http',
-          method: 'post',
-          type: 'IRemoteReqInfo',
-          url: '',
-          params: '',// kv or JSON
-          desc: '',
-        },
+        remoteReqInfo: defaultRemote,
       };
     default:
       return {};

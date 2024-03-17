@@ -33,7 +33,7 @@ export const parseMakeByFromId = <P, >(
 ) => {
   //广度遍历节点
   const bfs = <T, >(fromId: string, fromEdge: Edge<string, IEdgeMessage> | undefined, params: T | IDefaultParams): Observable<T | IDefaultParams | unknown> => {
-    console.log(fromId, getWDGraph().getOutDegree(fromId), 'ghop');
+    console.log(fromId, getWDGraph().getOutDegree(fromId), genLogicConfigMap(), 'ghop');
     if (getWDGraph().getOutDegree(fromId).length === 0) {
       //任务结束
       effect.logicItemOver(fromId);
@@ -61,7 +61,7 @@ export const parseMakeByFromId = <P, >(
       //子节点的订阅
       const subObservableFn = inputPorts
         .map(target => {
-          const targetConfig = genLogicConfigMap().configInfo.get(fromId);
+          //  const targetConfig = genLogicConfigMap().configInfo.get(fromId);
 
           const fn = genLogicNodeMenuItems().initLogicInMake.get(target.targetPort.split('#')[1]);
           return fn ? {
@@ -69,7 +69,7 @@ export const parseMakeByFromId = <P, >(
             edge: target,
             observable: parseFn(fn, {
               pre: params,
-              config: targetConfig,
+
               id: target.target,
               edge: target,
             }),

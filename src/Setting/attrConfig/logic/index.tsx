@@ -17,7 +17,7 @@ export const setDefaultLogicConfig = () => {
 };
 
 export const AttrConfigInit = (configParams: IConfigTypeParams) => {
-  // remoteGetConfig(configParams);
+  remoteGetConfig(configParams);
   // handleMixConfig(configParams);
   // CacheSetConfig(configParams);
   handleTrigger(configParams);

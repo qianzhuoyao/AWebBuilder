@@ -32,11 +32,8 @@ export interface IViewMapInfo {
 }
 
 export interface IRemoteReqInfo {
-  type: 'IRemoteReqInfo',
   url: string;
   protocol: IProtocol;
-  params: Record<string, string> | string; // kv or JSON
-  desc?: string;
   method: 'post' | 'get';
 }
 

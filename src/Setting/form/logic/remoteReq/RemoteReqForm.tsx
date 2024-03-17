@@ -1,5 +1,4 @@
 import { Formik, Form, FieldArray, FormikProps, Field } from 'formik';
-// import { Icon } from '@iconify-icon/react';
 import type { SVGProps } from 'react';
 import {
   Card,
@@ -17,10 +16,10 @@ import {
   Input,
   CardFooter,
   Tab,
-  Tabs, Switch, Tooltip,
+  Tabs,
 } from '@nextui-org/react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ILs, IProtocol, updateNodeConfigInfo } from '../../../../store/slice/logicSlice.ts';
+import { ILs } from '../../../../store/slice/logicSlice.ts';
 import { memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { arrayToGenObj, objToGenArray } from '../../../../comp/computeTools.ts';
 import ReactJson from 'react-json-view';
@@ -53,31 +52,15 @@ const initialValues: IInitValueType = {
 const RemoteReqCodeForm = memo(() => {
   const mirrorRef = useRef<ReactCodeMirrorRef>(null);
   const { theme } = useTheme();
-  const dispatch = useDispatch();
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
   const onChange = useCallback((value: string, viewUpdate: ViewUpdate) => {
     console.log(value, viewUpdate, JSON.parse(value), 'viewUpdateviewUpdate');
 
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        params: JSON.parse(value),
-      },
-    }));
   }, [logicState.logicNodes, logicState.target]);
 
-  const defaultFormValue = useMemo(() => {
-    if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get') {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
-    } else {
-      return '';
-    }
 
-  }, [logicState.logicNodes, logicState.target]);
   useEffect(() => {
     if (mirrorRef.current?.view) {
       console.log(mirrorRef.current, 'mirrorRef.current');
@@ -86,7 +69,7 @@ const RemoteReqCodeForm = memo(() => {
   }, []);
   return <CodeMirror
     ref={mirrorRef}
-    value={beautify_js(JSON.stringify(arrayToGenObj(defaultFormValue || [])), { indent_size: 2 })}
+    value={beautify_js(JSON.stringify(arrayToGenObj(  [])), { indent_size: 2 })}
     height="200px"
     lang={'json'}
     theme={theme === 'dark' ? 'dark' : 'light'}
@@ -105,39 +88,18 @@ const RemoteReqJSONForm = memo(() => {
     return state.logicSlice;
   });
   const dispatch = useDispatch();
-  const defaultFormValue = useMemo(() => {
-    if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get'
-    ) {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
-    } else {
-      return '';
-    }
-
-  }, [logicState.logicNodes, logicState.target]);
-
-  const updateValue = useCallback((newObj: object) => {
-
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        params: newObj,
-      },
-    }));
 
 
-  }, [logicState.logicNodes, logicState.target]);
 
   return <>
     <ReactJson
       name={'params'}
       theme={theme === 'dark' ? 'solarized' : 'rjv-default'}
-      src={arrayToGenObj(defaultFormValue || [])}
+      src={arrayToGenObj( [])}
 
       onEdit={(e) => {
         console.log(e);
-        updateValue(e.updated_src);
+
       }}
       onSelect={(s) => {
         console.log(s);
@@ -145,11 +107,11 @@ const RemoteReqJSONForm = memo(() => {
       }}
       onAdd={(a) => {
         console.log(a);
-        updateValue(a.updated_src);
+
       }}
       onDelete={(d) => {
         console.log(d);
-        updateValue(d.updated_src);
+
       }}
     />
   </>;
@@ -169,14 +131,7 @@ const RemoteReqForm = memo(() => {
 
   }, [logicState]);
 
-  const defaultFormValue = useMemo(() => {
-    if (logicState.logicNodes[logicState.target[0]].typeId === 'logic_D_get') {
-      return objToGenArray(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.params as Record<string, any>).result;
-    } else {
-      return undefined;
-    }
 
-  }, [logicState.logicNodes, logicState.target]);
 
 
   useEffect(() => {
@@ -197,14 +152,8 @@ const RemoteReqForm = memo(() => {
       } : initialValues}
       onSubmit={async (values) => {
         const JSONObj = arrayToGenObj(values.params || []);
-        dispatch(updateNodeConfigInfo({
-          id: logicState.target[0],
-          infoType: 'remoteReqInfo',
-          configInfo: {
-            ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-            params: JSONObj,
-          },
-        }));
+
+
       }}
     >
       {({ values }) => (
@@ -314,83 +263,27 @@ export const RemoteUrl = memo(() => {
     return state.logicSlice;
   });
 
-  const items: {
-    key: IProtocol,
-    label: string
-  }[] = useMemo(() => [
-    {
-      key: 'https',
-      label: 'https',
-    },
-    {
-      key: 'http',
-      label: 'http',
-    },
-  ], []);
+
 
   const updateUrl = useCallback((url: string) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        url: url,
-      },
-    }));
+
   }, [logicState.logicNodes, logicState.target]);
 
   const updateMethod = useCallback((method: 'post' | 'get') => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        method: method,
-      },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
 
-  const updateDesc = useCallback((desc: string) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        desc: desc,
-      },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
-
-  const updateProtocol = useCallback((protocol: IProtocol) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        protocol: protocol,
-      },
-    }));
   }, [logicState.logicNodes, logicState.target]);
 
 
-  const onHandleChangeStrict = useCallback((checked: boolean) => {
-    console.log(checked, logicState.target[0], 'checked');
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'remoteReqInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo || {}),
-        strict: checked,
-      },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
+
+
+
 
   return <>
     <div style={{
       height: height - 80 + 'px',
     }}>
       <Input
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.url}
+        value={''}
         classNames={{
           base: 'w-full',
           mainWrapper: 'w-full',
@@ -401,7 +294,7 @@ export const RemoteUrl = memo(() => {
               <button>
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">{
-                    `${logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol}://`
+                    `${}://`
                   }</span>
                 </div>
               </button>
@@ -409,22 +302,15 @@ export const RemoteUrl = memo(() => {
             <DropdownMenu
               disallowEmptySelection
               selectionMode="multiple"
-              selectedKeys={new Set(
-                [logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.protocol as IProtocol],
-              )}
+
               aria-label="PROTOCOL"
 
-              items={items}>
-              {(item) => (
-                <DropdownItem
-                  key={item.key}
-                  onClick={() => {
-                    updateProtocol(item.key);
-                  }}
-                >
-                  {item.label}
-                </DropdownItem>
-              )}
+        >
+              <DropdownItem
+
+              >
+                {11}
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         }
@@ -444,15 +330,15 @@ export const RemoteUrl = memo(() => {
         classNames={{
           innerWrapper: 'h-[200px]',
         }}
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.desc}
+        value={''}
         onChange={e => {
-          updateDesc(e.target.value);
+
         }}
       />
       <div className={'flex justify-between items-center h-[60px]'}>
         <RadioGroup
 
-          value={logicState.logicNodes[logicState.target[0]]?.configInfo?.remoteReqInfo?.method}
+          value={''}
           orientation="horizontal"
           onValueChange={e => {
             console.log(e, 'erererer');

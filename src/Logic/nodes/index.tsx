@@ -15,7 +15,7 @@ import { useEffect } from 'react';
 
 export const nodeBuilder = () => {
 
-  // buildDataReqNode();
+  buildDataReqNode();
   // buildDataSyncNode();
   // buildCacheClearReqNode();
   // buildCacheSetNode();
