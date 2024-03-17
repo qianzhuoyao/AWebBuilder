@@ -2,52 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
 import { INodeType } from './nodeSlice.ts';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
-import { IStage } from '../../comp/msg.tsx';
-
-
-export type IProtocol = 'https' | 'http';
-
-
-export interface IFilterListInfo {
-  type: 'IFilterListInfo',
-  logic: string
-}
-
-export interface IMixDataFieldMap {
-  type: 'IMixDataFieldMap',
-  fieldString: string
-}
-
-export interface IBar {
-  x: string;
-  y: string;
-}
-
-export type IInstanceBind = IBar
-
-export interface IViewMapInfo {
-  bindViewNodeId: string;
-  viewType: string
-  instance: IInstanceBind
-  type: 'IViewMapInfo',
-}
-
-export interface IRemoteReqInfo {
-  type: 'IRemoteReqInfo',
-  url: string;
-  protocol: IProtocol;
-  strict: boolean
-  params: Record<string, string> | string; // kv or JSON
-  desc?: string;
-  method: 'post' | 'get';
-}
-
-export type IInfo = {
-  remoteReqInfo?: IRemoteReqInfo
-  viewMapInfo?: IViewMapInfo
-  mixDataFieldMap?: IMixDataFieldMap
-  filterListInfo?: IFilterListInfo
-}
 
 export interface ILogicConfig {
   target: string[];
@@ -66,8 +20,6 @@ export interface ILogicNode {
   width: number;
   height: number;
   imageUrl: string;
-  //节点配置信息
-  configInfo?: IInfo;
   /**
    * 对端句柄
 
@@ -91,17 +43,24 @@ export interface ILogicEdge {
 
 }
 
+//逻辑路基id而不是节点
+type logicId = string
+
 export interface ILs {
   //0 大预览 1 小缩略
   contentImageShowType: 0 | 1;
   logicNodes: Record<string, ILogicNode>;
   logicEdges: ILogicEdge[];
-  //数据池
-  stagPool: IStage[];
   target: string[];
   signalSet: string[];
   //正在执行任务的fromId集合
-  currentGoingIdList: string[],
+  workingNodeIdList: string[],
+  //某发送节点的发送次数
+  sendDugCount: Record<string, Record<logicId, {
+    type: 'success' | 'fail' | 'pending'
+    startTime: number,
+    endTime: number
+  }>>;
   logicPanel: {
     //如果存在循环任务时切断逻辑链路如果时true则停止链路逻辑，否则持续执行
     autoStop: boolean
@@ -111,7 +70,8 @@ export interface ILs {
 export const logicSlice = createSlice({
   name: 'logic',
   initialState: {
-    currentGoingIdList: [],
+    sendDugCount: {},
+    workingNodeIdList: [],
     logicPanel: {
       autoStop: false,
     },
@@ -123,21 +83,40 @@ export const logicSlice = createSlice({
     stagPool: [],
   } as ILs,
   reducers: {
-
-    updateCurrentGoingId: (state, action) => {
+    updateSendDugCount: (state, action) => {
+      const { nodeId, id, type, startTime, endTime } = action.payload;
+      if (!state.sendDugCount[nodeId]) {
+        state.sendDugCount[nodeId] = {};
+      }
+      state.sendDugCount[nodeId][id] = {
+        ...state.sendDugCount[nodeId][id],
+        type,
+        startTime,
+        endTime,
+      };
+    },
+    clearSendDugCount: (state, action) => {
+      const { nodeId } = action.payload;
+      if (!state.sendDugCount[nodeId]) {
+        state.sendDugCount[nodeId] = {};
+      }
+      state.sendDugCount[nodeId] = {};
+    },
+    deleteSendDugCount: (state, action) => {
+      const { nodeId, id } = action.payload;
+      delete state.sendDugCount[nodeId][id];
+    },
+    deleteWorkingNodeIdList: (state, action) => {
       const { id } = action.payload;
-      if (!state.currentGoingIdList.includes(id)) {
-        state.currentGoingIdList = state.currentGoingIdList.concat([id]);
+      state.workingNodeIdList = state.workingNodeIdList.filter(i => i !== id);
+    },
+    updateWorkingNodeIdList: (state, action) => {
+      const { id } = action.payload;
+      if (!state.workingNodeIdList.includes(id)) {
+        state.workingNodeIdList = state.workingNodeIdList.concat([id]);
       }
     },
 
-    clearStagePool: (state) => {
-      state.stagPool = [];
-    },
-
-    pushStagPool: (state, action) => {
-      state.stagPool.push(action.payload);
-    },
 
     removeLogicEdge: (state, action) => {
       const { from, fromPort, to, toPort } = action.payload;
@@ -156,14 +135,6 @@ export const logicSlice = createSlice({
       state.signalSet = action.payload;
     },
 
-    updateNodeConfigInfo: (state, action) => {
-      const { id, configInfo, infoType } = action.payload;
-      console.log(action.payload, 'e>)[id]');
-      if (!infoType) {
-        return;
-      }
-      ((state.logicNodes as Record<string, ILogicNode>)[id].configInfo as Record<string, any>)[infoType] = configInfo;
-    },
 
     setLogicTarget: (state, action) => {
       console.log(action.payload, 'sssaction.payload');
@@ -197,7 +168,7 @@ export const logicSlice = createSlice({
         {
           ...(state.logicNodes as Record<string, ILogicNode>)[id]
           , ...{
-            ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id].ports.map(port => {
+            ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id]?.ports.map(port => {
               if (portType === 'in') {
                 if (port.id === portId.split('#')[1] && port.type === portType) {
                   return {
@@ -260,13 +231,14 @@ export const {
   updateLogicNode,
   addLogicEdge,
   deleteNode,
+  updateSendDugCount,
+  clearSendDugCount,
   updateSignalSet,
-  clearStagePool,
-  pushStagPool,
-  updateCurrentGoingId,
+  updateWorkingNodeIdList,
+  deleteWorkingNodeIdList,
   setLogicTarget,
-  updateNodeConfigInfo,
   updateLogicContentImageShowType,
+  deleteSendDugCount,
   addLogicNode,
 } = logicSlice.actions;
 

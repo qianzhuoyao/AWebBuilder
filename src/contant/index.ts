@@ -13,5 +13,5 @@ export const Node = 'IS_A_NODE' as const;
 export const PANEL_MAIN_BG = 'PANEL_MAIN_BG' as const;
 export const MAIN_CONTAINER = 'MAIN_CONTAINER' as const;
 
-
+export const MUST_FORCE_STOP_SE = 'MUST_FORCE_STOP_SE' as const;
 export const DEFAULT_PANEL_COLOR = 'rgba(35,35,36,1)';

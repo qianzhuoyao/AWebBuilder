@@ -23,9 +23,10 @@ const initConfig = () => {
 
 export const getAttrConfig = createSingleInstance(initConfig);
 
-export type IConfig = (nodeInfo: { target: string[] ,
+export type IConfig = (nodeInfo: {
+  target: string[],
 
-go?:()=>Promise<void>
+  go?: () => Promise<void>
 }) => React.ReactNode
 //注册视图节点配置
 export const signalViewNodeAttrConfig = (nodeViewTypeId: string) => {

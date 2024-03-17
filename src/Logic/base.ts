@@ -58,6 +58,7 @@ const initializeLogicNodeMenuItems = <F>(): IMenu<F> => {
   };
 };
 
+
 export const genLogicNodeMenuItems = createLogicMenuInstance(initializeLogicNodeMenuItems);
 
 

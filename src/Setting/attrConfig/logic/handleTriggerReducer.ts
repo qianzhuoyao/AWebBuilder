@@ -1,9 +1,9 @@
 import { createContext } from 'react';
-import { IStage } from '../../../comp/msg.tsx';
+
 
 
 interface IInitState {
-  stages: IStage[];
+  stages: any[];
 }
 
 export const htInitialState: IInitState = {
@@ -13,7 +13,7 @@ export const htInitialState: IInitState = {
 
 interface IAction {
   type: 'updateStage';
-  payload: IStage[];
+  payload: any[];
 }
 
 

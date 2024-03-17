@@ -2,13 +2,13 @@ import { signalLogicNode } from '../base.ts';
 import { logic_Dug_Trigger } from '../../store/slice/nodeSlice.ts';
 import trigger from '../../assets/widgetIcon/game-icons--click.svg';
 import triggerPick from '../../assets/widgetIcon/game-icons--click2.svg';
-import { of } from 'rxjs';
+import { emitLogic } from './emit.ts';
 
 
 //检查器
 export const handleTrigger = () => {
 
-  const HandleTrigger = signalLogicNode<number>({
+  const HandleTrigger = signalLogicNode<any>({
     id: logic_Dug_Trigger,
     type: 'hTrigger',
     src: trigger,
@@ -18,7 +18,7 @@ export const handleTrigger = () => {
   });
 
   HandleTrigger.signalOut('out', () => {
-    return of(0);
+    return emitLogic();
   });
 
 };

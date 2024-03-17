@@ -1,33 +1,27 @@
 import { remoteGetConfig } from './remoteGetConfig.tsx';
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { CacheSetConfig } from './cacheSetConfig.tsx';
-import { ILs } from '../../../store/slice/logicSlice.ts';
-import { genLogicNodeMenuItems } from '../../../Logic/base.ts';
 import { handleTrigger } from './handleTrigger.tsx';
 import { viewMapping } from './viewMapping.tsx';
 import { FilterDataConfig } from './filterDataConfig.tsx';
 import { handleMixConfig } from './mixConfig.tsx';
-import { INs } from '../../../store/slice/nodeSlice.ts';
+import { TimerIntConfig } from './timerIntConfig.tsx';
+import { IConfigTypeParams } from './configType.ts';
 
 
-export const setDefaultLogicConfig = ({logicState}:{logicState:ILs}) => {
+export const setDefaultLogicConfig = () => {
   const config = signalLogicNodeAttrConfig('DEFAULT-LOGIC-PANEL-CONFIG');
   config.setConfigEle(() => {
-    // const logicState = useSelector((state: { logicSlice: ILs }) => {
-    //   return state.logicSlice;
-    // });
-
-
-    console.log(logicState, genLogicNodeMenuItems(), 'cascascascascasc');
     return <div>-</div>;
   });
 };
 
-export const AttrConfigInit = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
-  remoteGetConfig({NodesState,logicState});
-  handleMixConfig({NodesState,logicState});
-  CacheSetConfig({NodesState,logicState});
-  handleTrigger({NodesState,logicState});
-  viewMapping({NodesState,logicState});
-  FilterDataConfig({NodesState,logicState});
+export const AttrConfigInit = (configParams: IConfigTypeParams) => {
+  // remoteGetConfig(configParams);
+  // handleMixConfig(configParams);
+  // CacheSetConfig(configParams);
+  handleTrigger(configParams);
+  TimerIntConfig(configParams);
+  // viewMapping(configParams);
+  // FilterDataConfig(configParams);
 };

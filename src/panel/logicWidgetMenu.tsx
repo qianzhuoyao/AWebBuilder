@@ -1,9 +1,9 @@
 import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { ITs } from './widgetMenu.tsx';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
-import { nodeBuilder } from '../Logic/nodes';
+import { useNodeBuilder } from '../Logic/nodes';
 
 
 const CacheMap = memo(() => {
@@ -461,8 +461,9 @@ const tabs = [
     content: <TabSlot ele={LogicDebugger}></TabSlot>,
   },
 ];
-nodeBuilder();
+
 export const LogicWidgetMenu = memo(() => {
+
   return (
     <div className="flex h-[calc(100%_-_44px)]">
       <Tabs

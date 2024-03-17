@@ -21,12 +21,13 @@ import {
   drag_size_height,
   drag_size_width,
 } from '../contant';
-import { IClassify, INodeType, addNode, logic_D_get } from '../store/slice/nodeSlice';
+import { IClassify, INodeType, addNode, logic_D_get, logic_Ring_get } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
 import { mapNodeBindPort } from '../comp/mapNodePort.ts';
 import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
+import { genLogicConfigMap, IConfigInfo } from '../Logic/nodes/logicConfigMap.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -246,6 +247,33 @@ const LogicCard = memo(
   },
 );
 
+
+const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
+
+  switch (typeId) {
+    case logic_Ring_get:
+      return {
+        timerConfigInfo: {
+          time: 1000,
+        },
+      };
+    case logic_D_get:
+      return {
+        remoteReqInfo: {
+          protocol: 'http',
+          method: 'post',
+          type: 'IRemoteReqInfo',
+          url: '',
+          params: '',// kv or JSON
+          desc: '',
+        },
+      };
+    default:
+      return {};
+  }
+
+};
+
 export const WidgetIconTemp = memo(
   ({ src, name, typeId, classify, nodeType, tips }: IW) => {
     const key = useId();
@@ -281,7 +309,6 @@ export const WidgetIconTemp = memo(
             return node;
           },
           move: (e, c) => {
-            console.log(e, 'streams');
             if (c) {
               c.style.left = e.pageX + 'px';
               c.style.top = e.pageY + 'px';
@@ -340,14 +367,13 @@ export const WidgetIconTemp = memo(
                   typeId,
                 });
 
-                const defaultConfigInfo = typeId === logic_D_get ? {
-                  remoteReqInfo: {
-                    protocol: 'http',
-                    method: 'post',
-                  },
-                } : {};
+                const logicId = uuidv4();
 
-                const ports = Tem.ports.map((port, index) => {
+                const defaultConfigInfo = setDefaultInfo(typeId);
+
+                genLogicConfigMap().configInfo.set(logicId, defaultConfigInfo);
+
+                const ports = Tem?.ports.map((port, index) => {
                   if (port.type === 'isIn') {
                     return {
                       type: 'in',
@@ -373,14 +399,13 @@ export const WidgetIconTemp = memo(
                   addLogicNode({
                     ports,
                     typeId,
-                    configInfo: defaultConfigInfo,
                     belongClass: classify,
                     x: e.pageX - left,
                     y: e.pageY - top,
                     shape: 'image',
                     width: 40,
                     height: 40,
-                    id: uuidv4(),
+                    id: logicId,
                     imageUrl: c.src,
                   }),
                 );

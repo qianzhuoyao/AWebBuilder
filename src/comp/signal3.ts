@@ -1,23 +1,24 @@
 import { Edge, getWDGraph, IEdgeMessage } from '../DirGraph/weightedDirectedGraph.ts';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
 import { concatMap, mergeMap, Observable, of, takeWhile, tap, throwError } from 'rxjs';
+import { genLogicConfigMap } from '../Logic/nodes/logicConfigMap.ts';
 
 
 //根据路径解析函数
 
-type IDefaultParams = 'start' | 'end' | 'empty'
-
+type IDefaultParams = 'start' | 'end' | 'empty' | 'stop'
 
 interface IEffect<T> {
   edgeRunOver: (edge: Edge<string, IEdgeMessage>, currentId: string, streamValue: T) => void;
   taskErrorRecord: (e: unknown) => void;
   logicItemOver: (id: string) => void;
+  startRun: () => void;
 }
 
 
 const parseFn = <T, >(
-  fn: (params: Observable<unknown>) => Observable<T>,
-  params: Observable<unknown>,
+  fn: (params: T | IDefaultParams) => Observable<T>,
+  params: T | IDefaultParams,
 ) => {
   try {
     return fn(params);
@@ -31,14 +32,17 @@ export const parseMakeByFromId = <P, >(
   effect: IEffect<P>,
 ) => {
   //广度遍历节点
-  const bfs = <T, >(fromId: string, params: T | IDefaultParams): Observable<T | IDefaultParams | unknown> => {
+  const bfs = <T, >(fromId: string, fromEdge: Edge<string, IEdgeMessage> | undefined, params: T | IDefaultParams): Observable<T | IDefaultParams | unknown> => {
     console.log(fromId, getWDGraph().getOutDegree(fromId), 'ghop');
     if (getWDGraph().getOutDegree(fromId).length === 0) {
+      //任务结束
       effect.logicItemOver(fromId);
       return of('end');
     }
     //子节点
     const inputPorts = getWDGraph().getEdges(fromId);
+
+    const currentConfig = genLogicConfigMap().configInfo.get(fromId);
 
     //输出点只允许一个
     if (inputPorts.length) {
@@ -46,15 +50,29 @@ export const parseMakeByFromId = <P, >(
       console.log(outPoint, 'outPoint');
       //当前节点输出值
       const currentObservable = genLogicNodeMenuItems().initLogicOutMake.get(outPoint.split('#')[1]);
-      const currentParams = currentObservable ? currentObservable(params) : of(params);
+      const currentParams = currentObservable ? currentObservable(
+        {
+          config: currentConfig,
+          pre: params,
+          id: fromId,
+          edge: fromEdge,
+        },
+      ) : of(params);
       //子节点的订阅
       const subObservableFn = inputPorts
         .map(target => {
+          const targetConfig = genLogicConfigMap().configInfo.get(fromId);
+
           const fn = genLogicNodeMenuItems().initLogicInMake.get(target.targetPort.split('#')[1]);
           return fn ? {
             id: target.target,
             edge: target,
-            observable: parseFn(fn, currentParams),
+            observable: parseFn(fn, {
+              pre: params,
+              config: targetConfig,
+              id: target.target,
+              edge: target,
+            }),
             // observable: fn(currentParams),
           } : {
             id: target.target,
@@ -64,21 +82,26 @@ export const parseMakeByFromId = <P, >(
         });
 
       console.log(subObservableFn, currentParams, currentObservable, 'subObservableFn');
+
+
       return currentParams?.pipe(
-        takeWhile(() => getWDGraph().getVertices().includes(
-          fromId,
-        )),
         tap(e => {
           console.log(e, 'params');
         }),
+        takeWhile(() => getWDGraph().getVertices().includes(
+          fromId,
+        )),
         concatMap(() =>
           of(...subObservableFn).pipe(
             mergeMap(({ id, observable, edge }) =>
               observable.pipe(
                 mergeMap((z) => {
                   effect.edgeRunOver(edge, id, z as P);
-                  console.log(z, id, 'z0p0');
-                  return bfs(id, z);
+                  if (edge.targetPort.indexOf('in-stop') > -1) {
+                    effect.logicItemOver(fromId);
+                    return of('stop');
+                  }
+                  return bfs(id, edge, z);
                 }),
               ),
             ),
@@ -87,7 +110,11 @@ export const parseMakeByFromId = <P, >(
     }
     return of('end');
   };
-  bfs(origin, 'start').subscribe({
+  bfs(origin, undefined, 'start').pipe(
+    tap(() => {
+      effect.startRun();
+    }),
+  ).subscribe({
     error: (e) => {
       effect.taskErrorRecord(e);
     },

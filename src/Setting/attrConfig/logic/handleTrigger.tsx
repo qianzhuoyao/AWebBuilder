@@ -1,11 +1,12 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_Dug_Trigger } from '../../../store/slice/nodeSlice.ts';
+import { INs, logic_Dug_Trigger } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { TriggerOperation } from '../../form/logic/trigger/triggerOperation.tsx';
 import { TriggerResponse } from '../../form/logic/trigger/triggerResponse.tsx';
+import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
-export const handleTrigger = () => {
+export const handleTrigger = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
   const config = signalLogicNodeAttrConfig(logic_Dug_Trigger);
 
 
@@ -25,17 +26,17 @@ export const handleTrigger = () => {
               <Tab key={'operation'} title={'操作'}>
                 <Card>
                   <CardBody>
-                    <TriggerOperation go={go} />
+                    <TriggerOperation go={go} target={target[0]} />
                   </CardBody>
                 </Card>
               </Tab>
-              <Tab key={'result'} title={'响应'}>
-                <Card>
-                  <CardBody>
-                    <TriggerResponse />
-                  </CardBody>
-                </Card>
-              </Tab>
+              {/*<Tab key={'result'} title={'响应'}>*/}
+              {/*  <Card>*/}
+              {/*    <CardBody>*/}
+              {/*      <TriggerResponse />*/}
+              {/*    </CardBody>*/}
+              {/*  </Card>*/}
+              {/*</Tab>*/}
             </Tabs>
           </div>
 

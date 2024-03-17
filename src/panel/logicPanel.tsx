@@ -67,7 +67,7 @@ const renderNode = (node: ILogicNode) => {
           },
         },
       },
-      items: node.ports.map((item, index) => {
+      items: node?.ports?.map((item, index) => {
         return {
           id: item.type + item.tag + '#' + item.id,
           tag: item.tag,

@@ -11,8 +11,10 @@ import { viewLogicSlot } from './viewSlotBind.ts';
 import { filterMixData } from './filterData.ts';
 import { mapFieldMixData } from './selectKeyMix.ts';
 import { timeSetter } from './timesSet.ts';
+import { useEffect } from 'react';
 
 export const nodeBuilder = () => {
+
   // buildDataReqNode();
   // buildDataSyncNode();
   // buildCacheClearReqNode();
@@ -20,7 +22,7 @@ export const nodeBuilder = () => {
   // changeSignal();
   // filterMixData();
   // checkPassword();
-  // timeOut();
+  timeOut();
   timeInter();
   handleTrigger();
   viewLogicSlot();
