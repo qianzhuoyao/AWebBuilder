@@ -30,6 +30,9 @@ export const timeInter = () => {
 
   TimeInter.signalIn('in-go', (value) => {
     getInitTimer().timer.set(value.id, true);
+    getSyncTimeIntConfig().subject.next({
+      status: true,
+    });
     return of(value?.pre);
   });
 
@@ -47,10 +50,6 @@ export const timeInter = () => {
 
   TimeInter.signalOut('out', (value) => {
     console.log(value, 'TimeInter');
-    getSyncTimeIntConfig().subject.next({
-      status: true,
-    });
-
     return interval(value.config.timerConfigInfo.time || 1000).pipe(
       takeWhile(() => {
         console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc-1');

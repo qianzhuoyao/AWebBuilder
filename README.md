@@ -1,6 +1,9 @@
 0：这是一个开箱即用的低代码项目
 
+## 如过组件不消费则不执行其输出
+
 - 0:注册右侧菜单 （signalLogicNode）
+
 ```tsx
 import { signalLogicNode } from '../base.ts';
 import { logic_Cache_clear } from '../../store/slice/nodeSlice.ts';
@@ -13,7 +16,7 @@ interface IDataReq {
 export const buildCacheClearReqNode = () => {
 
   const cacheClearReq = signalLogicNode<IDataReq, IDataReq>({
-  //必须预先注册一个关于组件的声明id，这个id在nodeSlice内注册
+    //必须预先注册一个关于组件的声明id，这个id在nodeSlice内注册
     id: logic_Cache_clear,
     //类型需要声明所属范围
     type: 'cache',
@@ -46,10 +49,12 @@ export const buildCacheClearReqNode = () => {
       });
     });
   });
-  
+
 };
 ```
+
 - 注册配置项 (signalLogicNodeAttrConfig)
+
 ```tsx
 export const remoteGetConfig = () => {
   //DEFAULT-LOGIC-PANEL-CONFIG 表示点击空白面板
@@ -59,7 +64,7 @@ export const remoteGetConfig = () => {
   config.setConfigEle(nodeInfo => {
     if (nodeInfo.target.length > 0) {
       return <>
-       xxx
+        xxx
       </>;
     }
   });
@@ -67,12 +72,13 @@ export const remoteGetConfig = () => {
 ```
 
 - 开启逻辑路径(useSignalMsg)
+
 ```tsx
 export const setDefaultLogicConfig = () => {
   //signalLogicNodeAttrConfig 是注册 组件 配置项组件
   //
   const config = signalLogicNodeAttrConfig('DEFAULT-LOGIC-PANEL-CONFIG');
- //setConfigEle 返回一个JSX.Element，用于插入组件
+  //setConfigEle 返回一个JSX.Element，用于插入组件
   config.setConfigEle(() => {
     const logicState = useSelector((state: { logicSlice: ILs }) => {
       return state.logicSlice;
