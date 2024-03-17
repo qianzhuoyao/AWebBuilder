@@ -1,7 +1,7 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_Ring_get } from '../../store/slice/nodeSlice.ts';
 import ring from '../../assets/widgetIcon/icon-park--cross-ring-two.svg';
-import { of, interval, takeWhile } from 'rxjs';
+import { of, interval, takeWhile, defer, tap } from 'rxjs';
 import { MUST_FORCE_STOP_SE } from '../../contant';
 import { createSingleInstance } from '../../comp/createSingleInstance.ts';
 import { getSyncTimeIntConfig } from '../../Setting/form/logic/timer/timeConfig.tsx';
@@ -29,25 +29,32 @@ export const timeInter = () => {
   });
 
   TimeInter.signalIn('in-go', (value) => {
-    return of(value);
+    getInitTimer().timer.set(value.id, true);
+    return of(value?.pre);
   });
 
   TimeInter.signalIn('in-stop', (value) => {
-    getInitTimer().timer.set(value.id, false);
-    getSyncTimeIntConfig().subject.next({
-      status: false,
-    });
-    return of(MUST_FORCE_STOP_SE);
+    return defer(() => of(MUST_FORCE_STOP_SE)).pipe(
+      tap(() => {
+        getInitTimer().timer.set(value.id, false);
+        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc');
+        getSyncTimeIntConfig().subject.next({
+          status: false,
+        });
+      }),
+    );
   });
 
   TimeInter.signalOut('out', (value) => {
-    getInitTimer().timer.set(value.id, true);
+    console.log(value, 'TimeInter');
     getSyncTimeIntConfig().subject.next({
       status: true,
     });
+
     return interval(value.config.timerConfigInfo.time || 1000).pipe(
       takeWhile(() => {
-        return !!getInitTimer().timer.get(value.id);
+        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc-1');
+        return !!getInitTimer().timer.get(value.id) && value?.pre !== MUST_FORCE_STOP_SE;
       }),
     );
   });

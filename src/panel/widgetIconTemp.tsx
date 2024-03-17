@@ -21,7 +21,7 @@ import {
   drag_size_height,
   drag_size_width,
 } from '../contant';
-import { IClassify, INodeType, addNode, logic_D_get, logic_Ring_get } from '../store/slice/nodeSlice';
+import { IClassify, INodeType, addNode, logic_D_get, logic_Ring_get, logic_TO_get } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
@@ -260,6 +260,12 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
       return {
         timerConfigInfo: {
           time: 1000,
+        },
+      };
+    case logic_TO_get:
+      return {
+        timerOutConfigInfo: {
+          timeOut: 10000,
         },
       };
     case logic_D_get:

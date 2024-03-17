@@ -18,6 +18,10 @@ export interface ITimerConfigInfo {
   time: number;
 }
 
+export interface ITimerOutConfigInfo {
+  timeOut: number;
+}
+
 export interface IMixDataFieldMap {
   type: 'IMixDataFieldMap',
   fieldString: string
@@ -44,6 +48,7 @@ export interface IConfigInfo {
   mixDataFieldMap?: IMixDataFieldMap;
   filterListInfo?: IFilterListInfo;
   timerConfigInfo?: ITimerConfigInfo;
+  timerOutConfigInfo?: ITimerOutConfigInfo;
 }
 
 const logicConfigMap = () => {

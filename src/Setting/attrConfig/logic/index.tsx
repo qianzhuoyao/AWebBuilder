@@ -7,6 +7,7 @@ import { FilterDataConfig } from './filterDataConfig.tsx';
 import { handleMixConfig } from './mixConfig.tsx';
 import { TimerIntConfig } from './timerIntConfig.tsx';
 import { IConfigTypeParams } from './configType.ts';
+import { TimerOutConfig } from './timeOutConfig.tsx';
 
 
 export const setDefaultLogicConfig = () => {
@@ -19,6 +20,7 @@ export const setDefaultLogicConfig = () => {
 export const AttrConfigInit = (configParams: IConfigTypeParams) => {
   remoteGetConfig(configParams);
   // handleMixConfig(configParams);
+  TimerOutConfig(configParams)
   // CacheSetConfig(configParams);
   handleTrigger(configParams);
   TimerIntConfig(configParams);

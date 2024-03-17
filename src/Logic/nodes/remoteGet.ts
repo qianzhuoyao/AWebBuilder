@@ -22,6 +22,7 @@ export const buildDataReqNode = () => {
 
 
     return from(new Promise((resolve, reject) => {
+      console.log(value,'dfafgsass');
       const query = () => fetch(value?.config?.remoteReqInfo?.protocol + '://' + value.config?.remoteReqInfo?.url || '',
         {
           method: value.config?.remoteReqInfo?.method || 'post',
@@ -30,7 +31,7 @@ export const buildDataReqNode = () => {
         reject(e);
       });
       query().then(res => {
-        console.log('dfafgsass');
+
         resolve({
           data: res,
         });

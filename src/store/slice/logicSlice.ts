@@ -52,7 +52,7 @@ export interface ILs {
   logicNodes: Record<string, ILogicNode>;
   logicEdges: ILogicEdge[];
   target: string[];
-  signalSet: string[];
+  signalSet: { source: string, target: string }[];
   //正在执行任务的fromId集合
   workingNodeIdList: string[],
   //某发送节点的发送次数
@@ -131,8 +131,12 @@ export const logicSlice = createSlice({
       );
     },
 
+    clearSignalSet: (state) => {
+      state.signalSet = []
+    },
+
     updateSignalSet: (state, action) => {
-      state.signalSet = action.payload;
+      state.signalSet = state.signalSet.concat(action.payload);
     },
 
 
@@ -226,6 +230,7 @@ export const logicSlice = createSlice({
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
+  clearSignalSet,
   removeLogicEdge,
   updateLogicPortsNode,
   updateLogicNode,

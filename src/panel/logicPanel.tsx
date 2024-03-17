@@ -110,8 +110,14 @@ export const LogicPanel = memo(() => {
   useEffect(() => {
     GRef.current.G?.getEdges().map(edge => {
       console.log(edge.getSourcePortId(), logicState.signalSet, 'edge-edge');
-      if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
-        && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
+      // if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
+      //   && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
+      // )
+      if (
+        logicState.signalSet.some(item =>
+          item.target === edge.getTargetCell()?.getProp().nodeGId
+          && item.source === edge.getSourceCell()?.getProp().nodeGId,
+        )
       ) {
         dispatch(updateLogicPortsNode({
           id: edge.getSourceNode()?.getProp().nodeGId,
@@ -385,8 +391,13 @@ export const LogicPanel = memo(() => {
     });
     GRef.current.G?.on('edge:added', ({ edge }) => {
       //连接后，默认无信号
-      if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
-        && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
+      if (
+        logicState.signalSet.some(item =>
+          item.target === edge.getTargetCell()?.getProp().nodeGId
+          && item.source === edge.getSourceCell()?.getProp().nodeGId,
+        )
+        // logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
+        // && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
       ) {
         edge.setAttrs({
           line: {

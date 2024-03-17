@@ -1,6 +1,6 @@
 import { Edge, getWDGraph, IEdgeMessage } from '../DirGraph/weightedDirectedGraph.ts';
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
-import { concatMap, mergeMap, Observable, of, takeWhile, tap, throwError } from 'rxjs';
+import { concatMap, defer, mergeMap, Observable, of, takeUntil, takeWhile, tap, throwError } from 'rxjs';
 import { genLogicConfigMap } from '../Logic/nodes/logicConfigMap.ts';
 
 
@@ -11,7 +11,9 @@ type IDefaultParams = 'start' | 'end' | 'empty' | 'stop'
 interface IEffect<T> {
   edgeRunOver: (edge: Edge<string, IEdgeMessage>, currentId: string, streamValue: T) => void;
   taskErrorRecord: (e: unknown) => void;
+  toLoopStop: (edge: Edge<string, IEdgeMessage>, currentId: string, streamValue: T) => void;
   logicItemOver: (id: string) => void;
+  complete: (id: string) => void;
   startRun: () => void;
 }
 
@@ -47,7 +49,7 @@ export const parseMakeByFromId = <P, >(
     //输出点只允许一个
     if (inputPorts.length) {
       const outPoint = getWDGraph().getEdges(fromId)[0].sourcePort;
-      console.log(outPoint, 'outPoint');
+      console.log(outPoint, inputPorts, 'outPoint');
       //当前节点输出值
       const currentObservable = genLogicNodeMenuItems().initLogicOutMake.get(outPoint.split('#')[1]);
       const currentParams = currentObservable ? currentObservable(
@@ -91,21 +93,26 @@ export const parseMakeByFromId = <P, >(
         takeWhile(() => getWDGraph().getVertices().includes(
           fromId,
         )),
-        concatMap(() =>
-          of(...subObservableFn).pipe(
+        concatMap((self) =>
+          defer(() => of(...subObservableFn)).pipe(
             mergeMap(({ id, observable, edge }) =>
               observable.pipe(
+                tap(a => {
+                  console.log(a, 'fgffgobservable');
+                }),
                 mergeMap((z) => {
+                  console.log(edge, self, 'fgffgobservafffble');
                   effect.edgeRunOver(edge, id, z as P);
                   if (edge.targetPort.indexOf('in-stop') > -1) {
-                    effect.logicItemOver(fromId);
-                    return of('stop');
+                    effect.toLoopStop(edge, id, z as P);
                   }
+
                   return bfs(id, edge, z);
                 }),
               ),
             ),
-          )),
+          ),
+        ),
       ) || of('empty');
     }
     return of('end');
@@ -115,6 +122,9 @@ export const parseMakeByFromId = <P, >(
       effect.startRun();
     }),
   ).subscribe({
+    complete: () => {
+      effect.complete(origin);
+    },
     error: (e) => {
       effect.taskErrorRecord(e);
     },
