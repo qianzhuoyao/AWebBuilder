@@ -100,6 +100,7 @@ const renderNode = (node: ILogicNode) => {
 const usePaintNodes = (Graph: Graph | null) => {
   const layerLogicNode = useFilterLogicNode();
   useEffect(() => {
+    Graph?.clearCells();
     const nodeIdMap = new Map<string, Node>();
     layerLogicNode.map(node => {
       const GNode = Graph?.addNode(renderNode(node));
@@ -130,7 +131,6 @@ const usePaintNodes = (Graph: Graph | null) => {
 export const LogicPanel = memo(() => {
   const GRef = useRef<GraphPanel>({ G: null });
   const dispatch = useDispatch();
-  GRef.current.G?.clearCells();
   //挂载上所有节点
   usePaintNodes(GRef.current.G);
   useEffect(() => {

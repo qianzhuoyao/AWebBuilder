@@ -1,7 +1,6 @@
 //预览
 
 
-import { BaseChart } from '../node/chart.tsx';
 import { Temp } from '../panel/operation.tsx';
 
 
@@ -33,12 +32,6 @@ export const Demo = () => {
                     PanelState={panel}
                     NodesState={data}></Temp>
             </div>
-            // <BaseChart
-            //   type={node.instance.type}
-            //   width={node.w}
-            //   height={node.w}
-            //   options={node.instance.option}
-            // ></BaseChart>
           );
         } else {
           return <>-</>;
