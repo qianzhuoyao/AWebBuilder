@@ -21,7 +21,15 @@ import {
   drag_size_height,
   drag_size_width,
 } from '../contant';
-import { IClassify, INodeType, addNode, logic_D_get, logic_Ring_get, logic_TO_get } from '../store/slice/nodeSlice';
+import {
+  IClassify,
+  INodeType,
+  addNode,
+  logic_D_get,
+  logic_Ring_get,
+  logic_TO_get,
+  INs,
+} from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode, ILogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
@@ -30,6 +38,8 @@ import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
 import { genLogicConfigMap, IConfigInfo, IRemoteReqInfo } from '../Logic/nodes/logicConfigMap.ts';
 import { addPortNodeMap, getPortStatus } from '../node/portStatus.ts';
 import { createNode } from './logicPanelEventSubscribe.ts';
+import { getLayerContent, getLayers, updateLogicNodesInLayer, updateViewNodesInLayer } from './layers.ts';
+import { IWls } from '../store/slice/widgetSlice.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -289,6 +299,14 @@ export const WidgetIconTemp = memo(
     const PanelState = useSelector((state: { panelSlice: IPs }) => {
       return state.panelSlice;
     });
+    const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+      return state.widgetSlice;
+    });
+    const currentLayer = getLayerContent(widgetState.currentLayerId);
+
+    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+      return state.viewNodesSlice;
+    });
 
     useEffect(() => {
       const subscription = setWidgetStream<HTMLImageElement | null, undefined>(
@@ -334,6 +352,7 @@ export const WidgetIconTemp = memo(
                 const w = drag_size_width * PanelState.tickUnit;
                 const h = drag_size_height * PanelState.tickUnit;
                 const { x, y } = pointer;
+                const viewNodeId = uuidv4();
                 dispatch(
                   addNode({
                     x: x * PanelState.tickUnit,
@@ -341,7 +360,7 @@ export const WidgetIconTemp = memo(
                     w,
                     h,
                     z: 10,
-                    id: uuidv4(),
+                    id: viewNodeId,
                     classify,
                     nodeType,
                     alias: name + '@' + uuidv4(),
@@ -351,6 +370,13 @@ export const WidgetIconTemp = memo(
                     },
                   }),
                 );
+                setTimeout(() => {
+                  console.log(NodesState, currentLayer?.layerNameNodesOfView, getLayers(), 'currentLayer?.layerNameNodesOfView');
+                  updateViewNodesInLayer(
+                    currentLayer?.layerNameNodesOfView || '',
+                    viewNodeId,
+                  );
+                }, 0);
               } else {
                 toast.error('目标面板应该是视图层');
               }
@@ -408,6 +434,9 @@ export const WidgetIconTemp = memo(
                     });
                   }
                 });
+                //widgetMapState
+
+
                 createNode({
                   typeId,
                   belongClass: classify,
@@ -432,6 +461,13 @@ export const WidgetIconTemp = memo(
                     imageUrl: c.src,
                   }),
                 );
+
+                setTimeout(() => {
+                  updateLogicNodesInLayer(
+                    currentLayer?.layerNameNodesOfLogic || '',
+                    logicId,
+                  );
+                }, 0);
               } else {
                 toast.error('目标面板应该是逻辑层');
               }
@@ -446,19 +482,7 @@ export const WidgetIconTemp = memo(
       return () => {
         subscription?.unsubscribe();
       };
-    }, [
-      PanelState.offset,
-      PanelState.rulerMinX,
-      PanelState.rulerMinY,
-      PanelState.tickUnit,
-      classify,
-      dispatch,
-      key,
-      name,
-      nodeType,
-      src,
-      typeId,
-    ]);
+    }, [NodesState, PanelState.offset, PanelState.rulerMinX, PanelState.rulerMinY, PanelState.tickUnit, classify, currentLayer?.layerNameNodesOfLogic, currentLayer?.layerNameNodesOfView, dispatch, key, name, nodeType, src, typeId]);
 
     return (
 

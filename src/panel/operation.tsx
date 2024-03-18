@@ -16,6 +16,7 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
 import { ItemParams } from 'react-contexify';
+import { useFilterLogicNode, useFilterViewNode } from './useFilter.tsx';
 
 export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
   NodesState: INs,
@@ -140,7 +141,7 @@ export const NodeSlot = memo(
 const NodeContainer = memo(() => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
-
+  const layerViewNode = useFilterViewNode();
   const removeViewNode = useCallback((params: ItemParams) => {
     console.log(params, ';params');
     dispatch(deleteListItem({ idList: [params.props.id] }));
@@ -205,7 +206,7 @@ const NodeContainer = memo(() => {
       dispatch(moveNode([]));
     }
 
-  }, [NodesState.moveTo, PanelState.tickUnit]);
+  }, [NodesState.moveTo, PanelState.tickUnit, dispatch]);
 
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
@@ -316,7 +317,7 @@ const NodeContainer = memo(() => {
       <div id={PANEL_MAIN_BG} className="relative w-full h-full elements" style={{
         background: PanelState.panelColor,
       }}>
-        {[...Object.values(NodesState.list)].map((node) => {
+        {layerViewNode.map((node) => {
           return <div
             onContextMenu={(e) => {
               console.log(e, 'sdefffffffff');

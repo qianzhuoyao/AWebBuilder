@@ -13,6 +13,7 @@ import { useSceneContext } from '../menu/context.tsx';
 import { ItemParams, TriggerEvent } from 'react-contexify';
 import { findPortInfo, getPortNodeMap, updateConnectStatus } from '../node/portStatus.ts';
 import { deleteSubNode, subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
+import { useFilterLogicNode } from './useFilter.tsx';
 
 
 interface GraphPanel {
@@ -96,14 +97,43 @@ const renderNode = (node: ILogicNode) => {
 };
 
 
-export const LogicPanel = memo(() => {
-
-  const GRef = useRef<GraphPanel>({ G: null });
-
-  const dispatch = useDispatch();
-
+const usePaintNodes = (Graph: Graph | null) => {
+  const layerLogicNode = useFilterLogicNode();
   useEffect(() => {
-    //挂载上所有节点
+    const nodeIdMap = new Map<string, Node>();
+    layerLogicNode.map(node => {
+      const GNode = Graph?.addNode(renderNode(node));
+      if (GNode) {
+        nodeIdMap.set(node.id, GNode);
+      }
+    });
+    console.log(getWDGraph().getAllEdges(), 'getAllEdges');
+    getWDGraph().getAllEdges().map(edge => {
+      const source = nodeIdMap.get(edge.source);
+      const target = nodeIdMap.get(edge.target);
+      if (source && target) {
+        Graph?.addEdge({
+          source: {
+            cell: source.id,
+            port: edge.sourcePort, // 链接桩 ID
+          },
+          target: {
+            cell: target.id,
+            port: edge.targetPort, // 链接桩 ID
+          },
+        });
+      }
+    });
+  }, [Graph, layerLogicNode]);
+};
+
+export const LogicPanel = memo(() => {
+  const GRef = useRef<GraphPanel>({ G: null });
+  const dispatch = useDispatch();
+  GRef.current.G?.clearCells();
+  //挂载上所有节点
+  usePaintNodes(GRef.current.G);
+  useEffect(() => {
     //逻辑流走向
     const updateEdgeSubscription = subscribeUpdateEdge(
       (nodeIdList) => {

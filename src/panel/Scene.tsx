@@ -37,7 +37,7 @@ import {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IWs, updateWidgetMapShow } from '../store/slice/widgetMapSlice';
-import { AR_PANEL_DOM_ID, MAIN_CONTAINER } from '../contant';
+import { AR_PANEL_DOM_ID, MAIN_CONTAINER, MAIN_LAYER } from '../contant';
 import { IPs, updateCurrentSTab } from '../store/slice/panelSlice';
 import {
   INs,
@@ -50,6 +50,14 @@ import { LogicPanel } from './logicPanel.tsx';
 import type { SVGProps } from 'react';
 import { ILs } from '../store/slice/logicSlice.ts';
 import { useAutoHeight } from '../comp/useAutoHeight.tsx';
+import {
+  addLayer,
+  subscribeLayerCreate,
+} from './layers.ts';
+import { v4 } from 'uuid';
+import { ReactKey } from '@react-awesome-query-builder/mui';
+import { updateCurrentLayer } from '../store/slice/widgetSlice.ts';
+import { useFilterLogicNode, useFilterViewNode } from './useFilter.tsx';
 
 
 export function MaterialSymbolsCreateNewFolderOutline(props: SVGProps<SVGSVGElement>) {
@@ -252,15 +260,6 @@ const SceneLayer = memo(() => {
               <IcBaselineKeyboard className="cursor-pointer mr-2"
                                   onClick={() => setHotKeyOpen(!hotKeyOpen)}></IcBaselineKeyboard>
             </div>
-            {/*<Icon*/}
-            {/*  icon="material-symbols:keyboard"*/}
-            {/*  className="cursor-pointer mr-2"*/}
-            {/*  height={16}*/}
-            {/*  width={16}*/}
-            {/*  onClick={() => {*/}
-            {/*    setHotKeyOpen(!hotKeyOpen);*/}
-            {/*  }}*/}
-            {/*/>*/}
           </Tooltip>
           <Tooltip
             color={PanelState.lockTransform ? 'danger' : 'success'}
@@ -278,12 +277,6 @@ const SceneLayer = memo(() => {
                 }
               </>
             </div>
-            {/*<Icon*/}
-            {/*  icon={PanelState.lockTransform ? 'uis:lock' : 'uis:unlock'}*/}
-            {/*  className="cursor-pointer mr-2"*/}
-            {/*  height={16}*/}
-            {/*  width={16}*/}
-            {/*/>*/}
           </Tooltip>
           <Tooltip
             color={PanelState.lockScale ? 'danger' : 'success'}
@@ -294,12 +287,6 @@ const SceneLayer = memo(() => {
             <Chip
               startContent={
                 <CarbonIntentRequestScaleIn className="cursor-pointer mx-1" />
-                // <Icon
-                //   icon="carbon:intent-request-scale-in"
-                //   className="cursor-pointer mx-1"
-                //   height={16}
-                //   width={16}
-                // />
               }
               variant="faded"
               color={PanelState.lockScale ? 'danger' : 'success'}
@@ -351,7 +338,10 @@ const widgetMapTabs = [
   },
 ];
 
+
 const SceneWidgetMap = memo(() => {
+  const layerViewNode = useFilterViewNode();
+  const layerLogicNode = useFilterLogicNode();
   const dispatch = useDispatch();
   const [currentType, setCurrentType] = useState<'logic_map_list' | 'view_map_list'>('view_map_list');
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
@@ -359,7 +349,6 @@ const SceneWidgetMap = memo(() => {
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
-
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
@@ -397,6 +386,7 @@ const SceneWidgetMap = memo(() => {
     },
     [dispatch],
   );
+
 
   const onHandleCopy = useCallback(
     (id: string) => {
@@ -437,31 +427,32 @@ const SceneWidgetMap = memo(() => {
           height: height - 100 + 'px',
         }}>
           {currentType === 'logic_map_list' ? <>{
-              [...Object.values(logicState.logicNodes)].map(node => {
-                return <>
-                  <Card
-                    shadow="sm"
-                    key={node.id}
-                    isPressable
-                    className="w-full my-1"
-                    style={{
-                      border: logicState.target.includes(node.id)
-                        ? '1px solid #006FEE'
-                        : '',
-                    }}
-                    onPress={() => console.log('item pressed')}
-                  >
-                    <CardBody className="overflow-visible p-1">
-                      <img src={node.imageUrl} alt="" className={'w-full h-[55px]'} />
-                    </CardBody>
-                    <CardFooter className="text-small justify-center items-center">
-                      <small>{node.belongClass}</small>
-                    </CardFooter>
-                  </Card></>;
-              })
+              layerLogicNode
+                .map(node => {
+                  return <>
+                    <Card
+                      shadow="sm"
+                      key={node.id}
+                      isPressable
+                      className="w-full my-1"
+                      style={{
+                        border: logicState.target.includes(node.id)
+                          ? '1px solid #006FEE'
+                          : '',
+                      }}
+                      onPress={() => console.log('item pressed')}
+                    >
+                      <CardBody className="overflow-visible p-1">
+                        <img src={node.imageUrl} alt="" className={'w-full h-[55px]'} />
+                      </CardBody>
+                      <CardFooter className="text-small justify-center items-center">
+                        <small>{node.belongClass}</small>
+                      </CardFooter>
+                    </Card></>;
+                })
             }</>
             :
-            <>{[...Object.values(NodesState.list)].map((node: IViewNode) => {
+            <>{layerViewNode.map((node: IViewNode) => {
               return (
                 <Card
                   shadow="sm"
@@ -524,18 +515,7 @@ const AContent = memo(() => {
   );
 });
 
-const SLayerTabs = [
-  {
-    id: 'layer1',
-    label: '图层1',
-    content: <AContent></AContent>,
-  },
-  // {
-  //   id: 'layer-Create',
-  //   label: '图层2',
-  //   content: <SceneLayer></SceneLayer>,
-  // },
-];
+
 export const Scene = memo(() => {
   const dispatch = useDispatch();
 
@@ -582,6 +562,14 @@ export const Scene = memo(() => {
     }
   }, [widgetMapState]);
 
+  const onCreateNewLayer = useCallback(() => {
+    const layerId = v4();
+    const viewLayerId = v4();
+    const logicLayerId = v4();
+    addLayer(layerId, logicLayerId, viewLayerId);
+  }, []);
+
+
   return (
     <div id={MAIN_CONTAINER} className="w-full h-full flex relative overflow-hidden">
       <div className="absolute left-[14px]">
@@ -593,13 +581,6 @@ export const Scene = memo(() => {
           className="m-1"
           onClick={onHandleOpenWidMap}
         >
-          {/*<Icon*/}
-          {/*  icon={*/}
-          {/*    widgetMapState.show*/}
-          {/*      ? 'mdi:arrow-collapse-left'*/}
-          {/*      : 'mdi:arrow-collapse-right'*/}
-          {/*  }*/}
-          {/*/>*/}
           {widgetMapState.show ? <MdiArrowCollapseLeft></MdiArrowCollapseLeft> :
             <MdiArrowCollapseRight></MdiArrowCollapseRight>}
         </Button>
@@ -612,33 +593,72 @@ export const Scene = memo(() => {
           variant="light"
           aria-label="locale"
           className="m-1"
+          onClick={onCreateNewLayer}
         >
           {/*<Icon icon="gridicons:create" />*/}
           <MaterialSymbolsCreateNewFolderOutline></MaterialSymbolsCreateNewFolderOutline>
         </Button>
       </div>
-      <Tabs
-        aria-label="Dynamic tabs"
-        size="sm"
-        items={SLayerTabs}
-        color="primary"
-        radius="md"
-        classNames={{
-          tab: '',
-          tabList: 'map-a-left-vis-tab flex flex-col mt-[80px]',
-          panel: 'p-0 bg-default-100 h-[calc(100%)] w-[100%]',
-          cursor: 'rounded-md',
-          base: 'map-a-left-vis bg-default-50 p-1 flex justify-center',
-        }}
-      >
-        {(item) => (
-          <Tab key={item.id} title={item.label}>
-            <Card className="rounded-none h-[100%]">
-              <CardBody className="p-0">{item.content}</CardBody>
-            </Card>
-          </Tab>
-        )}
-      </Tabs>
+      <LayerContent></LayerContent>
     </div>
   );
+});
+
+const LayerContent = memo(() => {
+
+  const dispatch = useDispatch();
+
+  const [sLayerTabs, setSLayerTabs] = useState<{
+    id: string
+    label: string
+  }[]>([{
+    id: MAIN_LAYER,
+    label: '主图层',
+  }]);
+
+  useEffect(() => {
+    const sub = subscribeLayerCreate(params => {
+      console.log(params, 'paramsssss');
+      setSLayerTabs(cur => {
+        return cur.concat([{
+          id: params.layerName,
+          label: '副图层',
+        }]);
+      });
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
+  const onHandleSelectLayer = useCallback((key: ReactKey) => {
+    dispatch(updateCurrentLayer(key));
+  }, [dispatch]);
+
+  return <>
+    <Tabs
+      aria-label="Dynamic tabs"
+      size="sm"
+      items={sLayerTabs}
+      color="primary"
+      radius="md"
+      classNames={{
+        tab: '',
+        tabList: 'map-a-left-vis-tab flex flex-col mt-[80px]',
+        panel: 'p-0 bg-default-100 h-[calc(100%)] w-[100%]',
+        cursor: 'rounded-md',
+        base: 'map-a-left-vis bg-default-50 p-1 flex justify-center',
+      }}
+      onSelectionChange={(key) => onHandleSelectLayer(key)}
+    >
+      {(item) => (
+        <Tab key={item.id} title={item.label}></Tab>
+      )}
+    </Tabs>
+    <Card className="rounded-none h-[100%] w-full">
+      <CardBody className="p-0">
+        <AContent></AContent>
+      </CardBody>
+    </Card>
+  </>;
 });
