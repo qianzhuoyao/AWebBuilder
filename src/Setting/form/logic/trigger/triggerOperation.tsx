@@ -122,9 +122,10 @@ export const TriggerOperation = memo(({ go, target }: {
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
-  console.log(target, logicState, 'target-target');
+
   const handleClick = () => {
     go && go();
+    console.log(target, logicState, 'tarssget-target');
   };
 
   const onClear = useCallback(() => {

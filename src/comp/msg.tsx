@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { clearSignalSet, ILs, updateSendDugCount, updateSignalSet } from '../store/slice/logicSlice.ts';
+import { ILs, updateSendDugCount } from '../store/slice/logicSlice.ts';
 import { parseMakeByFromId } from './signal3.ts';
 import { pushLogicMap } from '../Logic/nodes/emit.ts';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
+import { updateEdge } from '../panel/logicPanelEventSubscribe.ts';
 
 export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
   source: string,
@@ -27,7 +28,9 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
         complete: () => {
         },
         toLoopStop: () => {
-          dispatch(clearSignalSet());
+          setTimeout(() => {
+            updateEdge([]);
+          }, 500);
         },
         startRun: () => {
           console.log(logicState.sendDugCount, logicId, 'start-p-0');
@@ -57,7 +60,7 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
           if (callCallback) {
             callCallback(runEdgeVis);
           }
-          dispatch(updateSignalSet([...runEdgeVis]));
+          updateEdge([...runEdgeVis]);
         },
         logicItemOver: () => {
           console.log('eedd999');
@@ -72,7 +75,7 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
           }, 0);
           setTimeout(() => {
             runEdgeVis = [];
-            dispatch(clearSignalSet());
+            updateEdge([]);
           }, 500);
         },
       },

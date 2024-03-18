@@ -20,17 +20,6 @@ export interface ILogicNode {
   width: number;
   height: number;
   imageUrl: string;
-  /**
-   * 对端句柄
-
-   */
-  ports: {
-    type: 'in' | 'out',
-    portName: string,
-    tag: number,
-    id: string,
-    pointStatus: 0 | 1 | 2; // 0 无连接 1 信号存在时异常或者无信号 2 信号存在时正常
-  }[];
 }
 
 

@@ -1,19 +1,19 @@
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { Graph, Node } from '@antv/x6';
 import { LOGIC_PANEL_DOM_ID } from '../contant';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
-  addLogicEdge, deleteNode,
-  ILogicNode,
-  ILs, removeLogicEdge, setLogicTarget,
+  deleteNode,
+  ILogicNode, setLogicTarget,
   updateLogicNode,
-  updateLogicPortsNode,
 } from '../store/slice/logicSlice';
 import ReactDOM from 'react-dom';
 import { toast } from 'react-toastify';
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { useSceneContext } from '../menu/context.tsx';
 import { ItemParams, TriggerEvent } from 'react-contexify';
+import { findPortInfo, getPortNodeMap, updateConnectStatus } from '../node/portStatus.ts';
+import { subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
 
 
 interface GraphPanel {
@@ -29,6 +29,7 @@ const colorSet = (color: 0 | 1 | 2) => {
 
 
 const renderNode = (node: ILogicNode) => {
+  const ports = getPortNodeMap(node.id);
   console.log(node, 'nodessss');
   return {
     shape: node.shape,
@@ -67,28 +68,29 @@ const renderNode = (node: ILogicNode) => {
           },
         },
       },
-      items: node?.ports?.map((item, index) => {
-        return {
-          id: item.type + item.tag + '#' + item.id,
-          tag: item.tag,
+      items: [...(ports || [])]?.map((item, index) => {
+        const partInfo = findPortInfo(item);
+        return !partInfo ? {} : {
+          id: item,
+          tag: partInfo.tag,
           group: 'group1',
           // 通过 args 指定绝对位置
           args: {
-            x: item.type === 'in' ? 0 : '100%',
-            y: item.type === 'in' ? (index * 40) : '100%',
+            x: partInfo.type === 'in' ? 0 : '100%',
+            y: partInfo.type === 'in' ? (index * 40) : '100%',
           },
           label: {
             position: {
-              name: item.type === 'in' ? '' : 'right',
+              name: partInfo.type === 'in' ? '' : 'right',
             },
           },
           attrs: {
             circle: {
               magnet: true,
-              stroke: colorSet(item.pointStatus),
-              fill: colorSet(item.pointStatus),
+              stroke: colorSet(partInfo.pointStatus),
+              fill: colorSet(partInfo.pointStatus),
             },
-            text: { text: item.portName || 'out' },
+            text: { text: partInfo.portName || 'out' },
           },
         };
       }),
@@ -102,63 +104,68 @@ export const LogicPanel = memo(() => {
   const GRef = useRef<GraphPanel>({ G: null, mountedIdList: new Map([]) });
 
   const dispatch = useDispatch();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-
 
   useEffect(() => {
-    GRef.current.G?.getEdges().map(edge => {
-      console.log(edge.getSourcePortId(), logicState.signalSet, 'edge-edge');
-      // if (logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
-      //   && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
-      // )
-      if (
-        logicState.signalSet.some(item =>
-          item.target === edge.getTargetCell()?.getProp().nodeGId
-          && item.source === edge.getSourceCell()?.getProp().nodeGId,
-        )
-      ) {
-        dispatch(updateLogicPortsNode({
-          id: edge.getSourceNode()?.getProp().nodeGId,
-          portId: edge.getSourcePortId(),
-          portType: 'out',
-          connected: 2,
-        }));
-        dispatch(updateLogicPortsNode({
-          id: edge.getTargetNode()?.getProp().nodeGId,
-          portId: edge.getTargetPortId(),
-          portType: 'in',
-          connected: 2,
-        }));
-        edge.setAttrs({
-          line: {
-            stroke: '#22F576FF',
-            targetMarker: 'classic',
-          },
+    //逻辑流走向
+    const updateEdgeSubscription = subscribeUpdateEdge(
+      (nodeIdList) => {
+        GRef.current.G?.getEdges().map(edge => {
+          console.log(edge.getSourcePortId(), nodeIdList, 'edge-edge');
+          if (
+            nodeIdList.some(item =>
+              item.target === edge.getTargetCell()?.getProp().nodeGId
+              && item.source === edge.getSourceCell()?.getProp().nodeGId,
+            )
+          ) {
+            updateConnectStatus(edge.getSourcePortId() || '', 2);
+            updateConnectStatus(edge.getTargetPortId() || '', 2);
+            edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+              fill: '#22F576FF',
+              stroke: '#22F576FF',
+            });
+            edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+              fill: '#22F576FF',
+              stroke: '#22F576FF',
+            });
+            edge.setAttrs({
+              line: {
+                stroke: '#22F576FF',
+                targetMarker: 'classic',
+              },
+            });
+          } else {
+            updateConnectStatus(edge.getSourcePortId() || '', 1);
+            updateConnectStatus(edge.getTargetPortId() || '', 1);
+            edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+              fill: '#f5222d',
+              stroke: '#f5222d',
+            });
+            edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+              fill: '#f5222d',
+              stroke: '#f5222d',
+            });
+            edge.setAttrs({
+              line: {
+                stroke: '#f5222d',
+                targetMarker: 'classic',
+              },
+            });
+          }
         });
-      } else {
-        dispatch(updateLogicPortsNode({
-          id: edge.getSourceNode()?.getProp().nodeGId,
-          portId: edge.getSourcePortId(),
-          portType: 'out',
-          connected: 1,
-        }));
-        dispatch(updateLogicPortsNode({
-          id: edge.getTargetNode()?.getProp().nodeGId,
-          portId: edge.getTargetPortId(),
-          portType: 'in',
-          connected: 1,
-        }));
-        edge.setAttrs({
-          line: {
-            stroke: '#f5222d',
-            targetMarker: 'classic',
-          },
-        });
-      }
-    });
-  }, [logicState.signalSet]);
+      },
+    );
+    //新增
+    const subscription = subscribeCreateNode(
+      (node) => {
+        GRef.current.G?.addNode(renderNode(node));
+        getWDGraph().addVertex(node.id);
+      },
+    );
+    return () => {
+      subscription.unsubscribe();
+      updateEdgeSubscription.unsubscribe();
+    };
+  }, []);
 
 
   const { view: NodeView, show: NodeShow } = useSceneContext(
@@ -186,102 +193,53 @@ export const LogicPanel = memo(() => {
 
 
   const removeNode = useCallback((params: ItemParams) => {
-    console.log(params, 'params-0');
-    GRef.current.G?.removeNode(params.props.node.id);
-    //获取入度是该节点的边
-
-    const inEdge = logicState.logicEdges.filter(edge => {
-      return edge.from === params.props.nodeProp.nodeGId;
-    });
-    console.log(inEdge, logicState.logicEdges, params.props.nodeProp.nodeGId, 'inEdge');
-    inEdge.map(edge => {
-      dispatch(removeLogicEdge({
-        from: edge.from,
-        to: edge.to,
-        fromPort: edge.fromPort,
-        toPort: edge.toPort,
-      }));
-      console.log(getWDGraph().getInDegree(edge.to), 'getWDGraph().getInDegree(edge.to)');
-      if (getWDGraph().getInDegree(edge.to).length === 1 && getWDGraph().getInDegree(edge.to)[0] === params.props.nodeProp.nodeGId) {
-        dispatch(
-          updateLogicPortsNode({
-            id: edge.to,
-            portId: edge.toPort,
-            portType: 'in',
-            connected: 0,
-          }),
-        );
+    GRef.current.G?.getEdges().map(edge => {
+      if (edge.getSourceNode()?.getProp().nodeGId === params.props.nodeProp.nodeGId) {
+        updateConnectStatus(edge.getTargetNode()?.getProp().nodeGId, 0);
+        edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+          fill: '#d9d9d9',
+          stroke: '#d9d9d9',
+        });
+      } else if (edge.getTargetNode()?.getProp().nodeGId === params.props.nodeProp.nodeGId) {
+        updateConnectStatus(edge.getSourceNode()?.getProp().nodeGId, 0);
+        edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+          fill: '#d9d9d9',
+          stroke: '#d9d9d9',
+        });
       }
-      return 0;
-    });
-    const outEdge = logicState.logicEdges.filter(edge => {
-      return edge.to === params.props.nodeProp.nodeGId;
-    });
-    console.log(outEdge, 'inEdge-1');
-    outEdge.map(edge => {
-      dispatch(removeLogicEdge({
-        from: edge.from,
-        to: edge.to,
-        fromPort: edge.fromPort,
-        toPort: edge.toPort,
-      }));
-      if (getWDGraph().getOutDegree(edge.from).length === 1 && getWDGraph().getOutDegree(edge.from)[0] === params.props.nodeProp.nodeGId) {
-        dispatch(
-          updateLogicPortsNode({
-            id: edge.from,
-            portId: edge.fromPort,
-            portType: 'out',
-            connected: 0,
-          }),
-        );
-      }
-      return 0;
     });
     getWDGraph().removeVertex(
       params.props.nodeProp.nodeGId,
     );
-    dispatch(deleteNode({
-      id: params.props.nodeProp.nodeGId,
-    }));
-  }, [dispatch, logicState.logicEdges]);
+    deleteNode(params.props.nodeProp.nodeGId);
+    GRef.current.G?.removeNode(params.props.node.id);
+  }, []);
 
   const removeEdge = useCallback((params: ItemParams) => {
-
-    GRef.current.G?.removeEdge(params.props.edge.id);
-    console.log(params, params.props.edge.id, GRef.current.G?.getEdges(), params.props.sourcePortId, 'paramssss');
-    getWDGraph().removeEdge(
-      params.props.sourceNode.nodeGId,
-      params.props.targetNode.nodeGId,
-    );
-    dispatch(removeLogicEdge({
-      from: params.props.sourceNode.nodeGId,
-      to: params.props.targetNode.nodeGId,
-      fromPort: params.props.sourcePortId,
-      toPort: params.props.targetPortId,
-    }));
-    //判断两个点是否还存在其他边
-    if (!getWDGraph().getOutDegree(params.props.sourceNode.nodeGId).length) {
-      dispatch(
-        updateLogicPortsNode({
-          id: params.props.sourceNode.nodeGId,
-          portId: params.props.sourcePortId,
-          portType: 'out',
-          connected: 0,
-        }),
-      );
-    }
-    if (!getWDGraph().getInDegree(params.props.targetNode.nodeGId).length) {
-      dispatch(
-        updateLogicPortsNode({
-          id: params.props.targetNode.nodeGId,
-          portId: params.props.targetPortId,
-          portType: 'in',
-          connected: 0,
-        }),
-      );
-    }
-
-  }, [dispatch]);
+    GRef.current.G?.getEdges().some(edge => {
+      if (edge.getTargetNode()?.getProp().nodeGId === params.props.targetNode.nodeGId
+        &&
+        edge.getSourceNode()?.getProp().nodeGId === params.props.sourceNode.nodeGId
+      ) {
+        edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+          fill: '#d9d9d9',
+          stroke: '#d9d9d9',
+        });
+        edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+          fill: '#d9d9d9',
+          stroke: '#d9d9d9',
+        });
+        getWDGraph().removeEdge(
+          params.props.sourceNode.nodeGId,
+          params.props.targetNode.nodeGId,
+        );
+        updateConnectStatus(params.props.sourceNode.nodeGId || '', 0);
+        updateConnectStatus(params.props.targetNode.nodeGId || '', 0);
+        GRef.current.G?.removeEdge(params.props.edge.id);
+        return true;
+      }
+    });
+  }, []);
 
 
   useEffect(() => {
@@ -302,33 +260,8 @@ export const LogicPanel = memo(() => {
             (args.edge.getTargetPortId()?.split('#')[0] || '').indexOf('in') > -1
           ) {
             try {
-              console.log(args, '0o0o0');
-              dispatch(
-                addLogicEdge({
-                  fromPort: args.edge.getSourcePortId(),
-                  toPort: args.edge.getTargetPortId(),
-                  from: args.edge.getSourceNode()?.getProp().nodeGId,
-                  to: args.edge.getTargetNode()?.getProp().nodeGId,
-                  weight: 1,
-                }),
-              );
-
-              dispatch(
-                updateLogicPortsNode({
-                  id: args.edge.getSourceNode()?.getProp().nodeGId,
-                  portId: args.edge.getSourcePortId(),
-                  portType: 'out',
-                  connected: 1,
-                }),
-              );
-              dispatch(
-                updateLogicPortsNode({
-                  id: args.edge.getTargetNode()?.getProp().nodeGId,
-                  portId: args.edge.getTargetPortId(),
-                  portType: 'in',
-                  connected: 1,
-                }),
-              );
+              updateConnectStatus(args.edge.getSourceNode()?.getProp().nodeGId || '', 1);
+              updateConnectStatus(args.edge.getTargetNode()?.getProp().nodeGId || '', 1);
               return true;
             } catch (e) {
               toast.error((e as { message: string }).message);
@@ -361,11 +294,9 @@ export const LogicPanel = memo(() => {
         }
       },
     });
-    GRef.current.G?.on('node:mousedown', (args) => {
-      console.log(args, 'argssssss');
+    GRef.current.G?.on('node:mousedown', () => {
     });
     GRef.current.G?.on('node:contextmenu', ({ e, x, y, node, view }) => {
-      console.log(e, x, y, node, view);
       NodeShow({
         event: (e as unknown as TriggerEvent),
         props: {
@@ -391,30 +322,50 @@ export const LogicPanel = memo(() => {
     });
     GRef.current.G?.on('edge:added', ({ edge }) => {
       //连接后，默认无信号
-      if (
-        logicState.signalSet.some(item =>
-          item.target === edge.getTargetCell()?.getProp().nodeGId
-          && item.source === edge.getSourceCell()?.getProp().nodeGId,
-        )
-        // logicState.signalSet.includes(edge.getSourceCell()?.getProp().nodeGId)
-        // && logicState.signalSet.includes(edge.getTargetCell()?.getProp().nodeGId)
-      ) {
-        edge.setAttrs({
-          line: {
-            stroke: '#22F576FF',
-            targetMarker: 'classic',
-          },
+      console.log(edge.getSourceNode()?.getPortProp(edge.getSourcePortId() || '', 'attrs/circle'), 'p;odsddddd');
+      edge.setAttrs({
+        line: {
+          stroke: '#f5222d',
+          targetMarker: 'classic',
+        },
+      });
+      edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+        fill: '#f5222d',
+        stroke: '#f5222d',
+      });
+
+      edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+        fill: '#f5222d',
+        stroke: '#f5222d',
+      });
+    });
+    GRef.current.G.on('edge:connected', ({ isNew, edge }) => {
+      if (isNew) {
+        if (
+          !getWDGraph().hasEdge(
+            edge.getSourceNode()?.getProp().nodeGId,
+            edge.getTargetNode()?.getProp().nodeGId,
+          )
+        ) {
+          getWDGraph().addEdge(
+            edge.getSourceNode()?.getProp().nodeGId,
+            edge.getTargetNode()?.getProp().nodeGId,
+            {},
+            1,
+            edge.getSourcePortId() || '',
+            edge.getTargetPortId() || '',
+          );
+        }
+        edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+          fill: '#f5222d',
+          stroke: '#f5222d',
         });
-      } else {
-        edge.setAttrs({
-          line: {
-            stroke: '#f5222d',
-            targetMarker: 'classic',
-          },
+
+        edge.getTargetNode()?.setPortProp(edge.getTargetPortId() || '', 'attrs/circle', {
+          fill: '#f5222d',
+          stroke: '#f5222d',
         });
       }
-
-
     });
     GRef.current.G?.on('node:mouseup', (args) => {
       console.log(args.node.getProp(), 'mouseup');
@@ -428,49 +379,7 @@ export const LogicPanel = memo(() => {
         }),
       );
     });
-
-    Object.values(logicState.logicNodes).map((node) => {
-      if (!GRef.current.mountedIdList.has(node.id)) {
-        //添加
-        console.log(GRef.current.G?.getNodes(), logicState.logicNodes, 'fgfgfffff');
-        const GNode = GRef.current.G?.addNode(renderNode(node));
-        GRef.current.mountedIdList.set(node.id, GNode);
-      } else {
-        //更新
-        if (GRef.current.mountedIdList.get(node.id)) {
-          (GRef.current.mountedIdList.get(node.id) as Node).setProp(
-            renderNode(node),
-          );
-        }
-      }
-    });
-    logicState.logicEdges.map(logicEdgeItem => {
-      const nodeA = GRef.current.mountedIdList.get(logicEdgeItem.from);
-      const nodeB = GRef.current.mountedIdList.get(logicEdgeItem.to);
-      console.log(logicState.logicEdges, { nodeA, nodeB, logicEdgeItem }, GRef.current.G?.getEdges(), 'nodeA,nodeB');
-      if (nodeA && nodeB && !GRef.current.G?.getEdges().some(edge => {
-        console.log(edge.getSourceCell()?.getProp(), edge.getTargetCell()?.getProp(), nodeA.getProp().nodeGId, nodeB.getProp().nodeGId, 'edge.getSourceCell()?.getProp()');
-        return edge.getSourceCell()?.getProp().nodeGId === nodeA.getProp().nodeGId &&
-          edge.getTargetCell()?.getProp().nodeGId === nodeB.getProp().nodeGId;
-      })) {
-
-        if (GRef.current.G?.hasCell(nodeA.id) && GRef.current.G?.hasCell(nodeB.id)) {
-          GRef.current.G?.addEdge({
-            source: {
-              cell: nodeA.id,
-              port: logicEdgeItem.fromPort, // 链接桩 ID
-            },
-            target: {
-              cell: nodeB.id,
-              port: logicEdgeItem.toPort, // 链接桩 ID
-            },
-          });
-        }
-
-
-      }
-    });
-  }, [logicState.logicNodes, logicState.logicEdges, NodeShow, show, logicState.signalSet]);
+  }, [NodeShow, show, dispatch]);
 
 
   return (<>

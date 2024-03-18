@@ -23,11 +23,13 @@ import {
 } from '../contant';
 import { IClassify, INodeType, addNode, logic_D_get, logic_Ring_get, logic_TO_get } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
-import { ILs, addLogicNode } from '../store/slice/logicSlice';
+import { ILs, addLogicNode, ILogicNode } from '../store/slice/logicSlice';
 import { toast } from 'react-toastify';
 import { mapNodeBindPort } from '../comp/mapNodePort.ts';
 import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
 import { genLogicConfigMap, IConfigInfo, IRemoteReqInfo } from '../Logic/nodes/logicConfigMap.ts';
+import { addPortNodeMap, getPortStatus } from '../node/portStatus.ts';
+import { createNode } from './logicPanelEventSubscribe.ts';
 
 interface IW {
   nodeType: 'LOGIC' | 'VIEW';
@@ -363,45 +365,62 @@ export const WidgetIconTemp = memo(
                   return;
                 }
                 const { left, top } = LOGIC_CONTAINER.getBoundingClientRect();
-                console.log(c, typeId, 'e-e-e');
+
 
                 //映射端点
                 const Tem = mapNodeBindPort({
                   belongClass: classify,
                   typeId,
                 });
-
+                console.log(Tem, 'eTem-e-e');
                 const logicId = uuidv4();
 
                 const defaultConfigInfo = setDefaultInfo(typeId);
 
+                //设置携带的端口状态
+                // getPortStatus().status.set(logicId)
                 genLogicConfigMap().configInfo.set(logicId, defaultConfigInfo);
 
-                const ports = Tem?.ports.map((port, index) => {
+                Tem?.ports.map((port, index) => {
                   if (port.type === 'isIn') {
-                    return {
+                    const inPortId = 'in' + index + '#' + port.id;
+                    addPortNodeMap(logicId, inPortId);
+                    getPortStatus().status.set(inPortId, {
                       type: 'in',
                       tag: index,
                       portType: '',
                       portName: port.portName,
                       pointStatus: 0,
                       id: port.id,
-                    };
+                    });
+
                   } else {
-                    return {
+                    const outPortId = 'out' + index + '#' + port.id;
+                    // getPortStatus().nodePortMap.set(logicId).;
+                    addPortNodeMap(logicId, outPortId);
+                    getPortStatus().status.set(outPortId, {
                       type: 'out',
                       tag: index,
                       portType: '',
                       portName: port.portName,
                       pointStatus: 0,
                       id: port.id,
-                    };
+                    });
                   }
                 });
-
+                createNode({
+                  typeId,
+                  belongClass: classify,
+                  x: e.pageX - left,
+                  y: e.pageY - top,
+                  shape: 'image',
+                  width: 40,
+                  height: 40,
+                  id: logicId,
+                  imageUrl: c.src,
+                } as ILogicNode);
                 dispatch(
                   addLogicNode({
-                    ports,
                     typeId,
                     belongClass: classify,
                     x: e.pageX - left,

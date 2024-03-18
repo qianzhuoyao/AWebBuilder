@@ -24,7 +24,7 @@ export const timeInter = () => {
     id: logic_Ring_get,
     type: 'timeInter',
     src: ring,
-    tips: '收到信号后循环发出信号,指导1端口收到信号止',
+    tips: '收到信号后循环发出信号,直到stop端口收到信号止',
     name: '循环',
   });
 
