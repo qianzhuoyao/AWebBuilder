@@ -15,12 +15,15 @@ export const viewLogicSlot = () => {
     name: '绑定器',
   });
   ViewLogicSlot.signalIn('in-0', (value) => {
-    console.log(value,'biff');
-    return of(1);
+    //输入 =》数据绑定
+    console.log(value, 'biff');
+    return of(value.pre);
   });
 
-  ViewLogicSlot.signalOut('out', () => {
-    return of(2);
+  ViewLogicSlot.signalOut('out', (value) => {
+    //输出=》事件输出
+    console.log(value, 'bdiff');
+    return of(value.pre);
   });
 
 };

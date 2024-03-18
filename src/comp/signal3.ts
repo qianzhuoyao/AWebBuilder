@@ -2,7 +2,16 @@ import { Edge, getWDGraph, IEdgeMessage } from '../DirGraph/weightedDirectedGrap
 import { genLogicNodeMenuItems } from '../Logic/base.ts';
 import { concatMap, defer, mergeMap, Observable, of, takeWhile, tap, throwError } from 'rxjs';
 import { genLogicConfigMap } from '../Logic/nodes/logicConfigMap.ts';
+import { createSingleInstance } from './createSingleInstance.ts';
 
+
+const dataCache = <T, >() => {
+  const cache = new Map<string, T>();
+  return {
+    cache,
+  };
+};
+const getStreamCache = createSingleInstance(dataCache);
 
 //根据路径解析函数
 
@@ -49,7 +58,7 @@ export const parseMakeByFromId = <P, >(
     //输出点只允许一个
     if (inputPorts.length) {
       const outPoint = getWDGraph().getEdges(fromId)[0].sourcePort;
-      console.log(outPoint, inputPorts, 'outPoint');
+      console.log(outPoint, inputPorts, params, 'outPoint');
       //当前节点输出值
       const currentObservable = genLogicNodeMenuItems().initLogicOutMake.get(outPoint.split('#')[1]);
       const currentParams = currentObservable ? currentObservable(
@@ -70,7 +79,7 @@ export const parseMakeByFromId = <P, >(
             id: target.target,
             edge: target,
             observable: parseFn(fn, {
-              pre: params,
+              pre: getStreamCache().cache.get(fromId),
               id: target.target,
               edge: target,
             }),
@@ -87,7 +96,8 @@ export const parseMakeByFromId = <P, >(
 
       return currentParams?.pipe(
         tap(e => {
-          console.log(e, 'params');
+          console.log(e, 'paramys');
+          getStreamCache().cache.set(fromId, e);
         }),
         takeWhile(() => getWDGraph().getVertices().includes(
           fromId,
@@ -100,7 +110,7 @@ export const parseMakeByFromId = <P, >(
                   console.log(a, 'fgffgobservable');
                 }),
                 mergeMap((z) => {
-                  console.log(edge, self, 'fgffgobservafffble');
+                  console.log(edge, self, z, params, 'fgffgobservafffble');
                   effect.edgeRunOver(edge, id, z as P);
                   if (edge.targetPort.indexOf('in-stop') > -1) {
                     effect.toLoopStop(edge, id, z as P);
@@ -116,11 +126,8 @@ export const parseMakeByFromId = <P, >(
     }
     return of('end');
   };
-  bfs(origin, undefined, 'start').pipe(
-    tap(() => {
-      effect.startRun();
-    }),
-  ).subscribe({
+  effect.startRun();
+  bfs(origin, undefined, 'start').subscribe({
     complete: () => {
       effect.complete(origin);
     },
