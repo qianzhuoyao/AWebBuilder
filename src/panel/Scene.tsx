@@ -28,6 +28,7 @@ import {
 import gsap from 'gsap';
 // import { Icon } from '@iconify-icon/react';
 import {
+  Fragment,
   memo,
   useCallback,
   useEffect,
@@ -429,7 +430,7 @@ const SceneWidgetMap = memo(() => {
           {currentType === 'logic_map_list' ? <>{
               layerLogicNode
                 .map(node => {
-                  return <>
+                  return <Fragment key={node.id}>
                     <Card
                       shadow="sm"
                       key={node.id}
@@ -448,7 +449,7 @@ const SceneWidgetMap = memo(() => {
                       <CardFooter className="text-small justify-center items-center">
                         <small>{node.belongClass}</small>
                       </CardFooter>
-                    </Card></>;
+                    </Card></Fragment>;
                 })
             }</>
             :

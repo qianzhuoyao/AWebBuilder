@@ -3,6 +3,7 @@ import { Graph, Node } from '@antv/x6';
 import { LOGIC_PANEL_DOM_ID } from '../contant';
 import { useDispatch } from 'react-redux';
 import {
+  deleteLogicNode,
   ILogicNode, setLogicTarget,
   updateLogicNode,
 } from '../store/slice/logicSlice';
@@ -108,7 +109,7 @@ const usePaintNodes = (Graph: Graph | null) => {
         nodeIdMap.set(node.id, GNode);
       }
     });
-    console.log(getWDGraph().getAllEdges(), 'getAllEdges');
+    console.log(getWDGraph().getAllEdges(), layerLogicNode, 'getAllEdges');
     getWDGraph().getAllEdges().map(edge => {
       const source = nodeIdMap.get(edge.source);
       const target = nodeIdMap.get(edge.target);
@@ -241,7 +242,8 @@ export const LogicPanel = memo(() => {
     );
     deleteSubNode(params.props.nodeProp.nodeGId);
     GRef.current.G?.removeNode(params.props.node.id);
-  }, []);
+    dispatch(deleteLogicNode({ id: params.props.nodeProp.nodeGId }));
+  }, [dispatch]);
 
   const removeEdge = useCallback((params: ItemParams) => {
     GRef.current.G?.getEdges().some(edge => {

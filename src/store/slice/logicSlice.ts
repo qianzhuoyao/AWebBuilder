@@ -95,38 +95,6 @@ export const logicSlice = createSlice({
       const { nodeId, id } = action.payload;
       delete state.sendDugCount[nodeId][id];
     },
-    deleteWorkingNodeIdList: (state, action) => {
-      const { id } = action.payload;
-      state.workingNodeIdList = state.workingNodeIdList.filter(i => i !== id);
-    },
-    updateWorkingNodeIdList: (state, action) => {
-      const { id } = action.payload;
-      if (!state.workingNodeIdList.includes(id)) {
-        state.workingNodeIdList = state.workingNodeIdList.concat([id]);
-      }
-    },
-
-
-    removeLogicEdge: (state, action) => {
-      const { from, fromPort, to, toPort } = action.payload;
-      state.logicEdges = state.logicEdges.filter(edge => {
-          return !(
-            edge.from === from &&
-            edge.fromPort === fromPort &&
-            edge.to === to &&
-            edge.toPort === toPort
-          );
-        },
-      );
-    },
-
-    clearSignalSet: (state) => {
-      state.signalSet = []
-    },
-
-    updateSignalSet: (state, action) => {
-      state.signalSet = state.signalSet.concat(action.payload);
-    },
 
 
     setLogicTarget: (state, action) => {
@@ -137,56 +105,6 @@ export const logicSlice = createSlice({
     },
 
 
-    addLogicEdge: (state, action) => {
-      const { from, to, weight, fromPort, toPort } = action.payload;
-      if (typeof from === 'string' && typeof to === 'string' && typeof weight === 'number') {
-        const edge: ILogicEdge = {
-          from,
-          to,
-          weight,
-          fromPort,
-          toPort,
-        };
-        state.logicEdges.push(edge);
-        getWDGraph().addEdge(from, to, {}, weight, fromPort, toPort);
-      } else {
-        throw TypeError('type error');
-      }
-    },
-
-    updateLogicPortsNode: (state, action) => {
-      const { id, portId, connected, portType } = action.payload;
-      console.log(JSON.parse(JSON.stringify(state)), action.payload, 'tagtagtagtag');
-      (state.logicNodes as Record<string, ILogicNode>)[id] =
-        {
-          ...(state.logicNodes as Record<string, ILogicNode>)[id]
-          , ...{
-            ...action.payload, ports: (state.logicNodes as Record<string, ILogicNode>)[id]?.ports.map(port => {
-              if (portType === 'in') {
-                if (port.id === portId.split('#')[1] && port.type === portType) {
-                  return {
-                    ...port,
-                    pointStatus: connected,
-                  };
-                } else {
-                  return port;
-                }
-              } else {
-                if (port.type === portType) {
-                  return {
-                    ...port,
-                    pointStatus: connected,
-                  };
-                } else {
-                  return port;
-                }
-              }
-            }),
-          },
-        };
-
-    },
-
     updateLogicNode: (state, action) => {
       const { id } = action.payload;
       (state.logicNodes as Record<string, ILogicNode>)[id] =
@@ -195,15 +113,13 @@ export const logicSlice = createSlice({
     },
 
 
-    deleteNode: (state, action) => {
+    deleteLogicNode: (state, action) => {
       const newKeys = Object.keys(state.logicNodes).filter(key => key !== action.payload.id);
       const newObj: Record<string, ILogicNode> = {};
       newKeys.map(key => {
         newObj[key] = (state.logicNodes as Record<string, ILogicNode>)[key];
       });
       state.logicNodes = newObj;
-      //同步至边
-
     },
     addLogicNode: (state, action) => {
 
@@ -212,26 +128,15 @@ export const logicSlice = createSlice({
       //添加节点，与logicNodes 区分开是为了做redo undo
       getWDGraph().addVertex(action.payload.id);
     },
-    updateLogicContentImageShowType: (state, action) => {
-      state.contentImageShowType = action.payload;
-    },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
-  clearSignalSet,
-  removeLogicEdge,
-  updateLogicPortsNode,
   updateLogicNode,
-  addLogicEdge,
-  deleteNode,
+  deleteLogicNode,
   updateSendDugCount,
   clearSendDugCount,
-  updateSignalSet,
-  updateWorkingNodeIdList,
-  deleteWorkingNodeIdList,
   setLogicTarget,
-  updateLogicContentImageShowType,
   deleteSendDugCount,
   addLogicNode,
 } = logicSlice.actions;

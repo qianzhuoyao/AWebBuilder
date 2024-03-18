@@ -49,6 +49,9 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
             startTime: startTime,
             endTime: dayjs().unix() * 1000,
           }));
+          setTimeout(() => {
+            updateEdge([]);
+          }, 500);
         },
         edgeRunOver: (edge) => {
           console.log(edge, 'edge-s');
