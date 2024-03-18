@@ -4,12 +4,12 @@ import { ILogicNode } from '../store/slice/logicSlice.ts';
 
 type nodeId = string
 const panelSubscribe = () => {
-  const logicNodes = new Map<nodeId, ILogicNode>();
+  const logicNodesConfig = new Map<nodeId, ILogicNode>();
   const createObservable = new ReplaySubject<ILogicNode>();
   const updateObservable = new ReplaySubject<ILogicNode>();
   const updateEdgeObservable = new ReplaySubject<{ source: string, target: string }[]>();
   return {
-    logicNodes,
+    logicNodesConfig,
     createObservable,
     updateEdgeObservable,
     updateObservable,
@@ -33,9 +33,9 @@ export const updateEdge = (nodeIdList: { source: string, target: string }[]) => 
   getPanelSubscribe().updateEdgeObservable.next(nodeIdList);
 };
 export const createNode = (node: ILogicNode) => {
-  getPanelSubscribe().logicNodes.set(node.id, node);
+  getPanelSubscribe().logicNodesConfig.set(node.id, node);
   getPanelSubscribe().createObservable.next(node);
 };
-export const deleteNode = (node: ILogicNode) => {
-  getPanelSubscribe().logicNodes.delete(node.id);
+export const deleteSubNode = (node: ILogicNode) => {
+  getPanelSubscribe().logicNodesConfig.delete(node.id);
 };

@@ -3,7 +3,6 @@ import { Graph, Node } from '@antv/x6';
 import { LOGIC_PANEL_DOM_ID } from '../contant';
 import { useDispatch } from 'react-redux';
 import {
-  deleteNode,
   ILogicNode, setLogicTarget,
   updateLogicNode,
 } from '../store/slice/logicSlice';
@@ -13,13 +12,11 @@ import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { useSceneContext } from '../menu/context.tsx';
 import { ItemParams, TriggerEvent } from 'react-contexify';
 import { findPortInfo, getPortNodeMap, updateConnectStatus } from '../node/portStatus.ts';
-import { subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
+import { deleteSubNode, subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
 
 
 interface GraphPanel {
   G: Graph | null;
-  mountedIdList: Map<string, Node | undefined>;
-
 }
 
 
@@ -101,11 +98,12 @@ const renderNode = (node: ILogicNode) => {
 
 export const LogicPanel = memo(() => {
 
-  const GRef = useRef<GraphPanel>({ G: null, mountedIdList: new Map([]) });
+  const GRef = useRef<GraphPanel>({ G: null });
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    //挂载上所有节点
     //逻辑流走向
     const updateEdgeSubscription = subscribeUpdateEdge(
       (nodeIdList) => {
@@ -211,7 +209,7 @@ export const LogicPanel = memo(() => {
     getWDGraph().removeVertex(
       params.props.nodeProp.nodeGId,
     );
-    deleteNode(params.props.nodeProp.nodeGId);
+    deleteSubNode(params.props.nodeProp.nodeGId);
     GRef.current.G?.removeNode(params.props.node.id);
   }, []);
 
@@ -246,7 +244,6 @@ export const LogicPanel = memo(() => {
     if (!containerRef.current) {
       return;
     }
-    console.log(GRef.current.G, 'GRef.current.G');
     GRef.current.G = GRef.current.G || new Graph({
       translating: {
         restrict: true,
@@ -339,6 +336,15 @@ export const LogicPanel = memo(() => {
         stroke: '#f5222d',
       });
     });
+    GRef.current.G.on('edge:mouseup', ({ edge }) => {
+      console.log(edge.getTargetNode(), edge.getSourceCellId(), 'edge.getTargetNode()');
+      if (!edge.getTargetNode()) {
+        (GRef.current.G?.getCellById(edge.getSourceCellId()) as Node)?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
+          fill: '#d9d9d9',
+          stroke: '#d9d9d9',
+        });
+      }
+    });
     GRef.current.G.on('edge:connected', ({ isNew, edge }) => {
       if (isNew) {
         if (
@@ -368,7 +374,7 @@ export const LogicPanel = memo(() => {
       }
     });
     GRef.current.G?.on('node:mouseup', (args) => {
-      console.log(args.node.getProp(), 'mouseup');
+      //校验port
       dispatch(setLogicTarget([args.node.getProp().nodeGId]));
       //更新位置
       dispatch(
@@ -379,7 +385,7 @@ export const LogicPanel = memo(() => {
         }),
       );
     });
-  }, [NodeShow, show, dispatch]);
+  }, [NodeShow, dispatch, show]);
 
 
   return (<>
