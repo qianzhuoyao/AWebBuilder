@@ -1,6 +1,6 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { logic_Form_get } from '../../../store/slice/nodeSlice.ts';
-import { Card, CardBody, Code, Switch, Tab, Tabs, Tooltip } from '@nextui-org/react';
+import { Card, CardBody, Switch, Tab, Tabs, Tooltip } from '@nextui-org/react';
 import { memo, useCallback, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import ReactJson from 'react-json-view';

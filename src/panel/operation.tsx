@@ -31,6 +31,12 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
 
   useEffect(() => {
     if (NodesState?.list) {
+      console.log( new Function('params',
+
+        `try{
+        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        }catch(e){return {}}`,
+      )(getWCache(id)),'ss999999');
       setParseOption(() => new Function('params',
 
         `try{

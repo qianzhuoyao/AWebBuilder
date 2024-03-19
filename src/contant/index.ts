@@ -17,3 +17,5 @@ export const MUST_FORCE_STOP_SE = 'MUST_FORCE_STOP_SE' as const;
 export const DEFAULT_PANEL_COLOR = 'rgba(35,35,36,1)';
 
 export const MAIN_LAYER = 'MAIN_LAYER' as const;
+
+export const CONSTANT_DEMO_PATH = '/demo/' as const;

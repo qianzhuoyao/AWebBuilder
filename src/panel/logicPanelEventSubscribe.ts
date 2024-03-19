@@ -17,6 +17,13 @@ const panelSubscribe = () => {
 };
 export const getPanelSubscribe = createSingleInstance(panelSubscribe);
 
+export const logicNodesConfigToJSON = () => {
+  const target: any = {};
+  [...getPanelSubscribe().logicNodesConfig.keys()].map(key => {
+    target[key] = getPanelSubscribe().logicNodesConfig.get(key) || null;
+  });
+  return JSON.stringify(target);
+};
 export const subscribeCreateNode = (subscribe: (node: ILogicNode) => void) => {
   return getPanelSubscribe().createObservable.subscribe(subscribe);
 };

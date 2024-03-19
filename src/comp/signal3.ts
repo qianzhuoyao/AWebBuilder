@@ -72,7 +72,7 @@ export const parseMakeByFromId = <P, >(
       //子节点的订阅
       const subObservableFn = inputPorts
         .map(target => {
-          console.log(target, genLogicConfigMap().configInfo, 'genLogicConfigMap().configInfos');
+          console.log(target, genLogicNodeMenuItems(), 'genLogicConfigMap().configInfos');
           const fn = genLogicNodeMenuItems().initLogicInMake.get(target.targetPort.split('#')[1]);
           return fn ? {
             id: target.target,

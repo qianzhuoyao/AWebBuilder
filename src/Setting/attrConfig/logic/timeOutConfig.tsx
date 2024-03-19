@@ -1,10 +1,9 @@
-import { IConfigTypeParams } from './configType.ts';
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { logic_Ring_get, logic_TO_get } from '../../../store/slice/nodeSlice.ts';
+import {  logic_TO_get } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { TimeOutConfig } from '../../form/logic/timer/timeOut.tsx';
 
-export const TimerOutConfig = (configParams: IConfigTypeParams) => {
+export const TimerOutConfig = () => {
   const config = signalLogicNodeAttrConfig(logic_TO_get);
   config.setConfigEle((nodeInfo) => {
     if (nodeInfo.target.length > 0) {

@@ -1,11 +1,10 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { INs, logic_View_bind } from '../../../store/slice/nodeSlice.ts';
+import { logic_View_bind } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { ViewMappingForm } from '../../form/logic/viewMapping/viewMappingForm.tsx';
-import { ILs } from '../../../store/slice/logicSlice.ts';
 
 
-export const viewMapping = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
+export const viewMapping = () => {
   const config = signalLogicNodeAttrConfig(logic_View_bind);
 
   config.setConfigEle(({ target }) => {

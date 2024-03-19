@@ -19,13 +19,13 @@ export const setDefaultLogicConfig = () => {
 };
 
 export const AttrConfigInit = (configParams: IConfigTypeParams) => {
-  remoteGetConfig(configParams);
-  FormConfig()
+  remoteGetConfig();
+  FormConfig();
   // handleMixConfig(configParams);
-  TimerOutConfig(configParams);
+  TimerOutConfig();
   // CacheSetConfig(configParams);
   handleTrigger();
-  TimerIntConfig(configParams);
-  viewMapping(configParams);
+  TimerIntConfig();
+  viewMapping();
   // FilterDataConfig(configParams);
 };

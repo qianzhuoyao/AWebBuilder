@@ -1,5 +1,5 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { INs, logic_D_get } from '../../../store/slice/nodeSlice.ts';
+import {  logic_D_get } from '../../../store/slice/nodeSlice.ts';
 import {
   Tabs,
   Tab,
@@ -219,7 +219,7 @@ const Test = memo(() => {
 });
 
 
-export const remoteGetConfig = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
+export const remoteGetConfig = () => {
   const config = signalLogicNodeAttrConfig(logic_D_get);
   config.setConfigEle(nodeInfo => {
 

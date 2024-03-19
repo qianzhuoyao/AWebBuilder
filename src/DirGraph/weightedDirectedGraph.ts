@@ -269,8 +269,15 @@ export default class WeightedDirectedGraph<T, M> {
     return this.adjacencyList.get(vertex) || [];
   }
 
+  toJSON() {
+    return JSON.stringify({
+      vecList: this.getVertices(),
+      edges: this.getAllEdges(),
+    });
+  }
+
   getAllEdges() {
-    return [...this.adjacencyList.values()].reduce((a, b) => a.concat(b),[]);
+    return [...this.adjacencyList.values()].reduce((a, b) => a.concat(b), []);
   }
 
 }
@@ -281,4 +288,28 @@ const instance = WdClass.getInstance() as WeightedDirectedGraph<string, IEdgeMes
 
 export const getWDGraph = (): WeightedDirectedGraph<string, IEdgeMessage> => {
   return instance;
+};
+//根据解析的json来生产图
+export const genWDGraph = (GJson: string) => {
+  try {
+    const GConfig = JSON.parse(GJson);
+    console.log(GConfig, 'GConfig');
+    const WDGraph = getWDGraph();
+    GConfig?.vecList.map((vec: string) => {
+      WDGraph.addVertex(vec);
+    });
+    GConfig?.edges.map((edge: Edge<string, IEdgeMessage>) => {
+      if (!WDGraph.hasEdge(
+        edge.source,
+        edge.target,
+      )) {
+        WDGraph.addEdge(edge.source, edge.target, {}, 1, edge.sourcePort, edge.targetPort);
+
+      }
+    });
+    return WDGraph;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 };

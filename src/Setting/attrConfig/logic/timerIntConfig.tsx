@@ -1,10 +1,9 @@
-import { IConfigTypeParams } from './configType.ts';
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
 import { logic_Ring_get } from '../../../store/slice/nodeSlice.ts';
 import { TimeConfig } from '../../form/logic/timer/timeConfig.tsx';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 
-export const TimerIntConfig = (configParams: IConfigTypeParams) => {
+export const TimerIntConfig = () => {
   const config = signalLogicNodeAttrConfig(logic_Ring_get);
   config.setConfigEle((nodeInfo) => {
     if (nodeInfo.target.length > 0) {

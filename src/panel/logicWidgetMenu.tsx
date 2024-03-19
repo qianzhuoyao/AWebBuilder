@@ -117,6 +117,29 @@ const HandleTrigger = memo(() => {
     </div>
   );
 });
+
+const PageSlotMap = memo(() => {
+  const PageSlot = genLogicNodeMenuItems();
+  const type = 'page';
+  return (
+    <div className="space-y-2">
+      {PageSlot.logicNodeMenuItems.get(type)?.map((item) => {
+        return (
+          <div key={item.id}>
+            <WidgetIconTemp
+              tips={item.tips}
+              nodeType="LOGIC"
+              classify={type}
+              typeId={item.id}
+              src={item.src}
+              name={item.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 const ViewSlotMap = memo(() => {
   const ViewSlot = genLogicNodeMenuItems();
   return (
@@ -193,7 +216,13 @@ const LogicDebugger = [
 ];
 const LogicBrowse = [];
 const LogicEvent = [];
-const LogicLife = [];
+const LogicLife = [
+  {
+    id: 'logic_page_slot',
+    label: '生命',
+    content: <PageSlotMap></PageSlotMap>,
+  },
+];
 const LogicView = [
   {
     id: 'logic_view_slot',

@@ -12,6 +12,9 @@ import type { SVGProps } from 'react';
 import { IPs, updateWorkSpaceName } from '../store/slice/panelSlice.ts';
 import { toast } from 'react-toastify';
 import { INs } from '../store/slice/nodeSlice.ts';
+import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
+import { logicNodesConfigToJSON } from '../panel/logicPanelEventSubscribe.ts';
+import { genLogicConfigMapToJSON } from '../Logic/nodes/logicConfigMap.ts';
 
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
@@ -133,8 +136,17 @@ export const Nav = memo(() => {
   }, []);
 
   const onPreView = useCallback(() => {
+    console.log(getWDGraph().toJSON(), 'getWDGraph().toJSON()');
+
     window.localStorage.setItem('DEMO-NODE#', JSON.stringify(NodesState));
     window.localStorage.setItem('DEMO-PANEL#', JSON.stringify(PanelState));
+    window.localStorage.setItem('DEMO-LOGIC#', JSON.stringify(
+      {
+        C: genLogicConfigMapToJSON(),
+        G: getWDGraph().toJSON(),
+        N: logicNodesConfigToJSON(),
+      },
+    ));
     window.open(window.location.origin + '/demo/' + PanelState.workSpaceName);
   }, [NodesState, PanelState]);
 

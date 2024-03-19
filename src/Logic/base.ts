@@ -45,6 +45,7 @@ const initializeLogicNodeMenuItems = <F>(): IMenu<F> => {
   init.set('mix', []);
   init.set('timeInter', []);
   init.set('hTrigger', []);
+  init.set('page', []);
   init.set('viewSlot', []);
 
   const initLogicInMake: Map<string, (v: F) => Observable<F>> = new Map();

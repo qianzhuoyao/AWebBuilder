@@ -18,6 +18,7 @@ export const handleTrigger = () => {
   });
 
   HandleTrigger.signalOut('out', () => {
+    console.log(window.location,'ccscscsc888');
     return emitLogic();
   });
 

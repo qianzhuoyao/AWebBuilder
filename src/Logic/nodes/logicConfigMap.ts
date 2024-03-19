@@ -21,7 +21,7 @@ export interface ITimerConfigInfo {
 
 export interface IFormConfigInfo {
   json: Record<string, any>;
-  mergePre?:boolean
+  mergePre?: boolean;
 }
 
 export interface ITimerOutConfigInfo {
@@ -63,3 +63,17 @@ const logicConfigMap = () => {
   };
 };
 export const genLogicConfigMap = createSingleInstance(logicConfigMap);
+export const genLogicConfigMapToJSON = () => {
+  const target: any = {};
+  [...genLogicConfigMap().configInfo.keys()].map(key => {
+    target[key] = genLogicConfigMap().configInfo.get(key) || null;
+  });
+  return JSON.stringify(target);
+};
+export const genLogicConfigMapToParse = (MapJSON: string) => {
+  const target = JSON.parse(MapJSON);
+  Object.keys(target).map(key => {
+      genLogicConfigMap().configInfo.set(key, target[key]);
+    },
+  );
+};

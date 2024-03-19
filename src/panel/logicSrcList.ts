@@ -9,6 +9,7 @@
 export const LOGIC_TYPE_LIST = [
   'remote',
   'viewSlot',
+  'page',
   'table',
   'hTrigger',
   'chart',

@@ -44,6 +44,8 @@ export const logic_TO_get = 'logic_TO_get' as const;
 export const logic_View_bind = 'logic_View_bind' as const;
 //循环
 export const logic_Ring_get = 'logic_Ring_get' as const;
+//load开始
+export const logic_Load_start = 'logic_Load_start' as const;
 //打平
 export const logic_Roll_get = 'logic_Roll_get' as const;
 //定次
@@ -56,6 +58,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_D_get
   | typeof logic_U_get
   | typeof logic_Cache_set
+  | typeof logic_Load_start
   | typeof logic_P_get
   | typeof logic_Roll_get
   | typeof logic_TM_get

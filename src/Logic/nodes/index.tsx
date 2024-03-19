@@ -14,6 +14,7 @@ import { timeSetter } from './timesSet.ts';
 import { useEffect } from 'react';
 import { rollPick } from './roll.ts';
 import { takeForm } from './takeForm.ts';
+import { loadStart } from './loadStart.ts';
 
 export const nodeBuilder = () => {
 
@@ -24,6 +25,7 @@ export const nodeBuilder = () => {
   // changeSignal();
   // filterMixData();
   // checkPassword();
+  loadStart();
   rollPick();
   timeOut();
   takeForm();
