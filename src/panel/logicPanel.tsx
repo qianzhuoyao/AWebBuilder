@@ -135,6 +135,7 @@ export const LogicPanel = memo(() => {
   //挂载上所有节点
   usePaintNodes(GRef.current.G);
   useEffect(() => {
+    document.ondragstart = () => false;
     //逻辑流走向
     const updateEdgeSubscription = subscribeUpdateEdge(
       (nodeIdList) => {

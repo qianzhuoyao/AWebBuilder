@@ -16,7 +16,10 @@ import { BaseChart } from '../node/chart';
 import { useSceneContext } from '../menu/context';
 import { computeActPositionNodeByRuler } from '../comp/computeActNodeByRuler.ts';
 import { ItemParams } from 'react-contexify';
-import { useFilterLogicNode, useFilterViewNode } from './useFilter.tsx';
+import { useFilterViewNode } from './useFilter.tsx';
+import { getWCache, subscribeViewCacheUpdate } from './data.ts';
+import { getChartEmit } from '../emit/emitChart.ts';
+
 
 export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
   NodesState: INs,
@@ -24,24 +27,50 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
   isTemp?: boolean,
   PanelState: IPs
 }) => {
-
-
   const [parseOption, setParseOption] = useState<any>({});
 
-  // const PanelState = useSelector((state: { panelSlice: IPs }) => {
-  //   return state.panelSlice;
-  // });
-  //
-  // const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-  //   return state.viewNodesSlice;
-  // });
+  useEffect(() => {
+    if (NodesState?.list) {
+      setParseOption(() => new Function('params',
+
+        `try{
+        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        }catch(e){return {}}`,
+      )(getWCache(id)));
+    }
+  }, []);
 
   useEffect(() => {
-    console.log();
-    setParseOption(() => new Function('params', NodesState.list[id].instance.option || '')(PanelState.dataPool[id]));
-  }, [NodesState.list, PanelState.dataPool, id]);
+    const sub = getChartEmit().observable.subscribe(() => {
+      if (NodesState?.list) {
+        setParseOption(() => new Function('params',
 
-  if (NodesState.list[id].classify === 'chart') {
+          `try{
+        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        }catch(e){return {}}`,
+        )(getWCache(id)));
+
+      }
+    });
+    const sSub = subscribeViewCacheUpdate(() => {
+      if (NodesState?.list) {
+        setParseOption(() => new Function('params',
+
+          `try{
+        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        }catch(e){
+        return {}}`,
+        )(getWCache(id)));
+      }
+    });
+    return () => {
+      sub.unsubscribe();
+      sSub.unsubscribe();
+    };
+  }, [NodesState?.list, id]);
+
+
+  if (NodesState.list[id]?.classify === 'chart') {
     return (
       <BaseChart
         type={NodesState.list[id].instance.type}

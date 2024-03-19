@@ -12,6 +12,7 @@ import { filterMixData } from './filterData.ts';
 import { mapFieldMixData } from './selectKeyMix.ts';
 import { timeSetter } from './timesSet.ts';
 import { useEffect } from 'react';
+import { rollPick } from './roll.ts';
 
 export const nodeBuilder = () => {
 
@@ -22,6 +23,7 @@ export const nodeBuilder = () => {
   // changeSignal();
   // filterMixData();
   // checkPassword();
+  rollPick();
   timeOut();
   timeInter();
   handleTrigger();

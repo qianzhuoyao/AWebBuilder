@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import * as Echart from 'echarts';
 import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
 //pixTable
@@ -43,6 +42,8 @@ export const logic_TO_get = 'logic_TO_get' as const;
 export const logic_View_bind = 'logic_View_bind' as const;
 //循环
 export const logic_Ring_get = 'logic_Ring_get' as const;
+//打平
+export const logic_Roll_get = 'logic_Roll_get' as const;
 //定次
 export const logic_TimesSet_get = 'logic_TimesSet_get' as const;
 //手动触发
@@ -54,6 +55,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_U_get
   | typeof logic_Cache_set
   | typeof logic_P_get
+  | typeof logic_Roll_get
   | typeof logic_TM_get
   | typeof logic_TO_get
   | typeof logic_Dug_Trigger
@@ -61,7 +63,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_View_bind
   | typeof logic_FilterData_get
   | typeof logic_MixData_get
-| typeof  logic_TimesSet_get
+  | typeof logic_TimesSet_get
 
 export type INodeType =
   | typeof pix_BLine

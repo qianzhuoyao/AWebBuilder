@@ -37,8 +37,9 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
   }, []);
 
   useEffect(() => {
+
     const CRvar = chartRef.current;
-    console.log(CRvar,chartParams, isEqual(instance.current.option, chartParams.options), 'RdddddchartParamsdasdaS');
+    console.log(CRvar, chartParams, instance.current.ChartInstance, isEqual(instance.current.option, chartParams.options), 'RdddddchartParamsdasdaS');
 
     if (CRvar) {
       if (chartParams.options) {
@@ -72,17 +73,23 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
   }, [chartParams, chartParams.options]);
 
   return (
-    <>{
-      chartParams.options ? <div
-        ref={chartRef}
-        id={chartId}
-        style={{
-          width: chartParams.width + 'px',
-          height: chartParams.height + 'px',
-        }}
-        //   className={`w-[${chartParams.width}px] h-[${chartParams.height}px]`}
-      ></div> : <>empty</>
-    }</>
+    <>
+      {
+        chartParams.options ? <div
+          ref={chartRef}
+          id={chartId}
+          style={{
+            width: chartParams.width + 'px',
+            height: chartParams.height + 'px',
+          }}
+          //   className={`w-[${chartParams.width}px] h-[${chartParams.height}px]`}
+        ></div> : <div
+          style={{
+            width: chartParams.width + 'px',
+            height: chartParams.height + 'px',
+          }}
+        >待解析</div>
+      }</>
 
   );
 });

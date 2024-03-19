@@ -5,6 +5,7 @@ import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { PixBXChartConfigCode } from '../../form/view/PixBXChartConfigCode.tsx';
 import { PixBXChartConfigForm } from '../../form/view/BXChartConfigForm.tsx';
 import { ILs } from '../../../store/slice/logicSlice.ts';
+import { StreamData } from '../../form/logic/remoteReq/StreamData.tsx';
 
 
 const chartTabs = [
@@ -20,9 +21,14 @@ const chartTabs = [
     label: '组件配置',
     content: < PixBXChartConfigForm />,
   },
+  {
+    id: 'params',
+    label: '流入数据',
+    content: < StreamData />,
+  },
 ];
 
-export const PixBXChartConfig = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
+export const PixBXChartConfig = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
   const config = signalViewNodeAttrConfig(pix_BX);
   config.setConfigEle(nodeInfo => {
     if (nodeInfo.target.length > 0) {

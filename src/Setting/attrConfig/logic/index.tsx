@@ -20,10 +20,10 @@ export const setDefaultLogicConfig = () => {
 export const AttrConfigInit = (configParams: IConfigTypeParams) => {
   remoteGetConfig(configParams);
   // handleMixConfig(configParams);
-  TimerOutConfig(configParams)
+  TimerOutConfig(configParams);
   // CacheSetConfig(configParams);
-  handleTrigger(configParams);
+  handleTrigger();
   TimerIntConfig(configParams);
-  // viewMapping(configParams);
+  viewMapping(configParams);
   // FilterDataConfig(configParams);
 };

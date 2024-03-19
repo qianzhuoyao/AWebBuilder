@@ -1,107 +1,58 @@
-import { memo, useCallback } from 'react';
-import { Input, Select, SelectItem } from '@nextui-org/react';
-import { useDispatch, useSelector } from 'react-redux';
-import { INs, pix_BX } from '../../../../store/slice/nodeSlice.ts';
-import { ILs, updateNodeConfigInfo } from '../../../../store/slice/logicSlice.ts';
+import { memo, useCallback, useState } from 'react';
+import { Select, SelectItem, Selection } from '@nextui-org/react';
+import { useSelector } from 'react-redux';
+import { ILs } from '../../../../store/slice/logicSlice.ts';
+import { useFilterViewNode } from '../../../../panel/useFilter.tsx';
+import { genLogicConfigMap } from '../../../../Logic/nodes/logicConfigMap.ts';
+import { createBindMap, removeBindMap } from './bindNodeMappingLogic.ts';
 
 export const ViewMappingForm = memo(() => {
-
-  const dispatch = useDispatch();
-
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const layerViewNode = useFilterViewNode();
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
 
-  const onHandleUpdateBindNode = useCallback((keys: string[]) => {
-    if (keys.length === 1) {
+  const defaultMappingViewNode = String(genLogicConfigMap().configInfo.get(logicState.target[0])?.viewMapInfo?.viewNodeId);
+  const [mappingViewNode, setMappingViewNode] = useState(defaultMappingViewNode);
 
-      dispatch(updateNodeConfigInfo({
-        id: logicState.target[0],
-        infoType: 'viewMapInfo',
-        configInfo: {
-          ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
-          viewType: NodesState.list[keys[0]].instance.type,
-          bindViewNodeId: keys[0],
-        },
-      }));
+  const onHandleInsertData = useCallback((key: Selection) => {
+    console.log([...key][0], 'keytssss');
+    setMappingViewNode([...key][0] as string);
+    if ([...key][0]) {
+      createBindMap([...key][0] as string, logicState.target[0]);
+    } else {
+      removeBindMap(logicState.target[0]);
     }
-  }, [logicState.logicNodes, logicState.target]);
-
-  const updateBarX = useCallback((x: string) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'viewMapInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
-        viewType: NodesState.list[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || ''].instance.type,
-        instance: {
-          x,
-          y: logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.y,
+    genLogicConfigMap().configInfo.set(
+      logicState.target[0],
+      {
+        viewMapInfo: {
+          viewNodeId: [...key][0] as string,
+          data: {},
         },
       },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
-
-  const updateBarY = useCallback((y: string) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'viewMapInfo',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo || {}),
-        viewType: NodesState.list[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || ''].instance.type,
-        instance: {
-          y,
-          x: logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.x,
-        },
-      },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
+    );
+  }, []);
 
   return <>
     <div>
-      <small>视图组件</small>
+      <small>选择组件(相同图层)</small>
       <Select
-        size={'sm'}
-        className="max-w-xs mt-1"
-        labelPlacement={'outside'}
-        selectedKeys={[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || '']}
-        onSelectionChange={selection => {
-          onHandleUpdateBindNode([...selection] as string[]);
+        selectedKeys={[mappingViewNode]}
+        placeholder={'选中映射组件'}
+        aria-label={'svie'}
+        labelPlacement={'outside-left'}
+        className="max-w-xs"
+        onSelectionChange={key => {
+          onHandleInsertData(key);
         }}
       >
-        {Object.values(NodesState.list).map((node) => (
-          <SelectItem key={node.id} value={node.id}>
-            {node.alias}
+        {layerViewNode.map((item) => (
+          <SelectItem key={item.id} value={item.id}>
+            {item.alias}
           </SelectItem>
         ))}
       </Select>
     </div>
-    {/*柱状图*/}
-    {NodesState.list[logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.bindViewNodeId || '']?.instance?.type === pix_BX &&
-      <>
-        <div>
-          <small>X轴字段</small>
-          <Input size={'sm'} labelPlacement={'outside'} placeholder={'a.b.c'}
-                 value={logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.x}
-                 onChange={e => {
-                   updateBarX(e.target.value);
-                 }}
-          ></Input>
-        </div>
-        <div>
-          <small>Y轴字段</small>
-          <Input size={'sm'} labelPlacement={'outside'} placeholder={'a.b.c'}
-                 value={logicState.logicNodes[logicState.target[0]]?.configInfo?.viewMapInfo?.instance?.y}
-
-                 onChange={e => {
-                   updateBarY(e.target.value);
-                 }}
-          ></Input>
-        </div>
-      </>
-    }
   </>;
 });

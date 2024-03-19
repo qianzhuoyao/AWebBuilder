@@ -6,11 +6,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from 'react-redux';
 import { INs, updateInstance } from '../../../store/slice/nodeSlice.ts';
-import { MAIN_CONTAINER } from '../../../contant';
 import { Button, Code, Tooltip } from '@nextui-org/react';
 import { PhQuestion } from '../../attrConfig/view/panelSet.tsx';
 import { parseFnContent, runViewFnString } from '../../../comp/setDefaultChartOption.ts';
 import { useAutoHeight } from '../../../comp/useAutoHeight.tsx';
+import { getChartEmit } from '../../../emit/emitChart.ts';
 
 export const defaultBuilderFn = `
 return {
@@ -91,6 +91,7 @@ export const PixBXChartConfigCode = () => {
           id: NodesState.list[target].id,
           option: curCode,
         }));
+        getChartEmit().observable.next(1)
       }
 
     }

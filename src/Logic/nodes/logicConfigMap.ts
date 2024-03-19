@@ -29,10 +29,8 @@ export interface IMixDataFieldMap {
 
 
 export interface IViewMapInfo {
-  bindViewNodeId: string;
-  viewType: string
-  instance: IInstanceBind
-  type: 'IViewMapInfo',
+  viewNodeId: string;
+  data: any;
 }
 
 export interface IRemoteReqInfo {

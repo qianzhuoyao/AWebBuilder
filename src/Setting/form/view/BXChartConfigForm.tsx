@@ -1,24 +1,19 @@
 import { AInput } from '../../../comp/AInput.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { INs, moveNode, resizeNode, updateAlias, updateSize } from '../../../store/slice/nodeSlice.ts';
+import { INs, moveNode, resizeNode, updateAlias } from '../../../store/slice/nodeSlice.ts';
 import { useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { ILs } from '../../../store/slice/logicSlice.ts';
 import { Chip } from '@nextui-org/react';
+import { hasBindViewMap } from '../logic/viewMapping/bindNodeMappingLogic.ts';
 
 export const PixBXChartConfigForm = () => {
   const dispatch = useDispatch();
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
   const isBind = useMemo(() => {
-    return Object.values(logicState.logicNodes).some(node => {
-      return node.configInfo?.viewMapInfo?.bindViewNodeId === NodesState.list[NodesState.targets[0]].id;
-    });
-  }, [NodesState.list, NodesState.targets, logicState.logicNodes]);
+    return hasBindViewMap(NodesState.list[NodesState.targets[0]].id);
+  }, [NodesState.list, NodesState.targets]);
 
   const onHandleChangeY = useCallback((y: string) => {
     if (y !== '0') {

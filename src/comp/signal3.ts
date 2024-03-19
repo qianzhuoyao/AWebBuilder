@@ -72,8 +72,7 @@ export const parseMakeByFromId = <P, >(
       //子节点的订阅
       const subObservableFn = inputPorts
         .map(target => {
-          //  const targetConfig = genLogicConfigMap().configInfo.get(fromId);
-
+          console.log(target, genLogicConfigMap().configInfo, 'genLogicConfigMap().configInfos');
           const fn = genLogicNodeMenuItems().initLogicInMake.get(target.targetPort.split('#')[1]);
           return fn ? {
             id: target.target,
@@ -81,6 +80,7 @@ export const parseMakeByFromId = <P, >(
             observable: parseFn(fn, {
               pre: getStreamCache().cache.get(fromId),
               id: target.target,
+              config: genLogicConfigMap().configInfo.get(target.source),
               edge: target,
             }),
             // observable: fn(currentParams),
