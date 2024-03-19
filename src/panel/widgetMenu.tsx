@@ -33,7 +33,7 @@ export const ChartIcon = memo(() => {
           fill="currentColor"
         ></path>
       </svg>
-      <span className="text-center">图表</span>
+      <span className="text-center">元素</span>
     </div>
   );
 });
@@ -244,13 +244,13 @@ export const ImageTabs = [
   },
 ];
 
-export const TableTabs = [
-  {
-    id: 'TableChartContent',
-    label: '表格',
-    content: <TableMap></TableMap>,
-  },
-];
+// export const TableTabs = [
+//   {
+//     id: 'TableChartContent',
+//     label: '表格',
+//     content: <TableMap></TableMap>,
+//   },
+// ];
 
 const TabSlot: React.FC<ITs> = ({ ele }) => {
   return (
@@ -284,13 +284,13 @@ export const WidgetMenu = memo(() => {
     () => [
       {
         id: 'bXChartContent',
-        label: '柱状图',
+        label: '图表',
         content: <BarMap></BarMap>,
       },
       {
         id: 'lChartContent',
-        label: '折线图',
-        content: <LineMap></LineMap>,
+        label: '表格',
+        content: <TableMap></TableMap>,
       },
     ],
     [],
@@ -302,11 +302,11 @@ export const WidgetMenu = memo(() => {
         label: <ChartIcon />,
         content: <TabSlot ele={ChartTabs}></TabSlot>,
       },
-      {
-        id: 'table',
-        label: <TableIcon />,
-        content: <TabSlot ele={TableTabs}></TabSlot>,
-      },
+      // {
+      //   id: 'table',
+      //   label: <TableIcon />,
+      //   content: <TabSlot ele={TableTabs}></TabSlot>,
+      // },
       {
         id: 'image',
         label: <ImageIcon />,

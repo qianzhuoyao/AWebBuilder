@@ -13,6 +13,7 @@ import { mapFieldMixData } from './selectKeyMix.ts';
 import { timeSetter } from './timesSet.ts';
 import { useEffect } from 'react';
 import { rollPick } from './roll.ts';
+import { takeForm } from './takeForm.ts';
 
 export const nodeBuilder = () => {
 
@@ -25,6 +26,7 @@ export const nodeBuilder = () => {
   // checkPassword();
   rollPick();
   timeOut();
+  takeForm();
   timeInter();
   handleTrigger();
   viewLogicSlot();

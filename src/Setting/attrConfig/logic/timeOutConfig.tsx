@@ -15,7 +15,7 @@ export const TimerOutConfig = (configParams: IConfigTypeParams) => {
                   panel: 'p-1',
                   base: 'px-1',
                 }}>
-            <Tab title={'设置'}>
+            <Tab title={'设置'} key={nodeInfo.target[0]}>
               <Card>
                 <CardBody>
                   <TimeOutConfig />

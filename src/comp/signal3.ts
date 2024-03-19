@@ -96,7 +96,7 @@ export const parseMakeByFromId = <P, >(
 
       return currentParams?.pipe(
         tap(e => {
-          console.log(e, 'paramys');
+          console.log(e, fromId, 'paramys');
           getStreamCache().cache.set(fromId, e);
         }),
         takeWhile(() => getWDGraph().getVertices().includes(
@@ -109,14 +109,14 @@ export const parseMakeByFromId = <P, >(
                 tap(a => {
                   console.log(a, 'fgffgobservable');
                 }),
-                mergeMap((z) => {
-                  console.log(edge, self, z, params, 'fgffgobservafffble');
-                  effect.edgeRunOver(edge, id, z as P);
+                mergeMap(() => {
+                  console.log(edge, self, params, 'fgffgobservafffble');
+                  effect.edgeRunOver(edge, id, self as P);
                   if (edge.targetPort.indexOf('in-stop') > -1) {
-                    effect.toLoopStop(edge, id, z as P);
+                    effect.toLoopStop(edge, id, self as P);
                   }
 
-                  return bfs(id, edge, z);
+                  return bfs(id, edge, self);
                 }),
               ),
             ),

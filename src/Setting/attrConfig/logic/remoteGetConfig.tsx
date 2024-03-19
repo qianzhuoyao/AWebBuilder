@@ -219,27 +219,6 @@ const Test = memo(() => {
 });
 
 
-const tabs = [
-  {
-    id: 'url',
-    label: 'Url',
-    content: <Url></Url>,
-  },
-  // {
-  //   id: 'builder',
-  //   label: '构建参数',
-  //   content: <>
-  //
-  //   </>,
-  // },
-  {
-    id: 'test',
-    label: '测试',
-    content: <Test>
-
-    </Test>,
-  },
-];
 export const remoteGetConfig = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
   const config = signalLogicNodeAttrConfig(logic_D_get);
   config.setConfigEle(nodeInfo => {
@@ -248,19 +227,25 @@ export const remoteGetConfig = ({ NodesState, logicState }: { NodesState: INs, l
     if (nodeInfo.target.length > 0) {
       return <>
         <div className="flex w-full flex-col px-1">
-          <Tabs aria-label="Dynamic tabs" items={tabs} classNames={{
-            panel: 'p-1',
-            base: 'px-1',
-          }}>
-            {(item) => (
-              <Tab key={item.id} title={item.label}>
-                <Card>
-                  <CardBody>
-                    {item.content}
-                  </CardBody>
-                </Card>
-              </Tab>
-            )}
+          <Tabs aria-label="Dynamic tabs"
+                classNames={{
+                  panel: 'p-1',
+                  base: 'px-1',
+                }}>
+            <Tab key={nodeInfo.target[0] + 'url'} title={'Url'}>
+              <Card>
+                <CardBody>
+                  <Url></Url>
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key={nodeInfo.target[0] + 'test'} title={'测试'}>
+              <Card>
+                <CardBody>
+                  <Test></Test>
+                </CardBody>
+              </Card>
+            </Tab>
           </Tabs>
         </div>
 

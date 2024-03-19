@@ -28,7 +28,7 @@ import {
   logic_D_get,
   logic_Ring_get,
   logic_TO_get,
-  INs,
+  INs, logic_Form_get,
 } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode, ILogicNode } from '../store/slice/logicSlice';
@@ -272,6 +272,13 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
       return {
         timerConfigInfo: {
           time: 1000,
+        },
+      };
+    case logic_Form_get:
+      return {
+        formConfigInfo: {
+          mergePre: false,
+          json: {},
         },
       };
     case logic_TO_get:

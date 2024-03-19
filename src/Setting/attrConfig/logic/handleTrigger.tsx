@@ -21,7 +21,7 @@ export const handleTrigger = () => {
                 panel: 'p-1',
                 base: 'px-1',
               }}>
-              <Tab key={'operation'} title={'操作'}>
+              <Tab key={target[0]+'operation'} title={'操作'}>
                 <Card>
                   <CardBody>
                     <TriggerOperation go={go} target={target[0]} />

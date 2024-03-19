@@ -46,7 +46,7 @@ export const SRC_ICON = {
     {
       id: pix_BX,
       src: pixBX,
-      name: "bar柱状",
+      name: "图表模板",
     },
     // {
     //   id: pix_BY,

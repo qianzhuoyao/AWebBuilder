@@ -44,6 +44,7 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
     if (CRvar) {
       if (chartParams.options) {
         if (!isEqual(instance.current.option, chartParams.options)) {
+          instance.current.ChartInstance?.clear()
           instance.current.ChartInstance.setOption(chartParams.options);
           instance.current.option = chartParams.options;
         }

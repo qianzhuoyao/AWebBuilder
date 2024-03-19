@@ -18,6 +18,12 @@ export interface ITimerConfigInfo {
   time: number;
 }
 
+
+export interface IFormConfigInfo {
+  json: Record<string, any>;
+  mergePre?:boolean
+}
+
 export interface ITimerOutConfigInfo {
   timeOut: number;
 }
@@ -46,6 +52,7 @@ export interface IConfigInfo {
   mixDataFieldMap?: IMixDataFieldMap;
   filterListInfo?: IFilterListInfo;
   timerConfigInfo?: ITimerConfigInfo;
+  formConfigInfo?: IFormConfigInfo;
   timerOutConfigInfo?: ITimerOutConfigInfo;
 }
 
