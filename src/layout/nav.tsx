@@ -114,6 +114,7 @@ export const Nav = memo(() => {
     return state.panelSlice;
   });
 
+
   const widgetState = useSelector((state: { widgetSlice: IWls }) => {
     console.log(state, '00000state');
     return state.widgetSlice;
@@ -133,7 +134,21 @@ export const Nav = memo(() => {
       dispatch(updateWorkSpaceName(name));
     }
 
-  }, []);
+  }, [dispatch]);
+
+  const onSave = useCallback(() => {
+    window.postMessage({
+      name: PanelState.workSpaceName,
+      panel: JSON.stringify(PanelState),
+      logic: {
+        C: genLogicConfigMapToJSON(),
+        G: getWDGraph().toJSON(),
+        N: logicNodesConfigToJSON(),
+      },
+      nodes: JSON.stringify(NodesState),
+
+    }, window.location.protocol + '//' + window.location.hostname + ':30081');
+  }, [NodesState, PanelState]);
 
   const onPreView = useCallback(() => {
     console.log(getWDGraph().toJSON(), 'getWDGraph().toJSON()');
@@ -213,7 +228,7 @@ export const Nav = memo(() => {
                   aria-label="locale"
                 >
                   {/*<Icon icon="uil:save" width={'16px'} height={'16px'} />*/}
-                  <IcOutlineSave></IcOutlineSave>
+                  <IcOutlineSave onClick={onSave}></IcOutlineSave>
                 </Button>
 
                 <div className="ml-[60px] flex items-center">
