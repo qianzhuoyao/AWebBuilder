@@ -255,7 +255,7 @@ export const Nav = memo(() => {
           </>
         </div>
         <div className="flex items-center">
-          <Tooltip color={'primary'} content={'预览'} className="capitalize">
+          {showTools ? <Tooltip color={'primary'} content={'预览'} className="capitalize">
             <Button
               className="mr-2"
               size="sm"
@@ -267,7 +267,7 @@ export const Nav = memo(() => {
             >
               预览
             </Button>
-          </Tooltip>
+          </Tooltip> : <></>}
           <Tooltip color={'primary'} content={'国际化'} className="capitalize">
             <Button
               isIconOnly
