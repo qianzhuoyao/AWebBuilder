@@ -6,50 +6,69 @@
 
 ```tsx
 import { signalLogicNode } from '../base.ts';
-import { logic_Cache_clear } from '../../store/slice/nodeSlice.ts';
-import cacheRemove from '../../assets/widgetIcon/cache-delete.svg';
+import { logic_Ring_get } from '../../store/slice/nodeSlice.ts';
+import ring from '../../assets/widgetIcon/icon-park--cross-ring-two.svg';
+import { of, interval, takeWhile, defer, tap } from 'rxjs';
+import { MUST_FORCE_STOP_SE } from '../../contant';
+import { createSingleInstance } from '../../comp/createSingleInstance.ts';
+import { getSyncTimeIntConfig } from '../../Setting/form/logic/timer/timeConfig.tsx';
+import { ITimerConfigInfo } from './logicConfigMap.ts';
 
-interface IDataReq {
-  data: number;
-}
 
-export const buildCacheClearReqNode = () => {
+const intTimer = () => {
+  const timer = new Map<string, boolean>();
+  return {
+    timer,
+  };
+};
 
-  const cacheClearReq = signalLogicNode<IDataReq, IDataReq>({
-    //必须预先注册一个关于组件的声明id，这个id在nodeSlice内注册
-    id: logic_Cache_clear,
-    //类型需要声明所属范围
-    type: 'cache',
-    //资源文件，用于放置图标
-    src: cacheRemove,
-    //组件说明
-    tips: '清除所有缓存以便释放内存',
-    //组件名称
-    name: '缓存清理器',
-  });
-  //注册入端口，会在使用逻辑流时执行。默认为一个任务，参数是，来源节点信息
-  cacheClearReq.signalIn('logic_Cache_clear-port-in-0', ({ fromNodes }) => {
-    console.log({
-      fromNodes,
-    });
-    return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
-    });
-  });
-//注册输出端，输出端只允许一个端口，可以连接多个，参数是in接口返回的promise数据
-  cacheClearReq.signalOut((params) => {
-    console.log({
-      params,
-    });
-    return new Promise(resolve => {
-      resolve({
-        data: 12,
-      });
-    });
+
+export const getInitTimer = createSingleInstance(intTimer);
+//循环器
+export const timeInter = () => {
+
+
+  const TimeInter = signalLogicNode<
+    { timerConfigInfo: ITimerConfigInfo },
+    unknown,
+    unknown
+  >({
+    id: logic_Ring_get,
+    type: 'timeInter',
+    src: ring,
+    tips: '收到信号后循环发出信号,直到stop端口收到信号止',
+    name: '循环',
   });
 
+  TimeInter.signalIn('in-go', (value) => {
+    getInitTimer().timer.set(value.id, true);
+    getSyncTimeIntConfig().subject.next({
+      status: true,
+    });
+    return of(value?.pre);
+  });
+
+  TimeInter.signalIn('in-stop', (value) => {
+    return defer(() => of(MUST_FORCE_STOP_SE)).pipe(
+      tap(() => {
+        getInitTimer().timer.set(value.id, false);
+        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc');
+        getSyncTimeIntConfig().subject.next({
+          status: false,
+        });
+      }),
+    );
+  });
+
+  TimeInter.signalOut('out', (value) => {
+    console.log(value, 'TimeInter');
+    return interval(value.config.timerConfigInfo.time || 1000).pipe(
+      takeWhile(() => {
+        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc-1');
+        return !!getInitTimer().timer.get(value.id) && value?.pre !== MUST_FORCE_STOP_SE;
+      }),
+    );
+  });
 };
 ```
 
