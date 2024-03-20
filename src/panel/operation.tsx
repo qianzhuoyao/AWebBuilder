@@ -248,6 +248,7 @@ const NodeContainer = memo(() => {
     if (box) {
       box.style.zIndex = '9';
     }
+    console.log(layerViewNode,'layerViewNode')
   }, []);
 
   return (

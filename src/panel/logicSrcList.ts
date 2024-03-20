@@ -1,11 +1,4 @@
 
-// | 'chart'
-// | 'table'
-// | 'dom'
-// | 'text'
-// | 'line'
-// | 'remote'
-// | 'cache';
 export const LOGIC_TYPE_LIST = [
   'remote',
   'viewSlot',

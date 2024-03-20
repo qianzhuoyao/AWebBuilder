@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 
 export const loadStart = () => {
 
-  const LoadStart = signalLogicNode<any>({
+  const LoadStart = signalLogicNode({
     id: logic_Load_start,
     type: 'page',
     src: start,

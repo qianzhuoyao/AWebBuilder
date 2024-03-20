@@ -14,7 +14,7 @@ export const useAttrSet = (deps?: React.DependencyList) => {
     return state.logicSlice;
   });
   useEffect(() => {
-    setDefaultLogicConfig({ logicState });
+    setDefaultLogicConfig();
     setDefaultPanelViewConfig({ NodesState });
     AttrConfigInit({ NodesState, logicState });
     AttrViewConfigInit({ NodesState, logicState });

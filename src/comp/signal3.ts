@@ -26,6 +26,12 @@ interface IEffect<T> {
   startRun: () => void;
 }
 
+export interface IMessageFromStream<Pre, Config> {
+  config: Config,
+  pre: Pre,
+  id: string,
+  edge: Edge<string, IEdgeMessage> | undefined
+}
 
 const parseFn = <T, >(
   fn: (params: T | IDefaultParams) => Observable<T>,

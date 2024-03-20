@@ -19,3 +19,5 @@ export const DEFAULT_PANEL_COLOR = 'rgba(35,35,36,1)';
 export const MAIN_LAYER = 'MAIN_LAYER' as const;
 
 export const CONSTANT_DEMO_PATH = '/demo/' as const;
+
+export const SERVICE_PORT = 30081

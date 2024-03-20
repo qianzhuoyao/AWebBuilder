@@ -5,6 +5,7 @@ import { of, interval, takeWhile, defer, tap } from 'rxjs';
 import { MUST_FORCE_STOP_SE } from '../../contant';
 import { createSingleInstance } from '../../comp/createSingleInstance.ts';
 import { getSyncTimeIntConfig } from '../../Setting/form/logic/timer/timeConfig.tsx';
+import { ITimerConfigInfo } from './logicConfigMap.ts';
 
 
 const intTimer = () => {
@@ -20,7 +21,11 @@ export const getInitTimer = createSingleInstance(intTimer);
 export const timeInter = () => {
 
 
-  const TimeInter = signalLogicNode<any>({
+  const TimeInter = signalLogicNode<
+    { timerConfigInfo: ITimerConfigInfo },
+    unknown,
+    unknown
+  >({
     id: logic_Ring_get,
     type: 'timeInter',
     src: ring,

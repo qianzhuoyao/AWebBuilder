@@ -295,10 +295,10 @@ export const genWDGraph = (GJson: string) => {
     const GConfig = JSON.parse(GJson);
     console.log(GConfig, 'GConfig');
     const WDGraph = getWDGraph();
-    GConfig?.vecList.map((vec: string) => {
+    GConfig?.vecList?.map((vec: string) => {
       WDGraph.addVertex(vec);
     });
-    GConfig?.edges.map((edge: Edge<string, IEdgeMessage>) => {
+    GConfig?.edges?.map((edge: Edge<string, IEdgeMessage>) => {
       if (!WDGraph.hasEdge(
         edge.source,
         edge.target,

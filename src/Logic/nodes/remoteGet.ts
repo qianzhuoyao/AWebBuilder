@@ -2,11 +2,16 @@ import { signalLogicNode } from '../base.ts';
 import { logic_D_get } from '../../store/slice/nodeSlice.ts';
 import remoteGet from '../../assets/widgetIcon/remote_get.svg';
 import { from, of } from 'rxjs';
+import { IRemoteReqInfo } from './logicConfigMap.ts';
 
 
 export const buildDataReqNode = () => {
 
-  const dataReq = signalLogicNode<any>({
+  const dataReq = signalLogicNode<
+    { remoteReqInfo: IRemoteReqInfo },
+    unknown,
+    unknown
+  >({
     id: logic_D_get,
     type: 'remote',
     src: remoteGet,
@@ -14,24 +19,21 @@ export const buildDataReqNode = () => {
     name: '获取器',
   });
   dataReq.signalIn('in-0', (value) => {
-    console.log(value.pre, 'value.pre');
     return of(value.pre);
   });
 
-  dataReq.signalOut('out', (value) => {
+  dataReq.signalOut<any>('out', (value) => {
 
 
     return from(new Promise((resolve, reject) => {
-      console.log(value,'dfafgsass');
       const query = () => fetch(value?.config?.remoteReqInfo?.protocol + '://' + value.config?.remoteReqInfo?.url || '',
         {
           method: value.config?.remoteReqInfo?.method || 'post',
-          body: value.config?.remoteReqInfo?.pre || null,
+          body: value.pre || null,
         }).then((res) => res.json()).catch(e => {
         reject(e);
       });
       query().then(res => {
-
         resolve({
           data: res,
         });

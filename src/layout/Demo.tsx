@@ -7,7 +7,7 @@ import { genWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { parseMakeByFromId } from '../comp/signal3.ts';
 import { createNode } from '../panel/logicPanelEventSubscribe.ts';
 import { ILogicNode } from '../store/slice/logicSlice.ts';
-import { addNode, INs } from '../store/slice/nodeSlice.ts';
+import { addNode, INs, IViewNode } from '../store/slice/nodeSlice.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { genLogicConfigMapToParse } from '../Logic/nodes/logicConfigMap.ts';
 
@@ -21,13 +21,13 @@ export const Demo = () => {
   const previewData = window.localStorage.getItem('DEMO-NODE#');
   const previewPanelData = window.localStorage.getItem('DEMO-PANEL#');
   const parseConfig = JSON.parse(previewLogic || '{}');
-  const data = JSON.parse(previewData);
+  const data = JSON.parse(previewData || '{}');
 
   useEffect(() => {
     if (window.location.pathname.slice(0, 6) === CONSTANT_DEMO_PATH) {
       nodeBuilder();
       genLogicConfigMapToParse(parseConfig.C);
-      Object.values(data.list || {})?.map(item => {
+      (Object.values(data.list || {}) as IViewNode[])?.map((item) => {
         dispatch(
           addNode({
             x: item.x,
@@ -44,7 +44,7 @@ export const Demo = () => {
         );
       });
 
-      Object.values(JSON.parse(parseConfig.N || '{}'))?.map(node => {
+      (Object.values(JSON.parse(parseConfig.N || '{}')) as ILogicNode[])?.map(node => {
         createNode({
           typeId: node.typeId,
           belongClass: node.belongClass,
@@ -58,9 +58,6 @@ export const Demo = () => {
         } as ILogicNode);
       });
       const newGraph = genWDGraph(parseConfig.G || '');
-      console.log(newGraph?.getVertices().filter(node => {
-        return newGraph?.getInDegree(node).length === 0;
-      }), 'newGraph');
       //查找所有入度为0的点执行
       newGraph?.getVertices().filter(node => {
         return newGraph?.getInDegree(node).length === 0;
@@ -75,11 +72,7 @@ export const Demo = () => {
         });
       });
     }
-
-    setTimeout(() => {
-      console.log(NodesState, 'adasdas3efNodesState3f3');
-    }, 0);
-  }, [previewLogic]);
+  }, [NodesState, data.list, dispatch, parseConfig.C, parseConfig.G, parseConfig.N, previewLogic]);
 
   if (previewData && previewPanelData) {
     const panel = JSON.parse(previewPanelData);

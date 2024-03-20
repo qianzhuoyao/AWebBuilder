@@ -190,24 +190,6 @@ const TableMap = memo(() => {
     </div>
   );
 });
-const LineMap = memo(() => {
-  return (
-    <div className="flex flex-wrap justify-between">
-      {SRC_ICON.line.map((line) => {
-        return (
-          <WidgetIconTemp
-            nodeType="VIEW"
-            key={line.id}
-            classify="line"
-            typeId={line.id}
-            src={line.src}
-            name={line.name}
-          ></WidgetIconTemp>
-        );
-      })}
-    </div>
-  );
-});
 
 const BarMap = memo(() => {
   return (

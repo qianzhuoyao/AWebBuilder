@@ -1,9 +1,8 @@
 import { signalLogicNodeAttrConfig } from '../../signalNodeConfig.ts';
-import { INs, logic_Cache_set } from '../../../store/slice/nodeSlice.ts';
-import { ILs } from '../../../store/slice/logicSlice.ts';
+import { logic_Cache_set } from '../../../store/slice/nodeSlice.ts';
 
 
-export const CacheSetConfig = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
+export const CacheSetConfig = () => {
   const config = signalLogicNodeAttrConfig(logic_Cache_set);
   config.setConfigEle(nodeInfo => {
     if (nodeInfo.target.length > 0) {

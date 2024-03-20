@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import {  subscribeViewCacheUpdate } from '../../../../panel/data.ts';
+import { subscribeViewCacheUpdate } from '../../../../panel/data.ts';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from '@codemirror/view';
 import beautify_js from 'js-beautify';
 import { useAutoHeight } from '../../../../comp/useAutoHeight.tsx';
 import { useTheme } from 'next-themes';
-import { Code, Tooltip } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
 import { PhQuestion } from '../../../attrConfig/view/panelSet.tsx';
 
 export const StreamData = () => {
@@ -15,8 +15,8 @@ export const StreamData = () => {
   const height = useAutoHeight();
   const { theme } = useTheme();
   useEffect(() => {
-    const sSub = subscribeViewCacheUpdate(({ data ,viewId}) => {
-      console.log(data,viewId,'data0st');
+    const sSub = subscribeViewCacheUpdate(({ data, viewId }: any) => {
+      console.log(data, viewId, 'data0st');
       setShowData(data);
     });
     return () => {

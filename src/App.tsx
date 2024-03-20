@@ -82,7 +82,7 @@ const router = createBrowserRouter([
 
       {
         //面板
-        path: '/panel',
+        path: '/panel/*',
         loader: () => ({ message: 'Hello Data Router1111!' }),
         element: <Panel></Panel>,
       },

@@ -15,6 +15,7 @@ import { INs } from '../store/slice/nodeSlice.ts';
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 import { logicNodesConfigToJSON } from '../panel/logicPanelEventSubscribe.ts';
 import { genLogicConfigMapToJSON } from '../Logic/nodes/logicConfigMap.ts';
+import { toSaveJSON, toSetLocalstorage } from '../struct/toJSON.ts';
 
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
@@ -137,31 +138,19 @@ export const Nav = memo(() => {
   }, [dispatch]);
 
   const onSave = useCallback(() => {
-    window.postMessage({
-      name: PanelState.workSpaceName,
-      panel: JSON.stringify(PanelState),
-      logic: {
-        C: genLogicConfigMapToJSON(),
-        G: getWDGraph().toJSON(),
-        N: logicNodesConfigToJSON(),
-      },
-      nodes: JSON.stringify(NodesState),
-
-    }, window.location.protocol + '//' + window.location.hostname + ':30081');
+    toSaveJSON(PanelState, NodesState);
   }, [NodesState, PanelState]);
 
   const onPreView = useCallback(() => {
-    console.log(getWDGraph().toJSON(), 'getWDGraph().toJSON()');
-
-    window.localStorage.setItem('DEMO-NODE#', JSON.stringify(NodesState));
-    window.localStorage.setItem('DEMO-PANEL#', JSON.stringify(PanelState));
-    window.localStorage.setItem('DEMO-LOGIC#', JSON.stringify(
-      {
+    toSetLocalstorage(
+      JSON.stringify(NodesState),
+      JSON.stringify(PanelState),
+      JSON.stringify({
         C: genLogicConfigMapToJSON(),
         G: getWDGraph().toJSON(),
         N: logicNodesConfigToJSON(),
-      },
-    ));
+      }),
+    );
     window.open(window.location.origin + '/demo/' + PanelState.workSpaceName);
   }, [NodesState, PanelState]);
 

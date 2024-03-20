@@ -2,12 +2,17 @@ import { signalLogicNode } from '../base.ts';
 import { logic_Form_get } from '../../store/slice/nodeSlice.ts';
 import formV from '../../assets/widgetIcon/mdi--form.svg';
 import { of } from 'rxjs';
+import { IFormConfigInfo } from './logicConfigMap.ts';
 
 
 //检查器
 export const takeForm = () => {
 
-  const TakeForm = signalLogicNode<any>({
+  const TakeForm = signalLogicNode<
+    { formConfigInfo: IFormConfigInfo },
+    unknown,
+    unknown
+  >({
     id: logic_Form_get,
     type: 'mix',
     src: formV,

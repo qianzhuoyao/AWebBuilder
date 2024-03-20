@@ -8,7 +8,7 @@ import { emitLogic } from './emit.ts';
 //检查器
 export const handleTrigger = () => {
 
-  const HandleTrigger = signalLogicNode<any>({
+  const HandleTrigger = signalLogicNode({
     id: logic_Dug_Trigger,
     type: 'hTrigger',
     src: trigger,
@@ -18,7 +18,7 @@ export const handleTrigger = () => {
   });
 
   HandleTrigger.signalOut('out', () => {
-    console.log(window.location,'ccscscsc888');
+    console.log(window.location, 'ccscscsc888');
     return emitLogic();
   });
 

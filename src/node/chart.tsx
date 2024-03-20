@@ -2,6 +2,7 @@ import { memo, useEffect, useId, useRef } from 'react';
 import * as Echart from 'echarts';
 import { INodeType } from '../store/slice/nodeSlice';
 import { isEqual } from 'lodash';
+import { EChartsType } from 'echarts';
 
 interface IBaseChart {
   options?: Echart.EChartsOption;
@@ -13,8 +14,8 @@ interface IBaseChart {
 export const BaseChart = memo((chartParams: IBaseChart) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const instance = useRef<{
-    option: any
-    ChartInstance: any
+    option: unknown
+    ChartInstance: EChartsType | null
   }>({
     option: null,
     ChartInstance: null,
@@ -44,8 +45,8 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
     if (CRvar) {
       if (chartParams.options) {
         if (!isEqual(instance.current.option, chartParams.options)) {
-          instance.current.ChartInstance?.clear()
-          instance.current.ChartInstance.setOption(chartParams.options);
+          instance.current.ChartInstance?.clear();
+          instance.current.ChartInstance?.setOption(chartParams.options);
           instance.current.option = chartParams.options;
         }
 
@@ -57,7 +58,7 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
           console.log(size, chartRef.current?.getBoundingClientRect(), 'RddddddasdaS');
           if (size.current.width !== width || size.current.height !== height) {
 
-            instance.current.ChartInstance.resize();
+            instance.current.ChartInstance?.resize();
             size.current.width = width;
             size.current.height = height;
           }

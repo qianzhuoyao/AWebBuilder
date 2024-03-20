@@ -3,12 +3,17 @@ import { logic_TO_get } from '../../store/slice/nodeSlice.ts';
 import time from '../../assets/widgetIcon/carbon--time.svg';
 import { delay, tap, of } from 'rxjs';
 import { getSyncTimeOutConfig } from '../../Setting/form/logic/timer/timeOut.tsx';
+import { ITimerOutConfigInfo } from './logicConfigMap.ts';
 
 
 //检查器
 export const timeOut = () => {
 
-  const TimeOut = signalLogicNode<any>({
+  const TimeOut = signalLogicNode<
+    {timerOutConfigInfo:ITimerOutConfigInfo},
+    unknown,
+    unknown
+  >({
     id: logic_TO_get,
     type: 'timeOut',
     src: time,

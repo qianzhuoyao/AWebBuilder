@@ -147,7 +147,7 @@ const Test = memo(() => {
     body: null,
   }).then((res) => res.json());
 
-  const { isLoading, isError, error, data, isFetching } =
+  const { isLoading, isError, error, data } =
     useQuery([toSend], () => query(), {
       retry: 0,
       enabled: !!toSend,

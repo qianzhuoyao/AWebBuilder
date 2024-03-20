@@ -3,12 +3,17 @@ import { logic_View_bind } from '../../store/slice/nodeSlice.ts';
 import mapSrc from '../../assets/widgetIcon/oi--project.svg';
 import { of } from 'rxjs';
 import { inertViewCache } from '../../panel/data.ts';
+import { IViewMapInfo } from './logicConfigMap.ts';
 
 
 //检查器
 export const viewLogicSlot = () => {
 
-  const ViewLogicSlot = signalLogicNode<any>({
+  const ViewLogicSlot = signalLogicNode<
+    { viewMapInfo: IViewMapInfo },
+    unknown,
+    unknown
+  >({
     id: logic_View_bind,
     type: 'viewSlot',
     src: mapSrc,

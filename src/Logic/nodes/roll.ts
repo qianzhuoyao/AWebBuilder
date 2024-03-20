@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 export const rollPick = () => {
 
 
-  const RollPick = signalLogicNode<any>({
+  const RollPick = signalLogicNode({
     id: logic_Roll_get,
     type: 'viewSlot',
     src: roll,

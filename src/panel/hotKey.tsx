@@ -16,7 +16,7 @@ import {
   updateIsSelection,
   updatePanelTickUnit,
 } from '../store/slice/panelSlice';
-import { AR_PANEL_DOM_ID, ATTR_TAG, Node, NODE_ID } from '../contant';
+import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from '../contant';
 import { updateTargets } from '../store/slice/nodeSlice';
 import { checkMouseDownInArea } from '../comp/mousdownArea.ts';
 

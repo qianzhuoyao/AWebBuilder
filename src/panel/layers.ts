@@ -68,6 +68,51 @@ export const getLayerContent = (layerName: layerName) => {
   return getLayers().layersMap.get(layerName);
 };
 
+
+export const getLayerContentToParse = (json: string) => {
+  const obj = JSON.parse(json)
+
+  Object.keys(obj?.layersMapObj || {}).map(key => {
+    getLayers().layersMap.set(key, obj?.layersMapObj[key])
+  })
+  Object.keys(obj?.layerNodesOfLogicObj || {}).map(key => {
+    const setL = new Set<string>()
+    obj?.layerNodesOfLogicObj[key]?.map(ki => {
+      setL.add(ki)
+    })
+
+    getLayers().layerNodesOfLogic.set(key, setL)
+  })
+  Object.keys(obj?.layerNodesOfViewObj || {}).map(key => {
+    const setV = new Set<string>()
+    obj?.layerNodesOfViewObj[key]?.map(iko => {
+      setV.add(iko)
+    })
+    getLayers().layerNodesOfView.set(key, setV)
+  })
+  console.log(getLayers(), 'sobj01')
+}
+export const getLayerContentToJSON = () => {
+  const layersMapObj: any = {}
+  const layerNodesOfLogicObj: any = {}
+  const layerNodesOfViewObj: any = {};
+  [...getLayers().layersMap.keys()].map(i => {
+    layersMapObj[i] = getLayers().layersMap.get(i)
+  });
+  [...getLayers().layerNodesOfLogic.keys()].map(i => {
+    layerNodesOfLogicObj[i] = [...(getLayers().layerNodesOfLogic.get(i) || [])]
+  });
+  [...getLayers().layerNodesOfView.keys()].map(i => {
+    layerNodesOfViewObj[i] = [...(getLayers().layerNodesOfView.get(i) || [])]
+  })
+  console.log(layerNodesOfLogicObj, layerNodesOfViewObj, 'slayerNodesOfViewObj')
+  return JSON.stringify({
+    layersMapObj,
+    layerNodesOfLogicObj,
+    layerNodesOfViewObj
+  })
+}
+
 export const findViewNodesInLayer = (layerName: string) => {
   return getLayers().layerNodesOfView.get(layerName);
 };
