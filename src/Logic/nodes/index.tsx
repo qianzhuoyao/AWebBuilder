@@ -21,17 +21,19 @@ import { or } from './or.ts';
 import { not } from './not.ts';
 
 export const nodeBuilder = () => {
-
+  buildCacheClearReqNode()
   buildDataReqNode();
   not();
   or();
   and();
+  buildCacheSetNode()
   // buildDataSyncNode();
   // buildCacheClearReqNode();
   // buildCacheSetNode();
   // changeSignal();
   // filterMixData();
   // checkPassword();
+  timeSetter()
   encryption();
   loadStart();
   rollPick();

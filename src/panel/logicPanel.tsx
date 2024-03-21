@@ -16,7 +16,7 @@ import { findPortInfo, getPortNodeMap, updateConnectStatus } from '../node/portS
 import { deleteSubNode, subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
 import { useFilterLogicNode } from './useFilter.tsx';
 import { getRunningTasks } from '../comp/msg.tsx';
-import { createPEM, findPEM, getPortEdgeMap, removePEM } from './portEdgeMap.ts';
+import { createPEM, findPEM, removePEM } from './portEdgeMap.ts';
 
 
 interface GraphPanel {
@@ -237,12 +237,14 @@ export const LogicPanel = memo(() => {
           fill: '#d9d9d9',
           stroke: '#d9d9d9',
         });
+        removePEM(edge.getTargetNode()?.getProp().nodeGId + edge.getTargetPortId() || '', (edge.getSourcePortId() || '') + edge.getTargetPortId());
       } else if (edge.getTargetNode()?.getProp().nodeGId === params.props.nodeProp.nodeGId) {
         updateConnectStatus(edge.getSourceNode()?.getProp().nodeGId, 0);
         edge.getSourceNode()?.setPortProp(edge.getSourcePortId() || '', 'attrs/circle', {
           fill: '#d9d9d9',
           stroke: '#d9d9d9',
         });
+        removePEM(edge.getSourceNode()?.getProp().nodeGId + edge.getSourcePortId() || '', (edge.getSourcePortId() || '') + edge.getTargetPortId());
       }
     });
     getWDGraph().removeVertex(

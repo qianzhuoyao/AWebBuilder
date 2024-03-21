@@ -4,6 +4,7 @@ export const LOGIC_TYPE_LIST = [
   'viewSlot',
   'page',
   'table',
+  "date",
   'hTrigger',
   'both',
   'chart',

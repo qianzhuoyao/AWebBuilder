@@ -64,6 +64,8 @@ export const Demo = () => {
       }).map(taskNodeId => {
         console.log(taskNodeId,'taskNodeIdss');
         parseMakeByFromId(taskNodeId, {
+          toAnd1:()=>void 0,
+          toAnd0:()=>void 0,
           edgeRunOver: () => void 0,
           taskErrorRecord: () => void 0,
           toLoopStop: () => void 0,

@@ -1,6 +1,7 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_Cache_clear } from '../../store/slice/nodeSlice.ts';
 import cacheRemove from '../../assets/widgetIcon/cache-delete.svg';
+import { of } from 'rxjs';
 
 
 export const buildCacheClearReqNode = () => {
@@ -14,5 +15,11 @@ export const buildCacheClearReqNode = () => {
   });
 
 
+  cacheClearReq.signalIn('in-0', (value) => {
+    return of(value?.pre);
+  });
+  cacheClearReq.signalOut('out', (value) => {
+    return of(value?.pre);
+  });
 
 };

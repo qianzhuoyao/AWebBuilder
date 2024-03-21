@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { updateEdge } from '../panel/logicPanelEventSubscribe.ts';
 import { createSingleInstance } from './createSingleInstance.ts';
-import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 
 
 const runningTask = () => {
@@ -45,7 +44,7 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
         },
         toAnd0: (edge, origin) => {
           //获取其另外入口
-          console.log(origin,'0origin');
+          console.log(origin, '0origin');
           const other1 = origin?.origin1;
           if (other1) {
             getRunningTasks().runEdgeVis.set(other1, []);
@@ -53,7 +52,7 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
           }
         },
         toAnd1: (edge, origin) => {
-          console.log(origin,'1origin');
+          console.log(origin, '1origin');
           const other0 = origin?.origin0;
           if (other0) {
             getRunningTasks().runEdgeVis.set(other0, []);

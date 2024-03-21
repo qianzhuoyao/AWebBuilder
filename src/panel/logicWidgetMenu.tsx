@@ -96,6 +96,18 @@ const TimeInterMap = memo(() => {
   );
 });
 
+const ClickMap = memo(() => {
+  return <></>;
+});
+
+const BatterMap = memo(() => {
+  return <></>;
+});
+
+const HandleForm = memo(() => {
+  return <></>;
+});
+
 const HandleTrigger = memo(() => {
   const HTrigger = genLogicNodeMenuItems();
   return (
@@ -110,6 +122,29 @@ const HandleTrigger = memo(() => {
               typeId={remote.id}
               src={remote.src}
               name={remote.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+const TimeSlotMap = memo(() => {
+  const TimeSlot = genLogicNodeMenuItems();
+  const type = 'date';
+  return (
+    <div className="space-y-2">
+      {TimeSlot.logicNodeMenuItems.get(type)?.map((item) => {
+        return (
+          <div key={item.id}>
+            <WidgetIconTemp
+              tips={item.tips}
+              nodeType="LOGIC"
+              classify={type}
+              typeId={item.id}
+              src={item.src}
+              name={item.name}
             ></WidgetIconTemp>
           </div>
         );
@@ -140,7 +175,7 @@ const PageSlotMap = memo(() => {
     </div>
   );
 });
-const LogicBoth = memo(()=>{
+const LogicBoth = memo(() => {
   const LogicSlot = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
@@ -160,7 +195,7 @@ const LogicBoth = memo(()=>{
       })}
     </div>
   );
-})
+});
 const ViewSlotMap = memo(() => {
   const ViewSlot = genLogicNodeMenuItems();
   return (
@@ -234,14 +269,66 @@ const LogicDebugger = [
     label: '触发',
     content: <HandleTrigger></HandleTrigger>,
   },
+  {
+    id: 'logic_form_trigger',
+    label: '表单',
+    content: <HandleForm></HandleForm>,
+  },
+  {
+    id: 'logic_log_trigger',
+    label: '日志',
+    content: <HandleForm></HandleForm>,
+  },
 ];
-const LogicBrowse = [];
-const LogicEvent = [];
+const LogicBrowse = [
+  {
+    id: 'logic_batter_slot',
+    label: '电量',
+    content: <BatterMap></BatterMap>,
+  },
+  {
+    id: 'logic_play_slot',
+    label: '音频',
+    content: <BatterMap></BatterMap>,
+  },
+  {
+    id: 'logic_net_slot',
+    label: '网络',
+    content: <BatterMap></BatterMap>,
+  },
+  {
+    id: 'logic_web_slot',
+    label: '标签',
+    content: <BatterMap></BatterMap>,
+  },
+];
+const LogicEvent = [
+  {
+    id: 'logic_mouse_slot',
+    label: '鼠标',
+    content: <ClickMap></ClickMap>,
+  },
+  {
+    id: 'logic_key_slot',
+    label: '键盘',
+    content: <ClickMap></ClickMap>,
+  },
+  {
+    id: 'logic_window_slot',
+    label: '窗口',
+    content: <ClickMap></ClickMap>,
+  },
+];
 const LogicLife = [
   {
     id: 'logic_page_slot',
     label: '生命',
     content: <PageSlotMap></PageSlotMap>,
+  },
+  {
+    id: 'logic_time_slot',
+    label: '时间',
+    content: <TimeSlotMap></TimeSlotMap>,
   },
 ];
 const LogicView = [
@@ -249,6 +336,11 @@ const LogicView = [
     id: 'logic_view_slot',
     label: '插槽',
     content: <ViewSlotMap></ViewSlotMap>,
+  },
+  {
+    id: 'logic_file_base',
+    label: '文件',
+    content: <></>,
   },
   {
     id: 'logic_view_base',

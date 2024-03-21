@@ -216,12 +216,22 @@ export const TextTabs = [
     label: '文本',
     content: <TextMap></TextMap>,
   },
+  {
+    id: 'InputContent',
+    label: '输入',
+    content: <TextMap></TextMap>,
+  },
 ];
 
 export const ImageTabs = [
   {
     id: 'PicContent',
-    label: '图片资源',
+    label: '图片',
+    content: <ImageMap></ImageMap>,
+  },
+  {
+    id: 'frameContent',
+    label: '框架',
     content: <ImageMap></ImageMap>,
   },
 ];
