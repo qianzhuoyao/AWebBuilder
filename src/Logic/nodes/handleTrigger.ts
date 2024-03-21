@@ -3,6 +3,8 @@ import { logic_Dug_Trigger } from '../../store/slice/nodeSlice.ts';
 import trigger from '../../assets/widgetIcon/game-icons--click.svg';
 import triggerPick from '../../assets/widgetIcon/game-icons--click2.svg';
 import { emitLogic } from './emit.ts';
+import { takeWhile } from 'rxjs';
+import { CONSTANT_DEMO_PATH } from '../../contant';
 
 
 //检查器
@@ -19,7 +21,11 @@ export const handleTrigger = () => {
 
   HandleTrigger.signalOut('out', () => {
     console.log(window.location, 'ccscscsc888');
-    return emitLogic();
+    return emitLogic().pipe(
+      takeWhile(() => {
+        return window.location.pathname.slice(0, 6) !== CONSTANT_DEMO_PATH;
+      }),
+    );
   });
 
 };

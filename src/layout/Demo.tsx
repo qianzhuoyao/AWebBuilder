@@ -62,6 +62,7 @@ export const Demo = () => {
       newGraph?.getVertices().filter(node => {
         return newGraph?.getInDegree(node).length === 0;
       }).map(taskNodeId => {
+        console.log(taskNodeId,'taskNodeIdss');
         parseMakeByFromId(taskNodeId, {
           edgeRunOver: () => void 0,
           taskErrorRecord: () => void 0,
@@ -72,7 +73,7 @@ export const Demo = () => {
         });
       });
     }
-  }, [NodesState, data.list, dispatch, parseConfig.C, parseConfig.G, parseConfig.N, previewLogic]);
+  }, []);
 
   if (previewData && previewPanelData) {
     const panel = JSON.parse(previewPanelData);
