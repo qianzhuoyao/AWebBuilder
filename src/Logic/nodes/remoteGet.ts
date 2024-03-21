@@ -24,12 +24,12 @@ export const buildDataReqNode = () => {
 
   dataReq.signalOut<any>('out', (value) => {
 
-
+    console.log(value,'asd0value');
     return from(new Promise((resolve, reject) => {
       const query = () => fetch(value?.config?.remoteReqInfo?.protocol + '://' + value.config?.remoteReqInfo?.url || '',
         {
           method: value.config?.remoteReqInfo?.method || 'post',
-          body: value.pre || null,
+          body: JSON.stringify(value.pre) || null,
         }).then((res) => res.json()).catch(e => {
         reject(e);
       });
