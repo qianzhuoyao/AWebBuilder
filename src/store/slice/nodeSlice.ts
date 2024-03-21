@@ -42,6 +42,9 @@ export const logic_FilterData_get = 'logic_FilterData_get' as const;
 export const logic_TM_get = 'logic_TM_get' as const;
 //定时器
 export const logic_TO_get = 'logic_TO_get' as const;
+export const logic_NOT_BOTH_get = 'logic_NOT_BOTH_get' as const;
+export const logic_or_BOTH_get = 'logic_or_BOTH_get' as const;
+export const logic_and_BOTH_get = 'logic_and_BOTH_get' as const;
 //组件映射
 export const logic_View_bind = 'logic_View_bind' as const;
 //循环
@@ -71,6 +74,9 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_Ring_get
   | typeof logic_View_bind
   | typeof logic_FilterData_get
+  | typeof logic_NOT_BOTH_get
+  | typeof logic_and_BOTH_get
+  | typeof logic_or_BOTH_get
   | typeof logic_MixData_get
   | typeof logic_TimesSet_get
 

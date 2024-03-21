@@ -48,7 +48,7 @@ const initializeLogicNodeMenuItems = <Pre, F, I, O>(): IMenu<Pre, F, I, O> => {
   init.set('hTrigger', []);
   init.set('page', []);
   init.set('viewSlot', []);
-
+  init.set('both', []);
   const initLogicInMake: Map<string, (v: IMessageFromStream<Pre, F>) => Observable<I>> = new Map();
   const initLogicOutMake: Map<string, (v: IMessageFromStream<Pre, F>) => Observable<O>> = new Map();
 

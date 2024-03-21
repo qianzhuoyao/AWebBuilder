@@ -16,10 +16,16 @@ import { rollPick } from './roll.ts';
 import { takeForm } from './takeForm.ts';
 import { loadStart } from './loadStart.ts';
 import { encryption } from './encryption.ts';
+import { and } from './and.ts';
+import { or } from './or.ts';
+import { not } from './not.ts';
 
 export const nodeBuilder = () => {
 
   buildDataReqNode();
+  not();
+  or();
+  and();
   // buildDataSyncNode();
   // buildCacheClearReqNode();
   // buildCacheSetNode();

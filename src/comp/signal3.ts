@@ -11,8 +11,17 @@ const dataCache = <T, >() => {
     cache,
   };
 };
+const dataAndOperationOrigin = () => {
+  const origin = new Map<string, {
+    origin0?: string,
+    origin1?: string
+  }>();
+  return {
+    origin,
+  };
+};
 const getStreamCache = createSingleInstance(dataCache);
-
+const getAndOrigin = createSingleInstance(dataAndOperationOrigin);
 //根据路径解析函数
 
 type IDefaultParams = 'start' | 'end' | 'empty' | 'stop'
@@ -22,6 +31,14 @@ interface IEffect<T> {
   taskErrorRecord: (e: unknown) => void;
   toLoopStop: (edge: Edge<string, IEdgeMessage>, currentId: string, streamValue: T) => void;
   logicItemOver: (id: string) => void;
+  toAnd0: (edge: Edge<string, IEdgeMessage>, origin?: {
+    origin0?: string;
+    origin1?: string;
+  }, currentId?: string, streamValue?: T) => void;
+  toAnd1: (edge: Edge<string, IEdgeMessage>, origin?: {
+    origin0?: string;
+    origin1?: string;
+  }, currentId?: string, streamValue?: T) => void;
   complete: (id: string) => void;
   startRun: () => void;
 }
@@ -108,8 +125,20 @@ export const parseMakeByFromId = <P, >(
                 mergeMap(() => {
                   console.log(edge, self, params, 'fgffgobservafffble');
                   effect.edgeRunOver(edge, id, self as P);
-                  if (edge.targetPort.indexOf('in-stop') > -1) {
+                  if (edge.targetPort.indexOf('logic_Ring_get@in-stop') > -1) {
                     effect.toLoopStop(edge, id, self as P);
+                  } else if (edge.targetPort.indexOf('logic_and_BOTH_get@in-and-0') > -1) {
+                    getAndOrigin().origin.set(id, {
+                      origin0: origin,
+                      origin1: getAndOrigin().origin.get(id)?.origin1,
+                    });
+                    effect.toAnd0(edge, getAndOrigin().origin.get(id), id, self as P);
+                  } else if (edge.targetPort.indexOf('logic_and_BOTH_get@in-and-1') > -1) {
+                    getAndOrigin().origin.set(id, {
+                      origin1: origin,
+                      origin0: getAndOrigin().origin.get(id)?.origin0,
+                    });
+                    effect.toAnd1(edge, getAndOrigin().origin.get(id), id, self as P);
                   }
 
                   return bfs(id, edge, self);

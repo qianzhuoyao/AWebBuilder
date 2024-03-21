@@ -140,6 +140,27 @@ const PageSlotMap = memo(() => {
     </div>
   );
 });
+const LogicBoth = memo(()=>{
+  const LogicSlot = genLogicNodeMenuItems();
+  return (
+    <div className="space-y-2">
+      {LogicSlot.logicNodeMenuItems.get('both')?.map((item) => {
+        return (
+          <div key={item.id}>
+            <WidgetIconTemp
+              tips={item.tips}
+              nodeType="LOGIC"
+              classify="both"
+              typeId={item.id}
+              src={item.src}
+              name={item.name}
+            ></WidgetIconTemp>
+          </div>
+        );
+      })}
+    </div>
+  );
+})
 const ViewSlotMap = memo(() => {
   const ViewSlot = genLogicNodeMenuItems();
   return (
@@ -232,7 +253,7 @@ const LogicView = [
   {
     id: 'logic_view_base',
     label: '门',
-    content: <></>,
+    content: <LogicBoth></LogicBoth>,
   },
 ];
 const LogicTime = [

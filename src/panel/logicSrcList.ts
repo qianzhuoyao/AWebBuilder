@@ -5,6 +5,7 @@ export const LOGIC_TYPE_LIST = [
   'page',
   'table',
   'hTrigger',
+  'both',
   'chart',
   'dom',
   'text',

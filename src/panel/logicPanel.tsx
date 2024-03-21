@@ -15,6 +15,8 @@ import { ItemParams, TriggerEvent } from 'react-contexify';
 import { findPortInfo, getPortNodeMap, updateConnectStatus } from '../node/portStatus.ts';
 import { deleteSubNode, subscribeCreateNode, subscribeUpdateEdge } from './logicPanelEventSubscribe.ts';
 import { useFilterLogicNode } from './useFilter.tsx';
+import { getRunningTasks } from '../comp/msg.tsx';
+import { createPEM, findPEM, getPortEdgeMap, removePEM } from './portEdgeMap.ts';
 
 
 interface GraphPanel {
@@ -100,6 +102,7 @@ const renderNode = (node: ILogicNode) => {
 
 const usePaintNodes = (Graph: Graph | null) => {
   const layerLogicNode = useFilterLogicNode();
+
   useEffect(() => {
     Graph?.clearCells();
     const nodeIdMap = new Map<string, Node>();
@@ -126,21 +129,25 @@ const usePaintNodes = (Graph: Graph | null) => {
         });
       }
     });
-  }, [Graph, layerLogicNode]);
+  }, []);
 };
 
 export const LogicPanel = memo(() => {
   const GRef = useRef<GraphPanel>({ G: null });
   const dispatch = useDispatch();
-  //挂载上所有节点
+  console.log('09890');
   usePaintNodes(GRef.current.G);
   useEffect(() => {
+    //挂载上所有节点
+
     document.ondragstart = () => false;
     //逻辑流走向
     const updateEdgeSubscription = subscribeUpdateEdge(
-      (nodeIdList) => {
+      ({ fromNodeId, nodeIdList }) => {
+        console.log(nodeIdList, fromNodeId, getRunningTasks(), '0909889');
         GRef.current.G?.getEdges().map(edge => {
           console.log(edge.getSourcePortId(), nodeIdList, 'edge-edge');
+          //当前边无正在run的任务
           if (
             nodeIdList.some(item =>
               item.target === edge.getTargetCell()?.getProp().nodeGId
@@ -264,6 +271,8 @@ export const LogicPanel = memo(() => {
           params.props.sourceNode.nodeGId,
           params.props.targetNode.nodeGId,
         );
+        removePEM(edge.getSourceNode()?.getProp().nodeGId + edge.getSourcePortId() || '', (edge.getSourcePortId() || '') + edge.getTargetPortId());
+        removePEM(edge.getTargetNode()?.getProp().nodeGId + edge.getTargetPortId() || '', (edge.getSourcePortId() || '') + edge.getTargetPortId());
         updateConnectStatus(params.props.sourceNode.nodeGId || '', 0);
         updateConnectStatus(params.props.targetNode.nodeGId || '', 0);
         GRef.current.G?.removeEdge(params.props.edge.id);
@@ -290,6 +299,21 @@ export const LogicPanel = memo(() => {
             (args.edge.getTargetPortId()?.split('#')[0] || '').indexOf('in') > -1
           ) {
             try {
+              console.log(args.edge.getTargetPortId(), findPEM(args.edge.getTargetPortId() || ''), 'args.edge.getTargetPortId()');
+              if (
+                ((args.edge.getTargetPortId() || '').indexOf('logic_and_BOTH_get@in-and') > -1
+                  &&
+                  [...(findPEM(args.edge.getTargetNode()?.getProp().nodeGId + args.edge.getTargetPortId() || '') || [])].length)
+                || (
+                  (args.edge.getTargetPortId() || '').indexOf('logic_or_BOTH_get@in-or') > -1
+                  &&
+                  [...(findPEM(args.edge.getTargetNode()?.getProp().nodeGId + args.edge.getTargetPortId() || '') || [])].length
+                )
+              ) {
+                toast.error('为了输出唯一,门节点输入必须唯一');
+                return false;
+              }
+
               updateConnectStatus(args.edge.getSourceNode()?.getProp().nodeGId || '', 1);
               updateConnectStatus(args.edge.getTargetNode()?.getProp().nodeGId || '', 1);
               return true;
@@ -352,6 +376,7 @@ export const LogicPanel = memo(() => {
     });
     GRef.current.G?.on('edge:added', ({ edge }) => {
       //连接后，默认无信号
+      console.log('pops-1');
       console.log(edge.getSourceNode()?.getPortProp(edge.getSourcePortId() || '', 'attrs/circle'), 'p;odsddddd');
       edge.setAttrs({
         line: {
@@ -379,6 +404,7 @@ export const LogicPanel = memo(() => {
       }
     });
     GRef.current.G.on('edge:connected', ({ isNew, edge }) => {
+      console.log(edge, 'pops');
       if (isNew) {
         if (
           !getWDGraph().hasEdge(
@@ -404,6 +430,11 @@ export const LogicPanel = memo(() => {
           fill: '#f5222d',
           stroke: '#f5222d',
         });
+
+        const edgeTag = (edge.getSourcePortId() || '') + (edge.getTargetPortId() || '');
+
+        createPEM(edge.getSourceNode()?.getProp().nodeGId + edge.getSourcePortId() || '', edgeTag);
+        createPEM(edge.getTargetNode()?.getProp().nodeGId + edge.getTargetPortId() || '', edgeTag);
       }
     });
     GRef.current.G?.on('node:mouseup', (args) => {
