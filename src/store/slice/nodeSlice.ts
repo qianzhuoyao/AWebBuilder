@@ -34,6 +34,8 @@ export const logic_P_get = 'logic_P_set' as const;
 export const logic_MixData_get = 'logic_MixData_get' as const;
 //表单构建
 export const logic_Form_get = 'logic_Form_get' as const;
+//加密器
+export const logic_ENC_get = 'logic_ENC_get' as const;
 //过滤数据
 export const logic_FilterData_get = 'logic_FilterData_get' as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
@@ -64,6 +66,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_TM_get
   | typeof logic_TO_get
   | typeof logic_Dug_Trigger
+  | typeof logic_ENC_get
   | typeof logic_Form_get
   | typeof logic_Ring_get
   | typeof logic_View_bind

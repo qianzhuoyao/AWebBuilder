@@ -24,6 +24,16 @@ export interface IFormConfigInfo {
   mergePre?: boolean;
 }
 
+export const ENCRYPTION_METHODS = [
+  'MD5',
+  'AES',
+] as const;
+
+export interface IEncryptionConfigInfo {
+  encryptionMethod: typeof ENCRYPTION_METHODS[number],
+  publicKey: string
+}
+
 export interface ITimerOutConfigInfo {
   timeOut: number;
 }
@@ -54,6 +64,7 @@ export interface IConfigInfo {
   timerConfigInfo?: ITimerConfigInfo;
   formConfigInfo?: IFormConfigInfo;
   timerOutConfigInfo?: ITimerOutConfigInfo;
+  encryptionConfigInfo?: IEncryptionConfigInfo;
 }
 
 const logicConfigMap = () => {

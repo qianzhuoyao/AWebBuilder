@@ -11,7 +11,6 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { IPs, updateWorkSpaceName } from '../store/slice/panelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNode } from '../store/slice/nodeSlice';
-import { nodeBuilder } from '../Logic/nodes';
 import { createNode } from '../panel/logicPanelEventSubscribe';
 import { ILogicNode } from '../store/slice/logicSlice';
 import { genWDGraph } from '../DirGraph/weightedDirectedGraph';
@@ -82,7 +81,7 @@ const Each = ({ data }: {
     </>
   );
 };
-nodeBuilder();
+
 const CustomCard = ({ data }: {
   data: IParseInPanel
 }) => {

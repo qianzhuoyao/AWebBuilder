@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { rollPick } from './roll.ts';
 import { takeForm } from './takeForm.ts';
 import { loadStart } from './loadStart.ts';
+import { encryption } from './encryption.ts';
 
 export const nodeBuilder = () => {
 
@@ -25,6 +26,7 @@ export const nodeBuilder = () => {
   // changeSignal();
   // filterMixData();
   // checkPassword();
+  encryption();
   loadStart();
   rollPick();
   timeOut();

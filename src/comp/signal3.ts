@@ -33,16 +33,6 @@ export interface IMessageFromStream<Pre, Config> {
   edge: Edge<string, IEdgeMessage> | undefined
 }
 
-const parseFn = <T, >(
-  fn: (params: T | IDefaultParams) => Observable<T>,
-  params: T | IDefaultParams,
-) => {
-  try {
-    return fn(params);
-  } catch (e) {
-    return throwError(() => Error('parseFn error'));
-  }
-};
 
 export const parseMakeByFromId = <P, >(
   origin: string,
@@ -83,7 +73,7 @@ export const parseMakeByFromId = <P, >(
           return fn ? {
             id: target.target,
             edge: target,
-            observable: parseFn(fn, {
+            observable: fn?.({
               pre: getStreamCache().cache.get(fromId),
               id: target.target,
               config: genLogicConfigMap().configInfo.get(target.source),

@@ -50,7 +50,7 @@
     "axios": "^1.6.7",
     "clone": "^2.1.2",
     "color": "^4.2.3",
-    "crypto-js": "^4.1.1",
+    "crypto-js": "^4.2.0",
     "dayjs": "1.11.6",
     "default-passive-events": "^2.0.0",
     "dexie": "^3.2.5",

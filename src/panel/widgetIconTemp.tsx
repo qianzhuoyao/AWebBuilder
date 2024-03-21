@@ -28,7 +28,7 @@ import {
   logic_D_get,
   logic_Ring_get,
   logic_TO_get,
-  INs, logic_Form_get,
+  INs, logic_Form_get, logic_ENC_get,
 } from '../store/slice/nodeSlice';
 import { IWs } from '../store/slice/widgetMapSlice';
 import { ILs, addLogicNode, ILogicNode } from '../store/slice/logicSlice';
@@ -285,6 +285,13 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
       return {
         timerOutConfigInfo: {
           timeOut: 10000,
+        },
+      };
+    case logic_ENC_get:
+      return {
+        encryptionConfigInfo: {
+          encryptionMethod: 'MD5',
+          publicKey: '',
         },
       };
     case logic_D_get:

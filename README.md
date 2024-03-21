@@ -3,6 +3,7 @@
 ## 如过组件不消费则不执行其输出
 
 - 0:注册右侧菜单 （signalLogicNode）
+- 1:所有逻辑节点输入端获取的config是上一节点的配置信息，而输出节点可以获取本节点配置信息
 
 ```tsx
 import { signalLogicNode } from '../base.ts';

@@ -12,6 +12,7 @@ import { QueryClientProvider } from 'react-query';
 import { queryClient } from './fetch/client.ts';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Demo } from './layout/Demo.tsx';
+import { nodeBuilder } from './Logic/nodes';
 
 
 
@@ -103,7 +104,7 @@ if (import.meta.hot) {
   import.meta.hot.dispose(() => router.dispose());
 }
 
-
+nodeBuilder();
 function App() {
 
   return (

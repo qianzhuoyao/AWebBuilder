@@ -6,6 +6,7 @@ import { TimerIntConfig } from './timerIntConfig.tsx';
 import { IConfigTypeParams } from './configType.ts';
 import { TimerOutConfig } from './timeOutConfig.tsx';
 import { FormConfig } from './formConfig.tsx';
+import { EncConfig } from './encConfig.tsx';
 
 
 export const setDefaultLogicConfig = () => {
@@ -21,6 +22,7 @@ export const AttrConfigInit = (configParams: IConfigTypeParams) => {
   // handleMixConfig(configParams);
   TimerOutConfig();
   // CacheSetConfig(configParams);
+  EncConfig()
   handleTrigger();
   TimerIntConfig();
   viewMapping();
