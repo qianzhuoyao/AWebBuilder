@@ -4,6 +4,7 @@ import cacheSet from '../../assets/widgetIcon/cache-storage.svg';
 import { of } from 'rxjs';
 
 
+
 export const buildCacheSetNode = () => {
 
   const CacheSet = signalLogicNode({
@@ -20,7 +21,6 @@ export const buildCacheSetNode = () => {
   CacheSet.signalOut('out', (value) => {
     return of(value?.pre);
   });
-
 
 
 };

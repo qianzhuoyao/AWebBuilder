@@ -129,7 +129,7 @@ const usePaintNodes = (Graph: Graph | null) => {
         });
       }
     });
-  }, []);
+  }, [Graph]);
 };
 
 export const LogicPanel = memo(() => {
