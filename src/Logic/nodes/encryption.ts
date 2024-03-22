@@ -2,7 +2,7 @@ import { signalLogicNode } from '../base.ts';
 import { ENCRYPTION_METHODS, IEncryptionConfigInfo } from './logicConfigMap.ts';
 import { logic_ENC_get } from '../../store/slice/nodeSlice.ts';
 import enc from '../../assets/widgetIcon/fluent-mdl2--encryption.svg';
-import { of } from 'rxjs';
+import { of, map } from 'rxjs';
 import { AES, MD5 } from 'crypto-js';
 
 
@@ -43,16 +43,19 @@ export const encryption = () => {
   Encryption.signalOut<{
     pre: any
   }>('out', (value) => {
-    console.log(value, 'forTakeFormm');
-    //覆盖
 
-    const encValue = startEnc(
-      value.pre,
-      value.config.encryptionConfigInfo.encryptionMethod,
-      value.config.encryptionConfigInfo.publicKey,
+    return of(value.pre).pipe(
+      map(a => {
+        console.log(value, 'forTakeFormm');
+        //覆盖
+        console.log(a.toString(), 'encValue');
+        return startEnc(
+          value.pre,
+          value.config.encryptionConfigInfo.encryptionMethod,
+          value.config.encryptionConfigInfo.publicKey,
+        );
+      }),
     );
-    console.log(encValue.toString(),'encValue');
-    return of(encValue.toString());
   });
 
 };

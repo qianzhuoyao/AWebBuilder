@@ -118,13 +118,16 @@ export const parseMakeByFromId = <P, >(
         concatMap((self) =>
           defer(() => of(...subObservableFn)).pipe(
             mergeMap(({ id, observable, edge }) =>
-              observable.pipe(
+              defer(() => observable.pipe(
                 tap(a => {
                   console.log(a, 'fgffgobservable');
                 }),
+                takeWhile(() =>
+                  getWDGraph().getVertices().includes(edge.target) &&
+                  getWDGraph().getVertices().includes(edge.source),
+                ),
                 mergeMap(() => {
                   console.log(edge, self, params, 'fgffgobservafffble');
-                  effect.edgeRunOver(edge, id, self as P);
                   if (edge.targetPort.indexOf('logic_Ring_get@in-stop') > -1) {
                     effect.toLoopStop(edge, id, self as P);
                   } else if (edge.targetPort.indexOf('logic_and_BOTH_get@in-and-0') > -1) {
@@ -140,10 +143,10 @@ export const parseMakeByFromId = <P, >(
                     });
                     effect.toAnd1(edge, getAndOrigin().origin.get(id), id, self as P);
                   }
-
-                  return bfs(id, edge, self);
+                  effect.edgeRunOver(edge, id, self as P);
+                  return defer(() => bfs(id, edge, self));
                 }),
-              ),
+              )),
             ),
           ),
         ),
@@ -154,6 +157,7 @@ export const parseMakeByFromId = <P, >(
   effect.startRun();
   bfs(origin, undefined, 'start').subscribe({
     complete: () => {
+      console.log('overss');
       effect.complete(origin);
     },
     error: (e) => {

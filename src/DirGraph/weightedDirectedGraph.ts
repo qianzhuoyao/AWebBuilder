@@ -266,7 +266,9 @@ export default class WeightedDirectedGraph<T, M> {
    */
 
   getEdges(vertex: T) {
-    return this.adjacencyList.get(vertex) || [];
+    return this.adjacencyList.get(vertex)?.filter(edge => {
+      return this.getVertices().includes(edge.source) && this.getVertices().includes(edge.target);
+    }) || [];
   }
 
   toJSON() {

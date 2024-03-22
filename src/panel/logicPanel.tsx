@@ -250,6 +250,7 @@ export const LogicPanel = memo(() => {
     getWDGraph().removeVertex(
       params.props.nodeProp.nodeGId,
     );
+
     deleteSubNode(params.props.nodeProp.nodeGId);
     GRef.current.G?.removeNode(params.props.node.id);
     dispatch(deleteLogicNode({ id: params.props.nodeProp.nodeGId }));

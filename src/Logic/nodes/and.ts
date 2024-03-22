@@ -1,7 +1,7 @@
 import { signalLogicNode } from '../base.ts';
 import { logic_and_BOTH_get } from '../../store/slice/nodeSlice.ts';
 import andS from '../../assets/widgetIcon/mingcute--and-line.svg';
-import { of, filter ,tap} from 'rxjs';
+import { of, filter, tap } from 'rxjs';
 import { createSingleInstance } from '../../comp/createSingleInstance.ts';
 
 
@@ -32,25 +32,36 @@ export const and = () => {
   });
 
   And.signalIn('in-and-0', (value) => {
-    getAndTags().tagsIn1.set(value.id, true);
-    return of(value.pre);
+
+    return of(value.pre).pipe(
+      tap(() => {
+        getAndTags().tagsIn1.set(value.id, true);
+        console.log(getAndTags(), value, 'getAndTags()=0');
+      }),
+    );
   });
 
   And.signalIn('in-and-1', (value) => {
-    getAndTags().tagsIn2.set(value.id, true);
-    return of(value.pre);
+    return of(value.pre).pipe(
+      tap(() => {
+        getAndTags().tagsIn2.set(value.id, true);
+        console.log(getAndTags(), value, 'getAndTags()=1');
+      }),
+    );
   });
 
   And.signalOut('out-and', (value) => {
 
+
+    console.log(getAndTags(), 'getAndTags()');
     return of(value.pre).pipe(
       filter(() => {
         return (getAndTags().tagsIn2.get(value.id) && getAndTags().tagsIn1.get(value.id)) || false;
       }),
-      tap(()=>{
+      tap(() => {
         getAndTags().tagsIn1.set(value.id, false);
         getAndTags().tagsIn2.set(value.id, false);
-      })
+      }),
     );
   });
 };
