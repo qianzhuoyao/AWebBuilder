@@ -8,6 +8,20 @@ import { updateEdge } from '../panel/logicPanelEventSubscribe.ts';
 import { createSingleInstance } from './createSingleInstance.ts';
 import { getWDGraph } from '../DirGraph/weightedDirectedGraph.ts';
 
+const findOriginFromGraph = (id: string): string[] => {
+  const result: string[] = [];
+  const findParent = (childId: string) => {
+    if (getWDGraph().getInDegree(childId).length) {
+      getWDGraph().getInDegree(childId).map(item => {
+        findParent(item);
+      });
+    } else {
+      result.push(childId);
+    }
+  };
+  findParent(id);
+  return result;
+};
 
 const runningTask = () => {
   const runEdgeVis = new Map<string, { source: string, target: string }[]>;
@@ -93,7 +107,7 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
           }
           updateEdge(fromNodeId, getAllVisOk());
         },
-        logicItemOver: () => {
+        logicItemOver: (id) => {
           console.log('eedd999');
           setTimeout(() => {
             dispatch(updateSendDugCount({
@@ -104,9 +118,13 @@ export const useSignalMsg = (fromNodeId: string, callCallback?: (calledEdge: {
               endTime: dayjs().unix() * 1000,
             }));
           }, 0);
+
           setTimeout(() => {
-            getRunningTasks().runEdgeVis.set(fromNodeId, []);
-            updateEdge(fromNodeId, getAllVisOk());
+            //逆向查找源节点
+            findOriginFromGraph(id).map(originId => {
+              getRunningTasks().runEdgeVis.set(originId, []);
+              updateEdge(originId, getAllVisOk());
+            });
           }, 500);
         },
       },
