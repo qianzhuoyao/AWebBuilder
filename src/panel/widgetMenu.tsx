@@ -2,6 +2,7 @@ import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
 import { SRC_ICON } from './picList';
 import React, { memo, useMemo } from 'react';
+import { pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
 
 export interface ITs {
   ele: {
@@ -180,7 +181,7 @@ const TableMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={table.id}
-            classify="table"
+            classify={pix_Table}
             typeId={table.id}
             src={table.src}
             name={table.name}
@@ -199,7 +200,7 @@ const BarMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={bar.id}
-            classify="chart"
+            classify={pix_BX}
             typeId={bar.id}
             src={bar.src}
             name={bar.name}

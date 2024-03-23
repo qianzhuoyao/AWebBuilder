@@ -140,6 +140,7 @@ const View = memo(() => {
   return (
     <div id={AR_PANEL_DOM_ID} className="w-full h-full">
       <ARuler></ARuler>
+
     </div>
   );
 });

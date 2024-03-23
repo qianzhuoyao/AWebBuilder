@@ -1,13 +1,13 @@
+import { pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
 
 export const LOGIC_TYPE_LIST = [
   'remote',
   'viewSlot',
   'page',
-  'table',
-  "date",
+  pix_Table,
+  'date',
   'hTrigger',
   'both',
-  'chart',
   'dom',
   'text',
   'line',
@@ -15,6 +15,7 @@ export const LOGIC_TYPE_LIST = [
   'mix',
   'timeInter',
   'cache',
+  pix_BX,
   'filter',
 ] as const;
 

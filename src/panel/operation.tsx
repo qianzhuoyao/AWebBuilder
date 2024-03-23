@@ -6,7 +6,7 @@ import Selecto from 'react-selecto';
 import {
   deleteListItem,
   INs,
-  IViewNode, moveNode, resizeNode,
+  IViewNode, moveNode, pix_BX, pix_Table, resizeNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -19,6 +19,8 @@ import { ItemParams } from 'react-contexify';
 import { useFilterViewNode } from './useFilter.tsx';
 import { getWCache, subscribeViewCacheUpdate } from './data.ts';
 import { getChartEmit } from '../emit/emitChart.ts';
+import { ATable } from '../comp/ATable';
+import { IWls } from '../store/slice/widgetSlice.ts';
 
 
 export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
@@ -31,12 +33,12 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
 
   useEffect(() => {
     if (NodesState?.list) {
-      console.log( new Function('params',
+      console.log(new Function('params',
 
         `try{
         ${(NodesState?.list || {})[id]?.instance?.option || ''}
         }catch(e){return {}}`,
-      )(getWCache(id)),'ss999999');
+      )(getWCache(id)), 'ss999999');
       setParseOption(() => new Function('params',
 
         `try{
@@ -76,7 +78,7 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
   }, [NodesState?.list, id]);
 
 
-  if (NodesState.list[id]?.classify === 'chart') {
+  if (NodesState.list[id]?.classify === pix_BX) {
     return (
       <BaseChart
         type={NodesState.list[id].instance.type}
@@ -85,6 +87,13 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
         options={parseOption}
         //   options={NodesState.list[id].instance.option}
       ></BaseChart>
+    );
+  } else if (NodesState.list[id]?.classify === pix_Table) {
+    return (
+      <div className={'overflow-scroll w-full h-full'}>
+        <ATable
+        ></ATable>
+      </div>
     );
   }
 
@@ -193,7 +202,9 @@ const NodeContainer = memo(() => {
   const PanelState = useSelector((state: { panelSlice: IPs, }) => {
     return state.panelSlice;
   });
-
+  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+    return state.widgetSlice;
+  });
 
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
@@ -248,7 +259,7 @@ const NodeContainer = memo(() => {
     if (box) {
       box.style.zIndex = '9';
     }
-    console.log(layerViewNode,'layerViewNode')
+    console.log(layerViewNode, 'layerViewNode');
   }, []);
 
   return (
@@ -258,7 +269,7 @@ const NodeContainer = memo(() => {
         origin={false}
         keepRatio={false}
         target={NodesState.targets.map((id) => document.getElementById(id))}
-        draggable={true}
+        draggable={widgetState.inOperationForDraggable}
         resizable={true}
         scalable={true}
         rotatable={true}
@@ -287,7 +298,6 @@ const NodeContainer = memo(() => {
         }}
         onDragEnd={(e) => {
           const pos = computeActPositionNodeByRuler(e.target, PanelState.tickUnit);
-          console.log(e, moveableRef, pos, 'e-e-e-e-e-e-ecc');
           if (pos) {
             dispatch(
               updatePosition({
@@ -356,7 +366,6 @@ const NodeContainer = memo(() => {
         {layerViewNode.map((node) => {
           return <div
             onContextMenu={(e) => {
-              console.log(e, 'sdefffffffff');
               show({
                 event: e,
                 props: node,

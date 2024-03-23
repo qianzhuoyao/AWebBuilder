@@ -32,9 +32,10 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
   useEffect(() => {
     const CRvar = chartRef.current;
     instance.current.ChartInstance = instance.current.ChartInstance || Echart.init(CRvar);
-    // return () => {
-    //   instance.current.ChartInstance.dispose();
-    // };
+    return () => {
+      instance.current.ChartInstance?.dispose();
+      instance.current.ChartInstance = null;
+    };
   }, []);
 
   useEffect(() => {
