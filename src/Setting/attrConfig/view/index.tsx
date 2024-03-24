@@ -5,9 +5,10 @@ import { INs } from '../../../store/slice/nodeSlice.ts';
 import { DefaultPanelSetting } from './panelSet.tsx';
 import { ILs } from '../../../store/slice/logicSlice.ts';
 import { TableConfig } from './table.tsx';
+import { ImageConfig } from './image.tsx';
 
 
-export const setDefaultPanelViewConfig = ({NodesState}:{NodesState:INs}) => {
+export const setDefaultPanelViewConfig = ({ NodesState }: { NodesState: INs }) => {
   const config = signalViewNodeAttrConfig('DEFAULT-VIEW-PANEL-CONFIG');
   config.setConfigEle(() => {
     console.log(NodesState, genLogicNodeMenuItems(), 'cascascascascasc');
@@ -15,7 +16,8 @@ export const setDefaultPanelViewConfig = ({NodesState}:{NodesState:INs}) => {
   });
 };
 
-export const AttrViewConfigInit = ({NodesState,logicState}:{NodesState:INs,logicState:ILs}) => {
-  PixBXChartConfig({NodesState,logicState});
-  TableConfig({NodesState,logicState})
+export const AttrViewConfigInit = ({ NodesState, logicState }: { NodesState: INs, logicState: ILs }) => {
+  PixBXChartConfig({ NodesState, logicState });
+  TableConfig({ NodesState, logicState });
+  ImageConfig({ NodesState, logicState });
 };

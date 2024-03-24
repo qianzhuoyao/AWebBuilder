@@ -2,7 +2,7 @@ import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 import { WidgetIconTemp } from './widgetIconTemp';
 import { SRC_ICON } from './picList';
 import React, { memo, useMemo } from 'react';
-import { pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
+import { pic_Img, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
 
 export interface ITs {
   ele: {
@@ -136,6 +136,25 @@ export const TextIcon = memo(() => {
   );
 });
 
+
+const InputMap = memo(()=>{
+  return (
+    <div className="flex flex-wrap justify-between">
+      {SRC_ICON.input.map((text) => {
+        return (
+          <WidgetIconTemp
+            nodeType="VIEW"
+            key={text.id}
+            typeId={text.id}
+            classify="input"
+            src={text.src}
+            name={text.name}
+          ></WidgetIconTemp>
+        );
+      })}
+    </div>
+  );
+})
 const TextMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
@@ -155,6 +174,25 @@ const TextMap = memo(() => {
   );
 });
 
+const IFrameMap = memo(() => {
+  return (
+    <div className="flex flex-wrap justify-between">
+      {SRC_ICON.Frame.map((item) => {
+        return (
+          <WidgetIconTemp
+            nodeType="VIEW"
+            key={item.id}
+            classify="frame"
+            typeId={item.id}
+            src={item.src}
+            name={item.name}
+          ></WidgetIconTemp>
+        );
+      })}
+    </div>
+  );
+});
+
 const ImageMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
@@ -163,7 +201,7 @@ const ImageMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={image.id}
-            classify="dom"
+            classify={pic_Img}
             typeId={image.id}
             src={image.src}
             name={image.name}
@@ -220,7 +258,7 @@ export const TextTabs = [
   {
     id: 'InputContent',
     label: '输入',
-    content: <TextMap></TextMap>,
+    content: <InputMap></InputMap>,
   },
 ];
 
@@ -233,7 +271,7 @@ export const ImageTabs = [
   {
     id: 'frameContent',
     label: '框架',
-    content: <ImageMap></ImageMap>,
+    content: <IFrameMap></IFrameMap>,
   },
 ];
 

@@ -6,7 +6,7 @@ import Selecto from 'react-selecto';
 import {
   deleteListItem,
   INs,
-  IViewNode, moveNode, pix_BX, pix_Table, resizeNode,
+  IViewNode, moveNode, pic_Img, pix_BX, pix_Table, resizeNode,
   updatePosition,
   updateSize,
   updateTargets,
@@ -21,7 +21,21 @@ import { getWCache, subscribeViewCacheUpdate } from './data.ts';
 import { getChartEmit } from '../emit/emitChart.ts';
 import { ATable } from '../comp/ATable';
 import { IWls } from '../store/slice/widgetSlice.ts';
+import { Image } from '@nextui-org/react';
 
+
+const BaseImage = memo(({ config }: { config: IViewNode }) => {
+  return <Image
+    width={'100%'}
+    height={'100%'}
+    alt="BaseImage"
+    className={'w-full h-full'}
+    src={config.instance.option?.src}
+    classNames={{
+      wrapper:'w-full h-full'
+    }}
+  ></Image>;
+});
 
 export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
   NodesState: INs,
@@ -91,6 +105,10 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
         ></ATable>
       </div>
     );
+  } else if (NodesState.list[id]?.classify === pic_Img) {
+    return <div className={'w-full h-full'}>
+      <BaseImage config={NodesState.list[id]}></BaseImage>
+    </div>;
   }
 
   return <></>;

@@ -2,8 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
 import { ITableConfig } from '../../node/viewConfigSubscribe.ts';
+import { IMAGE_DEFAULT_OPTION } from '../../comp/setDefaultChartOption.ts';
 //pixTable
 export const pix_Table = 'pixTable' as const;
+export const pix_frame = 'pix_frame' as const;
+export const pix_input = 'pix_input' as const;
 //文本
 export const pix_Text = 'pixText' as const;
 //图片资源
@@ -87,6 +90,8 @@ export type ILogicType = typeof logic_Cache_clear
 export type INodeType =
   | typeof pix_BLine
   | typeof logic_TM_get
+  | typeof pix_frame
+  | typeof pix_input
   | typeof pix_Table
   | typeof pix_BY
   | typeof pix_BX
@@ -99,13 +104,14 @@ export type INodeType =
 interface IChartInstance {
   option?: Partial<{
     chart: string
-  } & ITableConfig>;
+  } & ITableConfig & typeof IMAGE_DEFAULT_OPTION>;
   type:
     | typeof pix_BLine
     | typeof pix_GLine
     | typeof pix_BY
     | typeof pix_BX
     | typeof pix_Table
+    |typeof  pic_Img
     | typeof pix_Line;
 }
 
@@ -189,6 +195,7 @@ export const viewNodesSlice = createSlice({
       const viewNodeTypeIdList = [
         pix_Table,
         pix_Text,
+        pic_Img,
         pix_BX,
       ];
       //是视图

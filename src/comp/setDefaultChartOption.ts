@@ -1,6 +1,6 @@
-import { INodeType, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
+import { INodeType, pic_Img, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
 import { defaultBuilderFn } from '../Setting/form/view/PixBXChartConfigCode.tsx';
-
+import pic from '../assets/widgetIcon/photo.svg';
 
 export const parseFnContent = (str: string) => {
   const value = str.match(/{([\s\S]*)}/);
@@ -28,6 +28,10 @@ export const TABLE_DEFAULT_OPTION = {
   dataField: 'data',
 };
 
+export const IMAGE_DEFAULT_OPTION = {
+  src: pic,
+} as const
+
 export const setDefaultChartOption = (type: INodeType) => {
   switch (type) {
     case pix_BX:
@@ -36,6 +40,8 @@ export const setDefaultChartOption = (type: INodeType) => {
       };
     case pix_Table:
       return TABLE_DEFAULT_OPTION;
+    case pic_Img:
+      return IMAGE_DEFAULT_OPTION;
     default:
       return undefined;
   }

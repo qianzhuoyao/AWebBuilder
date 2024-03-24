@@ -114,11 +114,9 @@ const ViewCard = memo(
                 ref={ImageRef}
                 id={id}
                 alt={name}
-                className="object-cover"
-                height={200}
                 isZoomed
                 src={src}
-                width={'100%'}
+                className={'h-[100px] w-[200px] object-fill'}
               />
 
               {!widgetMapState.contentImageShowType && (
