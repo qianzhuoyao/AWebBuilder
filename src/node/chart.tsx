@@ -82,18 +82,12 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
           ref={chartRef}
           id={chartId}
           className={'w-full h-full'}
-          // style={{
-          //   width: chartParams.width + 'px',
-          //   height: chartParams.height + 'px',
-          // }}
-          //   className={`w-[${chartParams.width}px] h-[${chartParams.height}px]`}
         ></div> : <div
-          style={{
-            width: chartParams.width + 'px',
-            height: chartParams.height + 'px',
-          }}
-        >待解析</div>
+          className={'w-full h-full'}
+        >传入值不存在或异常,图表待解析</div>
       }</>
 
   );
+}, (a, b) => {
+  return isEqual(a, b);
 });
