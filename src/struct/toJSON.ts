@@ -6,6 +6,7 @@ import { SERVICE_PORT } from '../contant';
 import { IPs } from '../store/slice/panelSlice.ts';
 import { INs, IViewNode } from '../store/slice/nodeSlice.ts';
 import { ILogicNode } from '../store/slice/logicSlice.ts';
+import { viewNodesToJSON } from '../node/viewConfigSubscribe.ts';
 
 export interface IParseInPanel {
   webLogic: string;
@@ -31,6 +32,7 @@ export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
       N: logicNodesConfigToJSON(),
       L: getLayerContentToJSON(),
     },
+    nodeConfig: viewNodesToJSON(),
     nodes: JSON.stringify(NodesState),
 
   }, window.location.protocol + '//' + window.location.hostname + ':' + SERVICE_PORT);

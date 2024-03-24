@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, memo, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useRef, memo } from 'react';
 import {
   Query, Builder, Utils,
   //types:
@@ -12,15 +12,13 @@ import loadedInitLogic from './init_logic.ts';
 import Immutable from 'immutable';
 import clone from 'clone';
 import { Button, Modal, useDisclosure, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react';
-import * as mui from '@react-awesome-query-builder/mui';
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from 'react-redux';
-import { ILs, updateNodeConfigInfo } from '../../../../../store/slice/logicSlice.ts';
+import { ILs } from '../../../../../store/slice/logicSlice.ts';
 
 const stringify = JSON.stringify;
 const {
   elasticSearchFormat,
-  queryBuilderFormat,
   jsonLogicFormat,
   queryString,
   _mongodbFormat,

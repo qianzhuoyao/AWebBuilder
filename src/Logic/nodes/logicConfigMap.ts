@@ -39,7 +39,6 @@ export interface ITimerOutConfigInfo {
 }
 
 export interface IMixDataFieldMap {
-  type: 'IMixDataFieldMap',
   fieldString: string
 }
 

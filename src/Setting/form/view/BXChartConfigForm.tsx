@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { Chip } from '@nextui-org/react';
 import { hasBindViewMap } from '../logic/viewMapping/bindNodeMappingLogic.ts';
 
-export const PixBXChartConfigForm = () => {
+export const DefaultViewNodeConfigForm = () => {
   const dispatch = useDispatch();
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;

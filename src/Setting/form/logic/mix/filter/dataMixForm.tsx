@@ -1,38 +1,45 @@
 import { Input } from '@nextui-org/react';
-import { memo, useCallback } from 'react';
-import { ILs, updateNodeConfigInfo } from '../../../../../store/slice/logicSlice.ts';
-import { useDispatch, useSelector } from 'react-redux';
+import { memo, useCallback, useState } from 'react';
+import { ILs } from '../../../../../store/slice/logicSlice.ts';
+import { useSelector } from 'react-redux';
+import { genLogicConfigMap } from '../../../../../Logic/nodes/logicConfigMap.ts';
 
 export const DataMixForm = memo(() => {
-  const dispatch = useDispatch();
+
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
+  const defaultValue = genLogicConfigMap().configInfo.get(logicState.target[0])?.mixDataFieldMap?.fieldString;
+  const [mixForm, setMixForm] = useState(defaultValue);
+
+
   const onHandleChangeMappingValue = useCallback((value: string) => {
-    dispatch(updateNodeConfigInfo({
-      id: logicState.target[0],
-      infoType: 'mixDataFieldMap',
-      configInfo: {
-        ...(logicState.logicNodes[logicState.target[0]]?.configInfo?.mixDataFieldMap || {}),
-        fieldString: value,
+    setMixForm(value);
+    genLogicConfigMap().configInfo.set(
+      logicState.target[0],
+      {
+        mixDataFieldMap: {
+          fieldString: value,
+        },
       },
-    }));
-  }, [logicState.logicNodes, logicState.target]);
+    );
+  }, [logicState.target]);
 
   return <>
     <div>
       <small>字段取值路径</small>
       <Input
-        type="url"
+        type="text"
         placeholder="fieldA.fieldB"
         labelPlacement="outside"
-        value={logicState.logicNodes[logicState.target[0]]?.configInfo?.mixDataFieldMap?.fieldString}
+        aria-label={'inputMix'}
+        value={mixForm || ''}
         onChange={e => {
           onHandleChangeMappingValue(e.target.value);
         }}
         startContent={
           <div className="pointer-events-none flex items-center">
-            <span className="text-default-400 text-small">root.</span>
+            <span className="text-default-400 text-small">streamPre.</span>
           </div>
         }
       />

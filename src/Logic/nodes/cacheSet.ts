@@ -11,7 +11,7 @@ export const buildCacheSetNode = () => {
     id: logic_Cache_set,
     type: 'cache',
     src: cacheSet,
-    tips: '获取来自服务器上的数据',
+    tips: '将流值设置进缓存',
     name: '缓存设置器',
   });
 

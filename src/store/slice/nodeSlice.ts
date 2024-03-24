@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
+import { ITableConfig } from '../../node/viewConfigSubscribe.ts';
 //pixTable
 export const pix_Table = 'pixTable' as const;
 //文本
@@ -38,6 +39,8 @@ export const logic_Form_get = 'logic_Form_get' as const;
 export const logic_ENC_get = 'logic_ENC_get' as const;
 //过滤数据
 export const logic_FilterData_get = 'logic_FilterData_get' as const;
+//过滤数据
+export const logic_FilterCheckData_get = 'logic_FilterCheckData_get' as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
 export const logic_TM_get = 'logic_TM_get' as const;
 //定时器
@@ -77,6 +80,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_NOT_BOTH_get
   | typeof logic_and_BOTH_get
   | typeof logic_or_BOTH_get
+  | typeof logic_FilterCheckData_get
   | typeof logic_MixData_get
   | typeof logic_TimesSet_get
 
@@ -93,16 +97,19 @@ export type INodeType =
   | ILogicType;
 
 interface IChartInstance {
-  option?: string;
+  option?: Partial<{
+    chart: string
+  } & ITableConfig>;
   type:
     | typeof pix_BLine
     | typeof pix_GLine
     | typeof pix_BY
     | typeof pix_BX
+    | typeof pix_Table
     | typeof pix_Line;
 }
 
-export type IIstance = IChartInstance;
+export type IIstance = IChartInstance
 
 enableMapSet();
 

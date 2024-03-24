@@ -7,7 +7,7 @@ type IObjectNotNull<T, > = { [key: string]: IObjectNotNull<T> | T }
 export const filterObjValue = <T, >(obj: IObjectNotNull<T>, keyString: string) => {
 
   if (!checkField(keyString)) {
-    throw new Error('字段解析字符串不合法');
+    return
   }
   const path: string[] = keyString.split('.');
 

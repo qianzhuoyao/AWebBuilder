@@ -1,9 +1,9 @@
 //普通柱状图配置
 import { signalViewNodeAttrConfig } from '../../signalNodeConfig.ts';
-import {  pix_BX } from '../../../store/slice/nodeSlice.ts';
+import { pix_BX } from '../../../store/slice/nodeSlice.ts';
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import { PixBXChartConfigCode } from '../../form/view/PixBXChartConfigCode.tsx';
-import { PixBXChartConfigForm } from '../../form/view/BXChartConfigForm.tsx';
+import { DefaultViewNodeConfigForm } from '../../form/view/BXChartConfigForm.tsx';
 import { StreamData } from '../../form/logic/remoteReq/StreamData.tsx';
 
 
@@ -18,7 +18,7 @@ const chartTabs = [
   {
     id: 'config',
     label: '组件配置',
-    content: < PixBXChartConfigForm />,
+    content: < DefaultViewNodeConfigForm />,
   },
   {
     id: 'params',
@@ -38,7 +38,7 @@ export const PixBXChartConfig = () => {
             base: 'px-1',
           }}>
             {(item) => (
-              <Tab key={item.id} title={item.label}>
+              <Tab key={nodeInfo.target[0] + item.id} title={item.label}>
                 <Card>
                   <CardBody>
                     {item.content}

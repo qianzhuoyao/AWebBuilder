@@ -4,7 +4,7 @@ import { IAs } from '../store/slice/atterSlice.ts';
 import { useSelector } from 'react-redux';
 import { INs } from '../store/slice/nodeSlice.ts';
 import { getAttrConfig, IConfig } from './signalNodeConfig.ts';
-import { ILs } from '../store/slice/logicSlice.ts';
+import { ILogicNode, ILs } from '../store/slice/logicSlice.ts';
 import { useAttrSet } from './attrConfig/useAttrSet.tsx';
 import { IPs } from '../store/slice/panelSlice.ts';
 import { useSignalMsg } from '../comp/msg.tsx';
@@ -26,15 +26,16 @@ const DefaultSetting = memo(({ target }: { target: string[] }) => {
   }</>;
 });
 
-const SelectNodeInstance = memo(() => {
+const SelectNodeInstance = memo(({
+                                   target,
+                                   logicNodes,
+                                 }: {
+  target: string[];
+  logicNodes: Record<string, ILogicNode>
+}) => {
   const config = getAttrConfig();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-  const { go } = useSignalMsg(logicState.target[0]);
+  const { go } = useSignalMsg(target[0]);
 
-  const { target, logicNodes } = logicState;
-  console.log(target, config, logicNodes, 'csclogicNodes');
   return <>{
     (config.config.get(logicNodes[target[0]]?.typeId) as IConfig)({
       target,
@@ -54,7 +55,7 @@ const SelectSetting = memo(() => {
     target &&
     config.config.get(logicNodes[target[0]]?.typeId)
     &&
-    <SelectNodeInstance></SelectNodeInstance>
+    <SelectNodeInstance target={target} logicNodes={logicNodes}></SelectNodeInstance>
   }</>;
 });
 

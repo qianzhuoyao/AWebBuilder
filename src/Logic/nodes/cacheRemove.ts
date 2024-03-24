@@ -10,15 +10,12 @@ export const buildCacheClearReqNode = () => {
     id: logic_Cache_clear,
     type: 'cache',
     src: cacheRemove,
-    tips: '清除所有缓存以便释放内存',
+    tips: '收到信号后立即清除所有缓存以便释放内存',
     name: '缓存清理器',
   });
 
 
   cacheClearReq.signalIn('in-0', (value) => {
-    return of(value?.pre);
-  });
-  cacheClearReq.signalOut('out', (value) => {
     return of(value?.pre);
   });
 

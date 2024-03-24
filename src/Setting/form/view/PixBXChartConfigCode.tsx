@@ -11,6 +11,7 @@ import { PhQuestion } from '../../attrConfig/view/panelSet.tsx';
 import { parseFnContent, runViewFnString } from '../../../comp/setDefaultChartOption.ts';
 import { useAutoHeight } from '../../../comp/useAutoHeight.tsx';
 import { getChartEmit } from '../../../emit/emitChart.ts';
+import { insertConfig } from '../../../node/viewConfigSubscribe.ts';
 
 export const defaultBuilderFn = `
 return {
@@ -47,7 +48,7 @@ export const PixBXChartConfigCode = () => {
   const codeString = useMemo(() => {
     if (targets.length) {
       const target = targets[0];
-      return beautify_js(runViewFnString(NodesState.list[target]?.instance?.option || ''), { indent_size: 2 });
+      return beautify_js(runViewFnString(NodesState.list[target]?.instance?.option?.chart || ''), { indent_size: 2 });
     } else {
       return runViewFnString('');
     }
@@ -62,6 +63,9 @@ export const PixBXChartConfigCode = () => {
       if (targets.length) {
         new Function(value)({});
         setParseError('');
+        insertConfig(NodesState.targets[0], {
+          config: parseValue,
+        });
       }
 
     } catch (e) {
@@ -76,7 +80,7 @@ export const PixBXChartConfigCode = () => {
   useEffect(() => {
     if (targets.length) {
       const target = targets[0];
-      setCurCode(NodesState.list[target]?.instance?.option || '');
+      setCurCode(NodesState.list[target]?.instance?.option?.chart || '');
     }
 
   }, [NodesState.list, targets]);
@@ -89,9 +93,11 @@ export const PixBXChartConfigCode = () => {
         dispatch(updateInstance({
           type: NodesState.list[target].instance.type,
           id: NodesState.list[target].id,
-          option: curCode,
+          option: {
+            chart: curCode,
+          },
         }));
-        getChartEmit().observable.next(1)
+        getChartEmit().observable.next(1);
       }
 
     }

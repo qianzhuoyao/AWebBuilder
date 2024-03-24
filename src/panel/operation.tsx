@@ -33,16 +33,10 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
 
   useEffect(() => {
     if (NodesState?.list) {
-      console.log(new Function('params',
-
-        `try{
-        ${(NodesState?.list || {})[id]?.instance?.option || ''}
-        }catch(e){return {}}`,
-      )(getWCache(id)), 'ss999999');
       setParseOption(() => new Function('params',
 
         `try{
-        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){return {}}`,
       )(getWCache(id)));
     }
@@ -54,7 +48,7 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
         setParseOption(() => new Function('params',
 
           `try{
-        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){return {}}`,
         )(getWCache(id)));
 
@@ -65,7 +59,7 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
         setParseOption(() => new Function('params',
 
           `try{
-        ${(NodesState?.list || {})[id]?.instance?.option || ''}
+        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){
         return {}}`,
         )(getWCache(id)));
@@ -92,6 +86,8 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
     return (
       <div className={'overflow-scroll w-full h-full'}>
         <ATable
+          id={id}
+          streamData={getWCache(id)}
         ></ATable>
       </div>
     );

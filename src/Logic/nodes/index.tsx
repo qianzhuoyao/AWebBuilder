@@ -19,21 +19,25 @@ import { encryption } from './encryption.ts';
 import { and } from './and.ts';
 import { or } from './or.ts';
 import { not } from './not.ts';
+import { checkFilter } from './checkFilter.ts';
 
 export const nodeBuilder = () => {
-  buildCacheClearReqNode()
+  buildCacheClearReqNode();
   buildDataReqNode();
   not();
   or();
   and();
-  buildCacheSetNode()
+  checkFilter();
+  filterMixData();
+  checkPassword();
+  buildCacheSetNode();
   // buildDataSyncNode();
   // buildCacheClearReqNode();
   // buildCacheSetNode();
   // changeSignal();
   // filterMixData();
   // checkPassword();
-  timeSetter()
+  timeSetter();
   encryption();
   loadStart();
   rollPick();

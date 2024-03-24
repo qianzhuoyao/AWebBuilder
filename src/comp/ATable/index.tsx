@@ -8,7 +8,6 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table';
-import { makeData, Person } from './makeData';
 
 import {
   DndContext,
@@ -22,15 +21,18 @@ import {
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { CSSProperties, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, memo, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateDraggable } from '../../store/slice/widgetSlice.ts';
+import { subscribeConfig } from '../../node/viewConfigSubscribe.ts';
+import { filterObjValue } from '../filterObjValue.ts';
+import { v4 } from 'uuid';
 
 const DraggableTableHeader = <T, >({
                                      header,
                                      table,
                                    }: {
-  header: Header<Person, unknown>,
+  header: Header<T, unknown>,
   table: Table<T>
 }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
@@ -100,7 +102,7 @@ const DraggableTableHeader = <T, >({
     ;
 };
 
-const DragAlongCell = ({ cell }: { cell: Cell<Person, unknown> }) => {
+const DragAlongCell = <T, >({ cell }: { cell: Cell<T, unknown> }) => {
   const { isDragging, setNodeRef, transform } = useSortable({
     id: cell.column.id,
   });
@@ -121,54 +123,53 @@ const DragAlongCell = ({ cell }: { cell: Cell<Person, unknown> }) => {
   );
 };
 
-export const ATable = memo(() => {
+export const ATable = memo(<T, >({
+                                   streamData,
+                                   id,
+                                 }: {
+  streamData: any,
+  id: string
+}) => {
+  const [columns, setColumns] = useState<ColumnDef<T>[]>([]);
+  const [data, setData] = useState<T[]>([]);
+
   const dispatch = useDispatch();
-  const columns = useMemo<ColumnDef<Person>[]>(
-    () => [
-      {
-        accessorKey: 'firstName',
-        cell: info => info.getValue(),
-        id: 'firstName',
-
-      },
-      {
-        accessorFn: row => row.lastName,
-        cell: info => info.getValue(),
-        header: () => <span>Last Name</span>,
-        id: 'lastName',
-
-      },
-      {
-        accessorKey: 'age',
-        header: () => 'Age',
-        id: 'age',
-
-
-      },
-      {
-        accessorKey: 'visits',
-        header: () => <span>Visits</span>,
-        id: 'visits',
-
-
-      },
-      {
-        accessorKey: 'status',
-        header: 'Status',
-        id: 'status',
-
-
-      },
-      {
-        accessorKey: 'progress',
-        header: 'Profile Progress',
-        id: 'progress',
-
-      },
-    ],
-    [],
-  );
-  const [data, setData] = useState(() => makeData(20));
+  // const columns = useMemo<ColumnDef<any>[]>(
+  //   () => [
+  //     {
+  //       accessorKey: 'firstName',
+  //       cell: info => info.getValue(),
+  //       id: 'firstName',
+  //     },
+  //     {
+  //       accessorFn: row => row.lastName,
+  //       cell: info => info.getValue(),
+  //       header: () => <span>Last Name</span>,
+  //       id: 'lastName',
+  //     },
+  //     {
+  //       accessorKey: 'age',
+  //       header: () => 'Age',
+  //       id: 'age',
+  //     },
+  //     {
+  //       accessorKey: 'visits',
+  //       header: () => <span>Visits</span>,
+  //       id: 'visits',
+  //     },
+  //     {
+  //       accessorKey: 'status',
+  //       header: 'Status',
+  //       id: 'status',
+  //     },
+  //     {
+  //       accessorKey: 'progress',
+  //       header: 'Profile Progress',
+  //       id: 'progress',
+  //     },
+  //   ],
+  //   [],
+  // );
   const [columnOrder, setColumnOrder] = useState<string[]>(() =>
     columns.map(c => c.id!),
   );
@@ -195,6 +196,40 @@ export const ATable = memo(() => {
     dispatch(updateDraggable(false));
   }, []);
 
+  useEffect(() => {
+    const sub = subscribeConfig(value => {
+      if (id === value.id) {
+        const col = filterObjValue(streamData, value?.colField || '');
+        const tableData = filterObjValue(streamData, value.dataField || '');
+        console.log(col, tableData, value, streamData, 'cscscscsc');
+        setColumns(() => {
+          if (Array.isArray(col)) {
+            return (col || []).map(item => {
+              return {
+                // accessorFn: (row) => {
+                //   console.log(row,'cccccws3333');
+                //   return row[value?.colProp||'']
+                // },
+                cell: info => {
+                  console.log(info.row.original, value?.colProp, 'info.getValue()');
+                  return info.row.original[(item[value?.colProp || ''] || '') as keyof T];
+
+                },
+                header: () => <span>{item[value.colLabel || '']}</span>,
+                id: value.colProp || v4(),
+              };
+            }) as ColumnDef<T>[];
+          }
+          return [];
+        });
+        setData((tableData || []) as T[]);
+      }
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [streamData]);
+
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
@@ -212,60 +247,62 @@ export const ATable = memo(() => {
 
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
-    >
-      <div>
-        <table
-          style={{
-            //width: table.getCenterTotalSize(),
-            width: table.getCenterTotalSize(),
-          }}
-        >
-          <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <div
-              {...{
-                key: headerGroup.id,
-                className: 'tr',
-              }}
-            >
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}
+    <>
+      {columns.length > 0 ? <DndContext
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+      >
+        <div>
+          <table
+            style={{
+              //width: table.getCenterTotalSize(),
+              width: table.getCenterTotalSize(),
+            }}
+          >
+            <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <div
+                {...{
+                  key: headerGroup.id,
+                  className: 'tr',
+                }}
               >
-                {headerGroup.headers.map(header => (
-                  <DraggableTableHeader key={header.id} header={header} table={table} />
-                ))}
-              </SortableContext>
-            </div>
-
-          ))}
-          </thead>
-          <tbody>
-          {table.getRowModel().rows.map(row => (
-            <div
-              {...{
-                key: row.id,
-                className: 'tr',
-              }}
-            >
-              {row.getVisibleCells().map(cell => (
                 <SortableContext
-                  key={cell.id}
                   items={columnOrder}
                   strategy={horizontalListSortingStrategy}
                 >
-                  <DragAlongCell key={cell.id} cell={cell} />
+                  {headerGroup.headers.map(header => (
+                    <DraggableTableHeader key={header.id} header={header} table={table} />
+                  ))}
                 </SortableContext>
-              ))}
-            </div>
+              </div>
 
-          ))}
-          </tbody>
-        </table>
-      </div>
-    </DndContext>
+            ))}
+            </thead>
+            <tbody>
+            {table.getRowModel().rows.map(row => (
+              <div
+                {...{
+                  key: row.id,
+                  className: 'tr',
+                }}
+              >
+                {row.getVisibleCells().map(cell => (
+                  <SortableContext
+                    key={cell.id}
+                    items={columnOrder}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    <DragAlongCell key={cell.id} cell={cell} />
+                  </SortableContext>
+                ))}
+              </div>
+
+            ))}
+            </tbody>
+          </table>
+        </div>
+      </DndContext> : <>表格无配置</>}
+    </>
   );
 });

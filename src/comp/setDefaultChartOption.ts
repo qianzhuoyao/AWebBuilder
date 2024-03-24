@@ -1,4 +1,4 @@
-import { INodeType, pix_BX } from '../store/slice/nodeSlice.ts';
+import { INodeType, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
 import { defaultBuilderFn } from '../Setting/form/view/PixBXChartConfigCode.tsx';
 
 
@@ -21,10 +21,21 @@ export const runViewFnString = (body: string) => {
   `;
 };
 
+export const TABLE_DEFAULT_OPTION = {
+  colField: 'col',
+  colLabel: 'label',
+  colProp: 'prop',
+  dataField: 'data',
+};
+
 export const setDefaultChartOption = (type: INodeType) => {
   switch (type) {
     case pix_BX:
-      return defaultBuilderFn;
+      return {
+        chart: defaultBuilderFn,
+      };
+    case pix_Table:
+      return TABLE_DEFAULT_OPTION;
     default:
       return undefined;
   }
