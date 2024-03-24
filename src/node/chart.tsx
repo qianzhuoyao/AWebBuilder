@@ -81,10 +81,11 @@ export const BaseChart = memo((chartParams: IBaseChart) => {
         chartParams.options ? <div
           ref={chartRef}
           id={chartId}
-          style={{
-            width: chartParams.width + 'px',
-            height: chartParams.height + 'px',
-          }}
+          className={'w-full h-full'}
+          // style={{
+          //   width: chartParams.width + 'px',
+          //   height: chartParams.height + 'px',
+          // }}
           //   className={`w-[${chartParams.width}px] h-[${chartParams.height}px]`}
         ></div> : <div
           style={{
