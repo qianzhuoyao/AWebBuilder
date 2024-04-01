@@ -1,5 +1,5 @@
-import { ReplaySubject } from 'rxjs';
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import { ReplaySubject } from "rxjs";
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
 export interface ITableConfig {
   colField: string;
@@ -8,8 +8,8 @@ export interface ITableConfig {
   dataField: string;
 }
 
-type IChartConfig = { config: string }
-type IConfig = Partial<ITableConfig & IChartConfig>
+type IChartConfig = { config: string };
+type IConfig = Partial<ITableConfig & IChartConfig>;
 
 const configSubscribe = () => {
   const nodeConfig = new Map<string, IConfig>();
@@ -31,13 +31,15 @@ export const getNodeConfig = (id: string) => {
   return getConfigSubscribe().nodeConfig.get(id);
 };
 
-export const subscribeConfig = (subscribe: (value: IConfig & { id?: string }) => void) => {
+export const subscribeConfig = (
+  subscribe: (value: IConfig & { id?: string }) => void
+) => {
   return getConfigSubscribe().observable.subscribe(subscribe);
 };
 export const viewNodesToJSON = () => {
-  const target: Record<string, IConfig | ''> = {};
-  [...getConfigSubscribe().nodeConfig.keys()].map(key => {
-    target[key] = getNodeConfig(key) || '';
+  const target: Record<string, IConfig | ""> = {};
+  [...getConfigSubscribe().nodeConfig.keys()].map((key) => {
+    target[key] = getNodeConfig(key) || "";
   });
   return JSON.stringify(target);
 };

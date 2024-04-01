@@ -1,32 +1,29 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-
-
-interface IInitState {
-  stages: any[];
+interface IInitState<T> {
+  stages: T[];
 }
 
-export const htInitialState: IInitState = {
+export const htInitialState: IInitState<unknown> = {
   stages: [],
-
 };
 
-interface IAction {
-  type: 'updateStage';
-  payload: any[];
+interface IAction<T> {
+  type: "updateStage";
+  payload: T[];
 }
 
+export const HtContext = createContext<
+  IInitState<unknown> & {
+    clear?: () => void;
+  }
+>(htInitialState);
 
-export const HtContext = createContext<IInitState & {
-  clear?: () => void
-}>(htInitialState);
-
-export const htReducer = (state: IInitState, action: IAction) => {
+export const htReducer = <T>(state: IInitState<T>, action: IAction<T>) => {
   const { type, payload } = action;
 
   switch (type) {
-    // Switch cases here...
-    case 'updateStage':
+    case "updateStage":
       return {
         ...state,
         stages: payload,

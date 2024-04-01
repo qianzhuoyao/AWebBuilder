@@ -1,5 +1,5 @@
-import { ReplaySubject } from 'rxjs';
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import { ReplaySubject } from "rxjs";
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
 const chart = () => {
   const observable = new ReplaySubject();

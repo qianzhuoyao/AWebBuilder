@@ -1,5 +1,5 @@
-import React, { useLayoutEffect } from 'react';
-import gsap from 'gsap';
+import React, { useLayoutEffect } from "react";
+import gsap from "gsap";
 
 interface IGsp {
   show: boolean;
@@ -9,25 +9,20 @@ interface IGsp {
 }
 
 export const useGsp = (gspParams: IGsp) => {
-  const {
-    show,
-    gspDom,
-    visibleStyle,
-    hiddenStyle,
-  } = gspParams;
+  const { show, gspDom, visibleStyle, hiddenStyle } = gspParams;
 
   useLayoutEffect(() => {
     if (!show) {
       gsap.to(gspDom, {
         ...visibleStyle,
         duration: 0.1,
-        ease: 'none',
+        ease: "none",
       });
     } else {
       gsap.to(gspDom, {
         ...hiddenStyle,
         duration: 0.1,
-        ease: 'none',
+        ease: "none",
       });
     }
   }, [show]);

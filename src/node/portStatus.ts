@@ -1,15 +1,15 @@
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
-type nodePortId = string
-type nodeId = string
+type nodePortId = string;
+type nodeId = string;
 
 interface IPort {
-  type: 'out' | 'in',
-  tag: number,
-  portType: string,
-  portName: string,
-  pointStatus: 0 | 1 | 2,
-  id: string,
+  type: "out" | "in";
+  tag: number;
+  portType: string;
+  portName: string;
+  pointStatus: 0 | 1 | 2;
+  id: string;
 }
 
 const portStatus = () => {

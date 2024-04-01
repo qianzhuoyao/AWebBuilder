@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { DEFAULT_PANEL_COLOR } from '../../contant';
+import { createSlice } from "@reduxjs/toolkit";
+import { DEFAULT_PANEL_COLOR } from "../../contant";
 
 export interface IPs {
   //操作面板指向是逻辑还是视图 STABS
-  currentSTab: 'logic' | 'view',
+  currentSTab: "logic" | "view";
   rulerMinX: number;
   rulerMinY: number;
   tickUnit: number;
@@ -12,20 +12,18 @@ export interface IPs {
   lockScale: boolean;
   lockTransform: boolean;
   snap: number;
-  panelColor: string,
+  panelColor: string;
   panelWidth: number;
   panelHeight: number;
   panelLeft: number;
   panelTop: number;
   workSpaceName: string;
-  //全局缓存数据池
-  dataPool: any
 }
 
 export const panelSlice = createSlice({
-  name: 'panel',
+  name: "panel",
   initialState: {
-    currentSTab: 'view',
+    currentSTab: "view",
     rulerMinX: 0,
     lockTransform: false,
     lockScale: false,
@@ -35,17 +33,13 @@ export const panelSlice = createSlice({
     panelColor: DEFAULT_PANEL_COLOR,
     offset: 30,
     tickUnit: 2,
-    workSpaceName: '工作空间',
+    workSpaceName: "工作空间",
     panelWidth: 1920,
     panelHeight: 1080,
     panelLeft: 0,
     panelTop: 0,
-    dataPool: {},
   },
   reducers: {
-    setDataPool: (state, action) => {
-      (state.dataPool as Record<string, any>)[action.payload.bindId] = action.payload.data;
-    },
     updateWorkSpaceName: (state, action) => {
       state.workSpaceName = action.payload;
     },
@@ -56,7 +50,7 @@ export const panelSlice = createSlice({
       state.currentSTab = action.payload;
     },
     updateIsSelection: (state, action) => {
-      console.log(action, 'action-action');
+      console.log(action, "action-action");
       state.isSelection = action.payload;
     },
     updatePanelLockTransform: (state, action) => {
@@ -87,14 +81,13 @@ export const panelSlice = createSlice({
       state.rulerMinX = action.payload;
     },
     updateRulerMinY: (state, action) => {
-      console.log(action, 'actionsss');
+      console.log(action, "actionsss");
       state.rulerMinY = action.payload;
     },
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
 export const {
-  setDataPool,
   updatePanelColor,
   updateCurrentSTab,
   updateWorkSpaceName,

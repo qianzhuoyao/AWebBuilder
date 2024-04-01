@@ -1,11 +1,11 @@
-export const asyncTask = <T, >() => {
+export const asyncTask = <T>() => {
   let tasks: (() => Promise<T>)[] = [];
   const insert = (task: () => Promise<T>) => {
     tasks.push(task);
     return this;
   };
   const run = async () => {
-    console.log(tasks,'tasks');
+    console.log(tasks, "tasks");
     for (const i of tasks) {
       await i();
     }
@@ -15,5 +15,5 @@ export const asyncTask = <T, >() => {
   const clear = () => {
     tasks = [];
   };
-  return { insert, run ,clear};
+  return { insert, run, clear };
 };

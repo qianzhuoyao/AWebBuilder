@@ -1,9 +1,6 @@
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
-
-interface IPackage {
-
-}
+interface IPackage {}
 
 const nodePackage = () => {
   const pack: Map<string, IPackage> = new Map();

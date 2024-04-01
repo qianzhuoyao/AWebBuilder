@@ -1,18 +1,15 @@
-import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
-import { WidgetIconTemp } from './widgetIconTemp';
-import { memo } from 'react';
-import { ITs } from './widgetMenu.tsx';
-import { genLogicNodeMenuItems } from '../Logic/base.ts';
-
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { WidgetIconTemp } from "./widgetIconTemp";
+import { memo } from "react";
+import { ITs } from "./widgetMenu.tsx";
+import { genLogicNodeMenuItems } from "../Logic/base.ts";
 
 const CacheMap = memo(() => {
-
   const cache = genLogicNodeMenuItems();
-
 
   return (
     <div className="space-y-2">
-      {cache.logicNodeMenuItems.get('cache')?.map((cache) => {
+      {cache.logicNodeMenuItems.get("cache")?.map((cache) => {
         return (
           <div key={cache.id}>
             <WidgetIconTemp
@@ -34,7 +31,7 @@ const MixMap = memo(() => {
   const mix = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {mix.logicNodeMenuItems.get('mix')?.map((filter) => {
+      {mix.logicNodeMenuItems.get("mix")?.map((filter) => {
         return (
           <div key={filter.id}>
             <WidgetIconTemp
@@ -56,7 +53,7 @@ const FilterMap = memo(() => {
   const filter = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {filter.logicNodeMenuItems.get('filter')?.map((filter) => {
+      {filter.logicNodeMenuItems.get("filter")?.map((filter) => {
         return (
           <div key={filter.id}>
             <WidgetIconTemp
@@ -78,7 +75,7 @@ const TimeInterMap = memo(() => {
   const TimeInter = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {TimeInter.logicNodeMenuItems.get('timeInter')?.map((remote) => {
+      {TimeInter.logicNodeMenuItems.get("timeInter")?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -112,7 +109,7 @@ const HandleTrigger = memo(() => {
   const HTrigger = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {HTrigger.logicNodeMenuItems.get('hTrigger')?.map((remote) => {
+      {HTrigger.logicNodeMenuItems.get("hTrigger")?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -132,7 +129,7 @@ const HandleTrigger = memo(() => {
 
 const TimeSlotMap = memo(() => {
   const TimeSlot = genLogicNodeMenuItems();
-  const type = 'date';
+  const type = "date";
   return (
     <div className="space-y-2">
       {TimeSlot.logicNodeMenuItems.get(type)?.map((item) => {
@@ -155,7 +152,7 @@ const TimeSlotMap = memo(() => {
 
 const PageSlotMap = memo(() => {
   const PageSlot = genLogicNodeMenuItems();
-  const type = 'page';
+  const type = "page";
   return (
     <div className="space-y-2">
       {PageSlot.logicNodeMenuItems.get(type)?.map((item) => {
@@ -179,7 +176,7 @@ const LogicBoth = memo(() => {
   const LogicSlot = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {LogicSlot.logicNodeMenuItems.get('both')?.map((item) => {
+      {LogicSlot.logicNodeMenuItems.get("both")?.map((item) => {
         return (
           <div key={item.id}>
             <WidgetIconTemp
@@ -200,7 +197,7 @@ const ViewSlotMap = memo(() => {
   const ViewSlot = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {ViewSlot.logicNodeMenuItems.get('viewSlot')?.map((remote) => {
+      {ViewSlot.logicNodeMenuItems.get("viewSlot")?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -222,7 +219,7 @@ const TimeOutMap = memo(() => {
   const TimeOut = genLogicNodeMenuItems();
   return (
     <div className="space-y-2">
-      {TimeOut.logicNodeMenuItems.get('timeOut')?.map((remote) => {
+      {TimeOut.logicNodeMenuItems.get("timeOut")?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -243,10 +240,9 @@ const TimeOutMap = memo(() => {
 const RemoteMap = memo(() => {
   const remote = genLogicNodeMenuItems();
 
-
   return (
     <div className="space-y-2">
-      {remote.logicNodeMenuItems.get('remote')?.map((remote) => {
+      {remote.logicNodeMenuItems.get("remote")?.map((remote) => {
         return (
           <div key={remote.id}>
             <WidgetIconTemp
@@ -265,124 +261,123 @@ const RemoteMap = memo(() => {
 });
 const LogicDebugger = [
   {
-    id: 'logic_deb_trigger',
-    label: '触发',
+    id: "logic_deb_trigger",
+    label: "触发",
     content: <HandleTrigger></HandleTrigger>,
   },
   {
-    id: 'logic_form_trigger',
-    label: '表单',
+    id: "logic_form_trigger",
+    label: "表单",
     content: <HandleForm></HandleForm>,
   },
   {
-    id: 'logic_log_trigger',
-    label: '日志',
+    id: "logic_log_trigger",
+    label: "日志",
     content: <HandleForm></HandleForm>,
   },
 ];
 const LogicBrowse = [
   {
-    id: 'logic_batter_slot',
-    label: '电量',
+    id: "logic_batter_slot",
+    label: "电量",
     content: <BatterMap></BatterMap>,
   },
   {
-    id: 'logic_play_slot',
-    label: '音频',
+    id: "logic_play_slot",
+    label: "音频",
     content: <BatterMap></BatterMap>,
   },
   {
-    id: 'logic_net_slot',
-    label: '网络',
+    id: "logic_net_slot",
+    label: "网络",
     content: <BatterMap></BatterMap>,
   },
   {
-    id: 'logic_web_slot',
-    label: '标签',
+    id: "logic_web_slot",
+    label: "标签",
     content: <BatterMap></BatterMap>,
   },
 ];
 const LogicEvent = [
   {
-    id: 'logic_mouse_slot',
-    label: '鼠标',
+    id: "logic_mouse_slot",
+    label: "鼠标",
     content: <ClickMap></ClickMap>,
   },
   {
-    id: 'logic_key_slot',
-    label: '键盘',
+    id: "logic_key_slot",
+    label: "键盘",
     content: <ClickMap></ClickMap>,
   },
   {
-    id: 'logic_window_slot',
-    label: '窗口',
+    id: "logic_window_slot",
+    label: "窗口",
     content: <ClickMap></ClickMap>,
   },
 ];
 const LogicLife = [
   {
-    id: 'logic_page_slot',
-    label: '生命',
+    id: "logic_page_slot",
+    label: "生命",
     content: <PageSlotMap></PageSlotMap>,
   },
   {
-    id: 'logic_time_slot',
-    label: '时间',
+    id: "logic_time_slot",
+    label: "时间",
     content: <TimeSlotMap></TimeSlotMap>,
   },
 ];
 const LogicView = [
   {
-    id: 'logic_view_slot',
-    label: '插槽',
+    id: "logic_view_slot",
+    label: "插槽",
     content: <ViewSlotMap></ViewSlotMap>,
   },
   {
-    id: 'logic_file_base',
-    label: '文件',
+    id: "logic_file_base",
+    label: "文件",
     content: <></>,
   },
   {
-    id: 'logic_view_base',
-    label: '门',
+    id: "logic_view_base",
+    label: "门",
     content: <LogicBoth></LogicBoth>,
   },
 ];
 const LogicTime = [
   {
-    id: 'logic_time_out',
-    label: '定时',
+    id: "logic_time_out",
+    label: "定时",
     content: <TimeOutMap></TimeOutMap>,
   },
   {
-    id: 'logic_time_inter',
-    label: '频发',
+    id: "logic_time_inter",
+    label: "频发",
     content: <TimeInterMap></TimeInterMap>,
   },
 ];
 const LogicData = [
   {
-    id: 'logic_remote_data',
-    label: '远程',
+    id: "logic_remote_data",
+    label: "远程",
     content: <RemoteMap></RemoteMap>,
   },
   {
-    id: 'logic_cache_data',
-    label: '缓存',
+    id: "logic_cache_data",
+    label: "缓存",
     content: <CacheMap></CacheMap>,
   },
   {
-    id: 'logic_filter_data',
-    label: '过滤',
+    id: "logic_filter_data",
+    label: "过滤",
     content: <FilterMap></FilterMap>,
   },
   {
-    id: 'logic_mix_data',
-    label: '装饰',
+    id: "logic_mix_data",
+    label: "装饰",
     content: <MixMap></MixMap>,
   },
 ];
-
 
 const TabSlot = memo(({ ele }: ITs) => {
   return (
@@ -393,10 +388,10 @@ const TabSlot = memo(({ ele }: ITs) => {
         color="primary"
         radius="none"
         classNames={{
-          tabList: 'flex flex-col',
-          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
-          cursor: 'rounded-md',
-          base: 'bg-default-100',
+          tabList: "flex flex-col",
+          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
+          cursor: "rounded-md",
+          base: "bg-default-100",
         }}
       >
         {(item) => (
@@ -485,8 +480,7 @@ const TimeIcon = memo(() => {
         viewBox="0 0 24 24"
       >
         <g fill="none">
-          <path
-            d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
+          <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
           <path
             fill="currentColor"
             d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16m0 2a1 1 0 0 1 .993.883L13 7v4.586l2.707 2.707a1 1 0 0 1-1.32 1.497l-.094-.083l-3-3a1 1 0 0 1-.284-.576L11 12V7a1 1 0 0 1 1-1"
@@ -535,8 +529,7 @@ const DebuggerIcon = memo(() => {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path
-            d="m3.5 10.5l1.3-1.3M4.5 7H3m7.5-3.5L9.2 4.8M9.5 7H11m-4.5-.5h3M.5 7a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0m11.096 4.596L2.404 2.404" />
+          <path d="m3.5 10.5l1.3-1.3M4.5 7H3m7.5-3.5L9.2 4.8M9.5 7H11m-4.5-.5h3M.5 7a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0m11.096 4.596L2.404 2.404" />
           <path d="M4.804 4.804A2.5 2.5 0 0 1 9.5 6v2a2.5 2.5 0 0 1-.304 1.196M4.5 7v1a2.5 2.5 0 0 0 3.172 2.408" />
         </g>
       </svg>
@@ -567,44 +560,43 @@ const BrowseIcon = memo(() => {
 
 const tabs = [
   {
-    id: 'data_logic',
+    id: "data_logic",
     label: <LogicDataIcon />,
     content: <TabSlot ele={LogicData}></TabSlot>,
   },
   {
-    id: 'time_logic',
+    id: "time_logic",
     label: <TimeIcon />,
     content: <TabSlot ele={LogicTime}></TabSlot>,
   },
   {
-    id: 'view_logic',
+    id: "view_logic",
     label: <ViewIcon />,
     content: <TabSlot ele={LogicView}></TabSlot>,
   },
   {
-    id: 'life_logic',
+    id: "life_logic",
     label: <LifeIcon />,
     content: <TabSlot ele={LogicLife}></TabSlot>,
   },
   {
-    id: 'event_logic',
+    id: "event_logic",
     label: <EventIcon />,
     content: <TabSlot ele={LogicEvent}></TabSlot>,
   },
   {
-    id: 'browse_logic',
+    id: "browse_logic",
     label: <BrowseIcon />,
     content: <TabSlot ele={LogicBrowse}></TabSlot>,
   },
   {
-    id: 'debugger_logic',
+    id: "debugger_logic",
     label: <DebuggerIcon />,
     content: <TabSlot ele={LogicDebugger}></TabSlot>,
   },
 ];
 
 export const LogicWidgetMenu = memo(() => {
-
   return (
     <div className="flex h-[calc(100%_-_44px)]">
       <Tabs
@@ -613,11 +605,11 @@ export const LogicWidgetMenu = memo(() => {
         items={tabs}
         radius="none"
         classNames={{
-          tab: 'h-[70px]',
-          tabList: 'flex flex-col',
-          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
-          cursor: 'rounded-md',
-          base: 'bg-default-100',
+          tab: "h-[70px]",
+          tabList: "flex flex-col",
+          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
+          cursor: "rounded-md",
+          base: "bg-default-100",
         }}
       >
         {(item) => (

@@ -1,4 +1,4 @@
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
 const portEdgeMap = () => {
   const portEdge = new Map<string, Set<string>>();
@@ -9,15 +9,15 @@ const portEdgeMap = () => {
 
 export const getPortEdgeMap = createSingleInstance(portEdgeMap);
 
-export const createPEM = (port: string, edgetag: string) => {
+export const createPEM = (port: string, edgeTag: string) => {
   if (!getPortEdgeMap().portEdge.has(port)) {
     getPortEdgeMap().portEdge.set(port, new Set<string>());
   }
-  getPortEdgeMap().portEdge.get(port)?.add(edgetag);
+  getPortEdgeMap().portEdge.get(port)?.add(edgeTag);
 };
-export const removePEM = (port: string, edgetag: string) => {
-  getPortEdgeMap().portEdge.get(port)?.delete(edgetag);
+export const removePEM = (port: string, edgeTag: string) => {
+  getPortEdgeMap().portEdge.get(port)?.delete(edgeTag);
 };
 export const findPEM = (port: string) => {
-  return getPortEdgeMap().portEdge.get(port)
+  return getPortEdgeMap().portEdge.get(port);
 };

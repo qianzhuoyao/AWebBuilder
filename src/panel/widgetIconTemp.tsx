@@ -1,5 +1,11 @@
-import { Card, Image, CardFooter, CardHeader, Tooltip } from '@nextui-org/react';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  Card,
+  Image,
+  CardFooter,
+  CardHeader,
+  Tooltip,
+} from "@nextui-org/react";
+import { v4 as uuidv4 } from "uuid";
 import {
   memo,
   useEffect,
@@ -7,11 +13,11 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-} from 'react';
-import { createLayerSrc, setWidgetStream } from './createWidgetPipe';
-import { useDispatch, useSelector } from 'react-redux';
-import { IPs } from '../store/slice/panelSlice';
-import gsap from 'gsap';
+} from "react";
+import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
+import { useDispatch, useSelector } from "react-redux";
+import { IPs } from "../store/slice/panelSlice";
+import gsap from "gsap";
 import {
   AR_PANEL_DOM_ID,
   LOGIC_PANEL_DOM_ID,
@@ -20,7 +26,7 @@ import {
   NODE_TYPE_IN_ELE_VIEW,
   drag_size_height,
   drag_size_width,
-} from '../contant';
+} from "../contant";
 import {
   IClassify,
   INodeType,
@@ -28,21 +34,32 @@ import {
   logic_D_get,
   logic_Ring_get,
   logic_TO_get,
-  INs, logic_Form_get, logic_ENC_get,
-} from '../store/slice/nodeSlice';
-import { IWs } from '../store/slice/widgetMapSlice';
-import { ILs, addLogicNode, ILogicNode } from '../store/slice/logicSlice';
-import { toast } from 'react-toastify';
-import { mapNodeBindPort } from '../comp/mapNodePort.ts';
-import { setDefaultChartOption } from '../comp/setDefaultChartOption.ts';
-import { genLogicConfigMap, IConfigInfo, IRemoteReqInfo } from '../Logic/nodes/logicConfigMap.ts';
-import { addPortNodeMap, getPortStatus } from '../node/portStatus.ts';
-import { createNode } from './logicPanelEventSubscribe.ts';
-import { getLayerContent, getLayers, updateLogicNodesInLayer, updateViewNodesInLayer } from './layers.ts';
-import { IWls } from '../store/slice/widgetSlice.ts';
+  INs,
+  logic_Form_get,
+  logic_ENC_get,
+} from "../store/slice/nodeSlice";
+import { IWs } from "../store/slice/widgetMapSlice";
+import { ILs, addLogicNode, ILogicNode } from "../store/slice/logicSlice";
+import { toast } from "react-toastify";
+import { mapNodeBindPort } from "../comp/mapNodePort.ts";
+import { setDefaultChartOption } from "../comp/setDefaultChartOption.ts";
+import {
+  genLogicConfigMap,
+  IConfigInfo,
+  IRemoteReqInfo,
+} from "../Logic/nodes/logicConfigMap.ts";
+import { addPortNodeMap, getPortStatus } from "../node/portStatus.ts";
+import { createNode } from "./logicPanelEventSubscribe.ts";
+import {
+  getLayerContent,
+  getLayers,
+  updateLogicNodesInLayer,
+  updateViewNodesInLayer,
+} from "./layers.ts";
+import { IWls } from "../store/slice/widgetSlice.ts";
 
 interface IW {
-  nodeType: 'LOGIC' | 'VIEW';
+  nodeType: "LOGIC" | "VIEW";
   src: string;
   name: string;
   typeId: INodeType;
@@ -52,7 +69,7 @@ interface IW {
 
 const isInPanel = (
   e: MouseEvent,
-  parentDomId: typeof AR_PANEL_DOM_ID | typeof LOGIC_PANEL_DOM_ID,
+  parentDomId: typeof AR_PANEL_DOM_ID | typeof LOGIC_PANEL_DOM_ID
 ): boolean => {
   const { pageX, pageY } = e;
 
@@ -73,11 +90,11 @@ const isInPanel = (
 
 const ViewCard = memo(
   ({
-     name,
-     typeId,
-     id,
-     src,
-   }: {
+    name,
+    typeId,
+    id,
+    src,
+  }: {
     name: string;
     typeId: INodeType;
     id: string;
@@ -93,7 +110,7 @@ const ViewCard = memo(
       ImageRef,
       name,
       typeId,
-      widgetMapState.contentImageShowType,
+      widgetMapState.contentImageShowType
     );
 
     useEffect(() => {
@@ -116,22 +133,21 @@ const ViewCard = memo(
                 alt={name}
                 isZoomed
                 src={src}
-                className={'h-[100px] w-[200px] object-fill'}
+                className={"h-[100px] w-[200px] object-fill"}
               />
 
               {!widgetMapState.contentImageShowType && (
-                <CardFooter
-                  className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
+                <CardFooter className="top-1 right-1 h-[20px] justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-md rounded-large bottom-1 w-[30px)] shadow-small ml-1 z-10">
                   <p className="text-tiny text-white/80">{name}</p>
                 </CardFooter>
               )}
             </Card>
           ),
-          [id, name, src, widgetMapState.contentImageShowType],
+          [id, name, src, widgetMapState.contentImageShowType]
         )}
       </>
     );
-  },
+  }
 );
 
 /**
@@ -142,7 +158,7 @@ const transPointInScene = (
   pageY: number,
   rMinX: number,
   rMinY: number,
-  offset: number,
+  offset: number
 ) => {
   const SCENE = document.getElementById(AR_PANEL_DOM_ID);
   if (!SCENE) {
@@ -161,10 +177,10 @@ const useCardDefaultSetting = (
   ImageRef: React.RefObject<HTMLImageElement>,
   name: string,
   typeId: INodeType,
-  contentImageShowType: number,
+  contentImageShowType: number
 ) => {
-  ImageRef.current?.setAttribute('data-temp-type', name);
-  ImageRef.current?.setAttribute('data-temp-id', typeId);
+  ImageRef.current?.setAttribute("data-temp-type", name);
+  ImageRef.current?.setAttribute("data-temp-id", typeId);
   useEffect(() => {
     if (!ICardRef.current) {
       return;
@@ -176,15 +192,15 @@ const useCardDefaultSetting = (
   useLayoutEffect(() => {
     if (contentImageShowType) {
       gsap.to(ICardRef.current, {
-        width: '44%',
+        width: "44%",
         duration: 0.1,
-        ease: 'none',
+        ease: "none",
       });
     } else {
       gsap.to(ICardRef.current, {
-        width: 'auto',
+        width: "auto",
         duration: 0.1,
-        ease: 'none',
+        ease: "none",
       });
     }
   }, [ICardRef, contentImageShowType]);
@@ -192,12 +208,12 @@ const useCardDefaultSetting = (
 
 const LogicCard = memo(
   ({
-     name,
-     typeId,
-     id,
-     src,
-     tips,
-   }: {
+    name,
+    typeId,
+    id,
+    src,
+    tips,
+  }: {
     name: string;
     typeId: INodeType;
     id: string;
@@ -214,7 +230,7 @@ const LogicCard = memo(
       ImageRef,
       name,
       typeId,
-      logicState.contentImageShowType,
+      logicState.contentImageShowType
     );
     useEffect(() => {
       ImageRef.current?.setAttribute(NODE_TYPE_IN_ELE, NODE_TYPE_IN_ELE_LOGIC);
@@ -228,7 +244,7 @@ const LogicCard = memo(
                 <CardHeader className="flex gap-3">
                   <Image
                     classNames={{
-                      wrapper: 'w-[30px]',
+                      wrapper: "w-[30px]",
                     }}
                     id={id}
                     ref={ImageRef}
@@ -240,7 +256,7 @@ const LogicCard = memo(
                   />
                   <div className="flex flex-col w-[70px]">
                     <p className="text-small">{name}</p>
-                    <Tooltip color={'default'} content={tips} className="">
+                    <Tooltip color={"default"} content={tips} className="">
                       <p className="text-small text-default-500 truncate">
                         {tips}
                       </p>
@@ -250,21 +266,20 @@ const LogicCard = memo(
               </Card>
             </>
           ),
-          [id, name, src, tips],
+          [id, name, src, tips]
         )}
       </>
     );
-  },
+  }
 );
 
 export const defaultRemote: IRemoteReqInfo = {
-  protocol: 'http',
-  method: 'post',
-  url: '',
+  protocol: "http",
+  method: "post",
+  url: "",
 };
 
 const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
-
   switch (typeId) {
     case logic_Ring_get:
       return {
@@ -288,8 +303,8 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
     case logic_ENC_get:
       return {
         encryptionConfigInfo: {
-          encryptionMethod: 'MD5',
-          publicKey: '',
+          encryptionMethod: "MD5",
+          publicKey: "",
         },
       };
     case logic_D_get:
@@ -299,7 +314,6 @@ const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
     default:
       return {};
   }
-
 };
 
 export const WidgetIconTemp = memo(
@@ -325,19 +339,19 @@ export const WidgetIconTemp = memo(
         key,
         {
           down: (e) => {
-            console.log(e, 'downe');
-            const node = createLayerSrc('img');
+            console.log(e, "downe");
+            const node = createLayerSrc("img");
             if (node) {
               node.src = src;
-              node.style.position = 'absolute';
-              node.style.width = drag_size_width + 'px';
-              node.style.height = drag_size_height + 'px';
-              node.style.left = e.pageX + 'px';
-              node.style.top = e.pageY + 'px';
+              node.style.position = "absolute";
+              node.style.width = drag_size_width + "px";
+              node.style.height = drag_size_height + "px";
+              node.style.left = e.pageX + "px";
+              node.style.top = e.pageY + "px";
               if (e.target instanceof HTMLElement) {
                 node.setAttribute(
                   NODE_TYPE_IN_ELE,
-                  e.target.getAttribute(NODE_TYPE_IN_ELE) || 'isError',
+                  e.target.getAttribute(NODE_TYPE_IN_ELE) || "isError"
                 );
               }
             }
@@ -346,8 +360,8 @@ export const WidgetIconTemp = memo(
           },
           move: (e, c) => {
             if (c) {
-              c.style.left = e.pageX + 'px';
-              c.style.top = e.pageY + 'px';
+              c.style.left = e.pageX + "px";
+              c.style.top = e.pageY + "px";
             }
           },
           up: (e, c) => {
@@ -358,7 +372,7 @@ export const WidgetIconTemp = memo(
                 e.pageY,
                 PanelState.rulerMinX,
                 PanelState.rulerMinY,
-                PanelState.offset,
+                PanelState.offset
               );
               if (pointer && isInPanel(e, AR_PANEL_DOM_ID)) {
                 const w = drag_size_width * PanelState.tickUnit;
@@ -375,22 +389,27 @@ export const WidgetIconTemp = memo(
                     id: viewNodeId,
                     classify,
                     nodeType,
-                    alias: name + '@' + uuidv4(),
+                    alias: name + "@" + uuidv4(),
                     instance: {
                       type: typeId,
                       option: setDefaultChartOption(typeId),
                     },
-                  }),
+                  })
                 );
                 setTimeout(() => {
-                  console.log(NodesState, currentLayer?.layerNameNodesOfView, getLayers(), 'currentLayer?.layerNameNodesOfView');
+                  console.log(
+                    NodesState,
+                    currentLayer?.layerNameNodesOfView,
+                    getLayers(),
+                    "currentLayer?.layerNameNodesOfView"
+                  );
                   updateViewNodesInLayer(
-                    currentLayer?.layerNameNodesOfView || '',
-                    viewNodeId,
+                    currentLayer?.layerNameNodesOfView || "",
+                    viewNodeId
                   );
                 }, 0);
               } else {
-                toast.error('目标面板应该是视图层');
+                toast.error("目标面板应该是视图层");
               }
             } else if (
               c?.getAttribute(NODE_TYPE_IN_ELE) === NODE_TYPE_IN_ELE_LOGIC
@@ -399,18 +418,17 @@ export const WidgetIconTemp = memo(
                 const LOGIC_CONTAINER =
                   document.getElementById(LOGIC_PANEL_DOM_ID);
                 if (!LOGIC_CONTAINER) {
-                  toast.error('逻辑面板不存在,请刷新');
+                  toast.error("逻辑面板不存在,请刷新");
                   return;
                 }
                 const { left, top } = LOGIC_CONTAINER.getBoundingClientRect();
-
 
                 //映射端点
                 const Tem = mapNodeBindPort({
                   belongClass: classify,
                   typeId,
                 });
-                console.log(Tem, 'eTem-e-e');
+                console.log(Tem, "eTem-e-e");
                 const logicId = uuidv4();
 
                 const defaultConfigInfo = setDefaultInfo(typeId);
@@ -420,26 +438,25 @@ export const WidgetIconTemp = memo(
                 genLogicConfigMap().configInfo.set(logicId, defaultConfigInfo);
 
                 Tem?.ports.map((port, index) => {
-                  if (port.type === 'isIn') {
-                    const inPortId = 'in' + index + '#' + port.id;
+                  if (port.type === "isIn") {
+                    const inPortId = "in" + index + "#" + port.id;
                     addPortNodeMap(logicId, inPortId);
                     getPortStatus().status.set(inPortId, {
-                      type: 'in',
+                      type: "in",
                       tag: index,
-                      portType: '',
+                      portType: "",
                       portName: port.portName,
                       pointStatus: 0,
                       id: port.id,
                     });
-
                   } else {
-                    const outPortId = 'out' + index + '#' + port.id;
+                    const outPortId = "out" + index + "#" + port.id;
                     // getPortStatus().nodePortMap.set(logicId).;
                     addPortNodeMap(logicId, outPortId);
                     getPortStatus().status.set(outPortId, {
-                      type: 'out',
+                      type: "out",
                       tag: index,
-                      portType: '',
+                      portType: "",
                       portName: port.portName,
                       pointStatus: 0,
                       id: port.id,
@@ -448,13 +465,12 @@ export const WidgetIconTemp = memo(
                 });
                 //widgetMapState
 
-
                 createNode({
                   typeId,
                   belongClass: classify,
                   x: e.pageX - left,
                   y: e.pageY - top,
-                  shape: 'image',
+                  shape: "image",
                   width: 40,
                   height: 40,
                   id: logicId,
@@ -466,40 +482,54 @@ export const WidgetIconTemp = memo(
                     belongClass: classify,
                     x: e.pageX - left,
                     y: e.pageY - top,
-                    shape: 'image',
+                    shape: "image",
                     width: 40,
                     height: 40,
                     id: logicId,
                     imageUrl: c.src,
-                  }),
+                  })
                 );
 
                 setTimeout(() => {
                   updateLogicNodesInLayer(
-                    currentLayer?.layerNameNodesOfLogic || '',
-                    logicId,
+                    currentLayer?.layerNameNodesOfLogic || "",
+                    logicId
                   );
                 }, 0);
               } else {
-                toast.error('目标面板应该是逻辑层');
+                toast.error("目标面板应该是逻辑层");
               }
               c?.remove();
             } else {
-              throw new Error('handler htmlELe is unknown');
+              throw new Error("handler htmlELe is unknown");
             }
           },
-        },
+        }
       );
 
       return () => {
         subscription?.unsubscribe();
       };
-    }, [NodesState, PanelState.offset, PanelState.rulerMinX, PanelState.rulerMinY, PanelState.tickUnit, classify, currentLayer?.layerNameNodesOfLogic, currentLayer?.layerNameNodesOfView, dispatch, key, name, nodeType, src, typeId]);
+    }, [
+      NodesState,
+      PanelState.offset,
+      PanelState.rulerMinX,
+      PanelState.rulerMinY,
+      PanelState.tickUnit,
+      classify,
+      currentLayer?.layerNameNodesOfLogic,
+      currentLayer?.layerNameNodesOfView,
+      dispatch,
+      key,
+      name,
+      nodeType,
+      src,
+      typeId,
+    ]);
 
     return (
-
       <>
-        {nodeType === 'VIEW' ? (
+        {nodeType === "VIEW" ? (
           <ViewCard id={key} name={name} typeId={typeId} src={src} />
         ) : (
           <LogicCard
@@ -512,5 +542,5 @@ export const WidgetIconTemp = memo(
         )}
       </>
     );
-  },
+  }
 );

@@ -1,11 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getWDGraph } from '../../DirGraph/weightedDirectedGraph.ts';
-import { INodeType } from './nodeSlice.ts';
-import { ILogicTypeList } from '../../panel/logicSrcList.ts';
+import { createSlice } from "@reduxjs/toolkit";
+import { getWDGraph } from "../../DirGraph/weightedDirectedGraph.ts";
+import { INodeType } from "./nodeSlice.ts";
+import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 
 export interface ILogicConfig {
   target: string[];
-
 }
 
 export interface ILogicNode {
@@ -22,18 +21,16 @@ export interface ILogicNode {
   imageUrl: string;
 }
 
-
 export interface ILogicEdge {
   from: string;
   to: string;
   weight: number;
   fromPort: string;
   toPort: string;
-
 }
 
 //逻辑路基id而不是节点
-type logicId = string
+type logicId = string;
 
 export interface ILs {
   //0 大预览 1 小缩略
@@ -41,23 +38,29 @@ export interface ILs {
   logicNodes: Record<string, ILogicNode>;
   logicEdges: ILogicEdge[];
   target: string[];
-  signalSet: { source: string, target: string }[];
+  signalSet: { source: string; target: string }[];
   //正在执行任务的fromId集合
-  workingNodeIdList: string[],
+  workingNodeIdList: string[];
   //某发送节点的发送次数
-  sendDugCount: Record<string, Record<logicId, {
-    type: 'success' | 'fail' | 'pending'
-    startTime: number,
-    endTime: number
-  }>>;
+  sendDugCount: Record<
+    string,
+    Record<
+      logicId,
+      {
+        type: "success" | "fail" | "pending";
+        startTime: number;
+        endTime: number;
+      }
+    >
+  >;
   logicPanel: {
     //如果存在循环任务时切断逻辑链路如果时true则停止链路逻辑，否则持续执行
-    autoStop: boolean
+    autoStop: boolean;
   };
 }
 
 export const logicSlice = createSlice({
-  name: 'logic',
+  name: "logic",
   initialState: {
     sendDugCount: {},
     workingNodeIdList: [],
@@ -96,33 +99,32 @@ export const logicSlice = createSlice({
       delete state.sendDugCount[nodeId][id];
     },
 
-
     setLogicTarget: (state, action) => {
-      console.log(action.payload, 'sssaction.payload');
+      console.log(action.payload, "sssaction.payload");
       if (Array.isArray(action.payload)) {
         state.target = action.payload;
       }
     },
 
-
     updateLogicNode: (state, action) => {
       const { id } = action.payload;
-      (state.logicNodes as Record<string, ILogicNode>)[id] =
-        { ...(state.logicNodes as Record<string, ILogicNode>)[id], ...action.payload };
-
+      (state.logicNodes as Record<string, ILogicNode>)[id] = {
+        ...(state.logicNodes as Record<string, ILogicNode>)[id],
+        ...action.payload,
+      };
     },
 
-
     deleteLogicNode: (state, action) => {
-      const newKeys = Object.keys(state.logicNodes).filter(key => key !== action.payload.id);
+      const newKeys = Object.keys(state.logicNodes).filter(
+        (key) => key !== action.payload.id
+      );
       const newObj: Record<string, ILogicNode> = {};
-      newKeys.map(key => {
+      newKeys.map((key) => {
         newObj[key] = (state.logicNodes as Record<string, ILogicNode>)[key];
       });
       state.logicNodes = newObj;
     },
     addLogicNode: (state, action) => {
-
       (state.logicNodes as Record<string, ILogicNode>)[action.payload.id] =
         action.payload;
       //添加节点，与logicNodes 区分开是为了做redo undo

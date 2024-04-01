@@ -1,8 +1,8 @@
-import { Observable, of } from 'rxjs';
-import { createSingleInstance } from '../../comp/createSingleInstance.ts';
+import { Observable, of } from "rxjs";
+import { createSingleInstance } from "../../comp/createSingleInstance.ts";
 
-type nodeId = string
-type logicId = string
+type nodeId = string;
+type logicId = string;
 const emitLogicId = () => {
   //一个点应该对应多个逻辑线
   const emitNodeToLogicIdMap = new Map<nodeId, Set<logicId>>();
@@ -29,5 +29,5 @@ export const isLogicFromNode = (logicId: string, nodeId: string) => {
 };
 
 export const emitLogic = (): Observable<string> => {
-  return of('trigger');
+  return of("trigger");
 };

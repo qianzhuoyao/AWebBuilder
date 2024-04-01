@@ -1,72 +1,72 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { enableMapSet } from 'immer';
-import { ILogicTypeList } from '../../panel/logicSrcList.ts';
-import { ITableConfig } from '../../node/viewConfigSubscribe.ts';
-import { IMAGE_DEFAULT_OPTION } from '../../comp/setDefaultChartOption.ts';
-import { CHART_OPTIONS } from '../../Setting/attrConfig/view/CHART_OPTIONS.ts';
+import { createSlice } from "@reduxjs/toolkit";
+import { enableMapSet } from "immer";
+import { ILogicTypeList } from "../../panel/logicSrcList.ts";
+import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
+import { IMAGE_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
+import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
 //pixTable
-export const pix_Table = 'pixTable' as const;
-export const pix_frame = 'pix_frame' as const;
-export const pix_input = 'pix_input' as const;
+export const pix_Table = "pixTable" as const;
+export const pix_frame = "pix_frame" as const;
+export const pix_input = "pix_input" as const;
 //文本
-export const pix_Text = 'pixText' as const;
+export const pix_Text = "pixText" as const;
 //图片资源
-export const pic_Img = 'pic' as const;
+export const pic_Img = "pic" as const;
 //条形图
-export const pix_Line = 'pixLine' as const;
+export const pix_Line = "pixLine" as const;
 //面积图
-export const pix_GLine = 'pixGLine' as const;
+export const pix_GLine = "pixGLine" as const;
 //普通柱状图
-export const pix_BX = 'pixBX' as const;
+export const pix_BX = "pixBX" as const;
 //横向柱状图
-export const pix_BY = 'pixBY' as const;
+export const pix_BY = "pixBY" as const;
 //折现柱状图
-export const pix_BLine = 'pixBLine' as const;
+export const pix_BLine = "pixBLine" as const;
 
 //关于信号的说明，0/1 当存在型号时，信号边为1 否则为0
 //逻辑 数据获取器
-export const logic_D_get = 'logic_D_get' as const;
+export const logic_D_get = "logic_D_get" as const;
 //逻辑 提交数据
-export const logic_U_get = 'logic_U_get' as const;
+export const logic_U_get = "logic_U_get" as const;
 //缓存器
-export const logic_Cache_set = 'logic_Cache_set' as const;
+export const logic_Cache_set = "logic_Cache_set" as const;
 //清理所有缓存
-export const logic_Cache_clear = 'logic_Cache_clear' as const;
+export const logic_Cache_clear = "logic_Cache_clear" as const;
 //校验器 当信号输入值与设置值相等时通过，否则拦截
-export const logic_P_get = 'logic_P_set' as const;
+export const logic_P_get = "logic_P_set" as const;
 
 //映射字段
-export const logic_MixData_get = 'logic_MixData_get' as const;
+export const logic_MixData_get = "logic_MixData_get" as const;
 //表单构建
-export const logic_Form_get = 'logic_Form_get' as const;
+export const logic_Form_get = "logic_Form_get" as const;
 //加密器
-export const logic_ENC_get = 'logic_ENC_get' as const;
+export const logic_ENC_get = "logic_ENC_get" as const;
 //过滤数据
-export const logic_FilterData_get = 'logic_FilterData_get' as const;
+export const logic_FilterData_get = "logic_FilterData_get" as const;
 //过滤数据
-export const logic_FilterCheckData_get = 'logic_FilterCheckData_get' as const;
+export const logic_FilterCheckData_get = "logic_FilterCheckData_get" as const;
 //信号转换器，输入的信号不满足条件时 不丢弃 并继续发送一条 信息用以通知
-export const logic_TM_get = 'logic_TM_get' as const;
+export const logic_TM_get = "logic_TM_get" as const;
 //定时器
-export const logic_TO_get = 'logic_TO_get' as const;
-export const logic_NOT_BOTH_get = 'logic_NOT_BOTH_get' as const;
-export const logic_or_BOTH_get = 'logic_or_BOTH_get' as const;
-export const logic_and_BOTH_get = 'logic_and_BOTH_get' as const;
+export const logic_TO_get = "logic_TO_get" as const;
+export const logic_NOT_BOTH_get = "logic_NOT_BOTH_get" as const;
+export const logic_or_BOTH_get = "logic_or_BOTH_get" as const;
+export const logic_and_BOTH_get = "logic_and_BOTH_get" as const;
 //组件映射
-export const logic_View_bind = 'logic_View_bind' as const;
+export const logic_View_bind = "logic_View_bind" as const;
 //循环
-export const logic_Ring_get = 'logic_Ring_get' as const;
+export const logic_Ring_get = "logic_Ring_get" as const;
 //load开始
-export const logic_Load_start = 'logic_Load_start' as const;
+export const logic_Load_start = "logic_Load_start" as const;
 //打平
-export const logic_Roll_get = 'logic_Roll_get' as const;
+export const logic_Roll_get = "logic_Roll_get" as const;
 //定次
-export const logic_TimesSet_get = 'logic_TimesSet_get' as const;
+export const logic_TimesSet_get = "logic_TimesSet_get" as const;
 //手动触发
-export const logic_Dug_Trigger = 'logic_Dug_Trigger' as const;
+export const logic_Dug_Trigger = "logic_Dug_Trigger" as const;
 
-
-export type ILogicType = typeof logic_Cache_clear
+export type ILogicType =
+  | typeof logic_Cache_clear
   | typeof logic_D_get
   | typeof logic_U_get
   | typeof logic_Cache_set
@@ -86,7 +86,7 @@ export type ILogicType = typeof logic_Cache_clear
   | typeof logic_or_BOTH_get
   | typeof logic_FilterCheckData_get
   | typeof logic_MixData_get
-  | typeof logic_TimesSet_get
+  | typeof logic_TimesSet_get;
 
 export type INodeType =
   | typeof pix_BLine
@@ -100,14 +100,17 @@ export type INodeType =
   | typeof pix_Line
   | typeof pic_Img
   | typeof pix_Text
-  | ILogicType;
-
+  | ILogicType
+  | keyof typeof CHART_OPTIONS;
 
 interface IChartInstance {
-  option?: Partial<{
-    chartClass: keyof typeof CHART_OPTIONS,
-    chart: string
-  } & ITableConfig & typeof IMAGE_DEFAULT_OPTION>;
+  option?: Partial<
+    {
+      chartClass: keyof typeof CHART_OPTIONS;
+      chart: string;
+    } & ITableConfig &
+      typeof IMAGE_DEFAULT_OPTION
+  >;
   type:
     | typeof pix_BLine
     | typeof pix_GLine
@@ -119,11 +122,11 @@ interface IChartInstance {
     | keyof typeof CHART_OPTIONS;
 }
 
-export type IIstance = IChartInstance
+export type IIstance = IChartInstance;
 
 enableMapSet();
 
-export type IClassify = ILogicTypeList
+export type IClassify = ILogicTypeList;
 
 export interface IViewNode {
   //标识
@@ -153,7 +156,7 @@ export interface IViewNode {
   classify: IClassify;
   //实例容器
   instance: IIstance;
-  nodeType: 'VIEW' | 'LOGIC';
+  nodeType: "VIEW" | "LOGIC";
 }
 
 type nodeId = string;
@@ -162,21 +165,21 @@ export interface INs {
   targets: string[];
   //在下一个执行任务执行完毕后更新位置
   moveTo: {
-    id: string,
-    newX: number,
-    newY: number
+    id: string;
+    newX: number;
+    newY: number;
   }[];
   //在下一个执行任务执行完毕后更新位置
   resizeTo: {
-    id: string,
-    newW: number,
-    newH: number
+    id: string;
+    newW: number;
+    newH: number;
   }[];
   list: Record<nodeId, IViewNode>;
 }
 
 export const viewNodesSlice = createSlice({
-  name: 'nodes',
+  name: "nodes",
   initialState: {
     list: {},
     moveTo: [],
@@ -196,12 +199,7 @@ export const viewNodesSlice = createSlice({
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
-      const viewNodeTypeIdList = [
-        pix_Table,
-        pix_Text,
-        pic_Img,
-        pix_BX,
-      ];
+      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX];
       //是视图
       if (viewNodeTypeIdList.includes(type)) {
         (state.list as Record<string, IViewNode>)[id].instance.option = option;
@@ -225,23 +223,22 @@ export const viewNodesSlice = createSlice({
     },
     updateSize: (state, action) => {
       const findNode = (state.list as Record<string, IViewNode>)[
-      action.payload.id || ''
-        ];
-      console.log(findNode, 'findNode');
+        action.payload.id || ""
+      ];
+      console.log(findNode, "findNode");
       if (findNode) {
         const newNode = {
-            ...findNode,
-            w: action.payload.w ?? findNode.w,
-            h: action.payload.h ?? findNode.h,
-          }
-        ;
+          ...findNode,
+          w: action.payload.w ?? findNode.w,
+          h: action.payload.h ?? findNode.h,
+        };
         state.list = { ...state.list, [action.payload.id]: newNode };
       }
     },
     updatePosition: (state, action) => {
       const findNode = (state.list as Record<string, IViewNode>)[
-      action.payload.id || ''
-        ];
+        action.payload.id || ""
+      ];
       if (findNode) {
         const newNode = {
           ...findNode,

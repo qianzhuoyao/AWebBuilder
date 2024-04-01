@@ -1,10 +1,7 @@
-import { Tools } from './tool';
-import { Scene } from './Scene';
-import { AttrSetting } from '../Setting/AttrSetting.tsx';
-import { memo } from 'react';
-
-
-
+import { Tools } from "./tool";
+import { Scene } from "./Scene";
+import { AttrSetting } from "../Setting/AttrSetting.tsx";
+import { memo } from "react";
 
 export const Panel = memo(() => {
   return (

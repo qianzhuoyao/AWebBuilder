@@ -1,7 +1,7 @@
-import { createSingleInstance } from '../../../../comp/createSingleInstance.ts';
+import { createSingleInstance } from "../../../../comp/createSingleInstance.ts";
 
-type viewId = string
-type bindNodeLogicId = string
+type viewId = string;
+type bindNodeLogicId = string;
 const bindNodeMappingLogic = () => {
   const mapInfo = new Map<viewId, bindNodeLogicId>();
   const reMap = new Map<bindNodeLogicId, viewId>();
@@ -10,9 +10,13 @@ const bindNodeMappingLogic = () => {
     reMap,
   };
 };
-export const getBindNodeMappingLogic = createSingleInstance(bindNodeMappingLogic);
+export const getBindNodeMappingLogic =
+  createSingleInstance(bindNodeMappingLogic);
 
-export const createBindMap = (viewId?: viewId, bindNodeLogicId?: bindNodeLogicId) => {
+export const createBindMap = (
+  viewId?: viewId,
+  bindNodeLogicId?: bindNodeLogicId
+) => {
   if (viewId && bindNodeLogicId) {
     getBindNodeMappingLogic().mapInfo.set(viewId, bindNodeLogicId);
     getBindNodeMappingLogic().reMap.set(bindNodeLogicId, viewId);
@@ -21,7 +25,7 @@ export const createBindMap = (viewId?: viewId, bindNodeLogicId?: bindNodeLogicId
 
 export const removeBindMap = (bindNodeLogicId: bindNodeLogicId) => {
   getBindNodeMappingLogic().mapInfo.delete(
-    getBindNodeMappingLogic().reMap.get(bindNodeLogicId) || '',
+    getBindNodeMappingLogic().reMap.get(bindNodeLogicId) || ""
   );
   getBindNodeMappingLogic().reMap.delete(bindNodeLogicId);
 };

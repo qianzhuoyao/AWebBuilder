@@ -1,9 +1,14 @@
-import { useEffect, useState } from 'react';
-import { ILogicNode, ILs } from '../store/slice/logicSlice.ts';
-import { useSelector } from 'react-redux';
-import { IWls } from '../store/slice/widgetSlice.ts';
-import { findLogicNodesInLayer, findViewNodesInLayer, getLayerContent, getLayers } from './layers.ts';
-import { INs, IViewNode } from '../store/slice/nodeSlice.ts';
+import { useEffect, useState } from "react";
+import { ILogicNode, ILs } from "../store/slice/logicSlice.ts";
+import { useSelector } from "react-redux";
+import { IWls } from "../store/slice/widgetSlice.ts";
+import {
+  findLogicNodesInLayer,
+  findViewNodesInLayer,
+  getLayerContent,
+  getLayers,
+} from "./layers.ts";
+import { INs, IViewNode } from "../store/slice/nodeSlice.ts";
 
 export const useFilterLogicNode = () => {
   const [layerLogicNode, setLayerLogicNode] = useState<ILogicNode[]>([]);
@@ -15,14 +20,12 @@ export const useFilterLogicNode = () => {
   });
   useEffect(() => {
     setLayerLogicNode(() => {
-      return [...Object.values(logicState.logicNodes)]
-        .filter(node => {
-          return findLogicNodesInLayer(
-            getLayerContent(
-              widgetState.currentLayerId,
-            )?.layerNameNodesOfLogic || '',
-          )?.has(node.id);
-        });
+      return [...Object.values(logicState.logicNodes)].filter((node) => {
+        return findLogicNodesInLayer(
+          getLayerContent(widgetState.currentLayerId)?.layerNameNodesOfLogic ||
+            ""
+        )?.has(node.id);
+      });
     });
   }, [logicState.logicNodes, widgetState.currentLayerId]);
   return layerLogicNode;
@@ -37,16 +40,14 @@ export const useFilterViewNode = () => {
     return state.viewNodesSlice;
   });
   useEffect(() => {
-    console.log(NodesState.list,getLayers(),'NodesState.list-0s')
+    console.log(NodesState.list, getLayers(), "NodesState.list-0s");
     setLayerViewNode(() => {
-      return [...Object.values(NodesState.list)]
-        .filter(node => {
-          return findViewNodesInLayer(
-            getLayerContent(
-              widgetState.currentLayerId,
-            )?.layerNameNodesOfView || '',
-          )?.has(node.id);
-        });
+      return [...Object.values(NodesState.list)].filter((node) => {
+        return findViewNodesInLayer(
+          getLayerContent(widgetState.currentLayerId)?.layerNameNodesOfView ||
+            ""
+        )?.has(node.id);
+      });
     });
   }, [NodesState.list, widgetState.currentLayerId]);
   return layerViewNode;

@@ -1,29 +1,28 @@
-import { pic_Img, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
+import { pic_Img, pix_BX, pix_Table } from "../store/slice/nodeSlice.ts";
 
 export const LOGIC_TYPE_LIST = [
-  'remote',
-  'viewSlot',
-  'page',
+  "remote",
+  "viewSlot",
+  "page",
   pic_Img,
-  'input',
+  "input",
   pix_Table,
-  'date',
-  'frame',
-  'hTrigger',
-  'both',
-  'dom',
-  'text',
-  'line',
-  'timeOut',
-  'mix',
-  'timeInter',
-  'cache',
+  "date",
+  "frame",
+  "hTrigger",
+  "both",
+  "dom",
+  "text",
+  "line",
+  "timeOut",
+  "mix",
+  "timeInter",
+  "cache",
   pix_BX,
-  'filter',
+  "filter",
 ] as const;
 
-
-export type ILogicTypeList = typeof LOGIC_TYPE_LIST[number]
+export type ILogicTypeList = (typeof LOGIC_TYPE_LIST)[number];
 
 //标准颜色#52525b
 export const LOGIC_SRC_ICON = {

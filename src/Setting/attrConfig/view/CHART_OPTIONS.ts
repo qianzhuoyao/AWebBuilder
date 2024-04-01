@@ -1,6 +1,5 @@
-
-export const CHART_OPTIONS={
-  'DEFAULT_BAR': `
+export const CHART_OPTIONS = {
+  DEFAULT_BAR: `
 return {
   xAxis: {
     type: 'category',
@@ -17,7 +16,7 @@ return {
   ],
 }
 `,
-'Basic Line Chart':`
+  "Basic Line Chart": `
 return {
 xAxis: {
     type: 'category',
@@ -33,7 +32,7 @@ xAxis: {
     }
   ]}
 `,
-  'Smoothed Line Chart':`
+  "Smoothed Line Chart": `
   return {
    xAxis: {
     type: 'category',
@@ -51,7 +50,7 @@ xAxis: {
   ]
   }
   `,
-  'Basic area chart':`
+  "Basic area chart": `
   return {
   xAxis: {
     type: 'category',
@@ -69,7 +68,7 @@ xAxis: {
     }
   ]}
   `,
-  'Stacked Line Chart':` 
+  "Stacked Line Chart": ` 
   return {
   title: {
     text: 'Stacked Line'
@@ -134,7 +133,7 @@ xAxis: {
   }
   
   `,
-  'Large scale area chart':`
+  "Large scale area chart": `
   let base = +new Date(1968, 9, 3);
 let oneDay = 24 * 3600 * 1000;
 let date = [];
@@ -210,6 +209,5 @@ tooltip: {
   ]
 }
   
-  `
-
-}as const
+  `,
+} as const;

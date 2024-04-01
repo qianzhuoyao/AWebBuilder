@@ -1,12 +1,11 @@
-import { signalLogicNode } from '../base.ts';
-import { logic_Ring_get } from '../../store/slice/nodeSlice.ts';
-import ring from '../../assets/widgetIcon/icon-park--cross-ring-two.svg';
-import { of, interval, takeWhile, defer, tap } from 'rxjs';
-import { MUST_FORCE_STOP_SE } from '../../contant';
-import { createSingleInstance } from '../../comp/createSingleInstance.ts';
-import { getSyncTimeIntConfig } from '../../Setting/form/logic/timer/timeConfig.tsx';
-import { ITimerConfigInfo } from './logicConfigMap.ts';
-
+import { signalLogicNode } from "../base.ts";
+import { logic_Ring_get } from "../../store/slice/nodeSlice.ts";
+import ring from "../../assets/widgetIcon/icon-park--cross-ring-two.svg";
+import { of, interval, takeWhile, defer, tap } from "rxjs";
+import { MUST_FORCE_STOP_SE } from "../../contant";
+import { createSingleInstance } from "../../comp/createSingleInstance.ts";
+import { getSyncTimeIntConfig } from "../../Setting/form/logic/timer/timeConfig.tsx";
+import { ITimerConfigInfo } from "./logicConfigMap.ts";
 
 const intTimer = () => {
   const timer = new Map<string, boolean>();
@@ -15,25 +14,22 @@ const intTimer = () => {
   };
 };
 
-
 export const getInitTimer = createSingleInstance(intTimer);
 //循环器
 export const timeInter = () => {
-
-
   const TimeInter = signalLogicNode<
     { timerConfigInfo: ITimerConfigInfo },
     unknown,
     unknown
   >({
     id: logic_Ring_get,
-    type: 'timeInter',
+    type: "timeInter",
     src: ring,
-    tips: '收到信号后循环发出信号,直到stop端口收到信号止',
-    name: '循环',
+    tips: "收到信号后循环发出信号,直到stop端口收到信号止",
+    name: "循环",
   });
 
-  TimeInter.signalIn('in-go', (value) => {
+  TimeInter.signalIn("in-go", (value) => {
     getInitTimer().timer.set(value.id, true);
     getSyncTimeIntConfig().subject.next({
       status: true,
@@ -41,25 +37,28 @@ export const timeInter = () => {
     return of(value?.pre);
   });
 
-  TimeInter.signalIn('in-stop', (value) => {
+  TimeInter.signalIn("in-stop", (value) => {
     return defer(() => of(MUST_FORCE_STOP_SE)).pipe(
       tap(() => {
         getInitTimer().timer.set(value.id, false);
-        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc');
+        console.log(getInitTimer().timer, value, "0o0o0ol0ccccccc");
         getSyncTimeIntConfig().subject.next({
           status: false,
         });
-      }),
+      })
     );
   });
 
-  TimeInter.signalOut('out', (value) => {
-    console.log(value, 'TimeInter');
+  TimeInter.signalOut("out", (value) => {
+    console.log(value, "TimeInter");
     return interval(value.config.timerConfigInfo.time || 1000).pipe(
       takeWhile(() => {
-        console.log(getInitTimer().timer, value, '0o0o0ol0ccccccc-1');
-        return !!getInitTimer().timer.get(value.id) && value?.pre !== MUST_FORCE_STOP_SE;
-      }),
+        console.log(getInitTimer().timer, value, "0o0o0ol0ccccccc-1");
+        return (
+          !!getInitTimer().timer.get(value.id) &&
+          value?.pre !== MUST_FORCE_STOP_SE
+        );
+      })
     );
   });
 };

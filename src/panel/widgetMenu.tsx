@@ -1,8 +1,8 @@
-import { Tabs, Tab, Card, CardBody } from '@nextui-org/react';
-import { WidgetIconTemp } from './widgetIconTemp';
-import { SRC_ICON } from './picList';
-import React, { memo, useMemo } from 'react';
-import { pic_Img, pix_BX, pix_Table } from '../store/slice/nodeSlice.ts';
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { WidgetIconTemp } from "./widgetIconTemp";
+import { SRC_ICON } from "./picList";
+import React, { memo, useMemo } from "react";
+import { pic_Img, pix_BX, pix_Table } from "../store/slice/nodeSlice.ts";
 
 export interface ITs {
   ele: {
@@ -136,8 +136,7 @@ export const TextIcon = memo(() => {
   );
 });
 
-
-const InputMap = memo(()=>{
+const InputMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
       {SRC_ICON.input.map((text) => {
@@ -154,7 +153,7 @@ const InputMap = memo(()=>{
       })}
     </div>
   );
-})
+});
 const TextMap = memo(() => {
   return (
     <div className="flex flex-wrap justify-between">
@@ -251,26 +250,26 @@ const BarMap = memo(() => {
 
 export const TextTabs = [
   {
-    id: 'TextContent',
-    label: '文本',
+    id: "TextContent",
+    label: "文本",
     content: <TextMap></TextMap>,
   },
   {
-    id: 'InputContent',
-    label: '输入',
+    id: "InputContent",
+    label: "输入",
     content: <InputMap></InputMap>,
   },
 ];
 
 export const ImageTabs = [
   {
-    id: 'PicContent',
-    label: '图片',
+    id: "PicContent",
+    label: "图片",
     content: <ImageMap></ImageMap>,
   },
   {
-    id: 'frameContent',
-    label: '框架',
+    id: "frameContent",
+    label: "框架",
     content: <IFrameMap></IFrameMap>,
   },
 ];
@@ -292,10 +291,10 @@ const TabSlot: React.FC<ITs> = ({ ele }) => {
         color="primary"
         radius="none"
         classNames={{
-          tabList: 'flex flex-col',
-          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
-          cursor: 'rounded-md',
-          base: 'bg-default-100',
+          tabList: "flex flex-col",
+          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
+          cursor: "rounded-md",
+          base: "bg-default-100",
         }}
       >
         {(item) => (
@@ -314,22 +313,22 @@ export const WidgetMenu = memo(() => {
   const ChartTabs = useMemo(
     () => [
       {
-        id: 'bXChartContent',
-        label: '图表',
+        id: "bXChartContent",
+        label: "图表",
         content: <BarMap></BarMap>,
       },
       {
-        id: 'lChartContent',
-        label: '表格',
+        id: "lChartContent",
+        label: "表格",
         content: <TableMap></TableMap>,
       },
     ],
-    [],
+    []
   );
   const tabs = useMemo(
     () => [
       {
-        id: 'chart',
+        id: "chart",
         label: <ChartIcon />,
         content: <TabSlot ele={ChartTabs}></TabSlot>,
       },
@@ -339,17 +338,17 @@ export const WidgetMenu = memo(() => {
       //   content: <TabSlot ele={TableTabs}></TabSlot>,
       // },
       {
-        id: 'image',
+        id: "image",
         label: <ImageIcon />,
         content: <TabSlot ele={ImageTabs}></TabSlot>,
       },
       {
-        id: 'text',
+        id: "text",
         label: <TextIcon />,
         content: <TabSlot ele={TextTabs}></TabSlot>,
       },
     ],
-    [],
+    []
   );
 
   return (
@@ -360,11 +359,11 @@ export const WidgetMenu = memo(() => {
         items={tabs}
         radius="none"
         classNames={{
-          tab: 'h-[70px]',
-          tabList: 'flex flex-col',
-          panel: 'p-0 bg-default-100 h-[100%] w-[100%]',
-          cursor: 'rounded-md',
-          base: 'bg-default-100',
+          tab: "h-[70px]",
+          tabList: "flex flex-col",
+          panel: "p-0 bg-default-100 h-[100%] w-[100%]",
+          cursor: "rounded-md",
+          base: "bg-default-100",
         }}
       >
         {(item) => (

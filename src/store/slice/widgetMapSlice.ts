@@ -26,7 +26,10 @@ export const widgetMapSlice = createSlice({
     },
   },
 });
-export const { updateWidgetMapShow, updateProviderShow,updateContentImageShowType } =
-  widgetMapSlice.actions;
+export const {
+  updateWidgetMapShow,
+  updateProviderShow,
+  updateContentImageShowType,
+} = widgetMapSlice.actions;
 
 export default widgetMapSlice.reducer;

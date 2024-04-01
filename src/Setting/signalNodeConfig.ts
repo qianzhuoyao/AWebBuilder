@@ -1,6 +1,6 @@
 //节点配置项注册
-import React from 'react';
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
+import React from "react";
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
 
 /**
  *
@@ -8,9 +8,6 @@ import { createSingleInstance } from '../comp/createSingleInstance.ts';
  * const nodeB = signalLogicNodeAttrConfig('B')
  * nodeB.setConfigEle((nodeInfo)=><>123</>)
  */
-
-
-
 
 const initConfig = () => {
   const initConfigList = new Map<string, IConfig>();
@@ -24,10 +21,10 @@ const initConfig = () => {
 export const getAttrConfig = createSingleInstance(initConfig);
 
 export type IConfig = (nodeInfo: {
-  target: string[],
+  target: string[];
 
-  go?: () => Promise<void>
-}) => React.ReactNode
+  go?: () => Promise<void>;
+}) => React.ReactNode;
 //注册视图节点配置
 export const signalViewNodeAttrConfig = (nodeViewTypeId: string) => {
   const config = getAttrConfig();
@@ -38,7 +35,6 @@ export const signalViewNodeAttrConfig = (nodeViewTypeId: string) => {
     setConfigEle,
   };
 };
-
 
 //注册逻辑节点配置
 export const signalLogicNodeAttrConfig = (nodeTypeId: string) => {

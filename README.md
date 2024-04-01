@@ -97,7 +97,7 @@ export const remoteGetConfig = () => {
 - 开启逻辑路径(useSignalMsg)
 
 ```tsx
-export const setDefaultLogicConfig = () => {
+export const DefaultLogicConfig = () => {
   //signalLogicNodeAttrConfig 是注册 组件 配置项组件
   //
   const config = signalLogicNodeAttrConfig('DEFAULT-LOGIC-PANEL-CONFIG');

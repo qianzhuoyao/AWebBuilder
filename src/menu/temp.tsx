@@ -1,3 +1,3 @@
-export const TempA=()=>{
-    return <>1</>
-}
+export const TempA = () => {
+  return <>1</>;
+};

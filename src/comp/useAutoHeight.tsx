@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { MAIN_CONTAINER } from '../contant';
+import { useEffect, useState } from "react";
+import { MAIN_CONTAINER } from "../contant";
 
 export const useAutoHeight = () => {
   const [codeContainerHeight, setCodeContainerHeight] = useState(0);

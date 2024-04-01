@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { MAIN_LAYER } from '../../contant';
+import { createSlice } from "@reduxjs/toolkit";
+import { MAIN_LAYER } from "../../contant";
 
 export interface IWls {
   show: boolean;
@@ -8,7 +8,7 @@ export interface IWls {
 }
 
 export const widgetSlice = createSlice({
-  name: 'widget',
+  name: "widget",
   initialState: {
     show: false,
     currentLayerId: MAIN_LAYER,
@@ -24,10 +24,10 @@ export const widgetSlice = createSlice({
     updateShow: (state, action) => {
       state.show = action.payload;
     },
-
   },
 });
 // 每个 case reducer 函数会生成对应的 Action creators
-export const { updateDraggable, updateCurrentLayer, updateShow } = widgetSlice.actions;
+export const { updateDraggable, updateCurrentLayer, updateShow } =
+  widgetSlice.actions;
 
 export default widgetSlice.reducer;

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fromEvent,
   filter,
@@ -10,46 +10,46 @@ import {
   map,
   takeUntil,
   take,
-} from 'rxjs';
+} from "rxjs";
 import {
   IPs,
   updateIsSelection,
   updatePanelTickUnit,
-} from '../store/slice/panelSlice';
-import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from '../contant';
-import { updateTargets } from '../store/slice/nodeSlice';
-import { checkMouseDownInArea } from '../comp/mousdownArea.ts';
+} from "../store/slice/panelSlice";
+import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
+import { updateTargets } from "../store/slice/nodeSlice";
+import { checkMouseDownInArea } from "../comp/mousdownArea.ts";
 
-const scroll = <T, >(filter: (e: WheelEvent) => T) => {
-  return fromEvent<WheelEvent>(document, 'mousewheel').pipe(
+const scroll = <T,>(filter: (e: WheelEvent) => T) => {
+  return fromEvent<WheelEvent>(document, "mousewheel").pipe(
     map((e) => {
       return filter(e);
-    }),
+    })
   );
 };
-const createMouseDown = <T, >(filter?: (e: MouseEvent) => T) => {
-  return fromEvent<MouseEvent>(document, 'mousedown').pipe(
+const createMouseDown = <T,>(filter?: (e: MouseEvent) => T) => {
+  return fromEvent<MouseEvent>(document, "mousedown").pipe(
     map((ev) => {
       return filter && filter(ev);
-    }),
+    })
   );
 };
-const createMouseUp = <T, >(filter?: (e: MouseEvent) => T) => {
-  return fromEvent<MouseEvent>(document, 'mouseup').pipe(
+const createMouseUp = <T,>(filter?: (e: MouseEvent) => T) => {
+  return fromEvent<MouseEvent>(document, "mouseup").pipe(
     map((ev) => {
       return filter && filter(ev);
-    }),
+    })
   );
 };
 const createKeyDown = (code: string) => {
-  return fromEvent<KeyboardEvent>(document, 'keydown').pipe(
+  return fromEvent<KeyboardEvent>(document, "keydown").pipe(
     filter((event) => {
       return event.key === code;
-    }),
+    })
   );
 };
 const createKeyUp = () => {
-  return fromEvent<KeyboardEvent>(document, 'keyup');
+  return fromEvent<KeyboardEvent>(document, "keyup");
 };
 const useZoomKeyEvent = () => {
   const dispatch = useDispatch();
@@ -63,23 +63,23 @@ const useZoomKeyEvent = () => {
       return;
     }
 
-    const keyDown$ = createKeyDown('f');
+    const keyDown$ = createKeyDown("f");
     const keyUp$ = createKeyUp();
     const scroll$ = scroll<number>((e) => e.deltaY);
 
     const mouseScroll$ = keyDown$.pipe(
-      switchMap(() => scroll$.pipe(takeUntil(keyUp$))),
+      switchMap(() => scroll$.pipe(takeUntil(keyUp$)))
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const subscription = zip(keyDown$, mouseScroll$).subscribe(([_, w]) => {
       if (w > 0) {
         dispatch(
-          updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1))),
+          updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1)))
         );
       } else {
         dispatch(
-          updatePanelTickUnit(Number((PanelState.tickUnit - 0.1).toFixed(1))),
+          updatePanelTickUnit(Number((PanelState.tickUnit - 0.1).toFixed(1)))
         );
       }
     });
@@ -101,7 +101,7 @@ const useSelectionKeyEvent = () => {
       return;
     }
 
-    const keyDown$ = createKeyDown('q');
+    const keyDown$ = createKeyDown("q");
     const keyUp$ = createKeyUp();
     const mousedown$ = createMouseDown();
     const mouseup$ = createMouseUp();
@@ -117,11 +117,11 @@ const useSelectionKeyEvent = () => {
             merge(mouseup$, keyUp$).pipe(
               map(() => {
                 dispatch(updateIsSelection(false));
-              }),
-            ),
-          ),
-        ),
-      ),
+              })
+            )
+          )
+        )
+      )
     );
 
     const subscription = zip(keyDown$, S$).pipe(take(1), repeat()).subscribe();
@@ -149,18 +149,23 @@ const useDefaultBlurEvent = () => {
     const D$ = mousedown$.pipe(
       map((d) => {
         if (d?.target instanceof HTMLElement) {
-          console.log(d, 'dasdasdasdsadsadasdsadddf');
+          console.log(d, "dasdasdasdsadsadasdsadddf");
           if (d?.target.getAttribute(ATTR_TAG) !== Node) {
-            if (checkMouseDownInArea({
-              x: d.pageX,
-              y: d.pageY,
-            }, document.getElementById(AR_PANEL_DOM_ID))) {
+            if (
+              checkMouseDownInArea(
+                {
+                  x: d.pageX,
+                  y: d.pageY,
+                },
+                document.getElementById(AR_PANEL_DOM_ID)
+              )
+            ) {
               dispatch(updateTargets([]));
             }
             // dispatch(updateTargets([]));
           }
         }
-      }),
+      })
     );
 
     const subscription = D$.subscribe();

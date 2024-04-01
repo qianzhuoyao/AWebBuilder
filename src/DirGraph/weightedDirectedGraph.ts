@@ -4,21 +4,20 @@ export type Vertex<V> = {
   inDegree: V[] | null | undefined;
 };
 
-export type  IEdgeMessage = Record<string, string>
+export type IEdgeMessage = Record<string, string>;
 
 export type Edge<T, M> = {
   target: T;
   targetPort: T;
   sourcePort: T;
   source: T;
-  message: M
+  message: M;
   weight: number;
 };
 
 export type Path<T, M> = {
   edges: Edge<T, M>[];
 };
-
 
 /**
  * 加权有向图
@@ -50,7 +49,6 @@ export default class WeightedDirectedGraph<T, M> {
     this.degree = new Map();
   }
 
-
   /**
    * 添加顶点
    * @param vertex
@@ -60,7 +58,6 @@ export default class WeightedDirectedGraph<T, M> {
       this.adjacencyList.set(vertex, []);
     }
   }
-
 
   removeVertex(vertex: T) {
     this.degree.delete(vertex);
@@ -120,18 +117,22 @@ export default class WeightedDirectedGraph<T, M> {
    * 获取某顶点入度集合
    */
   getInDegree(source: T) {
-    return [...this.degree.values()].filter(vec => {
-      return vec.outDegree?.includes(source);
-    }).map(vec => vec.vertex);
+    return [...this.degree.values()]
+      .filter((vec) => {
+        return vec.outDegree?.includes(source);
+      })
+      .map((vec) => vec.vertex);
   }
 
   /**
    * 获取某顶点出度集合
    */
   getOutDegree(source: T) {
-    return [...this.degree.values()].filter(vec => {
-      return vec.inDegree?.includes(source);
-    }).map(vec => vec.vertex);
+    return [...this.degree.values()]
+      .filter((vec) => {
+        return vec.inDegree?.includes(source);
+      })
+      .map((vec) => vec.vertex);
   }
 
   /**
@@ -139,7 +140,7 @@ export default class WeightedDirectedGraph<T, M> {
    * @param path
    */
 
-  calculateTotalWeight<T, >(path: Path<T, M>): number {
+  calculateTotalWeight<T>(path: Path<T, M>): number {
     let totalWeight = 0;
     for (const edge of path.edges) {
       totalWeight += edge.weight;
@@ -156,7 +157,6 @@ export default class WeightedDirectedGraph<T, M> {
     const edges = this.adjacencyList.get(source);
     return !!edges && edges.some((edge) => edge.target === target);
   }
-
 
   private addDegree(source: T, target: T) {
     if (!this.degree.has(source)) {
@@ -186,10 +186,16 @@ export default class WeightedDirectedGraph<T, M> {
    * @param sport
    * @param tport
    */
-  addEdge(source: T, target: T, message: M, weight: number, sport: T, tport: T) {
-
+  addEdge(
+    source: T,
+    target: T,
+    message: M,
+    weight: number,
+    sport: T,
+    tport: T
+  ) {
     if (this.hasEdge(source, target)) {
-      throw new Error('边已经存在，如要修改边信息 请使用updateEdge方法');
+      throw new Error("边已经存在，如要修改边信息 请使用updateEdge方法");
     }
 
     if (!this.adjacencyList.has(source)) {
@@ -200,8 +206,12 @@ export default class WeightedDirectedGraph<T, M> {
     }
     this.addDegree(source, target);
     this.adjacencyList.get(source)?.push({
-      source, target, sourcePort: sport,
-      weight, message, targetPort: tport,
+      source,
+      target,
+      sourcePort: sport,
+      weight,
+      message,
+      targetPort: tport,
     });
   }
 
@@ -215,17 +225,21 @@ export default class WeightedDirectedGraph<T, M> {
     if (edges) {
       this.degree.set(source, {
         ...this.degree.get(source),
-        outDegree: this.degree.get(source)?.outDegree?.filter(d => d !== target),
+        outDegree: this.degree
+          .get(source)
+          ?.outDegree?.filter((d) => d !== target),
       } as Vertex<T>);
 
       this.degree.set(target, {
         ...this.degree.get(target),
-        inDegree: this.degree.get(target)?.inDegree?.filter(d => d !== source),
+        inDegree: this.degree
+          .get(target)
+          ?.inDegree?.filter((d) => d !== source),
       } as Vertex<T>);
-      console.log(this.degree, 'sss this.degree');
+      console.log(this.degree, "sss this.degree");
       this.adjacencyList.set(
         source,
-        edges.filter((edge) => edge.target !== target),
+        edges.filter((edge) => edge.target !== target)
       );
     }
   }
@@ -235,14 +249,17 @@ export default class WeightedDirectedGraph<T, M> {
    * @param newEdge
    */
   updateEdge(newEdge: {
-    from: T, to: T, newWeight?: number, message?: M
+    from: T;
+    to: T;
+    newWeight?: number;
+    message?: M;
   }): void {
     const { from, to, newWeight, message } = newEdge;
     const edges = this.adjacencyList.get(from);
     if (!edges) {
       return;
     }
-    const edge = edges.find(edge => edge.target === to);
+    const edge = edges.find((edge) => edge.target === to);
     if (edge) {
       if (newWeight) {
         edge.weight = newWeight;
@@ -252,7 +269,6 @@ export default class WeightedDirectedGraph<T, M> {
       }
     }
   }
-
 
   /**
    * 获取所有顶点
@@ -266,9 +282,14 @@ export default class WeightedDirectedGraph<T, M> {
    */
 
   getEdges(vertex: T) {
-    return this.adjacencyList.get(vertex)?.filter(edge => {
-      return this.getVertices().includes(edge.source) && this.getVertices().includes(edge.target);
-    }) || [];
+    return (
+      this.adjacencyList.get(vertex)?.filter((edge) => {
+        return (
+          this.getVertices().includes(edge.source) &&
+          this.getVertices().includes(edge.target)
+        );
+      }) || []
+    );
   }
 
   toJSON() {
@@ -281,12 +302,14 @@ export default class WeightedDirectedGraph<T, M> {
   getAllEdges() {
     return [...this.adjacencyList.values()].reduce((a, b) => a.concat(b), []);
   }
-
 }
 
 const WdClass = WeightedDirectedGraph<string, IEdgeMessage>;
 
-const instance = WdClass.getInstance() as WeightedDirectedGraph<string, IEdgeMessage>;
+const instance = WdClass.getInstance() as WeightedDirectedGraph<
+  string,
+  IEdgeMessage
+>;
 
 export const getWDGraph = (): WeightedDirectedGraph<string, IEdgeMessage> => {
   return instance;
@@ -295,18 +318,21 @@ export const getWDGraph = (): WeightedDirectedGraph<string, IEdgeMessage> => {
 export const genWDGraph = (GJson: string) => {
   try {
     const GConfig = JSON.parse(GJson);
-    console.log(GConfig, 'GConfig');
+    console.log(GConfig, "GConfig");
     const WDGraph = getWDGraph();
     GConfig?.vecList?.map((vec: string) => {
       WDGraph.addVertex(vec);
     });
     GConfig?.edges?.map((edge: Edge<string, IEdgeMessage>) => {
-      if (!WDGraph.hasEdge(
-        edge.source,
-        edge.target,
-      )) {
-        WDGraph.addEdge(edge.source, edge.target, {}, 1, edge.sourcePort, edge.targetPort);
-
+      if (!WDGraph.hasEdge(edge.source, edge.target)) {
+        WDGraph.addEdge(
+          edge.source,
+          edge.target,
+          {},
+          1,
+          edge.sourcePort,
+          edge.targetPort
+        );
       }
     });
     return WDGraph;

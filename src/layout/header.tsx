@@ -1,3 +1,3 @@
-export const Header = ()=>{
-    return <>3233</>
-}
+export const Header = () => {
+  return <>3233</>;
+};

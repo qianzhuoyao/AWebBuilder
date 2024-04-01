@@ -1,9 +1,10 @@
-import { createSingleInstance } from '../comp/createSingleInstance.ts';
-import { ReplaySubject } from 'rxjs';
+import { createSingleInstance } from "../comp/createSingleInstance.ts";
+import { ReplaySubject } from "rxjs";
+import { IObjectNotNull } from "../comp/filterObjValue.ts";
 
-type viewId = string
-const windowData = <T, >() => {
-  const data = new Map<viewId, T>();
+type viewId = string;
+const windowData = <T>() => {
+  const data = new Map<viewId, IObjectNotNull<T>>();
   const viewInsertObservable = new ReplaySubject<T>();
   return {
     data,
@@ -13,18 +14,27 @@ const windowData = <T, >() => {
 
 const getWindowDataInstance = createSingleInstance(windowData);
 
-
-export const subscribeViewCacheUpdate = <T, >(subscribe: (value: {
-  viewId?: string, data?: T
-} | unknown) => void) => {
+export const subscribeViewCacheUpdate = <T>(
+  subscribe: (
+    value:
+      | {
+          viewId?: string;
+          data?: T;
+        }
+      | unknown
+  ) => void
+) => {
   return getWindowDataInstance().viewInsertObservable.subscribe(subscribe);
 };
 export const getWCache = (id: string) => {
   return getWindowDataInstance().data.get(id);
 };
 
-export const inertViewCache = <T, >(viewId?: string, data?: T) => {
-  if (viewId) {
+export const inertViewCache = <T extends IObjectNotNull<unknown>>(
+  viewId?: string,
+  data?: T
+) => {
+  if (viewId && data) {
     getWindowDataInstance().data.set(viewId, data);
     getWindowDataInstance().viewInsertObservable.next({
       viewId,
