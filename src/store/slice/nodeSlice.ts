@@ -3,6 +3,7 @@ import { enableMapSet } from 'immer';
 import { ILogicTypeList } from '../../panel/logicSrcList.ts';
 import { ITableConfig } from '../../node/viewConfigSubscribe.ts';
 import { IMAGE_DEFAULT_OPTION } from '../../comp/setDefaultChartOption.ts';
+import { CHART_OPTIONS } from '../../Setting/attrConfig/view/CHART_OPTIONS.ts';
 //pixTable
 export const pix_Table = 'pixTable' as const;
 export const pix_frame = 'pix_frame' as const;
@@ -101,8 +102,10 @@ export type INodeType =
   | typeof pix_Text
   | ILogicType;
 
+
 interface IChartInstance {
   option?: Partial<{
+    chartClass: keyof typeof CHART_OPTIONS,
     chart: string
   } & ITableConfig & typeof IMAGE_DEFAULT_OPTION>;
   type:
@@ -111,8 +114,9 @@ interface IChartInstance {
     | typeof pix_BY
     | typeof pix_BX
     | typeof pix_Table
-    |typeof  pic_Img
-    | typeof pix_Line;
+    | typeof pic_Img
+    | typeof pix_Line
+    | keyof typeof CHART_OPTIONS;
 }
 
 export type IIstance = IChartInstance

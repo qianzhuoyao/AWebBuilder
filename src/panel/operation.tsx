@@ -3,6 +3,7 @@ import { IPs } from '../store/slice/panelSlice';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import Moveable from 'react-moveable';
 import Selecto from 'react-selecto';
+import * as echarts from 'echarts';
 import {
   deleteListItem,
   INs,
@@ -47,36 +48,35 @@ export const Temp = memo(({ id, isTemp, PanelState, NodesState }: {
 
   useEffect(() => {
     if (NodesState?.list) {
-      setParseOption(() => new Function('params',
+      setParseOption(() => new Function('params','echarts',
 
         `try{
         ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){return {}}`,
-      )(getWCache(id)));
+      )(getWCache(id),echarts));
     }
   }, []);
 
   useEffect(() => {
     const sub = getChartEmit().observable.subscribe(() => {
       if (NodesState?.list) {
-        setParseOption(() => new Function('params',
-
+        setParseOption(() => new Function('params','echarts',
           `try{
         ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){return {}}`,
-        )(getWCache(id)));
+        )(getWCache(id),echarts));
 
       }
     });
     const sSub = subscribeViewCacheUpdate(() => {
       if (NodesState?.list) {
-        setParseOption(() => new Function('params',
+        setParseOption(() => new Function('params','echarts',
 
           `try{
         ${(NodesState?.list || {})[id]?.instance?.option?.chart || ''}
         }catch(e){
         return {}}`,
-        )(getWCache(id)));
+        )(getWCache(id),echarts));
       }
     });
     return () => {

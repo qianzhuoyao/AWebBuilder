@@ -6,30 +6,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from 'react-redux';
 import { INs, updateInstance } from '../../../store/slice/nodeSlice.ts';
-import { Button, Code, Tooltip } from '@nextui-org/react';
+import { Button, Code, Select, SelectItem, Tooltip } from '@nextui-org/react';
 import { PhQuestion } from '../../attrConfig/view/panelSet.tsx';
 import { parseFnContent, runViewFnString } from '../../../comp/setDefaultChartOption.ts';
 import { useAutoHeight } from '../../../comp/useAutoHeight.tsx';
 import { getChartEmit } from '../../../emit/emitChart.ts';
 import { insertConfig } from '../../../node/viewConfigSubscribe.ts';
+import { CHART_OPTIONS } from '../../attrConfig/view/CHART_OPTIONS.ts';
 
-export const defaultBuilderFn = `
-return {
-  xAxis: {
-    type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  },
-  yAxis: {
-    type: 'value',
-  },
-  series: [
-    {
-      data: [120, 200, 150, 80, 70, 110, 130],
-      type: 'bar',
-    },
-  ],
-}
-`;
+
+
 
 export const PixBXChartConfigCode = () => {
   const codeContainerHeight = useAutoHeight();
@@ -44,6 +30,21 @@ export const PixBXChartConfigCode = () => {
   const { targets } = NodesState;
 
   //只允许一项
+
+  const updateChartClassify = useCallback((classify:keyof typeof CHART_OPTIONS)=>{
+    const target = targets[0];
+    const chartInfo = CHART_OPTIONS[classify]
+    setCurCode(chartInfo);
+    dispatch(updateInstance({
+      type: NodesState.list[target].instance.type,
+      id: NodesState.list[target].id,
+      option: {
+        chartClass:classify,
+        chart: chartInfo,
+      },
+    }));
+    getChartEmit().observable.next(1);
+  },[NodesState.list, targets])
 
   const codeString = useMemo(() => {
     if (targets.length) {
@@ -94,6 +95,7 @@ export const PixBXChartConfigCode = () => {
           type: NodesState.list[target].instance.type,
           id: NodesState.list[target].id,
           option: {
+            chartClass:NodesState.list[target].instance.option?.chartClass,
             chart: curCode,
           },
         }));
@@ -113,6 +115,28 @@ export const PixBXChartConfigCode = () => {
     {parseError && <div className={'h-[40px] text-[10px] text-red-500 overflow-y-scroll'}>
       {parseError}
     </div>}
+    <div className={'mb-1'}>
+      <Select
+        labelPlacement="outside"
+        aria-label={'clas'}
+        selectedKeys={[NodesState.list[NodesState.targets[0]]?.instance?.option?.chartClass||'']}
+        placeholder="图表类型"
+        size={'sm'}
+        className="max-w-xs"
+        onChange={e => {
+          console.log(e.target.value,'e.target.value');
+          if(e.target.value){
+            updateChartClassify(e.target.value as keyof typeof CHART_OPTIONS)
+          }
+        }}
+      >
+        {Object.keys(CHART_OPTIONS).map((item) => (
+          <SelectItem key={item} value={item}>
+            {item}
+          </SelectItem>
+        ))}
+      </Select>
+    </div>
     <CodeMirror
       ref={mirrorRef}
       value={codeString}
