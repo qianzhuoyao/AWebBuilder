@@ -163,7 +163,7 @@ const TaskCard = memo(
           id,
         })
       );
-    }, [dispatch, id]);
+    }, [dispatch, id, target]);
 
     return (
       <Card className="max-w-[400px]">
@@ -217,7 +217,6 @@ export const TriggerOperation = memo(
 
     const handleClick = () => {
       go && go();
-      console.log(target, logicState, "tarssget-target");
     };
 
     const onClear = useCallback(() => {

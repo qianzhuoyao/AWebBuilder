@@ -9,6 +9,7 @@ type ISize = { [k in keyof typeof DEFAULT_SIZE]: number };
 
 export const useResizable = (propDom: HTMLElement | null) => {
   const [dom, setDom] = useState(() => propDom);
+
   const callback = useRef<{
     watchSizeEffect: (size: ISize) => void;
   }>({
@@ -16,8 +17,8 @@ export const useResizable = (propDom: HTMLElement | null) => {
   });
 
   const [size, setSize] = useState<ISize>(DEFAULT_SIZE);
+  
   useEffect(() => {
-    console.log(callback.current, dom, "7774");
     const R = new ResizeObserver(() => {
       if (dom) {
         const { height, width } = dom.getBoundingClientRect();
