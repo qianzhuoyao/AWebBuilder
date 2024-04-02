@@ -6,7 +6,6 @@ import {
   findLogicNodesInLayer,
   findViewNodesInLayer,
   getLayerContent,
-  getLayers,
 } from "./layers.ts";
 import { INs, IViewNode } from "../store/slice/nodeSlice.ts";
 
@@ -41,7 +40,7 @@ export const useFilterViewNode = () => {
   });
 
   useEffect(() => {
-    console.log(NodesState.list, getLayers(), "NodesState.list-0s");
+    console.log(NodesState.list,'NodesState.list')
     setLayerViewNode(() => {
       return [...Object.values(NodesState.list)].filter((node) => {
         return findViewNodesInLayer(

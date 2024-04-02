@@ -1,5 +1,6 @@
 import {
   INodeType,
+  IOptionInstance,
   pic_Img,
   pix_BX,
   pix_Table,
@@ -37,7 +38,7 @@ export const IMAGE_DEFAULT_OPTION = {
   src: pic,
 } as const;
 
-export const setDefaultChartOption = (type: INodeType) => {
+export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
   switch (type) {
     case pix_BX:
       return {
@@ -49,6 +50,6 @@ export const setDefaultChartOption = (type: INodeType) => {
     case pic_Img:
       return IMAGE_DEFAULT_OPTION;
     default:
-      return undefined;
+      throw new Error("unknown option type");
   }
 };

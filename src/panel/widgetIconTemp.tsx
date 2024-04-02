@@ -37,6 +37,7 @@ import {
   INs,
   logic_Form_get,
   logic_ENC_get,
+  IViewNode,
 } from "../store/slice/nodeSlice";
 import { IWs } from "../store/slice/widgetMapSlice";
 import { ILs, addLogicNode, ILogicNode } from "../store/slice/logicSlice";
@@ -52,11 +53,14 @@ import { addPortNodeMap, getPortStatus } from "../node/portStatus.ts";
 import { createNode } from "./logicPanelEventSubscribe.ts";
 import {
   getLayerContent,
-  getLayers,
   updateLogicNodesInLayer,
   updateViewNodesInLayer,
 } from "./layers.ts";
 import { IWls } from "../store/slice/widgetSlice.ts";
+import {
+  RECORD_VIEW_NODE,
+  recordChange,
+} from "../store/slice/viewNodesRecordSlice.ts";
 
 interface IW {
   nodeType: "LOGIC" | "VIEW";
@@ -379,29 +383,38 @@ export const WidgetIconTemp = memo(
                 const h = drag_size_height * PanelState.tickUnit;
                 const { x, y } = pointer;
                 const viewNodeId = uuidv4();
-                dispatch(
-                  addNode({
-                    x: x * PanelState.tickUnit,
-                    y: y * PanelState.tickUnit,
-                    w,
-                    h,
-                    z: 10,
-                    id: viewNodeId,
-                    classify,
-                    nodeType,
-                    alias: name + "@" + uuidv4(),
-                    instance: {
-                      type: typeId,
-                      option: setDefaultChartOption(typeId),
-                    },
-                  })
-                );
+                const newNodeName = name + "@" + viewNodeId;
+                const newNode: IViewNode = {
+                  x: x * PanelState.tickUnit,
+                  y: y * PanelState.tickUnit,
+                  r: 0,
+                  w,
+                  h,
+                  z: 10,
+                  desc: "",
+                  id: viewNodeId,
+                  typeId,
+                  classify,
+                  nodeType,
+                  alias: newNodeName,
+                  instance: {
+                    type: typeId,
+                    option: setDefaultChartOption(typeId),
+                  },
+                };
+                dispatch(addNode(newNode));
+
                 setTimeout(() => {
-                  console.log(
-                    NodesState,
-                    currentLayer?.layerNameNodesOfView,
-                    getLayers(),
-                    "currentLayer?.layerNameNodesOfView"
+                  console.log(NodesState.list, "NodesState.lists");
+                  dispatch(
+                    recordChange({
+                      recordViewType: RECORD_VIEW_NODE,
+                      recordDesc: "添加一个视图组件,别名为" + newNodeName,
+                      recordViewInfo: {
+                        ...NodesState.list,
+                        [viewNodeId]: newNode,
+                      },
+                    })
                   );
                   updateViewNodesInLayer(
                     currentLayer?.layerNameNodesOfView || "",

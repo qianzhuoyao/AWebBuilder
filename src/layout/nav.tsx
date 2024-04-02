@@ -11,11 +11,13 @@ import { updateShow } from "../store/slice/widgetSlice";
 import type { SVGProps } from "react";
 import { IPs, updateWorkSpaceName } from "../store/slice/panelSlice.ts";
 import { toast } from "react-toastify";
-import { INs } from "../store/slice/nodeSlice.ts";
+import { INs, setList } from "../store/slice/nodeSlice.ts";
 import { getWDGraph } from "../DirGraph/weightedDirectedGraph.ts";
 import { logicNodesConfigToJSON } from "../panel/logicPanelEventSubscribe.ts";
 import { genLogicConfigMapToJSON } from "../Logic/nodes/logicConfigMap.ts";
 import { toSaveJSON, toSetLocalstorage } from "../struct/toJSON.ts";
+
+import { IARs, RECORD_VIEW_NODE } from "../store/slice/viewNodesRecordSlice.ts";
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
   return (
@@ -202,6 +204,18 @@ export const Nav = memo(() => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
+  const NodesRecordState = useSelector(
+    (state: { viewNodesRecordSlice: { present: IARs } }) => {
+      console.log(
+        state.viewNodesRecordSlice,
+        PanelState,
+
+        "state.viewNodesRecordSlice"
+      );
+      return state.viewNodesRecordSlice.present;
+    }
+  );
+
   const onHandleWidVis = useCallback(() => {
     dispatch(updateShow(!widgetState.show));
   }, [dispatch, widgetState.show]);
@@ -221,6 +235,36 @@ export const Nav = memo(() => {
     toSaveJSON(PanelState, NodesState);
   }, [NodesState, PanelState]);
 
+  const redo = useCallback(() => {
+    console.log("redo");
+    dispatch({
+      type: "viewRedo",
+    });
+    setTimeout(() => {
+      if (NodesRecordState.recordViewType === RECORD_VIEW_NODE) {
+        dispatch(setList(NodesRecordState.recordViewInfo));
+      }
+    }, 0);
+  }, [
+    NodesRecordState.recordViewInfo,
+    NodesRecordState.recordViewType,
+    dispatch,
+  ]);
+  const undo = useCallback(() => {
+    dispatch({
+      type: "viewUndo",
+    });
+    setTimeout(() => {
+      console.log(NodesRecordState.recordViewInfo, "undo");
+      if (NodesRecordState.recordViewType === RECORD_VIEW_NODE) {
+        dispatch(setList(NodesRecordState.recordViewInfo));
+      }
+    }, 0);
+  }, [
+    NodesRecordState.recordViewInfo,
+    NodesRecordState.recordViewType,
+    dispatch,
+  ]);
   const onPreView = useCallback(() => {
     toSetLocalstorage(
       JSON.stringify(NodesState),
@@ -267,6 +311,7 @@ export const Nav = memo(() => {
                   isIconOnly
                   variant="light"
                   aria-label="locale"
+                  onClick={undo}
                 >
                   <SolarUndoLeftRoundSquareLinear></SolarUndoLeftRoundSquareLinear>
                   {/*<Icon*/}
@@ -281,6 +326,7 @@ export const Nav = memo(() => {
                   isIconOnly
                   variant="light"
                   aria-label="locale"
+                  onClick={redo}
                 >
                   <SolarUndoRightRoundSquareOutline></SolarUndoRightRoundSquareOutline>
                   {/*<Icon*/}
@@ -295,9 +341,10 @@ export const Nav = memo(() => {
                   isIconOnly
                   variant="light"
                   aria-label="locale"
+                  onClick={onSave}
                 >
                   {/*<Icon icon="uil:save" width={'16px'} height={'16px'} />*/}
-                  <IcOutlineSave onClick={onSave}></IcOutlineSave>
+                  <IcOutlineSave></IcOutlineSave>
                 </Button>
 
                 <div className="ml-[60px] flex items-center">

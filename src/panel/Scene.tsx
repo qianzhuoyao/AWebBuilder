@@ -327,7 +327,6 @@ const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
   const dispatch = useDispatch();
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
     return state.panelSlice;
   });
 

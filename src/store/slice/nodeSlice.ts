@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
 import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
@@ -103,23 +103,17 @@ export type INodeType =
   | ILogicType
   | keyof typeof CHART_OPTIONS;
 
+export type IOptionInstance = Partial<
+  {
+    chartClass: keyof typeof CHART_OPTIONS;
+    chart: string;
+  } & ITableConfig &
+    typeof IMAGE_DEFAULT_OPTION
+>;
+
 interface IChartInstance {
-  option?: Partial<
-    {
-      chartClass: keyof typeof CHART_OPTIONS;
-      chart: string;
-    } & ITableConfig &
-      typeof IMAGE_DEFAULT_OPTION
-  >;
-  type:
-    | typeof pix_BLine
-    | typeof pix_GLine
-    | typeof pix_BY
-    | typeof pix_BX
-    | typeof pix_Table
-    | typeof pic_Img
-    | typeof pix_Line
-    | keyof typeof CHART_OPTIONS;
+  option?: IOptionInstance;
+  type: INodeType;
 }
 
 export type IIstance = IChartInstance;
@@ -157,6 +151,7 @@ export interface IViewNode {
   //实例容器
   instance: IIstance;
   nodeType: "VIEW" | "LOGIC";
+  transform?: string;
 }
 
 type nodeId = string;
@@ -187,6 +182,13 @@ export const viewNodesSlice = createSlice({
     targets: [],
   },
   reducers: {
+    updateRotate: (
+      state,
+      action: PayloadAction<{ id: string; rotate: number }>
+    ) => {
+      const { id, rotate } = action.payload;
+      (state.list as Record<string, IViewNode>)[id].r = rotate;
+    },
     updateAlias: (state, action) => {
       const { id, alias } = action.payload;
       (state.list as Record<string, IViewNode>)[id].alias = alias;
@@ -245,8 +247,16 @@ export const viewNodesSlice = createSlice({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,
         };
-        state.list = { ...state.list, [action.payload.id]: newNode };
+        const mergeTransform = { transform: action.payload.transform } || {};
+        state.list = {
+          ...state.list,
+          [action.payload.id]: { ...newNode, ...mergeTransform },
+        };
       }
+    },
+    setList: (state, action) => {
+      console.log(action, "actions");
+      state.list = action.payload;
     },
     addNode: (state, action) => {
       (state.list as Record<string, IViewNode>)[action.payload.id] =
@@ -257,10 +267,12 @@ export const viewNodesSlice = createSlice({
 
 export const {
   updateAlias,
+  setList,
   moveNode,
   updateInstance,
   addNode,
   updateTargets,
+  updateRotate,
   updatePosition,
   resizeNode,
   deleteListItem,

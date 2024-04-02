@@ -21,7 +21,6 @@ export const ARuler = React.memo(() => {
   useHotkeys("q", () => setForce(false), { keyup: true, keydown: false });
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
     return state.panelSlice;
   });
 

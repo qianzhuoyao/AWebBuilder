@@ -166,7 +166,6 @@ export const AttrSetting = memo(() => {
   const gsapContainer = useRef<HTMLDivElement>(null);
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    console.log(state, "statescvsfv");
     return state.panelSlice;
   });
   const AttrState = useSelector(
@@ -176,7 +175,6 @@ export const AttrSetting = memo(() => {
   );
 
   useLayoutEffect(() => {
-    console.log(AttrState, "AttrStatse");
     if (!AttrState.show) {
       gsap.to(gsapContainer.current, {
         width: "0px",
