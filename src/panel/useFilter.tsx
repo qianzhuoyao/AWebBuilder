@@ -39,6 +39,7 @@ export const useFilterViewNode = () => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
+
   useEffect(() => {
     console.log(NodesState.list, getLayers(), "NodesState.list-0s");
     setLayerViewNode(() => {

@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Moveable from "react-moveable";
 import Selecto from "react-selecto";
-import * as echarts from "echarts";
 import {
   deleteListItem,
+  INodeType,
   INs,
   IViewNode,
   moveNode,
@@ -24,11 +24,11 @@ import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler.ts"
 import { ItemParams } from "react-contexify";
 import { useFilterViewNode } from "./useFilter.tsx";
 import { getWCache, subscribeViewCacheUpdate } from "./data.ts";
-import { getChartEmit } from "../emit/emitChart.ts";
+import { viewUpdateReducer } from "../emit/emitChart.ts";
 import { ATable } from "../comp/ATable";
 import { IWls } from "../store/slice/widgetSlice.ts";
 import { Image } from "@nextui-org/react";
-import { EChartsOption } from "echarts";
+import { runChartOption } from "../comp/useChartOption.tsx";
 
 const BaseImage = memo(({ config }: { config: IViewNode }) => {
   return (
@@ -45,6 +45,36 @@ const BaseImage = memo(({ config }: { config: IViewNode }) => {
   );
 });
 
+const MemoChart = memo(
+  ({
+    type,
+    node,
+    isTemp,
+    tickUnit,
+    parseOption,
+  }: {
+    type: INodeType;
+    node: IViewNode;
+    isTemp: boolean | undefined;
+    tickUnit: number;
+    parseOption: string;
+  }) => (
+    <>
+      {useMemo(
+        () => (
+          <BaseChart
+            type={type}
+            width={isTemp ? 205 : node.w / tickUnit}
+            height={isTemp ? 100 : node.h / tickUnit}
+            options={runChartOption(node.id, parseOption)}
+          />
+        ),
+        [parseOption]
+      )}
+    </>
+  )
+);
+
 export const Temp = memo(
   ({
     id,
@@ -57,68 +87,36 @@ export const Temp = memo(
     isTemp?: boolean;
     PanelState: IPs;
   }) => {
-    const [parseOption, setParseOption] = useState<EChartsOption | undefined>(
-      {}
+    const [parseOptionString, setParseOptionString] = useState(
+      () => (NodesState?.list || {})[id]?.instance?.option?.chart || ""
     );
 
     useEffect(() => {
-      if (NodesState?.list) {
-        setParseOption(() =>
-          new Function(
-            "params",
-            "echarts",
-            `try{
-        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ""}
-        }catch(e){return {}}`
-          )(getWCache(id), echarts)
-        );
-      }
-    }, []);
-
-    useEffect(() => {
-      const sub = getChartEmit().observable.subscribe(() => {
-        if (NodesState?.list) {
-          setParseOption(() =>
-            new Function(
-              "params",
-              "echarts",
-              `try{
-        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ""}
-        }catch(e){return {}}`
-            )(getWCache(id), echarts)
-          );
-        }
+      const sub = viewUpdateReducer(id, (payload) => {
+        setParseOptionString(payload.payload);
       });
-      const sSub = subscribeViewCacheUpdate(() => {
+      const cacheSub = subscribeViewCacheUpdate(() => {
         if (NodesState?.list) {
-          setParseOption(() =>
-            new Function(
-              "params",
-              "echarts",
-
-              `try{
-        ${(NodesState?.list || {})[id]?.instance?.option?.chart || ""}
-        }catch(e){
-        return {}}`
-            )(getWCache(id), echarts)
+          setParseOptionString(
+            (NodesState?.list || {})[id]?.instance?.option?.chart || ""
           );
         }
       });
       return () => {
         sub.unsubscribe();
-        sSub.unsubscribe();
+        cacheSub.unsubscribe();
       };
-    }, [NodesState?.list, id]);
+    }, [NodesState, id]);
 
     if (NodesState.list[id]?.classify === pix_BX) {
       return (
-        <BaseChart
+        <MemoChart
           type={NodesState.list[id].instance.type}
-          width={isTemp ? 205 : NodesState.list[id].w / PanelState.tickUnit}
-          height={isTemp ? 100 : NodesState.list[id].h / PanelState.tickUnit}
-          options={parseOption}
-          //   options={NodesState.list[id].instance.option}
-        ></BaseChart>
+          node={NodesState.list[id]}
+          isTemp={isTemp}
+          tickUnit={PanelState.tickUnit}
+          parseOption={parseOptionString}
+        />
       );
     } else if (NodesState.list[id]?.classify === pix_Table) {
       return (
@@ -413,6 +411,7 @@ const NodeContainer = memo(() => {
         {layerViewNode.map((node) => {
           return (
             <div
+              key={node.id}
               onContextMenu={(e) => {
                 show({
                   event: e,

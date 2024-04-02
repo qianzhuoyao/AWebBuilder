@@ -197,14 +197,12 @@ export const Nav = memo(() => {
   });
 
   const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    console.log(state, "00000state");
     return state.widgetSlice;
   });
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
   const onHandleWidVis = useCallback(() => {
-    console.log(!widgetState.show, "!widgetState.show");
     dispatch(updateShow(!widgetState.show));
   }, [dispatch, widgetState.show]);
 

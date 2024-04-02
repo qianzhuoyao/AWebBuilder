@@ -2,6 +2,7 @@ import { createSingleInstance } from "../comp/createSingleInstance.ts";
 import { ReplaySubject } from "rxjs";
 import { IObjectNotNull } from "../comp/filterObjValue.ts";
 
+
 type viewId = string;
 const windowData = <T>() => {
   const data = new Map<viewId, IObjectNotNull<T>>();
@@ -24,7 +25,9 @@ export const subscribeViewCacheUpdate = <T>(
       | unknown
   ) => void
 ) => {
-  return getWindowDataInstance().viewInsertObservable.subscribe(subscribe);
+  return getWindowDataInstance().viewInsertObservable.subscribe((value)=>{
+    subscribe(value)
+  });
 };
 export const getWCache = (id: string) => {
   return getWindowDataInstance().data.get(id);

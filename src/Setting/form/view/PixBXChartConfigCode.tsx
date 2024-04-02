@@ -13,7 +13,7 @@ import {
   runViewFnString,
 } from "../../../comp/setDefaultChartOption.ts";
 import { useAutoHeight } from "../../../comp/useAutoHeight.tsx";
-import { getChartEmit } from "../../../emit/emitChart.ts";
+import { dispatchViewUpdate } from "../../../emit/emitChart.ts";
 import { insertConfig } from "../../../node/viewConfigSubscribe.ts";
 import { CHART_OPTIONS } from "../../attrConfig/view/CHART_OPTIONS.ts";
 
@@ -46,9 +46,9 @@ export const PixBXChartConfigCode = () => {
           },
         })
       );
-      getChartEmit().observable.next(1);
+      dispatchViewUpdate(NodesState.list[target].id, chartInfo);
     },
-    [NodesState.list, targets]
+    [NodesState, dispatch, targets]
   );
 
   const codeString = useMemo(() => {
@@ -78,12 +78,12 @@ export const PixBXChartConfigCode = () => {
           });
         }
       } catch (e) {
-        setParseError(e.message);
+        setParseError((e as { message: string }).message);
         console.log(e, "JSON.parse(value)-1");
-        throw new Error(e.message);
+        throw new Error((e as { message: string }).message);
       }
     },
-    [targets]
+    [NodesState.targets, targets.length]
   );
 
   useEffect(() => {
@@ -107,10 +107,10 @@ export const PixBXChartConfigCode = () => {
             },
           })
         );
-        getChartEmit().observable.next(1);
+        dispatchViewUpdate(NodesState.list[target].id, curCode);
       }
     }
-  }, [NodesState.list, curCode, parseError, targets]);
+  }, [NodesState, curCode, dispatch, parseError, targets]);
 
   return (
     <>

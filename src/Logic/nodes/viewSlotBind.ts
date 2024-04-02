@@ -25,7 +25,7 @@ export const viewLogicSlot = <T>() => {
     return of(value.pre);
   });
 
-  ViewLogicSlot.signalOut("out", (value) => {
+  ViewLogicSlot.signalOut<any>("out", (value) => {
     //输出=》事件输出
     console.log(value, "bdiff");
     inertViewCache(value?.config?.viewMapInfo?.viewNodeId, value?.pre);
