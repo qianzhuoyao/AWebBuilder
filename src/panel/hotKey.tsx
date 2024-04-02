@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fromEvent,
   filter,
-  merge,
   repeat,
   switchMap,
   zip,
   map,
   takeUntil,
-  take,
+  concatMap,
 } from "rxjs";
 import {
   IPs,
@@ -111,10 +110,10 @@ const useSelectionKeyEvent = () => {
         // dispatch(updatePanelLockTransform(true));
         dispatch(updateIsSelection(true));
       }),
-      switchMap(() =>
+      concatMap(() =>
         mousedown$.pipe(
           takeUntil(
-            merge(mouseup$, keyUp$).pipe(
+            zip(mouseup$, keyUp$).pipe(
               map(() => {
                 dispatch(updateIsSelection(false));
               })
@@ -124,7 +123,7 @@ const useSelectionKeyEvent = () => {
       )
     );
 
-    const subscription = zip(keyDown$, S$).pipe(take(1), repeat()).subscribe();
+    const subscription = S$.pipe(repeat()).subscribe();
 
     return () => {
       subscription.unsubscribe();

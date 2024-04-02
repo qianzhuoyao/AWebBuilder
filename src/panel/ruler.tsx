@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import Guides from "@scena/react-guides";
@@ -17,8 +17,28 @@ import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
 export const ARuler = React.memo(() => {
   const [force, setForce] = useState(false);
 
+  const ges = useRef<{ g: Gesto | null }>({ g: null });
   useHotkeys("q", () => setForce(true), { keyup: false, keydown: true });
   useHotkeys("q", () => setForce(false), { keyup: true, keydown: false });
+
+  const mouseForce = useCallback((e: MouseEvent) => {
+    if ((e.target as HTMLElement).getAttribute(ATTR_TAG) === Node) {
+      setForce(true);
+    }
+  }, []);
+
+  const mouseUnForce = useCallback(() => {
+    setForce(false);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousedown", mouseForce);
+    window.addEventListener("mouseup", mouseUnForce);
+    return () => {
+      window.removeEventListener("mousedown", mouseForce);
+      window.removeEventListener("mouseup", mouseUnForce);
+    };
+  }, []);
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
@@ -31,37 +51,20 @@ export const ARuler = React.memo(() => {
 
   const dispatch = useDispatch();
 
-  // const restore = () => {
-  //   scrollX = 0;
-  //   scrollY = 0;
-  //   guides1.current?.scroll(0);
-  //   guides1.current?.scrollGuides(0);
-  //   guides2.current?.scroll(0);
-  //   guides2.current?.scrollGuides(0);
-  // };
-
   useCustomHotKeys();
 
-  // React.useEffect(() => {
-  //   guides1.current?.resize();
-  //   guides2.current?.resize();
-  // }, [PanelState]);
-
-  let ges: Gesto | null = null;
+  // let ges: Gesto | null = null;
   React.useEffect(() => {
     const dom = document.getElementById(AR_PANEL_DOM_ID);
 
     if (!dom) {
       return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    ges = new Gesto(dom);
-    ges.on("drag", (e) => {
-      if (
-        !PanelState.lockTransform &&
-        (e.inputEvent.target as HTMLElement).getAttribute(ATTR_TAG) !== Node &&
-        !force
-      ) {
+    ges.current.g = new Gesto(dom);
+
+    ges.current.g.on("drag", (e) => {
+      console.log(!PanelState.lockTransform && !force, "f33f3f3");
+      if (!PanelState.lockTransform && !force) {
         scrollX -= e.deltaX;
         scrollY -= e.deltaY;
         guides1.current?.scrollGuides(scrollY);
@@ -80,7 +83,7 @@ export const ARuler = React.memo(() => {
     });
     ArDomResizeObserver.observe(dom);
     return () => {
-      ges?.off();
+      ges.current.g?.off();
       ArDomResizeObserver.unobserve(dom);
       ArDomResizeObserver.disconnect();
     };

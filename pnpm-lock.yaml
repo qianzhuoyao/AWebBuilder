@@ -26,6 +26,9 @@ dependencies:
   '@codemirror/view':
     specifier: ^6.24.1
     version: 6.24.1
+  '@daybrush/utils':
+    specifier: ^1.13.0
+    version: 1.13.0
   '@dnd-kit/core':
     specifier: ^6.1.0
     version: 6.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -59,6 +62,9 @@ dependencies:
   '@monaco-editor/react':
     specifier: ^4.6.0
     version: 4.6.0(monaco-editor@0.33.0)(react-dom@18.2.0)(react@18.2.0)
+  '@moveable/helper':
+    specifier: ^0.1.3
+    version: 0.1.3
   '@mui/base':
     specifier: 5.0.0-beta.37
     version: 5.0.0-beta.37(@types/react@18.2.58)(react-dom@18.2.0)(react@18.2.0)
@@ -200,6 +206,9 @@ dependencies:
   jsx-runtime:
     specifier: ^1.2.0
     version: 1.2.0
+  keycon:
+    specifier: ^1.4.0
+    version: 1.4.0
   keymaster:
     specifier: ^1.6.2
     version: 1.6.2
@@ -257,6 +266,9 @@ dependencies:
   react-json-view:
     specifier: ^1.21.3
     version: 1.21.3(@types/react@18.2.58)(react-dom@18.2.0)(react@18.2.0)
+  react-keycon:
+    specifier: ^0.3.0
+    version: 0.3.0
   react-moveable:
     specifier: ^0.56.0
     version: 0.56.0
@@ -653,6 +665,12 @@ packages:
     resolution: {integrity: sha512-kvYX0RpL45XTHJ5sW7teNbKeAa7pK3nNqaJPoFfZDPTIBJOkTtRD3QhkBG+O3Hu69a8xeMoPvF6y/RtJ6JUOdA==}
     dependencies:
       '@egjs/component': 3.0.5
+    dev: false
+
+  /@cfcs/react@0.0.6:
+    resolution: {integrity: sha512-PfMS9BGiGWVY+YVB7iIj/YxBUtklwV1ArH+rRYLIqqonwRLyKfvmXJQUAIapGFymdjNR3C4z9ZA9sF3kIONxKQ==}
+    dependencies:
+      '@cfcs/core': 0.0.6
     dev: false
 
   /@codemirror/autocomplete@6.12.0(@codemirror/language@6.10.1)(@codemirror/state@6.4.1)(@codemirror/view@6.24.1)(@lezer/common@1.2.1):
@@ -2296,6 +2314,12 @@ packages:
       monaco-editor: 0.33.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@moveable/helper@0.1.3:
+    resolution: {integrity: sha512-hSSyPkU7/cZuJys79rG0/xMs2Py09a8RUvBtpi/AftLYeSS8JAmMNwiw9lL19nddsVNB9cb2UON+U6uyFNS8Zw==}
+    dependencies:
+      '@daybrush/utils': 1.13.0
     dev: false
 
   /@mui/base@5.0.0-beta.36(@types/react@18.2.58)(react-dom@18.2.0)(react@18.2.0):
@@ -9885,6 +9909,13 @@ packages:
     transitivePeerDependencies:
       - '@types/react'
       - encoding
+    dev: false
+
+  /react-keycon@0.3.0:
+    resolution: {integrity: sha512-F5fzotY2U892HQYIAnLflkaac3uKC+Gutl6PRu9VXermxnibDLX+lj/6ltoTHdLfrC75OKOPZTgdrvOgRd1WVQ==}
+    dependencies:
+      '@cfcs/react': 0.0.6
+      keycon: 1.4.0
     dev: false
 
   /react-lifecycles-compat@3.0.4:

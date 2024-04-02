@@ -158,18 +158,6 @@ type nodeId = string;
 
 export interface INs {
   targets: string[];
-  //在下一个执行任务执行完毕后更新位置
-  moveTo: {
-    id: string;
-    newX: number;
-    newY: number;
-  }[];
-  //在下一个执行任务执行完毕后更新位置
-  resizeTo: {
-    id: string;
-    newW: number;
-    newH: number;
-  }[];
   list: Record<nodeId, IViewNode>;
 }
 
@@ -177,8 +165,6 @@ export const viewNodesSlice = createSlice({
   name: "nodes",
   initialState: {
     list: {},
-    moveTo: [],
-    resizeTo: [],
     targets: [],
   },
   reducers: {
@@ -192,12 +178,6 @@ export const viewNodesSlice = createSlice({
     updateAlias: (state, action) => {
       const { id, alias } = action.payload;
       (state.list as Record<string, IViewNode>)[id].alias = alias;
-    },
-    resizeNode: (state, action) => {
-      state.resizeTo = action.payload;
-    },
-    moveNode: (state, action) => {
-      state.moveTo = action.payload;
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
@@ -268,13 +248,11 @@ export const viewNodesSlice = createSlice({
 export const {
   updateAlias,
   setList,
-  moveNode,
   updateInstance,
   addNode,
   updateTargets,
   updateRotate,
   updatePosition,
-  resizeNode,
   deleteListItem,
   updateSize,
 } = viewNodesSlice.actions;
