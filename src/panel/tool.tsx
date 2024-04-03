@@ -293,7 +293,6 @@ export const Tools = memo(() => {
   });
 
   const onHandleShowAttr = useCallback(() => {
-    console.log(AttrState, "AttrState");
     dispatch(updateAttrShow(!AttrState.show));
   }, [AttrState.show, dispatch]);
 

@@ -18,7 +18,6 @@ export const handleTrigger = () => {
   });
 
   HandleTrigger.signalOut("out", () => {
-    console.log(window.location, "ccscscsc888");
     return emitLogic().pipe(
       takeWhile(() => {
         return window.location.pathname.slice(0, 6) !== CONSTANT_DEMO_PATH;

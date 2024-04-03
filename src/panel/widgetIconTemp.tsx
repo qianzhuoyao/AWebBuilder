@@ -343,7 +343,6 @@ export const WidgetIconTemp = memo(
         key,
         {
           down: (e) => {
-            console.log(e, "downe");
             const node = createLayerSrc("img");
             if (node) {
               node.src = src;
@@ -405,7 +404,6 @@ export const WidgetIconTemp = memo(
                 dispatch(addNode(newNode));
 
                 setTimeout(() => {
-                  console.log(NodesState.list, "NodesState.lists");
                   dispatch(
                     recordChange({
                       recordViewType: RECORD_VIEW_NODE,
@@ -441,7 +439,7 @@ export const WidgetIconTemp = memo(
                   belongClass: classify,
                   typeId,
                 });
-                console.log(Tem, "eTem-e-e");
+
                 const logicId = uuidv4();
 
                 const defaultConfigInfo = setDefaultInfo(typeId);

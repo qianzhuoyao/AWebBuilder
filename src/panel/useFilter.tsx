@@ -40,7 +40,6 @@ export const useFilterViewNode = () => {
   });
 
   useEffect(() => {
-    console.log(NodesState.list,'NodesState.list')
     setLayerViewNode(() => {
       return [...Object.values(NodesState.list)].filter((node) => {
         return findViewNodesInLayer(

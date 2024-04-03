@@ -71,7 +71,7 @@ const ColorPick = memo(() => {
     return state.panelSlice;
   });
   const onHandleColorChange = useCallback((color: ColorResult) => {
-    console.log(color.hex, "onHandleColorChange");
+  
     dispatch(updatePanelColor(color.hex));
   }, []);
 

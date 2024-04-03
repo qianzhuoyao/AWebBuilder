@@ -207,7 +207,7 @@ export const viewNodesSlice = createSlice({
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
-      console.log(findNode, "findNode");
+
       if (findNode) {
         const newNode = {
           ...findNode,
@@ -235,7 +235,6 @@ export const viewNodesSlice = createSlice({
       }
     },
     setList: (state, action) => {
-      console.log(action, "actions");
       state.list = action.payload;
     },
     addNode: (state, action) => {

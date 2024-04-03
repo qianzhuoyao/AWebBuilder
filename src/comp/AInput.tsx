@@ -37,7 +37,7 @@ export const AInput = extendVariants(Input, {
         inputWrapper: "h-unit-7 min-h-unit-7 px-1",
         input: "text-tiny",
       },
-    
+
       xs: {
         inputWrapper: "h-unit-8 min-h-unit-8 px-1",
         input: "text-tiny",

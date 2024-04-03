@@ -11,7 +11,7 @@ import {
   updateSize,
   updateTargets,
 } from "../store/slice/nodeSlice";
-import { IPs, updateIsSelection } from "../store/slice/panelSlice";
+import { IPs } from "../store/slice/panelSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { ItemParams } from "react-contexify";
 import {
@@ -79,7 +79,6 @@ export const NodeContainer = memo(() => {
 
   const removeViewNode = useCallback(
     (params: ItemParams) => {
-      console.log(params, ";params");
       dispatch(deleteListItem({ idList: [params.props.id] }));
       dispatch(
         recordChange({
@@ -147,15 +146,11 @@ export const NodeContainer = memo(() => {
         snapThreshold={1}
         maxSnapElementGuidelineDistance={1}
         elementGuidelines={[".target"]}
-        onDragStart={(e) => {
-          console.log(e, "onDragStarsst");
-        }}
+        onDragStart={() => {}}
         onClickGroup={(e) => {
-          console.log(e, "onClickGroup");
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
         onRotateEnd={(e) => {
-          console.log(e, "eeeonRotateEndeeee");
           dispatch(
             updateRotate({
               id: e.target.id,
@@ -182,7 +177,6 @@ export const NodeContainer = memo(() => {
         }}
         onRender={(e) => {
           e.target.style.cssText += e.cssText;
-          console.log(e, "renderaaa");
         }}
         onResizeEnd={(e) => {
           dispatch(
@@ -214,7 +208,6 @@ export const NodeContainer = memo(() => {
           }, 0);
         }}
         onDragEnd={(e) => {
-          console.log(e?.lastEvent, "onDragEnd");
           const pos = computeActPositionNodeByRuler(
             e.target,
             PanelState.tickUnit
@@ -229,7 +222,6 @@ export const NodeContainer = memo(() => {
               })
             );
             setTimeout(() => {
-              console.log(NodesState, "NodesStatess3");
               dispatch(
                 recordChange({
                   recordViewType: RECORD_VIEW_NODE,
@@ -280,7 +272,6 @@ export const NodeContainer = memo(() => {
         ratio={0}
         keyContainer={window}
         onDragStart={(e) => {
-          console.log(e, lock, "{}ddfff");
           if (!lock) {
             e.preventDrag();
           }

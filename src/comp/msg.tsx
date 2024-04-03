@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
-import { ILs, updateSendDugCount } from "../store/slice/logicSlice.ts";
+import { useDispatch } from "react-redux";
+import { updateSendDugCount } from "../store/slice/logicSlice.ts";
 import { parseMakeByFromId } from "./signal3.ts";
 import { pushLogicMap } from "../Logic/nodes/emit.ts";
 import dayjs from "dayjs";
@@ -51,9 +51,6 @@ export const useSignalMsg = (
   ) => void
 ) => {
   const dispatch = useDispatch();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
 
   const go = async () => {
     //任务的id
@@ -73,7 +70,6 @@ export const useSignalMsg = (
         }, 500);
       },
       startRun: () => {
-        console.log(logicState.sendDugCount, logicId, "start-p-0");
         dispatch(
           updateSendDugCount({
             nodeId: fromNodeId,
@@ -83,7 +79,6 @@ export const useSignalMsg = (
         );
       },
       taskErrorRecord: () => {
-        console.log("start-p-1");
         dispatch(
           updateSendDugCount({
             nodeId: fromNodeId,
@@ -99,8 +94,6 @@ export const useSignalMsg = (
         }, 500);
       },
       edgeRunOver: (edge) => {
-        console.log(edge, getWDGraph(), "edge-ss1");
-
         if (!getRunningTasks().runEdgeVis.has(fromNodeId)) {
           getRunningTasks().runEdgeVis.set(fromNodeId, []);
         }
@@ -117,7 +110,6 @@ export const useSignalMsg = (
         updateEdge(fromNodeId, getAllVisOk());
       },
       logicItemOver: (id) => {
-        console.log("eedd999");
         setTimeout(() => {
           dispatch(
             updateSendDugCount({

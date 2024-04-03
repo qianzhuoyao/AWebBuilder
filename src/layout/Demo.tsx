@@ -10,6 +10,7 @@ import { ILogicNode } from "../store/slice/logicSlice.ts";
 import { addNode, INs, IViewNode } from "../store/slice/nodeSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { genLogicConfigMapToParse } from "../Logic/nodes/logicConfigMap.ts";
+import { templateMain } from "../node/index.ts";
 
 export const Demo = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ export const Demo = () => {
   useEffect(() => {
     if (window.location.pathname.slice(0, 6) === CONSTANT_DEMO_PATH) {
       nodeBuilder();
+      templateMain();
       genLogicConfigMapToParse(parseConfig.C);
       (Object.values(data.list || {}) as IViewNode[])?.map((item) => {
         dispatch(
@@ -66,7 +68,6 @@ export const Demo = () => {
           return newGraph?.getInDegree(node).length === 0;
         })
         .map((taskNodeId) => {
-          console.log(taskNodeId, "taskNodeIdss");
           parseMakeByFromId(taskNodeId, {
             toAnd1: () => void 0,
             toAnd0: () => void 0,

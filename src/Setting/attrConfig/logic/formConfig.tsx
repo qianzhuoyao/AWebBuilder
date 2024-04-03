@@ -58,18 +58,13 @@ const CodeTip = memo(() => {
         theme={theme === "dark" ? "solarized" : "rjv-default"}
         src={code || {}}
         onEdit={(e) => {
-          console.log(e);
           updateCode(e.updated_src);
         }}
-        onSelect={(s) => {
-          console.log(s);
-        }}
+        onSelect={() => {}}
         onAdd={(a) => {
-          console.log(a);
           updateCode(a.updated_src);
         }}
         onDelete={(d) => {
-          console.log(d);
           updateCode(d.updated_src);
         }}
       />

@@ -402,7 +402,6 @@ const SceneLayer = memo(() => {
           selectedKey={PanelState.currentSTab}
           radius="md"
           onSelectionChange={(key) => {
-            console.log(key, "stabskey");
             onHandleUpdateSTab(key as string);
           }}
           classNames={{
@@ -483,7 +482,6 @@ const SceneWidgetMap = memo(() => {
 
   const onHandleRemove = useCallback(
     (id: string) => {
-      console.log(id, "ssss");
       dispatch(deleteListItem({ idList: [id] }));
     },
     [dispatch]
@@ -545,7 +543,7 @@ const SceneWidgetMap = memo(() => {
                           ? "1px solid #006FEE"
                           : "",
                       }}
-                      onPress={() => console.log("item pressed")}
+                      onPress={() => {}}
                     >
                       <CardBody className="overflow-visible p-1">
                         <img
@@ -576,10 +574,10 @@ const SceneWidgetMap = memo(() => {
                         ? "1px solid #006FEE"
                         : "",
                     }}
-                    onPress={() => console.log("item pressed")}
+                    onPress={() => {}}
                   >
                     <CardBody className="overflow-visible p-0">
-                      <NodeSlot node={node} isTemp={true}></NodeSlot>
+                      <NodeSlot tag="cube" node={node} isTemp={true}></NodeSlot>
                     </CardBody>
                     <CardFooter className="text-small justify-between items-center">
                       <small className="text-default-500">{node.alias}</small>
@@ -741,7 +739,6 @@ const LayerContent = memo(() => {
 
   useEffect(() => {
     const sub = subscribeLayerCreate((params) => {
-      console.log(params, "paramsssss");
       setSLayerTabs((cur) => {
         return cur.concat([
           {

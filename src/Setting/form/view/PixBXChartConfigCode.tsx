@@ -69,7 +69,6 @@ export const PixBXChartConfigCode = () => {
 
       setCurCode(parseValue);
       try {
-        console.log(parseValue, "JSON.parse(value)-0");
         if (targets.length) {
           new Function(value)({});
           setParseError("");
@@ -79,7 +78,7 @@ export const PixBXChartConfigCode = () => {
         }
       } catch (e) {
         setParseError((e as { message: string }).message);
-        console.log(e, "JSON.parse(value)-1");
+
         throw new Error((e as { message: string }).message);
       }
     },
@@ -145,7 +144,6 @@ export const PixBXChartConfigCode = () => {
           size={"sm"}
           className="max-w-xs"
           onChange={(e) => {
-            console.log(e.target.value, "e.target.value");
             if (e.target.value) {
               updateChartClassify(e.target.value as keyof typeof CHART_OPTIONS);
             }

@@ -236,7 +236,7 @@ export default class WeightedDirectedGraph<T, M> {
           .get(target)
           ?.inDegree?.filter((d) => d !== source),
       } as Vertex<T>);
-      console.log(this.degree, "sss this.degree");
+
       this.adjacencyList.set(
         source,
         edges.filter((edge) => edge.target !== target)
@@ -318,7 +318,7 @@ export const getWDGraph = (): WeightedDirectedGraph<string, IEdgeMessage> => {
 export const genWDGraph = (GJson: string) => {
   try {
     const GConfig = JSON.parse(GJson);
-    console.log(GConfig, "GConfig");
+
     const WDGraph = getWDGraph();
     GConfig?.vecList?.map((vec: string) => {
       WDGraph.addVertex(vec);

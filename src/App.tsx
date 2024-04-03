@@ -13,6 +13,7 @@ import { queryClient } from "./fetch/client.ts";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Demo } from "./layout/Demo.tsx";
 import { nodeBuilder } from "./Logic/nodes";
+import { templateMain } from "./node/index.ts";
 
 interface MessagesData {
   messages: string[];
@@ -103,6 +104,7 @@ if (import.meta.hot) {
 }
 
 nodeBuilder();
+templateMain();
 function App() {
   return (
     <>

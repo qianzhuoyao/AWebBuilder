@@ -50,7 +50,6 @@ export const panelSlice = createSlice({
       state.currentSTab = action.payload;
     },
     updateIsSelection: (state, action) => {
-      console.log(action, "action-action");
       state.isSelection = action.payload;
     },
     updatePanelLockTransform: (state, action) => {
@@ -81,7 +80,6 @@ export const panelSlice = createSlice({
       state.rulerMinX = action.payload;
     },
     updateRulerMinY: (state, action) => {
-      console.log(action, "actionsss");
       state.rulerMinY = action.payload;
     },
   },

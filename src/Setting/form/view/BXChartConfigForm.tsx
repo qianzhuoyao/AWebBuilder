@@ -31,7 +31,6 @@ export const DefaultViewNodeConfigForm = () => {
     [NodesState.targets]
   );
 
-  console.log(NodesState, "sdasdadasdsadadfffNodesState");
   return (
     <>
       <div className={"flex items-center justify-between"}>

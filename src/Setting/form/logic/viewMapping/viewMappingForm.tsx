@@ -21,7 +21,6 @@ export const ViewMappingForm = memo(() => {
   );
 
   const onHandleInsertData = useCallback((key: Selection) => {
-    console.log([...key][0], "keytssss");
     setMappingViewNode([...key][0] as string);
     if ([...key][0]) {
       createBindMap([...key][0] as string, logicState.target[0]);

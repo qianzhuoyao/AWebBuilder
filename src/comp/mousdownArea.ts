@@ -10,6 +10,5 @@ export const checkMouseDownInArea = (
   }
   const { x, y } = pointer;
   const { left, top, height, width } = dom.getBoundingClientRect();
-  console.log(pointer, dom, left, top, height, width, "checkMouseDownInArea");
   return x >= left && x <= left + width && y >= top && y <= top + height;
 };

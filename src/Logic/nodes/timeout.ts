@@ -19,7 +19,6 @@ export const timeOut = () => {
     name: "延时器",
   });
   TimeOut.signalIn("in-0", (value) => {
-    console.log("biff");
     return of(value?.pre);
   });
 

@@ -60,7 +60,7 @@ const DraggableTableHeader = <T,>({
     width: header.getSize(),
     zIndex: isDragging ? 1000 : 0,
   };
-  console.log(header.getSize(), "listeners");
+
   return (
     <div
       ref={setNodeRef}

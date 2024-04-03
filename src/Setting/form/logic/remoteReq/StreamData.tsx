@@ -15,8 +15,7 @@ export const StreamData = () => {
   const height = useAutoHeight();
   const { theme } = useTheme();
   useEffect(() => {
-    const sSub = subscribeViewCacheUpdate(({ data, viewId }: any) => {
-      console.log(data, viewId, "data0st");
+    const sSub = subscribeViewCacheUpdate(({ data }: any) => {
       setShowData(data);
     });
     return () => {

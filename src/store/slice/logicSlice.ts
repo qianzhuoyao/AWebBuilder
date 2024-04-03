@@ -100,7 +100,6 @@ export const logicSlice = createSlice({
     },
 
     setLogicTarget: (state, action) => {
-      console.log(action.payload, "sssaction.payload");
       if (Array.isArray(action.payload)) {
         state.target = action.payload;
       }

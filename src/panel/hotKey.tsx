@@ -148,7 +148,6 @@ const useDefaultBlurEvent = () => {
     const D$ = mousedown$.pipe(
       map((d) => {
         if (d?.target instanceof HTMLElement) {
-          console.log(d, "dasdasdasdsadsadasdsadddf");
           if (d?.target.getAttribute(ATTR_TAG) !== Node) {
             if (
               checkMouseDownInArea(

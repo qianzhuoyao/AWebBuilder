@@ -179,7 +179,6 @@ export const Nav = memo(() => {
   }, [location]);
 
   useEffect(() => {
-    console.log(location, "location");
     if (
       location.pathname === "/" ||
       location.pathname === "/menu/" ||
@@ -190,7 +189,6 @@ export const Nav = memo(() => {
   }, [location, navigate]);
 
   const onChangeTheme = useCallback(() => {
-    console.log(theme, "theme");
     setTheme(theme === "light" ? "dark" : "light");
   }, [setTheme, theme]);
 
@@ -206,12 +204,6 @@ export const Nav = memo(() => {
   });
   const NodesRecordState = useSelector(
     (state: { viewNodesRecordSlice: { present: IARs } }) => {
-      console.log(
-        state.viewNodesRecordSlice,
-        PanelState,
-
-        "state.viewNodesRecordSlice"
-      );
       return state.viewNodesRecordSlice.present;
     }
   );
@@ -236,7 +228,6 @@ export const Nav = memo(() => {
   }, [NodesState, PanelState]);
 
   const redo = useCallback(() => {
-    console.log("redo");
     dispatch({
       type: "viewRedo",
     });
@@ -255,7 +246,6 @@ export const Nav = memo(() => {
       type: "viewUndo",
     });
     setTimeout(() => {
-      console.log(NodesRecordState.recordViewInfo, "undo");
       if (NodesRecordState.recordViewType === RECORD_VIEW_NODE) {
         dispatch(setList(NodesRecordState.recordViewInfo));
       }

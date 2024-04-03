@@ -86,7 +86,6 @@ export const getLayerContentToParse = (json: string) => {
     });
     getLayers().layerNodesOfView.set(key, setV);
   });
-  console.log(getLayers(), "sobj01");
 };
 export const getLayerContentToJSON = () => {
   const layersMapObj: Record<string, unknown> = {};
@@ -101,11 +100,7 @@ export const getLayerContentToJSON = () => {
   [...getLayers().layerNodesOfView.keys()].map((i) => {
     layerNodesOfViewObj[i] = [...(getLayers().layerNodesOfView.get(i) || [])];
   });
-  console.log(
-    layerNodesOfLogicObj,
-    layerNodesOfViewObj,
-    "slayerNodesOfViewObj"
-  );
+
   return JSON.stringify({
     layersMapObj,
     layerNodesOfLogicObj,
@@ -120,7 +115,6 @@ export const updateViewNodesInLayer = (
   layerName: string,
   symbolIds: symbolNodeId
 ) => {
-  console.log(layerName, symbolIds, "csa8symbolIds");
   if (!getLayers().layerNodesOfView.has(layerName)) {
     getLayers().layerNodesOfView.set(layerName, new Set<symbolNodeId>());
   }
@@ -137,7 +131,6 @@ export const updateLogicNodesInLayer = (
   layerName: string,
   symbolIds: symbolNodeId
 ) => {
-  console.log(layerName, symbolIds, "csa8symbolIds");
   if (!getLayers().layerNodesOfLogic.has(layerName)) {
     getLayers().layerNodesOfLogic.set(layerName, new Set<symbolNodeId>());
   }

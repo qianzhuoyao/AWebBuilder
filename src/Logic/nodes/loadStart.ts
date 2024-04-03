@@ -20,7 +20,6 @@ export const loadStart = () => {
       type: "page-load",
     }).pipe(
       takeWhile(() => {
-        console.log("f--------------");
         return window.location.pathname.slice(0, 6) === CONSTANT_DEMO_PATH;
       })
     );

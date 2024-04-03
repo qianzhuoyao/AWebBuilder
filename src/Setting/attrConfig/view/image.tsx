@@ -18,11 +18,7 @@ const ImageConfigSetting = memo(() => {
 
   const onUpdateSrc = useCallback(
     (value: string) => {
-      console.log(
-        NodesState.list[NodesState.targets[0]]?.instance,
-        value,
-        "ddddddd"
-      );
+     
       dispatch(
         updateInstance({
           type: NodesState.list[NodesState.targets[0]].instance.type,

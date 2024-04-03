@@ -29,7 +29,6 @@ export const and = () => {
     return of(value.pre).pipe(
       tap(() => {
         getAndTags().tagsIn1.set(value.id, true);
-        console.log(getAndTags(), value, "getAndTags()=0");
       })
     );
   });
@@ -38,13 +37,11 @@ export const and = () => {
     return of(value.pre).pipe(
       tap(() => {
         getAndTags().tagsIn2.set(value.id, true);
-        console.log(getAndTags(), value, "getAndTags()=1");
       })
     );
   });
 
   And.signalOut("out-and", (value) => {
-    console.log(getAndTags(), "getAndTags()");
     return of(value.pre).pipe(
       filter(() => {
         return (

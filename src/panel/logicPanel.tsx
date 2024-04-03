@@ -24,7 +24,6 @@ import {
   subscribeUpdateEdge,
 } from "./logicPanelEventSubscribe.ts";
 import { useFilterLogicNode } from "./useFilter.tsx";
-import { getRunningTasks } from "../comp/msg.tsx";
 import { createPEM, findPEM, removePEM } from "./portEdgeMap.ts";
 
 interface GraphPanel {
@@ -37,7 +36,7 @@ const colorSet = (color: 0 | 1 | 2) => {
 
 const renderNode = (node: ILogicNode) => {
   const ports = getPortNodeMap(node.id);
-  console.log(node, "nodessss");
+
   return {
     shape: node.shape,
     x: node.x,
@@ -119,7 +118,7 @@ const usePaintNodes = (Graph: Graph | null) => {
         nodeIdMap.set(node.id, GNode);
       }
     });
-    console.log(getWDGraph().getAllEdges(), layerLogicNode, "getAllEdges");
+
     getWDGraph()
       .getAllEdges()
       .map((edge) => {
@@ -144,71 +143,67 @@ const usePaintNodes = (Graph: Graph | null) => {
 export const LogicPanel = memo(() => {
   const GRef = useRef<GraphPanel>({ G: null });
   const dispatch = useDispatch();
-  console.log("09890");
+
   usePaintNodes(GRef.current.G);
   useEffect(() => {
     //挂载上所有节点
 
     document.ondragstart = () => false;
     //逻辑流走向
-    const updateEdgeSubscription = subscribeUpdateEdge(
-      ({ fromNodeId, nodeIdList }) => {
-        console.log(nodeIdList, fromNodeId, getRunningTasks(), "0909889");
-        GRef.current.G?.getEdges().map((edge) => {
-          console.log(edge.getSourcePortId(), nodeIdList, "edge-edge");
-          //当前边无正在run的任务
-          if (
-            nodeIdList.some(
-              (item) =>
-                item.target === edge.getTargetCell()?.getProp().nodeGId &&
-                item.source === edge.getSourceCell()?.getProp().nodeGId
-            )
-          ) {
-            updateConnectStatus(edge.getSourcePortId() || "", 2);
-            updateConnectStatus(edge.getTargetPortId() || "", 2);
-            edge
-              .getSourceNode()
-              ?.setPortProp(edge.getSourcePortId() || "", "attrs/circle", {
-                fill: "#22F576FF",
-                stroke: "#22F576FF",
-              });
-            edge
-              .getTargetNode()
-              ?.setPortProp(edge.getTargetPortId() || "", "attrs/circle", {
-                fill: "#22F576FF",
-                stroke: "#22F576FF",
-              });
-            edge.setAttrs({
-              line: {
-                stroke: "#22F576FF",
-                targetMarker: "classic",
-              },
+    const updateEdgeSubscription = subscribeUpdateEdge(({ nodeIdList }) => {
+      GRef.current.G?.getEdges().map((edge) => {
+        //当前边无正在run的任务
+        if (
+          nodeIdList.some(
+            (item) =>
+              item.target === edge.getTargetCell()?.getProp().nodeGId &&
+              item.source === edge.getSourceCell()?.getProp().nodeGId
+          )
+        ) {
+          updateConnectStatus(edge.getSourcePortId() || "", 2);
+          updateConnectStatus(edge.getTargetPortId() || "", 2);
+          edge
+            .getSourceNode()
+            ?.setPortProp(edge.getSourcePortId() || "", "attrs/circle", {
+              fill: "#22F576FF",
+              stroke: "#22F576FF",
             });
-          } else {
-            updateConnectStatus(edge.getSourcePortId() || "", 1);
-            updateConnectStatus(edge.getTargetPortId() || "", 1);
-            edge
-              .getSourceNode()
-              ?.setPortProp(edge.getSourcePortId() || "", "attrs/circle", {
-                fill: "#f5222d",
-                stroke: "#f5222d",
-              });
-            edge
-              .getTargetNode()
-              ?.setPortProp(edge.getTargetPortId() || "", "attrs/circle", {
-                fill: "#f5222d",
-                stroke: "#f5222d",
-              });
-            edge.setAttrs({
-              line: {
-                stroke: "#f5222d",
-                targetMarker: "classic",
-              },
+          edge
+            .getTargetNode()
+            ?.setPortProp(edge.getTargetPortId() || "", "attrs/circle", {
+              fill: "#22F576FF",
+              stroke: "#22F576FF",
             });
-          }
-        });
-      }
-    );
+          edge.setAttrs({
+            line: {
+              stroke: "#22F576FF",
+              targetMarker: "classic",
+            },
+          });
+        } else {
+          updateConnectStatus(edge.getSourcePortId() || "", 1);
+          updateConnectStatus(edge.getTargetPortId() || "", 1);
+          edge
+            .getSourceNode()
+            ?.setPortProp(edge.getSourcePortId() || "", "attrs/circle", {
+              fill: "#f5222d",
+              stroke: "#f5222d",
+            });
+          edge
+            .getTargetNode()
+            ?.setPortProp(edge.getTargetPortId() || "", "attrs/circle", {
+              fill: "#f5222d",
+              stroke: "#f5222d",
+            });
+          edge.setAttrs({
+            line: {
+              stroke: "#f5222d",
+              targetMarker: "classic",
+            },
+          });
+        }
+      });
+    });
     //新增
     const subscription = subscribeCreateNode((node) => {
       GRef.current.G?.addNode(renderNode(node));
@@ -231,16 +226,6 @@ export const LogicPanel = memo(() => {
   );
 
   const { view, show } = useSceneContext("LINE", (params) => {
-    console.log(
-      params,
-      (params.event.target as HTMLElement)?.innerText,
-      params.props.edge.getSourceNode()?.getProp(),
-      "params"
-    );
-    console.log(
-      (params.event.target as HTMLElement)?.innerText,
-      "(params.event.target as HTMLElement)?.innerText"
-    );
     switch ((params.event.target as HTMLElement)?.innerText) {
       case "删除边":
         return removeEdge(params);
@@ -348,13 +333,6 @@ export const LogicPanel = memo(() => {
         },
         connecting: {
           validateEdge(args) {
-            console.log(
-              (args.edge.getSourcePortId() || "").indexOf("out") > -1 &&
-                (args.edge.getTargetPortId() || "").indexOf("in") > -1,
-              args.edge.getSourcePortId(),
-              args.edge.getTargetPortId(),
-              "s-sf"
-            );
             if (
               (args.edge.getSourcePortId()?.split("#")[0] || "").indexOf(
                 "out"
@@ -363,11 +341,6 @@ export const LogicPanel = memo(() => {
                 -1
             ) {
               try {
-                console.log(
-                  args.edge.getTargetPortId(),
-                  findPEM(args.edge.getTargetPortId() || ""),
-                  "args.edge.getTargetPortId()"
-                );
                 if (
                   ((args.edge.getTargetPortId() || "").indexOf(
                     "logic_and_BOTH_get@in-and"
@@ -467,13 +440,7 @@ export const LogicPanel = memo(() => {
     });
     GRef.current.G?.on("edge:added", ({ edge }) => {
       //连接后，默认无信号
-      console.log("pops-1");
-      console.log(
-        edge
-          .getSourceNode()
-          ?.getPortProp(edge.getSourcePortId() || "", "attrs/circle"),
-        "p;odsddddd"
-      );
+
       edge.setAttrs({
         line: {
           stroke: "#f5222d",
@@ -495,11 +462,6 @@ export const LogicPanel = memo(() => {
         });
     });
     GRef.current.G.on("edge:mouseup", ({ edge }) => {
-      console.log(
-        edge.getTargetNode(),
-        edge.getSourceCellId(),
-        "edge.getTargetNode()"
-      );
       if (!edge.getTargetNode()) {
         (
           GRef.current.G?.getCellById(edge.getSourceCellId()) as Node
@@ -510,7 +472,6 @@ export const LogicPanel = memo(() => {
       }
     });
     GRef.current.G.on("edge:connected", ({ isNew, edge }) => {
-      console.log(edge, "pops");
       if (isNew) {
         if (
           !getWDGraph().hasEdge(

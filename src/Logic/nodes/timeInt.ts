@@ -41,7 +41,7 @@ export const timeInter = () => {
     return defer(() => of(MUST_FORCE_STOP_SE)).pipe(
       tap(() => {
         getInitTimer().timer.set(value.id, false);
-        console.log(getInitTimer().timer, value, "0o0o0ol0ccccccc");
+
         getSyncTimeIntConfig().subject.next({
           status: false,
         });
@@ -50,10 +50,8 @@ export const timeInter = () => {
   });
 
   TimeInter.signalOut("out", (value) => {
-    console.log(value, "TimeInter");
     return interval(value.config.timerConfigInfo.time || 1000).pipe(
       takeWhile(() => {
-        console.log(getInitTimer().timer, value, "0o0o0ol0ccccccc-1");
         return (
           !!getInitTimer().timer.get(value.id) &&
           value?.pre !== MUST_FORCE_STOP_SE

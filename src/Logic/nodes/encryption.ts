@@ -34,7 +34,6 @@ export const encryption = () => {
     name: "加密器",
   });
   Encryption.signalIn("in-0", (value) => {
-    console.log(value, "bifsf");
     return of(value?.pre);
   });
 

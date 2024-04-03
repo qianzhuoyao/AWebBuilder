@@ -63,7 +63,6 @@ export const ARuler = React.memo(() => {
     ges.current.g = new Gesto(dom);
 
     ges.current.g.on("drag", (e) => {
-      console.log(!PanelState.lockTransform && !force, "f33f3f3");
       if (!PanelState.lockTransform && !force) {
         scrollX -= e.deltaX;
         scrollY -= e.deltaY;
@@ -116,21 +115,11 @@ export const ARuler = React.memo(() => {
         displayDragPos={true}
         displayGuidePos={true}
         guidesOffset={50}
-        onChangeGuides={({ guides }) => {
-          console.log("horizontal", guides);
-        }}
-        onDragStart={(e) => {
-          console.log("dragStart", e);
-        }}
-        onDrag={(e) => {
-          console.log("drag", e);
-        }}
-        onDragEnd={(e) => {
-          console.log("dragEnd", e);
-        }}
-        onClickRuler={(e) => {
-          console.log("?", e);
-        }}
+        onChangeGuides={() => {}}
+        onDragStart={() => {}}
+        onDrag={() => {}}
+        onDragEnd={() => {}}
+        onClickRuler={() => {}}
       />
       <Guides
         ref={guides2}
@@ -152,7 +141,6 @@ export const ARuler = React.memo(() => {
           height: `calc(100% - ${PanelState.offset}px)`,
         }}
         dragPosFormat={(v) => {
-          console.log(v, "cascascas");
           return `${
             v * PanelState.tickUnit + 10 * PanelState.tickUnit * PanelState.snap
           }px`;
@@ -160,21 +148,11 @@ export const ARuler = React.memo(() => {
         displayDragPos={true}
         displayGuidePos={true}
         guidesOffset={50}
-        onChangeGuides={({ guides }) => {
-          console.log("horizontal", guides);
-        }}
-        onDragStart={(e) => {
-          console.log("dragStart", e);
-        }}
-        onDrag={(e) => {
-          console.log("drag", e, guides2);
-        }}
-        onDragEnd={(e) => {
-          console.log("dragEnd", e);
-        }}
-        onClickRuler={(e) => {
-          console.log("?", e);
-        }}
+        onChangeGuides={() => {}}
+        onDragStart={() => {}}
+        onDrag={() => {}}
+        onDragEnd={() => {}}
+        onClickRuler={() => {}}
       />
 
       <AScene></AScene>

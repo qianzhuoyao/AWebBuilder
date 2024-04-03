@@ -1,70 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import {
-  INodeType,
   INs,
   IViewNode,
-  pic_Img,
-  pix_BX,
-  pix_Table,
   updatePosition,
   updateTargets,
 } from "../store/slice/nodeSlice";
 import { ATTR_TAG, Node, NODE_ID, SCENE } from "../contant";
-import { BaseChart } from "../node/chart";
 import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler.ts";
-import { getWCache, subscribeViewCacheUpdate } from "./data.ts";
-import { viewUpdateReducer } from "../emit/emitChart.ts";
-import { ATable } from "../comp/ATable";
-import { Image } from "@nextui-org/react";
-import { runChartOption } from "../comp/useChartOption.tsx";
+
 import { NodeContainer } from "./nodeContainer.tsx";
-
-const BaseImage = memo(({ config }: { config: IViewNode }) => {
-  return (
-    <Image
-      width={"100%"}
-      height={"100%"}
-      alt="BaseImage"
-      className={"w-full h-full"}
-      src={config.instance.option?.src}
-      classNames={{
-        wrapper: "w-full h-full",
-      }}
-    ></Image>
-  );
-});
-
-const MemoChart = memo(
-  ({
-    type,
-    node,
-    isTemp,
-    tickUnit,
-    parseOption,
-  }: {
-    type: INodeType;
-    node: IViewNode;
-    isTemp: boolean | undefined;
-    tickUnit: number;
-    parseOption: string;
-  }) => (
-    <>
-      {useMemo(
-        () => (
-          <BaseChart
-            type={type}
-            width={isTemp ? 205 : node.w / tickUnit}
-            height={isTemp ? 100 : node.h / tickUnit}
-            options={runChartOption(node.id, parseOption)}
-          />
-        ),
-        [parseOption]
-      )}
-    </>
-  )
-);
+import { getTemplate } from "../node/baseViewNode.ts";
 
 export const Temp = memo(
   ({
@@ -78,52 +25,38 @@ export const Temp = memo(
     isTemp?: boolean;
     PanelState: IPs;
   }) => {
-    const [parseOptionString, setParseOptionString] = useState(
-      () => (NodesState?.list || {})[id]?.instance?.option?.chart || ""
+    const elementBuilder = getTemplate(NodesState.list[id]?.classify);
+    return (
+      elementBuilder?.(NodesState.list[id], {
+        isInit: !!isTemp,
+        PanelState,
+        NodesState,
+        id,
+      }) || <></>
     );
-
-    useEffect(() => {
-      const sub = viewUpdateReducer(id, (payload) => {
-        setParseOptionString(payload.payload);
-      });
-      const cacheSub = subscribeViewCacheUpdate(() => {
-        if (NodesState?.list) {
-          setParseOptionString(
-            (NodesState?.list || {})[id]?.instance?.option?.chart || ""
-          );
-        }
-      });
-      return () => {
-        sub.unsubscribe();
-        cacheSub.unsubscribe();
-      };
-    }, [NodesState, id]);
-    console.log(NodesState, "NodesState09");
-    if (NodesState.list[id]?.classify === pix_BX) {
-      return (
-        <MemoChart
-          type={NodesState.list[id].instance.type}
-          node={NodesState.list[id]}
-          isTemp={isTemp}
-          tickUnit={PanelState.tickUnit}
-          parseOption={parseOptionString}
-        />
-      );
-    } else if (NodesState.list[id]?.classify === pix_Table) {
-      return (
-        <div className={"overflow-scroll w-full h-full"}>
-          <ATable id={id} streamData={getWCache(id)}></ATable>
-        </div>
-      );
-    } else if (NodesState.list[id]?.classify === pic_Img) {
-      return (
-        <div className={"w-full h-full"}>
-          <BaseImage config={NodesState.list[id]}></BaseImage>
-        </div>
-      );
-    }
-
-    return <></>;
+    // if (NodesState.list[id]?.classify === pix_BX) {
+    //   return (
+    //     <MemoChart
+    //       type={NodesState.list[id].instance.type}
+    //       node={NodesState.list[id]}
+    //       isTemp={isTemp}
+    //       tickUnit={PanelState.tickUnit}
+    //       parseOption={parseOptionString}
+    //     />
+    //   );
+    // } else if (NodesState.list[id]?.classify === pix_Table) {
+    //   return (
+    //     <div className={"overflow-scroll w-full h-full"}>
+    //       <ATable id={id} streamData={getWCache(id)}></ATable>
+    //     </div>
+    //   );
+    // } else if (NodesState.list[id]?.classify === pic_Img) {
+    //   return (
+    //     <div className={"w-full h-full"}>
+    //       <BaseImage config={NodesState.list[id]}></BaseImage>
+    //     </div>
+    //   );
+    // }
   }
 );
 
@@ -187,7 +120,7 @@ export const NodeSlot = memo(
         dispatch(updateTargets([nodeRef.current?.id]));
       }
     }, [isTemp, node.id]);
-    console.log(node, "nodes4");
+
     return (
       <div
         ref={nodeRef}

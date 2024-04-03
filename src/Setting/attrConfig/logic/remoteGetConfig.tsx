@@ -69,7 +69,7 @@ const Url = memo(() => {
     },
     [logicState.target, params]
   );
-  console.log(params, "sdsfggg");
+
   return (
     <>
       <div className={"mt-1"}>
@@ -177,7 +177,6 @@ const Test = memo(() => {
     setToSend(toSend + 1);
   }, [toSend]);
 
-  console.log(loadParams, "loadParams-0");
   return (
     <>
       <Card className="max-w-[400px]">

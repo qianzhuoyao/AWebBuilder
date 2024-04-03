@@ -42,7 +42,7 @@ let initValue: JsonTree = loadedInitValue && Object.keys(loadedInitValue).length
 const initLogic: JsonLogicTree | undefined = loadedInitLogic && Object.keys(loadedInitLogic).length > 0 ? loadedInitLogic as JsonLogicTree : undefined;
 let initTree: ImmutableTree;
 const loadedConfig = loadConfig(initialSkin);
-console.log(loadedConfig, 'loadedConfigsss');
+
 //initTree = checkTree(loadTree(initValue), loadedConfig);
 initTree = checkTree(loadFromJsonLogic(initLogic, loadedConfig)!, loadedConfig); // <- this will work same
 
@@ -146,7 +146,7 @@ const FilterDataBuilder = memo(() => {
     return state.logicSlice;
   });
   const memo: React.MutableRefObject<DemoQueryBuilderMemo> = useRef({});
-  console.log(memo, 'ccmemoc');
+
   const [state, setState] = useState<DemoQueryBuilderState>({
     tree: initTree,
     config: {
@@ -182,7 +182,7 @@ const FilterDataBuilder = memo(() => {
 
   const onConfigChanged = (e: Event) => {
     const { detail: { config, _initTree, _initValue } } = e as CustomEvent<CustomEventDetail>;
-    console.log('Updating config...');
+   
     setState({
       ...state,
       config,

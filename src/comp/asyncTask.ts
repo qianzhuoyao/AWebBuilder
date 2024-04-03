@@ -5,7 +5,6 @@ export const asyncTask = <T>() => {
     return this;
   };
   const run = async () => {
-    console.log(tasks, "tasks");
     for (const i of tasks) {
       await i();
     }

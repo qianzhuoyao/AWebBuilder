@@ -1,11 +1,10 @@
-import { Chip, Input } from '@nextui-org/react';
-import { useSelector } from 'react-redux';
-import { ILs } from '../../../../store/slice/logicSlice.ts';
-import { useCallback, useEffect, useState } from 'react';
-import { genLogicConfigMap } from '../../../../Logic/nodes/logicConfigMap.ts';
-import { ReplaySubject } from 'rxjs';
-import { createSingleInstance } from '../../../../comp/createSingleInstance.ts';
-
+import { Chip, Input } from "@nextui-org/react";
+import { useSelector } from "react-redux";
+import { ILs } from "../../../../store/slice/logicSlice.ts";
+import { useCallback, useEffect, useState } from "react";
+import { genLogicConfigMap } from "../../../../Logic/nodes/logicConfigMap.ts";
+import { ReplaySubject } from "rxjs";
+import { createSingleInstance } from "../../../../comp/createSingleInstance.ts";
 
 const syncTimeOutConfig = () => {
   const subject = new ReplaySubject();
@@ -23,68 +22,66 @@ export const TimeOutConfig = () => {
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
-  const loadTimeOut = String(genLogicConfigMap().configInfo.get(logicState.target[0])?.timerOutConfigInfo?.timeOut);
+  const loadTimeOut = String(
+    genLogicConfigMap().configInfo.get(logicState.target[0])?.timerOutConfigInfo
+      ?.timeOut
+  );
   const [time, setTime] = useState(loadTimeOut);
   const [subjectValue, setSubjectValue] = useState<ISubjectValue>({
     status: false,
   });
 
-
-  const updateTime = useCallback((time: string) => {
-    setTime(time);
-    genLogicConfigMap().configInfo.set(
-      logicState.target[0],
-      {
+  const updateTime = useCallback(
+    (time: string) => {
+      setTime(time);
+      genLogicConfigMap().configInfo.set(logicState.target[0], {
         timerOutConfigInfo: {
           timeOut: Number(time),
         },
-      },
-    );
-  }, [logicState.target]);
+      });
+    },
+    [logicState.target]
+  );
 
   useEffect(() => {
-    const subscription = getSyncTimeOutConfig().subject.subscribe(value => {
+    const subscription = getSyncTimeOutConfig().subject.subscribe((value) => {
       setSubjectValue(value as ISubjectValue);
-      console.log(value, 'ssss74');
     });
     return () => {
       subscription.unsubscribe();
     };
   }, []);
 
-
-  console.log(logicState.logicNodes, 'logicState.logicNodes');
-  return <>
-    <div>
-      <small>倒计时(ms):</small>
-      <Input
-        type="text"
-        placeholder="倒计时"
-        value={time}
-        labelPlacement="outside"
-        onChange={e => {
-          updateTime(e.target.value);
-        }}
-      />
-      <div className={'mt-1'}>
-        <small>工作状态:</small>
-        {/*{subjectValue?.status ? '工作中' : '未工作'}*/}
-        {subjectValue?.status ? <Chip
-          variant="faded"
-          color="success"
-        >
-          工作中
-        </Chip> : <Chip
-          variant="faded"
-          color="danger"
-        >
-          已结束
-        </Chip>}
+  return (
+    <>
+      <div>
+        <small>倒计时(ms):</small>
+        <Input
+          type="text"
+          placeholder="倒计时"
+          value={time}
+          labelPlacement="outside"
+          onChange={(e) => {
+            updateTime(e.target.value);
+          }}
+        />
+        <div className={"mt-1"}>
+          <small>工作状态:</small>
+          {/*{subjectValue?.status ? '工作中' : '未工作'}*/}
+          {subjectValue?.status ? (
+            <Chip variant="faded" color="success">
+              工作中
+            </Chip>
+          ) : (
+            <Chip variant="faded" color="danger">
+              已结束
+            </Chip>
+          )}
+        </div>
+        <div className={"mt-1"}>
+          <small>并发:</small>
+        </div>
       </div>
-      <div className={'mt-1'}>
-        <small>并发:</small>
-
-      </div>
-    </div>
-  </>;
+    </>
+  );
 };

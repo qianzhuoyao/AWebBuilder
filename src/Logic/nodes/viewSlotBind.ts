@@ -4,6 +4,7 @@ import mapSrc from "../../assets/widgetIcon/oi--project.svg";
 import { of } from "rxjs";
 import { inertViewCache } from "../../panel/data.ts";
 import { IViewMapInfo } from "./logicConfigMap.ts";
+import { IObjectNotNull } from "../../comp/filterObjValue.ts";
 
 //检查器
 export const viewLogicSlot = <T>() => {
@@ -20,15 +21,18 @@ export const viewLogicSlot = <T>() => {
   });
   ViewLogicSlot.signalIn("in-0", (value) => {
     //输入 =》数据绑定
-    console.log(value, "biff");
+
     //
     return of(value.pre);
   });
 
-  ViewLogicSlot.signalOut<any>("out", (value) => {
+  ViewLogicSlot.signalOut<unknown>("out", (value) => {
     //输出=》事件输出
-    console.log(value, "bdiff");
-    inertViewCache(value?.config?.viewMapInfo?.viewNodeId, value?.pre);
+
+    inertViewCache(
+      value?.config?.viewMapInfo?.viewNodeId,
+      value?.pre as IObjectNotNull<unknown>
+    );
     return of(value.pre);
   });
 };

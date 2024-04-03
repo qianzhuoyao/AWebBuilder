@@ -18,18 +18,18 @@ export const BuilderStruct = memo(() => {
         theme={theme === 'dark' ? 'solarized' : 'rjv-default'}
         src={jsonConfig}
 
-        onEdit={(e) => {
-          console.log(e);
+        onEdit={() => {
+     
         }}
-        onSelect={(s) => {
-          console.log(s);
+        onSelect={() => {
+   
 
         }}
-        onAdd={(a) => {
-          console.log(a);
+        onAdd={() => {
+ 
         }}
-        onDelete={(d) => {
-          console.log(d);
+        onDelete={() => {
+  
         }}
       />
     </div>
