@@ -84,7 +84,7 @@ export const panelSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
+// 
 export const {
   updatePanelColor,
   updateCurrentSTab,

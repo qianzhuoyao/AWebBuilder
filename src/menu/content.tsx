@@ -24,6 +24,7 @@ import {
   toSetLocalstorage,
 } from "../struct/toJSON.ts";
 import { ICs, updateContentList } from "../store/slice/configSlice.ts";
+import { DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW } from "../contant/index.ts";
 
 export const MenuContent = () => {
   const ConfigState = useSelector((state: { configSlice: ICs }) => {
@@ -134,10 +135,20 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
       search: `?name=${data?.viewName}`,
     });
   }, [data, dispatch, navigate]);
-  const toDemo = () => {
-    toSetLocalstorage(data.webNodes, data.webPanel, data.webLogic);
-    window.open(window.location.origin + "/demo/" + PanelState.workSpaceName);
-  };
+
+  const toDemo = useCallback(() => {
+    toSetLocalstorage(
+      PanelState.workSpaceName,
+      DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW,
+      data.webNodes,
+      data.webPanel,
+      data.webLogic
+    );
+    window.open(window.location.origin + "/demo?work=" + JSON.stringify({
+      indexList: [PanelState.workSpaceName]
+    }));
+  }, [PanelState.workSpaceName, data.webLogic, data.webNodes, data.webPanel]);
+
   return (
     <div>
       <Card className="py-1.5 min-w-[300px] max-h-[320px] cursor-pointer">

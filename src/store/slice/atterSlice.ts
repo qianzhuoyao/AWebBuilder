@@ -16,7 +16,7 @@ export const attrSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
+
 export const { updateAttrShow } = attrSlice.actions;
 
 export default attrSlice.reducer;

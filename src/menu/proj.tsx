@@ -26,11 +26,8 @@ import {
   updateDuration,
   updateIndexList,
 } from "../store/slice/configSlice";
-import {
-  DEMO_CAROUSEL_LOCALSTORAGE,
-  DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL,
-  DEMO_STATUS_LOCALSTORAGE,
-} from "../contant";
+import { DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL } from "../contant";
+import { toSetLocalstorage } from "../struct/toJSON";
 
 const IntervalContent = memo(() => {
   const ConfigState = useSelector((state: { configSlice: ICs }) => {
@@ -180,22 +177,29 @@ export const Proj = memo(() => {
   }, [onOpen]);
 
   const onToPreviewInterval = useCallback(() => {
-    localStorage.setItem(
-      DEMO_STATUS_LOCALSTORAGE,
-      DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL
-    );
-    localStorage.setItem(
-      DEMO_CAROUSEL_LOCALSTORAGE,
-      JSON.stringify({
-        ...ConfigState,
-      })
-    );
+    ConfigState.contentList?.records.map((rec) => {
+      toSetLocalstorage(
+        rec.viewName,
+        DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL,
+        rec.webNodes,
+        rec.webPanel,
+        rec.webLogic
+      );
+    });
+
     window.open(
       window.location.origin +
-        "/demo/" +
-        ConfigState.indexList.map((k) => k.name)
+        "/demo?work=" +
+        JSON.stringify({
+          indexList: ConfigState.indexList.map((k) => k.name),
+          duration: ConfigState.duration,
+        })
     );
-  }, [ConfigState]);
+  }, [
+    ConfigState.contentList?.records,
+    ConfigState.duration,
+    ConfigState.indexList,
+  ]);
 
   return (
     <div>

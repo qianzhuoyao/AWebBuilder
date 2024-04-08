@@ -9,11 +9,9 @@ import {
   getLayerContentToParse,
 } from "../panel/layers.ts";
 import {
+  DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL,
   DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW,
-  DEMO_LOGIC_LOCALSTORAGE,
-  DEMO_NODE_LOCALSTORAGE,
-  DEMO_PANEL_LOCALSTORAGE,
-  DEMO_STATUS_LOCALSTORAGE,
+  DEMO_LOCALSTORAGE,
   SERVICE_PORT,
 } from "../contant";
 import { IPs } from "../store/slice/panelSlice.ts";
@@ -55,10 +53,10 @@ export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
         nodes: JSON.stringify(NodesState),
       },
       window.location.protocol +
-        "//" +
-        window.location.hostname +
-        ":" +
-        SERVICE_PORT
+      "//" +
+      window.location.hostname +
+      ":" +
+      SERVICE_PORT
     );
   });
 };
@@ -99,10 +97,10 @@ export const frameSendDelete = <T>(data: T) => {
       type: "delete",
     },
     window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
+    "//" +
+    window.location.hostname +
+    ":" +
+    SERVICE_PORT
   );
 };
 /**
@@ -114,10 +112,10 @@ export const frameSendPageLoadSuccess = () => {
       type: "loadSuccess",
     },
     window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
+    "//" +
+    window.location.hostname +
+    ":" +
+    SERVICE_PORT
   );
 };
 
@@ -132,10 +130,10 @@ export const frameSendChangePageInfo = (pageNum: number) => {
       type: "changePage",
     },
     window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
+    "//" +
+    window.location.hostname +
+    ":" +
+    SERVICE_PORT
   );
 };
 /**
@@ -162,10 +160,10 @@ export const messageEventListener = <T>(callback: (params: T) => void) => {
     if (
       e.origin ===
       window.location.protocol +
-        "//" +
-        window.location.hostname +
-        ":" +
-        SERVICE_PORT
+      "//" +
+      window.location.hostname +
+      ":" +
+      SERVICE_PORT
     ) {
       callback(e.data?.data);
     }
@@ -174,24 +172,51 @@ export const messageEventListener = <T>(callback: (params: T) => void) => {
   return subscription;
 };
 
+const typeCheck = (value: string): object => {
+  const obj = JSON.parse(value)
+  if (obj instanceof Object) {
+    return obj
+  }
+  return {}
+}
+
 export const toSetLocalstorage = (
+  workSpace: string,
+  state: typeof DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW | typeof DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL,
   webNodesJSON: string,
   webPanelJSON: string,
   webLogicJSON: string
 ) => {
-  const LOGIC = JSON.parse(webLogicJSON);
-  window.localStorage.setItem(DEMO_NODE_LOCALSTORAGE, webNodesJSON || "{}");
-  window.localStorage.setItem(
-    DEMO_STATUS_LOCALSTORAGE,
-    DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW
-  );
-  window.localStorage.setItem(DEMO_PANEL_LOCALSTORAGE, webPanelJSON || "{}");
-  window.localStorage.setItem(
-    DEMO_LOGIC_LOCALSTORAGE,
-    JSON.stringify({
-      C: LOGIC?.C || "{}",
-      G: LOGIC?.G || "{}",
-      N: LOGIC?.N || "{}",
-    })
-  );
+  const LOGIC = JSON.parse(webLogicJSON || '{}');
+  const PANEL = JSON.parse(webPanelJSON || '{}')
+  const NODE = JSON.parse(webNodesJSON || '{}')
+
+
+  const pre_obj = window.localStorage.getItem(DEMO_LOCALSTORAGE) || "{}"
+
+  const DEMO_LOCALSTORAGE_OBJ = {
+    ...typeCheck(pre_obj),
+    [workSpace]: {
+      PANEL,
+      NODE,
+      LOGIC,
+      DEMO_STATUS_LOCALSTORAGE: state
+    }
+  }
+  console.log(DEMO_LOCALSTORAGE_OBJ, pre_obj, 'DEMO_LOCALSTORAGE_OBJ')
+  window.localStorage.setItem(DEMO_LOCALSTORAGE, JSON.stringify(DEMO_LOCALSTORAGE_OBJ))
+  // window.localStorage.setItem(DEMO_NODE_LOCALSTORAGE, webNodesJSON || "{}");
+  // window.localStorage.setItem(
+  //   DEMO_STATUS_LOCALSTORAGE,
+  //   DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW
+  // );
+  //window.localStorage.setItem(DEMO_PANEL_LOCALSTORAGE, webPanelJSON || "{}");
+  // window.localStorage.setItem(
+  //   DEMO_LOGIC_LOCALSTORAGE,
+  //   JSON.stringify({
+  //     C: LOGIC?.C || "{}",
+  //     G: LOGIC?.G || "{}",
+  //     N: LOGIC?.N || "{}",
+  //   })
+  // );
 };

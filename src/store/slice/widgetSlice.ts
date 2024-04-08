@@ -26,7 +26,7 @@ export const widgetSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
+// 
 export const { updateDraggable, updateCurrentLayer, updateShow } =
   widgetSlice.actions;
 

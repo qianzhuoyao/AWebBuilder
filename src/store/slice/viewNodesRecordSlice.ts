@@ -29,7 +29,7 @@ export const viewNodesRecordSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
+// 
 export const { recordChange } = viewNodesRecordSlice.actions;
 
 export default viewNodesRecordSlice.reducer;

@@ -18,6 +18,7 @@ import { genLogicConfigMapToJSON } from "../Logic/nodes/logicConfigMap.ts";
 import { toSaveJSON, toSetLocalstorage } from "../struct/toJSON.ts";
 
 import { IARs, RECORD_VIEW_NODE } from "../store/slice/viewNodesRecordSlice.ts";
+import { DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW } from "../contant/index.ts";
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
   return (
@@ -257,6 +258,8 @@ export const Nav = memo(() => {
   ]);
   const onPreView = useCallback(() => {
     toSetLocalstorage(
+      PanelState.workSpaceName,
+      DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW,
       JSON.stringify(NodesState),
       JSON.stringify(PanelState),
       JSON.stringify({
@@ -265,7 +268,13 @@ export const Nav = memo(() => {
         N: logicNodesConfigToJSON(),
       })
     );
-    window.open(window.location.origin + "/demo/" + PanelState.workSpaceName);
+    window.open(
+      window.location.origin +
+        "/demo?work=" +
+        JSON.stringify({
+          indexList: [PanelState.workSpaceName],
+        })
+    );
   }, [NodesState, PanelState]);
 
   return (

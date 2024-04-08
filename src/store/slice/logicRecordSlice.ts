@@ -19,7 +19,7 @@ export const logicRecordSlice = createSlice({
     },
   },
 });
-// 每个 case reducer 函数会生成对应的 Action creators
+// 
 export const { recordLogicChange } = logicRecordSlice.actions;
 
 export default logicRecordSlice.reducer;
