@@ -274,14 +274,6 @@ export const ImageTabs = [
   },
 ];
 
-// export const TableTabs = [
-//   {
-//     id: 'TableChartContent',
-//     label: '表格',
-//     content: <TableMap></TableMap>,
-//   },
-// ];
-
 const TabSlot: React.FC<ITs> = ({ ele }) => {
   return (
     <div className="flex h-[100%]">
@@ -332,11 +324,6 @@ export const WidgetMenu = memo(() => {
         label: <ChartIcon />,
         content: <TabSlot ele={ChartTabs}></TabSlot>,
       },
-      // {
-      //   id: 'table',
-      //   label: <TableIcon />,
-      //   content: <TabSlot ele={TableTabs}></TabSlot>,
-      // },
       {
         id: "image",
         label: <ImageIcon />,
@@ -348,7 +335,7 @@ export const WidgetMenu = memo(() => {
         content: <TabSlot ele={TextTabs}></TabSlot>,
       },
     ],
-    []
+    [ChartTabs]
   );
 
   return (

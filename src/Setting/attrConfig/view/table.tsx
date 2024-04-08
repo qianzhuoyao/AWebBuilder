@@ -102,7 +102,7 @@ const TakeForm = memo(() => {
         })
       );
     },
-    [NodesState.list, NodesState.targets]
+    [NodesState.list, NodesState.targets, dispatch]
   );
 
   const updateTableConfig = useCallback(() => {

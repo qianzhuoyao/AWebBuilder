@@ -15,8 +15,8 @@ export const useAttrSet = (deps?: React.DependencyList) => {
   });
   useEffect(() => {
     DefaultLogicConfig();
-    DefaultPanelViewConfig({ NodesState });
+    DefaultPanelViewConfig();
     AttrConfigInit({ NodesState, logicState });
-    AttrViewConfigInit({ NodesState, logicState });
+    AttrViewConfigInit();
   }, [NodesState, deps, logicState]);
 };

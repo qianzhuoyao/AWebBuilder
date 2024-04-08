@@ -17,8 +17,8 @@ const DefaultSetting = memo(({ target }: { target: string[] }) => {
   const { go } = useSignalMsg(logicState.target[0]);
   return (
     <>
-      {config.config.get("DEFAULT-LOGIC-PANEL-CONFIG") &&
-        (config.config.get("DEFAULT-LOGIC-PANEL-CONFIG") as IConfig)({
+      {config.config.get("DEFAULT_LOGIC_PANEL_CONFIG") &&
+        (config.config.get("DEFAULT_LOGIC_PANEL_CONFIG") as IConfig)({
           target,
           go,
         })}

@@ -77,7 +77,7 @@ export const timeInter = () => {
 
 ```tsx
 export const remoteGetConfig = () => {
-  //DEFAULT-LOGIC-PANEL-CONFIG 表示点击空白面板
+  //DEFAULT_LOGIC_PANEL_CONFIG 表示点击空白面板
   //参数 logic_D_get 就是组件注册的id
   const config = signalLogicNodeAttrConfig(logic_D_get);
   //nodeInfo 的target 是数组，表面 允许多选
@@ -97,7 +97,7 @@ export const remoteGetConfig = () => {
 export const DefaultLogicConfig = () => {
   //signalLogicNodeAttrConfig 是注册 组件 配置项组件
   //
-  const config = signalLogicNodeAttrConfig('DEFAULT-LOGIC-PANEL-CONFIG');
+  const config = signalLogicNodeAttrConfig('DEFAULT_LOGIC_PANEL_CONFIG');
   //setConfigEle 返回一个JSX.Element，用于插入组件
   config.setConfigEle(() => {
     const logicState = useSelector((state: { logicSlice: ILs }) => {

@@ -21,3 +21,5 @@ export const MAIN_LAYER = "MAIN_LAYER" as const;
 export const CONSTANT_DEMO_PATH = "/demo/" as const;
 
 export const SERVICE_PORT = 30081;
+
+export const DEFAULT_LOGIC_PANEL_CONFIG = 'DEFAULT-LOGIC-PANEL-CONFIG' as const

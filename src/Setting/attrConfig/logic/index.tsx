@@ -11,7 +11,7 @@ import { FilterDataConfig } from "./filterDataConfig.tsx";
 import { handleMixConfig } from "./mixConfig.tsx";
 
 export const DefaultLogicConfig = () => {
-  const config = signalLogicNodeAttrConfig("DEFAULT-LOGIC-PANEL-CONFIG");
+  const config = signalLogicNodeAttrConfig("DEFAULT_LOGIC_PANEL_CONFIG");
   config.setConfigEle(() => {
     return <div>-</div>;
   });
