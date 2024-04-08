@@ -291,21 +291,21 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                     </TableCell>
                   </TableRow>
                   <TableRow key="1">
-                    <TableCell>锚定面板</TableCell>
+                    <TableCell>锁定面板</TableCell>
                     <TableCell>
-                      <Kbd keys={[]}>KeyQ+Mouse1Down</Kbd>
+                      <Kbd keys={[]}>KeyS</Kbd>
                     </TableCell>
                     <TableCell>
-                      <Kbd keys={[]}>KeyQ+Mouse1Down</Kbd>
+                      <Kbd keys={[]}>KeyS</Kbd>
                     </TableCell>
                   </TableRow>
                   <TableRow key="1">
-                    <TableCell>延续多选</TableCell>
+                    <TableCell>多选</TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
+                      <Kbd keys={["shift"]}>KeyQ</Kbd>
                     </TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ+Shift+Mouse1Down</Kbd>
+                      <Kbd keys={["shift"]}>KeyQ</Kbd>
                     </TableCell>
                   </TableRow>
                 </TableBody>

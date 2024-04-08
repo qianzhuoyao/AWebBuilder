@@ -58,7 +58,7 @@ const DraggableTableHeader = <T,>({
     transition: "width transform 0.2s ease-in-out",
     whiteSpace: "nowrap",
     width: header.getSize(),
-    zIndex: isDragging ? 1000 : 0,
+    zIndex: isDragging ? 100 : 0,
   };
 
   return (

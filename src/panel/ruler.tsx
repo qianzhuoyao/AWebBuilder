@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState } from "react";
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import Guides from "@scena/react-guides";
@@ -12,33 +12,14 @@ import {
 } from "../store/slice/panelSlice";
 import { useSelector } from "react-redux";
 import { useCustomHotKeys } from "./hotKey";
-import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
+import { AR_PANEL_DOM_ID } from "../contant";
 
 export const ARuler = React.memo(() => {
-  const [force, setForce] = useState(false);
+  const [sceneLock, setSceneLock] = useState(true);
 
   const ges = useRef<{ g: Gesto | null }>({ g: null });
-  useHotkeys("q", () => setForce(true), { keyup: false, keydown: true });
-  useHotkeys("q", () => setForce(false), { keyup: true, keydown: false });
-
-  const mouseForce = useCallback((e: MouseEvent) => {
-    if ((e.target as HTMLElement).getAttribute(ATTR_TAG) === Node) {
-      setForce(true);
-    }
-  }, []);
-
-  const mouseUnForce = useCallback(() => {
-    setForce(false);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("mousedown", mouseForce);
-    window.addEventListener("mouseup", mouseUnForce);
-    return () => {
-      window.removeEventListener("mousedown", mouseForce);
-      window.removeEventListener("mouseup", mouseUnForce);
-    };
-  }, []);
+  useHotkeys("s", () => setSceneLock(false), { keyup: false, keydown: true });
+  useHotkeys("s", () => setSceneLock(true), { keyup: true, keydown: false });
 
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
@@ -63,7 +44,7 @@ export const ARuler = React.memo(() => {
     ges.current.g = new Gesto(dom);
 
     ges.current.g.on("drag", (e) => {
-      if (!PanelState.lockTransform && !force) {
+      if (!sceneLock) {
         scrollX -= e.deltaX;
         scrollY -= e.deltaY;
         guides1.current?.scrollGuides(scrollY);
@@ -86,7 +67,7 @@ export const ARuler = React.memo(() => {
       ArDomResizeObserver.unobserve(dom);
       ArDomResizeObserver.disconnect();
     };
-  }, [PanelState.lockTransform, force]);
+  }, [PanelState.lockTransform, sceneLock]);
   return (
     <div className="page h-full relative">
       {/* <div className="box" onClick={restore}></div> */}
