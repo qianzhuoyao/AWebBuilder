@@ -290,7 +290,7 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                       <Kbd keys={[]}>KeyF+Wheel</Kbd>
                     </TableCell>
                   </TableRow>
-                  <TableRow key="1">
+                  <TableRow key="2">
                     <TableCell>锁定面板</TableCell>
                     <TableCell>
                       <Kbd keys={[]}>KeyS</Kbd>
@@ -299,13 +299,22 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                       <Kbd keys={[]}>KeyS</Kbd>
                     </TableCell>
                   </TableRow>
-                  <TableRow key="1">
+                  <TableRow key="3">
                     <TableCell>多选</TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ</Kbd>
+                      <Kbd keys={["shift"]}>KeyW</Kbd>
                     </TableCell>
                     <TableCell>
-                      <Kbd keys={["shift"]}>KeyQ</Kbd>
+                      <Kbd keys={["shift"]}>KeyW</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="4">
+                    <TableCell>锚定节点</TableCell>
+                    <TableCell>
+                      <Kbd keys={["shift"]}>KeyV</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["shift"]}>KeyV</Kbd>
                     </TableCell>
                   </TableRow>
                 </TableBody>

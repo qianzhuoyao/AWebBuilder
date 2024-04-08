@@ -34,29 +34,6 @@ export const Temp = memo(
         id,
       }) || <></>
     );
-    // if (NodesState.list[id]?.classify === pix_BX) {
-    //   return (
-    //     <MemoChart
-    //       type={NodesState.list[id].instance.type}
-    //       node={NodesState.list[id]}
-    //       isTemp={isTemp}
-    //       tickUnit={PanelState.tickUnit}
-    //       parseOption={parseOptionString}
-    //     />
-    //   );
-    // } else if (NodesState.list[id]?.classify === pix_Table) {
-    //   return (
-    //     <div className={"overflow-scroll w-full h-full"}>
-    //       <ATable id={id} streamData={getWCache(id)}></ATable>
-    //     </div>
-    //   );
-    // } else if (NodesState.list[id]?.classify === pic_Img) {
-    //   return (
-    //     <div className={"w-full h-full"}>
-    //       <BaseImage config={NodesState.list[id]}></BaseImage>
-    //     </div>
-    //   );
-    // }
   }
 );
 

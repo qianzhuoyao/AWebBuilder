@@ -13,6 +13,7 @@ import { IPs } from "../store/slice/panelSlice.ts";
 import { INs, IViewNode } from "../store/slice/nodeSlice.ts";
 import { ILogicNode } from "../store/slice/logicSlice.ts";
 import { viewNodesToJSON } from "../node/viewConfigSubscribe.ts";
+import { toImage } from "../comp/domToImage.ts";
 
 export interface IParseInPanel {
   webLogic: string;
@@ -28,26 +29,29 @@ export interface IParseInPanel {
  * @param NodesState
  */
 export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
-  window.parent.postMessage(
-    {
-      type: "save",
-      name: PanelState.workSpaceName,
-      panel: JSON.stringify(PanelState),
-      logic: {
-        C: genLogicConfigMapToJSON(),
-        G: getWDGraph().toJSON(),
-        N: logicNodesConfigToJSON(),
-        L: getLayerContentToJSON(),
+  toImage().then((image) => {
+    window.parent.postMessage(
+      {
+        type: "save",
+        name: PanelState.workSpaceName,
+        panel: JSON.stringify(PanelState),
+        shotImage: image,
+        logic: {
+          C: genLogicConfigMapToJSON(),
+          G: getWDGraph().toJSON(),
+          N: logicNodesConfigToJSON(),
+          L: getLayerContentToJSON(),
+        },
+        nodeConfig: viewNodesToJSON(),
+        nodes: JSON.stringify(NodesState),
       },
-      nodeConfig: viewNodesToJSON(),
-      nodes: JSON.stringify(NodesState),
-    },
-    window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
-  );
+      window.location.protocol +
+        "//" +
+        window.location.hostname +
+        ":" +
+        SERVICE_PORT
+    );
+  });
 };
 
 /**

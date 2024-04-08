@@ -12,7 +12,7 @@ import {
   updateTargets,
 } from "../store/slice/nodeSlice";
 import { IPs } from "../store/slice/panelSlice";
-import { IWls } from "../store/slice/widgetSlice";
+import { IWls, updateDraggable } from "../store/slice/widgetSlice";
 import { ItemParams } from "react-contexify";
 import {
   RECORD_VIEW_NODE,
@@ -24,13 +24,64 @@ import { ATTR_TAG, Node, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
 
+const useNodeContainerHotKeys = () => {
+  const [lock, setLock] = useState(false);
+  const dispatch = useDispatch();
+  useHotkeys(
+    "w",
+    () => {
+      setLock(true);
+    },
+    { keyup: false, keydown: true }
+  );
+  useHotkeys(
+    "w",
+    () => {
+      setLock(false);
+    },
+    { keyup: true, keydown: false }
+  );
+
+  useHotkeys(
+    "v",
+    () => {
+      dispatch(updateDraggable(false));
+    },
+    { keyup: false, keydown: true }
+  );
+  useHotkeys(
+    "v",
+    () => {
+      dispatch(updateDraggable(true));
+    },
+    { keyup: true, keydown: false }
+  );
+
+  useHotkeys(
+    "s",
+    () => {
+      dispatch(updateDraggable(false));
+    },
+    { keyup: false, keydown: true }
+  );
+  useHotkeys(
+    "s",
+    () => {
+      dispatch(updateDraggable(true));
+    },
+    { keyup: true, keydown: false }
+  );
+  return {
+    lock,
+  };
+};
+
 export const NodeContainer = memo(() => {
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
   const layerViewNode = useFilterViewNode();
-  const [lock, setLock] = useState(false);
-  useHotkeys("q", () => setLock(true), { keyup: false, keydown: true });
-  useHotkeys("q", () => setLock(false), { keyup: true, keydown: false });
+  const { lock } = useNodeContainerHotKeys();
+
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
