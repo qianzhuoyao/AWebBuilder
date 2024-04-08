@@ -30,6 +30,7 @@ export interface IParseInPanel {
  */
 export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
   toImage().then((image) => {
+    console.log(image,'image')
     window.parent.postMessage(
       {
         type: "save",

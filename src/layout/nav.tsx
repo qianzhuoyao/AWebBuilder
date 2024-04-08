@@ -270,7 +270,7 @@ export const Nav = memo(() => {
 
   return (
     <>
-      <div className="flex justify-between m-1 border-zinc-200 border-b-[1px] pb-1 h-[44px]">
+      <div className="flex justify-between m-1 border-zinc-200 border-b-[1px] h-[44px]">
         <div className="flex items-center">
           <Link to={"/menu"}>
             <Button isIconOnly variant="light" aria-label="locale" size="sm">

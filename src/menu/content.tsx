@@ -49,7 +49,7 @@ export const MenuContent = () => {
 
   return (
     <>
-      <div className="flex flex-wrap content-start">
+      <div className="flex flex-wrap content-start h-[calc(100vh_-_180px)]">
         {list?.records?.map((item, index) => {
           return (
             <Fragment key={index}>
@@ -155,16 +155,6 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
               删除
             </small>
           </div>
-          {/*<div className="flex-col items-end">*/}
-          {/*  <p className="flex items-center mb-1">*/}
-          {/*    <small className="text-default-500 mr-1">构建人:</small>*/}
-          {/*    <small>admin</small>*/}
-          {/*  </p>*/}
-          {/*  <p className="flex items-center">*/}
-          {/*    <small className="text-default-500">构建日期:</small>*/}
-          {/*    <small>2024.01.01</small>*/}
-          {/*  </p>*/}
-          {/*</div>*/}
         </CardFooter>
       </Card>
       <Spacer x={4} />
