@@ -361,11 +361,11 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                 </TableBody>
               </Table>
             </ModalBody>
-            <ModalFooter>
+            {/* <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
                 关闭
               </Button>
-            </ModalFooter>
+            </ModalFooter> */}
           </>
         )}
       </ModalContent>

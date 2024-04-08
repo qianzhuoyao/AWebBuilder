@@ -2,7 +2,12 @@
 import { Temp } from "../panel/operation.tsx";
 import { useEffect } from "react";
 import { nodeBuilder } from "../Logic/nodes";
-import { CONSTANT_DEMO_PATH } from "../contant";
+import {
+  CONSTANT_DEMO_PATH,
+  DEMO_LOGIC_LOCALSTORAGE,
+  DEMO_NODE_LOCALSTORAGE,
+  DEMO_PANEL_LOCALSTORAGE,
+} from "../contant";
 import { genWDGraph } from "../DirGraph/weightedDirectedGraph.ts";
 import { parseMakeByFromId } from "../comp/signal3.ts";
 import { createNode } from "../panel/logicPanelEventSubscribe.ts";
@@ -17,9 +22,9 @@ export const Demo = () => {
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
-  const previewLogic = window.localStorage.getItem("DEMO-LOGIC#");
-  const previewData = window.localStorage.getItem("DEMO-NODE#");
-  const previewPanelData = window.localStorage.getItem("DEMO-PANEL#");
+  const previewLogic = window.localStorage.getItem(DEMO_LOGIC_LOCALSTORAGE);
+  const previewData = window.localStorage.getItem(DEMO_NODE_LOCALSTORAGE);
+  const previewPanelData = window.localStorage.getItem(DEMO_PANEL_LOCALSTORAGE);
   const parseConfig = JSON.parse(previewLogic || "{}");
   const data = JSON.parse(previewData || "{}");
 
@@ -27,7 +32,7 @@ export const Demo = () => {
     if (window.location.pathname.slice(0, 6) === CONSTANT_DEMO_PATH) {
       nodeBuilder();
       templateMain();
-      genLogicConfigMapToParse(parseConfig.C);
+      genLogicConfigMapToParse(parseConfig.C||'{}');
       (Object.values(data.list || {}) as IViewNode[])?.map((item) => {
         dispatch(
           addNode({
@@ -60,7 +65,7 @@ export const Demo = () => {
           } as ILogicNode);
         }
       );
-      const newGraph = genWDGraph(parseConfig.G || "");
+      const newGraph = genWDGraph(parseConfig.G || "{}");
       //查找所有入度为0的点执行
       newGraph
         ?.getVertices()

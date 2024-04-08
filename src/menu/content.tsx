@@ -7,7 +7,7 @@ import {
   Image,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect } from "react";
 import { IPs, updateWorkSpaceName } from "../store/slice/panelSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addNode } from "../store/slice/nodeSlice";
@@ -23,19 +23,21 @@ import {
   toParseInPanel,
   toSetLocalstorage,
 } from "../struct/toJSON.ts";
+import { ICs, updateContentList } from "../store/slice/configSlice.ts";
 
 export const MenuContent = () => {
-  const [list, setList] = useState<{
-    total: number;
-    records: IParseInPanel[];
-  } | null>(null);
+  const ConfigState = useSelector((state: { configSlice: ICs }) => {
+    return state.configSlice;
+  });
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const sub = messageEventListener<{
       total: number;
       records: IParseInPanel[];
     }>((data) => {
-      setList(data);
+      dispatch(updateContentList(data));
     });
     frameSendPageLoadSuccess();
     return () => {
@@ -50,7 +52,7 @@ export const MenuContent = () => {
   return (
     <>
       <div className="flex flex-wrap content-start h-[calc(100vh_-_180px)]">
-        {list?.records?.map((item, index) => {
+        {ConfigState.contentList?.records?.map((item, index) => {
           return (
             <Fragment key={index}>
               <Each data={item}></Each>
@@ -62,7 +64,7 @@ export const MenuContent = () => {
         <Pagination
           isCompact
           showControls
-          total={(list?.total || 1) / 10 + 1}
+          total={(ConfigState.contentList?.total || 1) / 10 + 1}
           initialPage={1}
           onChange={(page) => {
             changePage(page);
@@ -126,7 +128,7 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
         );
       },
     });
-    genWDGraph(JSON.parse(data.webLogic || "{}")?.G || "");
+    genWDGraph(JSON.parse(data.webLogic || "{}")?.G || "{}");
     navigate({
       pathname: "/panel",
       search: `?name=${data?.viewName}`,

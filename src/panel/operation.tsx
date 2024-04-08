@@ -7,7 +7,7 @@ import {
   updatePosition,
   updateTargets,
 } from "../store/slice/nodeSlice";
-import { ATTR_TAG, Node, NODE_ID, SCENE } from "../contant";
+import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID, SCENE } from "../contant";
 import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler.ts";
 
 import { NodeContainer } from "./nodeContainer.tsx";
@@ -83,7 +83,7 @@ export const NodeSlot = memo(
         return;
       }
       [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
-        ele.setAttribute(ATTR_TAG, Node);
+        ele.setAttribute(ATTR_TAG, NODE_TYPE_CODE);
         ele.setAttribute(NODE_ID, node.id);
       });
     }, [NodesState]);

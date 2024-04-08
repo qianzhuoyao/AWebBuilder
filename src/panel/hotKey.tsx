@@ -15,7 +15,7 @@ import {
   updateIsSelection,
   updatePanelTickUnit,
 } from "../store/slice/panelSlice";
-import { AR_PANEL_DOM_ID, ATTR_TAG, Node } from "../contant";
+import { AR_PANEL_DOM_ID, ATTR_TAG, NODE_TYPE_CODE } from "../contant";
 import { updateTargets } from "../store/slice/nodeSlice";
 import { checkMouseDownInArea } from "../comp/mousdownArea.ts";
 
@@ -148,7 +148,7 @@ const useDefaultBlurEvent = () => {
     const D$ = mousedown$.pipe(
       map((d) => {
         if (d?.target instanceof HTMLElement) {
-          if (d?.target.getAttribute(ATTR_TAG) !== Node) {
+          if (d?.target.getAttribute(ATTR_TAG) !== NODE_TYPE_CODE) {
             if (
               checkMouseDownInArea(
                 {

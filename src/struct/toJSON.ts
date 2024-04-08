@@ -8,7 +8,14 @@ import {
   getLayerContentToJSON,
   getLayerContentToParse,
 } from "../panel/layers.ts";
-import { SERVICE_PORT } from "../contant";
+import {
+  DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW,
+  DEMO_LOGIC_LOCALSTORAGE,
+  DEMO_NODE_LOCALSTORAGE,
+  DEMO_PANEL_LOCALSTORAGE,
+  DEMO_STATUS_LOCALSTORAGE,
+  SERVICE_PORT,
+} from "../contant";
 import { IPs } from "../store/slice/panelSlice.ts";
 import { INs, IViewNode } from "../store/slice/nodeSlice.ts";
 import { ILogicNode } from "../store/slice/logicSlice.ts";
@@ -21,6 +28,7 @@ export interface IParseInPanel {
   viewName: string;
   webPanel: string;
   img?: string;
+  viewId: string;
 }
 
 /**
@@ -30,7 +38,7 @@ export interface IParseInPanel {
  */
 export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
   toImage().then((image) => {
-    console.log(image,'image')
+    console.log(image, "image");
     window.parent.postMessage(
       {
         type: "save",
@@ -70,14 +78,14 @@ export const toParseInPanel = (
   const parseJsonData = JSON.parse(data.webLogic || "{}");
   const parseJsonView = JSON.parse(data.webNodes || "{}");
   getLayerContentToParse(parseJsonData?.L || "{}");
-  genLogicConfigMapToParse(parseJsonData?.C);
+  genLogicConfigMapToParse(parseJsonData?.C || "{}");
   Object.values(parseJsonView?.list || {})?.map((item) => {
     panelViewPaint.paintViewNodesEach(item as IViewNode);
   });
   Object.values(JSON.parse(parseJsonData?.N || "{}"))?.map((node) => {
     panelViewPaint.paintLogicNodesEach(node as ILogicNode);
   });
-  genWDGraph(parseJsonData?.G || "");
+  genWDGraph(parseJsonData?.G || "{}");
 };
 
 /**
@@ -172,10 +180,14 @@ export const toSetLocalstorage = (
   webLogicJSON: string
 ) => {
   const LOGIC = JSON.parse(webLogicJSON);
-  window.localStorage.setItem("DEMO-NODE#", webNodesJSON || "{}");
-  window.localStorage.setItem("DEMO-PANEL#", webPanelJSON || "{}");
+  window.localStorage.setItem(DEMO_NODE_LOCALSTORAGE, webNodesJSON || "{}");
   window.localStorage.setItem(
-    "DEMO-LOGIC#",
+    DEMO_STATUS_LOCALSTORAGE,
+    DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW
+  );
+  window.localStorage.setItem(DEMO_PANEL_LOCALSTORAGE, webPanelJSON || "{}");
+  window.localStorage.setItem(
+    DEMO_LOGIC_LOCALSTORAGE,
     JSON.stringify({
       C: LOGIC?.C || "{}",
       G: LOGIC?.G || "{}",

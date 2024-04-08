@@ -22,11 +22,7 @@ interface MessagesData {
 const Loading = async () => {
   await new Promise((r) => setTimeout(r, 500));
   return {
-    messages: [
-      "Message 1 from Dashboard.tsx loader",
-      "Message 2 from Dashboard.tsx loader",
-      "Message 3 from Dashboard.tsx loader",
-    ],
+    messages: ["1", "2", "3"],
   } as MessagesData;
 };
 

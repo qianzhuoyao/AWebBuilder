@@ -20,7 +20,7 @@ import {
 } from "../store/slice/viewNodesRecordSlice";
 import { useSceneContext } from "../menu/context";
 import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler";
-import { ATTR_TAG, Node, PANEL_MAIN_BG } from "../contant";
+import { ATTR_TAG, NODE_TYPE_CODE, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -342,7 +342,7 @@ export const NodeContainer = memo(() => {
         onSelectEnd={(e) => {
           setTimeout(() => {
             [...document.querySelectorAll(".moveable-area")].forEach((node) => {
-              node.setAttribute(ATTR_TAG, Node);
+              node.setAttribute(ATTR_TAG, NODE_TYPE_CODE);
             });
           }, 0);
           if (e.isDragStartEnd) {

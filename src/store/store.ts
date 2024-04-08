@@ -8,12 +8,14 @@ import logicSlice from "./slice/logicSlice";
 import undoable from "redux-undo";
 import viewNodesRecordSlice from "./slice/viewNodesRecordSlice";
 import logicRecordSlice from "./slice/logicRecordSlice";
+import configSlice from "./slice/configSlice";
 
 export default configureStore({
   reducer: {
     panelSlice,
     attrSlice,
     widgetMapSlice,
+    configSlice,
     widgetSlice,
     viewNodesRecordSlice: undoable(viewNodesRecordSlice, {
       undoType: "viewUndo",
