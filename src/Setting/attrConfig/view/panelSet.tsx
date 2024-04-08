@@ -340,11 +340,11 @@ const PanelSetting = memo(() => {
   );
 });
 const tabs = [
-  {
-    id: "panel",
-    label: "面板设置",
-    content: <PanelSetting></PanelSetting>,
-  },
+  // {
+  //   id: "panel",
+  //   label: "面板设置",
+  //   content: <PanelSetting></PanelSetting>,
+  // },
   {
     id: "page",
     label: "容器配置",

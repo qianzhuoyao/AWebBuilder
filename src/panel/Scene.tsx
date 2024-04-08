@@ -57,6 +57,47 @@ import { ReactKey } from "@react-awesome-query-builder/mui";
 import { updateCurrentLayer } from "../store/slice/widgetSlice.ts";
 import { useFilterLogicNode, useFilterViewNode } from "./useFilter.tsx";
 
+export function SolarLockBoldDuotone(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M2 16c0-2.828 0-4.243.879-5.121C3.757 10 5.172 10 8 10h8c2.828 0 4.243 0 5.121.879C22 11.757 22 13.172 22 16c0 2.828 0 4.243-.879 5.121C20.243 22 18.828 22 16 22H8c-2.828 0-4.243 0-5.121-.879C2 20.243 2 18.828 2 16"
+        opacity={0.5}
+      ></path>
+      <path
+        fill="currentColor"
+        d="M6.75 8a5.25 5.25 0 0 1 10.5 0v2.004c.567.005 1.064.018 1.5.05V8a6.75 6.75 0 0 0-13.5 0v2.055a23.57 23.57 0 0 1 1.5-.051z"
+      ></path>
+    </svg>
+  );
+}
+
+export function MaterialSymbolsLightDeleteOutline(
+  props: SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M7.615 20q-.67 0-1.143-.472Q6 19.056 6 18.385V6H5V5h4v-.77h6V5h4v1h-1v12.385q0 .69-.462 1.152T16.385 20zM17 6H7v12.385q0 .269.173.442t.442.173h8.77q.23 0 .423-.192t.192-.423zM9.808 17h1V8h-1zm3.384 0h1V8h-1zM7 6v13z"
+      ></path>
+    </svg>
+  );
+}
+
 export function MaterialSymbolsCreateNewFolderOutline(
   props: SVGProps<SVGSVGElement>
 ) {
@@ -786,7 +827,27 @@ const LayerContent = memo(() => {
         }}
         onSelectionChange={(key) => onHandleSelectLayer(key)}
       >
-        {(item) => <Tab key={item.id} title={item.label}></Tab>}
+        {(item) => (
+          <Tab
+            key={item.id}
+            title={
+              <div className="flex items-center justify-between">
+                <small className="pr-1">{item.label}</small>
+                {item.label === "主图层" ? (
+                  <SolarLockBoldDuotone></SolarLockBoldDuotone>
+                ) : (
+                  <MaterialSymbolsLightDeleteOutline
+                    onClick={() => {
+                      setSLayerTabs((cur) => {
+                        return cur.filter((c) => c.id !== item.id);
+                      });
+                    }}
+                  ></MaterialSymbolsLightDeleteOutline>
+                )}
+              </div>
+            }
+          ></Tab>
+        )}
       </Tabs>
       <Card className="rounded-none h-[100%] w-full">
         <CardBody className="p-0">

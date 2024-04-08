@@ -33,6 +33,7 @@ const DraggableTableHeader = <T,>({
   header: Header<T, unknown>;
   table: Table<T>;
 }) => {
+  console.log(header,'sfheaders')
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: header.column.id,
@@ -50,7 +51,7 @@ const DraggableTableHeader = <T,>({
   }, [dispatch]);
 
   useMouseUp(mouseUpDefaultSetDraggable);
-
+  console.log(header, "headers");
   const style: CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     position: "relative",
@@ -67,7 +68,7 @@ const DraggableTableHeader = <T,>({
       {...{
         colSpan: header.colSpan,
         key: header.id,
-        className: "th",
+        className: "thz bg-[#f5f8fd] text-[#000c] text-[13px]",
         style: style,
       }}
     >
@@ -90,7 +91,13 @@ const DraggableTableHeader = <T,>({
   );
 };
 
-const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
+const DragAlongCell = <T,>({
+  cell,
+  color,
+}: {
+  cell: Cell<T, unknown>;
+  color: string;
+}) => {
   const { isDragging, setNodeRef, transform } = useSortable({
     id: cell.column.id,
   });
@@ -102,6 +109,8 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
     transition: "width transform 0.2s ease-in-out",
     width: cell.column.getSize(),
     zIndex: isDragging ? 1 : 0,
+    color:'#000',
+    background: color,
   };
 
   return (
@@ -169,7 +178,7 @@ export const ATable = memo(
                     ];
                   },
                   header: () => <span>{item[value.colLabel || ""]}</span>,
-                  id: value.colProp || v4(),
+                  id: item[value?.colProp || ""]  || v4(),
                 };
               }) as ColumnDef<T>[];
             }
@@ -199,8 +208,9 @@ export const ATable = memo(
       <>
         {columns.length > 0 ? (
           <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-            <div>
+            <div className="w-full h-full overflow-scroll">
               <table
+                className="w-full h-full"
                 style={{
                   //width: table.getCenterTotalSize(),
                   width: table.getCenterTotalSize(),
@@ -211,7 +221,7 @@ export const ATable = memo(
                     <div
                       {...{
                         key: headerGroup.id,
-                        className: "tr",
+                        className: "trz",
                       }}
                     >
                       <SortableContext
@@ -229,12 +239,12 @@ export const ATable = memo(
                     </div>
                   ))}
                 </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
+                <tbody className="bg-[#fff]">
+                  {table.getRowModel().rows.map((row, index) => (
                     <div
                       {...{
                         key: row.id,
-                        className: "tr",
+                        className: `trz`,
                       }}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -243,7 +253,11 @@ export const ATable = memo(
                           items={columnOrder}
                           strategy={horizontalListSortingStrategy}
                         >
-                          <DragAlongCell key={cell.id} cell={cell} />
+                          <DragAlongCell
+                            color={index % 2 ? "#e1e1e1" : "#fff"}
+                            key={cell.id}
+                            cell={cell}
+                          />
                         </SortableContext>
                       ))}
                     </div>
