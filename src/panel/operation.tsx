@@ -119,7 +119,7 @@ export const NodeSlot = memo(
       } else {
         dispatch(updateTargets([nodeRef.current?.id]));
       }
-    }, [isTemp, node.id]);
+    }, [dispatch, isTemp, node.id]);
 
     return (
       <div
@@ -134,9 +134,6 @@ export const NodeSlot = memo(
                 height: "100%",
               }
             : {
-                // left: node.x / PanelState.tickUnit + "px",
-                // top: node.y / PanelState.tickUnit + "px",
-                // transform: node.transform,
                 width: node.w / PanelState.tickUnit + "px",
                 height: node.h / PanelState.tickUnit + "px",
               }
