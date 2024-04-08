@@ -13,14 +13,27 @@ import { genLogicConfigMapToParse } from "../Logic/nodes/logicConfigMap.ts";
 import { templateMain } from "../node/index.ts";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { loop } from "../comp/loop.ts";
+import { IPs } from "../store/slice/panelSlice.ts";
+
+interface ICurrentData {
+  LOGIC: {
+    C: string;
+    N: string;
+    G: string;
+  };
+  PANEL: IPs;
+  NODE: {
+    list: IViewNode;
+  };
+}
 
 export const Demo = () => {
   const indexRef = useRef<{
     index: number;
-    currentData: any;
+    currentData: ICurrentData | null;
   }>({
     index: 0,
-    currentData: {},
+    currentData: null,
   });
   const [search] = useSearchParams();
   const dispatch = useDispatch();
@@ -30,13 +43,10 @@ export const Demo = () => {
   });
   const localStorageDataJSON = window.localStorage.getItem(DEMO_LOCALSTORAGE);
   const localStorageData = JSON.parse(localStorageDataJSON || "{}");
-  console.log(localStorageData[search.get("work") || ""], "dasdasd");
   const params = JSON.parse(search.get("work") || "{}");
-  console.log(params, "asdasffff");
   const pathList = params?.indexList || [];
-  console.log(params, search.get("work"), "sfasgtagsasg");
   const draw = useCallback(
-    (currentData: any) => {
+    (currentData: ICurrentData | null) => {
       if (location.pathname + "/" === CONSTANT_DEMO_PATH && currentData) {
         nodeBuilder();
         templateMain();
@@ -108,7 +118,7 @@ export const Demo = () => {
         if (indexRef.current.index >= pathList.length - 1) {
           indexRef.current.index++;
         }
-        console.log(indexRef.current.currentData,"loop");
+        console.log(indexRef.current.currentData, "loop");
         draw(indexRef.current.currentData);
       });
       return () => {
