@@ -140,7 +140,14 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
     <div>
       <Card className="py-1.5 min-w-[300px] max-h-[320px] cursor-pointer">
         <CardBody className="overflow-visible py-2">
-          <Image width={300} alt="NextUI hero Image" src={data?.img} />
+          <div className="border-slate-500 border rounded-md">
+            <Image
+              width={300}
+              alt="visImageShot"
+              src={data?.img}
+              className="h-[200px]"
+            />
+          </div>
         </CardBody>
         <CardFooter className="justify-between">
           <div>
