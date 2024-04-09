@@ -6,6 +6,7 @@ import { signalViewNode } from "./baseViewNode";
 export const TableTemplate = () => {
   const table = signalViewNode(pix_Table);
   table.createElement((_, { id }) => {
+    console.log(getWCache(id),'getWCache(id)')
     return (
       <div
         style={{
@@ -13,7 +14,7 @@ export const TableTemplate = () => {
           width: "100%",
         }}
       >
-        <ATable id={id} streamData={getWCache(id)}></ATable>
+        <ATable id={id}></ATable>
       </div>
     );
   });

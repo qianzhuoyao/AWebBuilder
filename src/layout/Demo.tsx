@@ -47,11 +47,28 @@ export const Demo = () => {
   const pathList = params?.indexList || [];
 
   const draw = useCallback(
-
     (currentData: ICurrentData | null) => {
-      console.log(currentData, 'useCallback')
+      console.log(currentData, "useCallback");
       if (location.pathname + "/" === CONSTANT_DEMO_PATH && currentData) {
         genLogicConfigMapToParse(currentData?.LOGIC?.C || "{}");
+
+        (
+          Object.values(
+            JSON.parse(currentData?.LOGIC?.N || "{}")
+          ) as ILogicNode[]
+        )?.map((node) => {
+          createNode({
+            typeId: node.typeId,
+            belongClass: node.belongClass,
+            x: 1,
+            y: 1,
+            shape: "image",
+            width: 40,
+            height: 40,
+            id: node.id,
+            imageUrl: node.imageUrl,
+          } as ILogicNode);
+        });
         (Object.values(currentData?.NODE?.list || {}) as IViewNode[])?.map(
           (item) => {
             dispatch(
@@ -71,42 +88,27 @@ export const Demo = () => {
           }
         );
 
-        (
-          Object.values(
-            JSON.parse(currentData?.LOGIC?.N || "{}")
-          ) as ILogicNode[]
-        )?.map((node) => {
-          createNode({
-            typeId: node.typeId,
-            belongClass: node.belongClass,
-            x: 1,
-            y: 1,
-            shape: "image",
-            width: 40,
-            height: 40,
-            id: node.id,
-            imageUrl: node.imageUrl,
-          } as ILogicNode);
-        });
-        const newGraph = genWDGraph(currentData?.LOGIC?.G || "{}");
-        //查找所有入度为0的点执行
-        newGraph
-          ?.getVertices()
-          .filter((node) => {
-            return newGraph?.getInDegree(node).length === 0;
-          })
-          .map((taskNodeId) => {
-            parseMakeByFromId(taskNodeId, {
-              toAnd1: () => void 0,
-              toAnd0: () => void 0,
-              edgeRunOver: () => void 0,
-              taskErrorRecord: () => void 0,
-              toLoopStop: () => void 0,
-              logicItemOver: () => void 0,
-              complete: () => void 0,
-              startRun: () => void 0,
+        setTimeout(() => {
+          const newGraph = genWDGraph(currentData?.LOGIC?.G || "{}");
+          //查找所有入度为0的点执行
+          newGraph
+            ?.getVertices()
+            .filter((node) => {
+              return newGraph?.getInDegree(node).length === 0;
+            })
+            .map((taskNodeId) => {
+              parseMakeByFromId(taskNodeId, {
+                toAnd1: () => void 0,
+                toAnd0: () => void 0,
+                edgeRunOver: () => void 0,
+                taskErrorRecord: () => void 0,
+                toLoopStop: () => void 0,
+                logicItemOver: () => void 0,
+                complete: () => void 0,
+                startRun: () => void 0,
+              });
             });
-          });
+        }, 0);
       }
     },
     [dispatch, location.pathname]
@@ -121,14 +123,19 @@ export const Demo = () => {
     if (params.duration) {
       const sub = loop(params.duration, () => {
         if (indexRef.current.index >= pathList.length - 1) {
-          indexRef.current.index = 0
+          indexRef.current.index = 0;
         } else {
           indexRef.current.index++;
         }
         indexRef.current.currentData =
           localStorageData[pathList[indexRef.current.index]];
-        console.log(indexRef.current.currentData, pathList, indexRef.current.index, "loop");
-        dispatch(clear())
+        console.log(
+          indexRef.current.currentData,
+          pathList,
+          indexRef.current.index,
+          "loop"
+        );
+        dispatch(clear());
         draw(indexRef.current.currentData);
       });
       return () => {

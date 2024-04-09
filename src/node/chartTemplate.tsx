@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { runChartOption } from "../comp/useChartOption";
 import { BaseChart } from "./chart";
 import { IPs } from "../store/slice/panelSlice";
+import { useAutoSubscription } from "../comp/autoSubscription";
 
 const MemoChart = memo(
   ({
@@ -15,9 +16,11 @@ const MemoChart = memo(
     isTemp,
     tickUnit,
     parseOption,
+    reRender,
   }: {
     type: INodeType;
     node: IViewNode;
+    reRender: boolean;
     isTemp: boolean | undefined;
     tickUnit: number;
     parseOption: string;
@@ -32,7 +35,7 @@ const MemoChart = memo(
             options={runChartOption(node.id, parseOption)}
           />
         ),
-        [parseOption]
+        [parseOption, reRender]
       )}
     </>
   )
@@ -45,6 +48,7 @@ const ChartContainer = ({ isInit, cid }: { isInit: boolean; cid: string }) => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
+  const [reRender, setReRender] = useState(false);
   const [parseOptionString, setParseOptionString] = useState(
     () => (NodesState?.list || {})[cid]?.instance?.option?.chart || ""
   );
@@ -63,10 +67,16 @@ const ChartContainer = ({ isInit, cid }: { isInit: boolean; cid: string }) => {
       sub.unsubscribe();
       cacheSub.unsubscribe();
     };
-  }, [NodesState?.list, cid]);
+  }, [NodesState?.list, cid, reRender]);
+
+  useAutoSubscription(cid).render((value) => {
+    setParseOptionString(value?.chart || "");
+    setReRender(!reRender);
+  });
 
   return (
     <MemoChart
+      reRender={reRender}
       type={NodesState.list[cid]?.instance?.type}
       node={NodesState.list[cid]}
       isTemp={isInit}

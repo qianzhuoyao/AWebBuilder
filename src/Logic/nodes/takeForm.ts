@@ -21,11 +21,13 @@ export const takeForm = <T>() => {
     return of(value?.pre);
   });
 
-  TakeForm.signalOut("out-form", (value) => {
-    //覆盖
+  TakeForm.signalOut<T>("out-form", (value) => {
+  
     const result = value?.config?.formConfigInfo?.mergePre
       ? Object.assign({}, value?.pre, value?.config?.formConfigInfo?.json)
       : value?.config?.formConfigInfo?.json;
-    return of(result);
+      console.log(result,'dwdwwddww')
+    //覆盖
+    return of(result)
   });
 };

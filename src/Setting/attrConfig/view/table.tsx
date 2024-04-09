@@ -106,7 +106,7 @@ const TakeForm = memo(() => {
   );
 
   const updateTableConfig = useCallback(() => {
-    insertConfig(NodesState.targets[0], {
+    const config = {
       colProp:
         NodesState.list[NodesState.targets[0]]?.instance?.option?.colProp,
       colLabel:
@@ -115,8 +115,16 @@ const TakeForm = memo(() => {
         NodesState.list[NodesState.targets[0]]?.instance?.option?.colField,
       dataField:
         NodesState.list[NodesState.targets[0]]?.instance?.option?.dataField,
-    });
-  }, [NodesState.list, NodesState.targets]);
+    };
+    insertConfig(NodesState.targets[0], config);
+    dispatch(
+      updateInstance({
+        type: NodesState.list[NodesState.targets[0]].instance.type,
+        id: NodesState.list[NodesState.targets[0]].id,
+        option: config,
+      })
+    );
+  }, [NodesState.list, NodesState.targets, dispatch]);
 
   return (
     <div>

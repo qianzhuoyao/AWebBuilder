@@ -1,15 +1,16 @@
 import { signalLogicNode } from "../base.ts";
-import { logic_View_bind } from "../../store/slice/nodeSlice.ts";
+import { IViewNode, logic_View_bind } from "../../store/slice/nodeSlice.ts";
 import mapSrc from "../../assets/widgetIcon/oi--project.svg";
-import { of } from "rxjs";
+import { of, tap } from "rxjs";
 import { inertViewCache } from "../../panel/data.ts";
 import { IViewMapInfo } from "./logicConfigMap.ts";
 import { IObjectNotNull } from "../../comp/filterObjValue.ts";
+import { ITableConfig, insertConfig } from "../../node/viewConfigSubscribe.ts";
 
 //检查器
 export const viewLogicSlot = <T>() => {
   const ViewLogicSlot = signalLogicNode<
-    { viewMapInfo: IViewMapInfo<T> },
+    { viewMapInfo: IViewMapInfo<T & IViewNode> },
     unknown,
     unknown
   >({
@@ -27,12 +28,17 @@ export const viewLogicSlot = <T>() => {
   });
 
   ViewLogicSlot.signalOut<unknown>("out", (value) => {
+    console.log(value, 'ViewLogicSlost')
     //输出=》事件输出
-
-    inertViewCache(
-      value?.config?.viewMapInfo?.viewNodeId,
-      value?.pre as IObjectNotNull<unknown>
-    );
-    return of(value.pre);
+    return of(value.pre).pipe(
+      tap(() => {
+        console.log(value, 'ViewLogicSlot')
+        insertConfig(value?.config?.viewMapInfo?.viewNodeId, value.config.viewMapInfo.data.instance.option as ITableConfig);
+        inertViewCache(
+          value?.config?.viewMapInfo?.viewNodeId,
+          value?.pre as IObjectNotNull<unknown>
+        );
+      })
+    )
   });
 };

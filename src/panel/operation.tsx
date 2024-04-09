@@ -26,6 +26,7 @@ export const Temp = memo(
     PanelState: IPs;
   }) => {
     const elementBuilder = getTemplate(NodesState.list[id]?.classify);
+
     return (
       elementBuilder?.(NodesState.list[id], {
         isInit: !!isTemp,

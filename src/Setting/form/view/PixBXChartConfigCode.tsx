@@ -72,8 +72,9 @@ export const PixBXChartConfigCode = () => {
         if (targets.length) {
           new Function(value)({});
           setParseError("");
+          console.log(parseValue, "parseValues");
           insertConfig(NodesState.targets[0], {
-            config: parseValue,
+            chart: parseValue,
           });
         }
       } catch (e) {

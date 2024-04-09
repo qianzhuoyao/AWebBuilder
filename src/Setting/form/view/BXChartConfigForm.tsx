@@ -28,7 +28,7 @@ export const DefaultViewNodeConfigForm = () => {
         );
       }
     },
-    [NodesState.targets]
+    [NodesState.list, NodesState.targets, dispatch]
   );
 
   return (

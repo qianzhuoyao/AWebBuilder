@@ -8,8 +8,8 @@ export interface ITableConfig {
   dataField: string;
 }
 
-type IChartConfig = { config: string };
-type IConfig = Partial<ITableConfig & IChartConfig>;
+type IChartConfig = { chart: string, };
+export type IConfig = Partial<ITableConfig & IChartConfig>;
 
 const configSubscribe = () => {
   const nodeConfig = new Map<string, IConfig>();
@@ -23,6 +23,7 @@ const configSubscribe = () => {
 export const getConfigSubscribe = createSingleInstance(configSubscribe);
 
 export const insertConfig = (id: string, config: IConfig) => {
+  console.log(config, 'configsssss')
   getConfigSubscribe().observable.next({ id, ...config });
   getConfigSubscribe().nodeConfig.set(id, config);
 };

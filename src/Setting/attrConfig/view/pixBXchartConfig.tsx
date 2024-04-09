@@ -6,28 +6,6 @@ import { PixBXChartConfigCode } from "../../form/view/PixBXChartConfigCode.tsx";
 import { DefaultViewNodeConfigForm } from "../../form/view/BXChartConfigForm.tsx";
 import { StreamData } from "../../form/logic/remoteReq/StreamData.tsx";
 
-const chartTabs = [
-  {
-    id: "codeView",
-    label: "图表配置",
-    content: (
-      <>
-        <PixBXChartConfigCode />
-      </>
-    ),
-  },
-  {
-    id: "config",
-    label: "组件配置",
-    content: <DefaultViewNodeConfigForm />,
-  },
-  {
-    id: "params",
-    label: "流入数据",
-    content: <StreamData />,
-  },
-];
-
 export const PixBXChartConfig = () => {
   const config = signalViewNodeAttrConfig(pix_BX);
   config.setConfigEle((nodeInfo) => {
@@ -37,19 +15,32 @@ export const PixBXChartConfig = () => {
           <div className="flex w-full flex-col px-1">
             <Tabs
               aria-label="chart config"
-              items={chartTabs}
               classNames={{
                 panel: "p-1",
                 base: "px-1",
               }}
             >
-              {(item) => (
-                <Tab key={nodeInfo.target[0] + item.id} title={item.label}>
-                  <Card>
-                    <CardBody>{item.content}</CardBody>
-                  </Card>
-                </Tab>
-              )}
+              <Tab key={nodeInfo.target[0] + "codeView"} title={"图表配置"}>
+                <Card>
+                  <CardBody>
+                    <PixBXChartConfigCode />
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key={nodeInfo.target[0] + "config"} title={"组件配置"}>
+                <Card>
+                  <CardBody>
+                    <DefaultViewNodeConfigForm />
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key={nodeInfo.target[0] + "params"} title={"流入数据"}>
+                <Card>
+                  <CardBody>
+                    <StreamData id={nodeInfo.target[0]}/>
+                  </CardBody>
+                </Card>
+              </Tab>
             </Tabs>
           </div>
         </>

@@ -5,13 +5,16 @@ import { ILs } from "../../../../store/slice/logicSlice.ts";
 import { useFilterViewNode } from "../../../../panel/useFilter.tsx";
 import { genLogicConfigMap } from "../../../../Logic/nodes/logicConfigMap.ts";
 import { createBindMap, removeBindMap } from "./bindNodeMappingLogic.ts";
+import { INs } from "../../../../store/slice/nodeSlice.ts";
 
 export const ViewMappingForm = memo(() => {
   const layerViewNode = useFilterViewNode();
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
-
+  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
+    return state.viewNodesSlice;
+  });
   const defaultMappingViewNode = String(
     genLogicConfigMap().configInfo.get(logicState.target[0])?.viewMapInfo
       ?.viewNodeId
@@ -20,20 +23,29 @@ export const ViewMappingForm = memo(() => {
     defaultMappingViewNode
   );
 
-  const onHandleInsertData = useCallback((key: Selection) => {
-    setMappingViewNode([...key][0] as string);
-    if ([...key][0]) {
-      createBindMap([...key][0] as string, logicState.target[0]);
-    } else {
-      removeBindMap(logicState.target[0]);
-    }
-    genLogicConfigMap().configInfo.set(logicState.target[0], {
-      viewMapInfo: {
-        viewNodeId: [...key][0] as string,
-        data: {},
-      },
-    });
-  }, []);
+  const onHandleInsertData = useCallback(
+    (key: Selection) => {
+      setMappingViewNode([...key][0] as string);
+      if ([...key][0]) {
+        createBindMap([...key][0] as string, logicState.target[0]);
+      } else {
+        removeBindMap(logicState.target[0]);
+      }
+      console.log(
+        genLogicConfigMap(),
+        key,
+        NodesState.list[[...key][0]],
+        "genLogicConfigMap()"
+      );
+      genLogicConfigMap().configInfo.set(logicState.target[0], {
+        viewMapInfo: {
+          viewNodeId: [...key][0] as string,
+          data: NodesState.list[[...key][0]],
+        },
+      });
+    },
+    [NodesState.list, logicState.target]
+  );
 
   return (
     <>

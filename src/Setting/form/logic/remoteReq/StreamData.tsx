@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { subscribeViewCacheUpdate } from "../../../../panel/data.ts";
+import {
+  ISubscribeParams,
+  subscribeViewCacheUpdate,
+} from "../../../../panel/data.ts";
 import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorView } from "@codemirror/view";
@@ -9,14 +12,16 @@ import { useTheme } from "next-themes";
 import { Tooltip } from "@nextui-org/react";
 import { PhQuestion } from "../../../attrConfig/view/panelSet.tsx";
 
-export const StreamData = () => {
+export const StreamData = <T,>({ id }: { id: string }) => {
   const mirrorRef = useRef<ReactCodeMirrorRef>(null);
-  const [showData, setShowData] = useState({});
+  const [showData, setShowData] = useState<T | undefined>(void 0);
   const height = useAutoHeight();
   const { theme } = useTheme();
   useEffect(() => {
-    const sSub = subscribeViewCacheUpdate(({ data }: any) => {
-      setShowData(data);
+    const sSub = subscribeViewCacheUpdate((params: ISubscribeParams<T>) => {
+      if (id === params.viewId) {
+        setShowData(params.data);
+      }
     });
     return () => {
       sSub.unsubscribe();

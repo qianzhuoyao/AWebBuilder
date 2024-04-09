@@ -15,18 +15,21 @@ const windowData = <T>() => {
 
 const getWindowDataInstance = createSingleInstance(windowData);
 
+export interface ISubscribeParams<T> {
+  viewId?: string;
+  data?: T;
+}
+
 export const subscribeViewCacheUpdate = <T>(
   subscribe: (
-    value:
-      | {
-          viewId?: string;
-          data?: T;
-        }
-      | unknown
+    value: ISubscribeParams<T>
   ) => void
 ) => {
-  return getWindowDataInstance().viewInsertObservable.subscribe((value)=>{
-    subscribe(value)
+  return getWindowDataInstance().viewInsertObservable.subscribe((value) => {
+    subscribe(value as {
+      viewId?: string;
+      data?: T;
+    })
   });
 };
 export const getWCache = (id: string) => {

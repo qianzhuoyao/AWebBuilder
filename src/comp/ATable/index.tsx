@@ -18,13 +18,14 @@ import {
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CSSProperties, memo, useCallback, useEffect, useState } from "react";
+import { CSSProperties, memo, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateDraggable } from "../../store/slice/widgetSlice.ts";
-import { subscribeConfig } from "../../node/viewConfigSubscribe.ts";
-import { filterObjValue, IObjectNotNull } from "../filterObjValue.ts";
+import { filterObjValue } from "../filterObjValue.ts";
 import { v4 } from "uuid";
 import { useMouseUp } from "../useMouseUp.tsx";
+import { getWCache } from "../../panel/data.ts";
+import { useAutoSubscription } from "../autoSubscription.tsx";
 
 const DraggableTableHeader = <T,>({
   header,
@@ -33,7 +34,7 @@ const DraggableTableHeader = <T,>({
   header: Header<T, unknown>;
   table: Table<T>;
 }) => {
-  console.log(header,'sfheaders')
+  console.log(header, "sfheaders");
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: header.column.id,
@@ -109,7 +110,7 @@ const DragAlongCell = <T,>({
     transition: "width transform 0.2s ease-in-out",
     width: cell.column.getSize(),
     zIndex: isDragging ? 1 : 0,
-    color:'#000',
+    color: "#000",
     background: color,
   };
 
@@ -120,156 +121,142 @@ const DragAlongCell = <T,>({
   );
 };
 
-export const ATable = memo(
-  <T, M>({
-    streamData,
-    id,
-  }: {
-    streamData?: IObjectNotNull<M>;
-    id: string;
-  }) => {
-    const [columns, setColumns] = useState<ColumnDef<T>[]>([]);
-    const [data, setData] = useState<T[]>([]);
+export const ATable = memo(<T,>({ id }: { id: string }) => {
+  const [columns, setColumns] = useState<ColumnDef<T>[]>([]);
+  const [data, setData] = useState<T[]>([]);
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const [columnOrder, setColumnOrder] = useState<string[]>(() =>
-      columns.map((c) => c.id!)
+  const [columnOrder, setColumnOrder] = useState<string[]>(() =>
+    columns.map((c) => c.id!)
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    columnResizeMode: "onChange",
+    columnResizeDirection: "ltr",
+    getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnOrder,
+    },
+    defaultColumn: {
+      minSize: 60,
+      maxSize: 800,
+    },
+    onColumnOrderChange: setColumnOrder,
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
+  });
+
+  const handleDragStart = useCallback(() => {
+    dispatch(updateDraggable(false));
+  }, []);
+
+  useAutoSubscription(id).render((value) => {
+    const col = filterObjValue(getWCache(id) || {}, value?.colField || "");
+    const tableData = filterObjValue(
+      getWCache(id) || {},
+      value.dataField || ""
     );
-
-    const table = useReactTable({
-      data,
-      columns,
-      columnResizeMode: "onChange",
-      columnResizeDirection: "ltr",
-      getCoreRowModel: getCoreRowModel(),
-      state: {
-        columnOrder,
-      },
-      defaultColumn: {
-        minSize: 60,
-        maxSize: 800,
-      },
-      onColumnOrderChange: setColumnOrder,
-      debugTable: true,
-      debugHeaders: true,
-      debugColumns: true,
+    setColumns(() => {
+      if (Array.isArray(col)) {
+        return (col || []).map((item) => {
+          return {
+            cell: (info) => {
+              return info.row.original[
+                (item[value?.colProp || ""] || "") as keyof T
+              ];
+            },
+            header: () => <span>{item[value.colLabel || ""]}</span>,
+            id: item[value?.colProp || ""] || v4(),
+          };
+        }) as ColumnDef<T>[];
+      }
+      return [];
     });
 
-    const handleDragStart = useCallback(() => {
-      dispatch(updateDraggable(false));
-    }, []);
+    setData((tableData || []) as T[]);
+  });
 
-    useEffect(() => {
-      const sub = subscribeConfig((value) => {
-        if (id === value.id) {
-          const col = filterObjValue(streamData || {}, value?.colField || "");
-          const tableData = filterObjValue(
-            streamData || {},
-            value.dataField || ""
-          );
-          setColumns(() => {
-            if (Array.isArray(col)) {
-              return (col || []).map((item) => {
-                return {
-                  cell: (info) => {
-                    return info.row.original[
-                      (item[value?.colProp || ""] || "") as keyof T
-                    ];
-                  },
-                  header: () => <span>{item[value.colLabel || ""]}</span>,
-                  id: item[value?.colProp || ""]  || v4(),
-                };
-              }) as ColumnDef<T>[];
-            }
-            return [];
-          });
-          setData((tableData || []) as T[]);
-        }
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setColumnOrder((columnOrder) => {
+        const oldIndex = columnOrder.indexOf(active.id as string);
+        const newIndex = columnOrder.indexOf(over.id as string);
+        return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
       });
-      return () => {
-        sub.unsubscribe();
-      };
-    }, [streamData]);
+    }
+    dispatch(updateDraggable(true));
+  }, []);
 
-    const handleDragEnd = useCallback((event: DragEndEvent) => {
-      const { active, over } = event;
-      if (active && over && active.id !== over.id) {
-        setColumnOrder((columnOrder) => {
-          const oldIndex = columnOrder.indexOf(active.id as string);
-          const newIndex = columnOrder.indexOf(over.id as string);
-          return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
-        });
-      }
-      dispatch(updateDraggable(true));
-    }, []);
-
-    return (
-      <>
-        {columns.length > 0 ? (
-          <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-            <div className="w-full h-full overflow-scroll">
-              <table
-                className="w-full h-full"
-                style={{
-                  //width: table.getCenterTotalSize(),
-                  width: table.getCenterTotalSize(),
-                }}
-              >
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <div
-                      {...{
-                        key: headerGroup.id,
-                        className: "trz",
-                      }}
+  return (
+    <>
+      {columns.length > 0 ? (
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+          <div className="w-full h-full overflow-scroll">
+            <table
+              className="w-full h-full"
+              style={{
+                //width: table.getCenterTotalSize(),
+                width: table.getCenterTotalSize(),
+              }}
+            >
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <div
+                    {...{
+                      key: headerGroup.id,
+                      className: "trz",
+                    }}
+                  >
+                    <SortableContext
+                      items={columnOrder}
+                      strategy={horizontalListSortingStrategy}
                     >
+                      {headerGroup.headers.map((header) => (
+                        <DraggableTableHeader
+                          key={header.id}
+                          header={header}
+                          table={table}
+                        />
+                      ))}
+                    </SortableContext>
+                  </div>
+                ))}
+              </thead>
+              <tbody className="bg-[#fff]">
+                {table.getRowModel().rows.map((row, index) => (
+                  <div
+                    {...{
+                      key: row.id,
+                      className: `trz`,
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
                       <SortableContext
+                        key={cell.id}
                         items={columnOrder}
                         strategy={horizontalListSortingStrategy}
                       >
-                        {headerGroup.headers.map((header) => (
-                          <DraggableTableHeader
-                            key={header.id}
-                            header={header}
-                            table={table}
-                          />
-                        ))}
-                      </SortableContext>
-                    </div>
-                  ))}
-                </thead>
-                <tbody className="bg-[#fff]">
-                  {table.getRowModel().rows.map((row, index) => (
-                    <div
-                      {...{
-                        key: row.id,
-                        className: `trz`,
-                      }}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <SortableContext
+                        <DragAlongCell
+                          color={index % 2 ? "#e1e1e1" : "#fff"}
                           key={cell.id}
-                          items={columnOrder}
-                          strategy={horizontalListSortingStrategy}
-                        >
-                          <DragAlongCell
-                            color={index % 2 ? "#e1e1e1" : "#fff"}
-                            key={cell.id}
-                            cell={cell}
-                          />
-                        </SortableContext>
-                      ))}
-                    </div>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </DndContext>
-        ) : (
-          <>表格无配置</>
-        )}
-      </>
-    );
-  }
-);
+                          cell={cell}
+                        />
+                      </SortableContext>
+                    ))}
+                  </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </DndContext>
+      ) : (
+        <>表格无配置</>
+      )}
+    </>
+  );
+});
