@@ -4,7 +4,6 @@ import {
   CardFooter,
   CardBody,
   Pagination,
-  Image,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { Fragment, useCallback, useEffect } from "react";
@@ -144,9 +143,13 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
       data.webPanel,
       data.webLogic
     );
-    window.open(window.location.origin + "/demo?work=" + JSON.stringify({
-      indexList: [PanelState.workSpaceName]
-    }));
+    window.open(
+      window.location.origin +
+        "/demo?work=" +
+        JSON.stringify({
+          indexList: [PanelState.workSpaceName],
+        })
+    );
   }, [PanelState.workSpaceName, data.webLogic, data.webNodes, data.webPanel]);
 
   return (
@@ -154,12 +157,13 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
       <Card className="py-1.5 min-w-[300px] max-h-[320px] cursor-pointer">
         <CardBody className="overflow-visible py-2">
           <div className="border-slate-500 border rounded-md">
-            <Image
+            {/* <Image
               width={300}
               alt="visImageShot"
               src={data?.img}
               className="h-[200px]"
-            />
+            /> */}
+            <img src={data?.img} alt="" className="h-[200px] w-[300px]" />
           </div>
         </CardBody>
         <CardFooter className="justify-between">
