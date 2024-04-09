@@ -30,7 +30,7 @@ const ImageConfigSetting = memo(() => {
         })
       );
     },
-    [NodesState.list, NodesState.targets]
+    [NodesState.list, NodesState.targets, dispatch]
   );
   return (
     <div>

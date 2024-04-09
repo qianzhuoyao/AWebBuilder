@@ -18,22 +18,22 @@ export const configSlice = createSlice({
     contentList: {
       total: 0,
       records: [
-        {
-          viewId: "1",
-          viewName: "cac",
-          webLogic: "",
-          webNodes: "",
-          webPanel: "",
-          img: "",
-        },
-        {
-          viewId: "2",
-          viewName: "ca2c",
-          webLogic: "",
-          webNodes: "",
-          webPanel: "",
-          img: "",
-        },
+        // {
+        //   viewId: "1",
+        //   viewName: "cac",
+        //   webLogic: "",
+        //   webNodes: "",
+        //   webPanel: "",
+        //   img: "",
+        // },
+        // {
+        //   viewId: "2",
+        //   viewName: "ca2c",
+        //   webLogic: "",
+        //   webNodes: "",
+        //   webPanel: "",
+        //   img: "",
+        // },
       ],
     },
   } as ICs,

@@ -209,6 +209,7 @@ export const Proj = memo(() => {
             新建
           </Button>
           <Button
+            isDisabled={!ConfigState.contentList?.records?.length}
             color="primary"
             className="ml-1"
             size="sm"
