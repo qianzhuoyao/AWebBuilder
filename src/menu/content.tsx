@@ -4,6 +4,7 @@ import {
   CardFooter,
   CardBody,
   Pagination,
+  Image,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { Fragment, useCallback, useEffect } from "react";
@@ -131,7 +132,7 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
     genWDGraph(JSON.parse(data.webLogic || "{}")?.G || "{}");
     navigate({
       pathname: "/panel",
-      search: `?name=${data?.viewName}`,
+      search: `?name=${data?.viewName}&id=${data?.viewId}`,
     });
   }, [data, dispatch, navigate]);
 
@@ -143,13 +144,9 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
       data.webPanel,
       data.webLogic
     );
-    window.open(
-      window.location.origin +
-        "/demo?work=" +
-        JSON.stringify({
-          indexList: [PanelState.workSpaceName],
-        })
-    );
+    window.open(window.location.origin + "/demo?work=" + JSON.stringify({
+      indexList: [PanelState.workSpaceName]
+    }));
   }, [PanelState.workSpaceName, data.webLogic, data.webNodes, data.webPanel]);
 
   return (

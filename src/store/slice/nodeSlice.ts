@@ -108,7 +108,7 @@ export type IOptionInstance = Partial<
     chartClass: keyof typeof CHART_OPTIONS;
     chart: string;
   } & ITableConfig &
-    typeof IMAGE_DEFAULT_OPTION
+  typeof IMAGE_DEFAULT_OPTION
 >;
 
 interface IChartInstance {
@@ -187,6 +187,9 @@ export const viewNodesSlice = createSlice({
         (state.list as Record<string, IViewNode>)[id].instance.option = option;
       }
     },
+    clear: (state,) => {
+      state.list = {}
+    },
     deleteListItem: (state, action) => {
       const { idList } = action.payload;
       if (Array.isArray(idList)) {
@@ -250,6 +253,7 @@ export const {
   updateInstance,
   addNode,
   updateTargets,
+  clear,
   updateRotate,
   updatePosition,
   deleteListItem,

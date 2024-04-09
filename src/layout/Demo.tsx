@@ -7,7 +7,7 @@ import { genWDGraph } from "../DirGraph/weightedDirectedGraph.ts";
 import { parseMakeByFromId } from "../comp/signal3.ts";
 import { createNode } from "../panel/logicPanelEventSubscribe.ts";
 import { ILogicNode } from "../store/slice/logicSlice.ts";
-import { addNode, INs, IViewNode } from "../store/slice/nodeSlice.ts";
+import { addNode, clear, INs, IViewNode } from "../store/slice/nodeSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { genLogicConfigMapToParse } from "../Logic/nodes/logicConfigMap.ts";
 import { templateMain } from "../node/index.ts";
@@ -45,11 +45,12 @@ export const Demo = () => {
   const localStorageData = JSON.parse(localStorageDataJSON || "{}");
   const params = JSON.parse(search.get("work") || "{}");
   const pathList = params?.indexList || [];
+
   const draw = useCallback(
+
     (currentData: ICurrentData | null) => {
+      console.log(currentData, 'useCallback')
       if (location.pathname + "/" === CONSTANT_DEMO_PATH && currentData) {
-        nodeBuilder();
-        templateMain();
         genLogicConfigMapToParse(currentData?.LOGIC?.C || "{}");
         (Object.values(currentData?.NODE?.list || {}) as IViewNode[])?.map(
           (item) => {
@@ -113,19 +114,26 @@ export const Demo = () => {
   indexRef.current.currentData =
     localStorageData[pathList[indexRef.current.index]];
   useEffect(() => {
+    nodeBuilder();
+    templateMain();
+    console.log(params, "params1");
+    draw(indexRef.current.currentData);
     if (params.duration) {
       const sub = loop(params.duration, () => {
         if (indexRef.current.index >= pathList.length - 1) {
+          indexRef.current.index = 0
+        } else {
           indexRef.current.index++;
         }
-        console.log(indexRef.current.currentData, "loop");
+        indexRef.current.currentData =
+          localStorageData[pathList[indexRef.current.index]];
+        console.log(indexRef.current.currentData, pathList, indexRef.current.index, "loop");
+        dispatch(clear())
         draw(indexRef.current.currentData);
       });
       return () => {
         sub.unsubscribe();
       };
-    } else {
-      draw(indexRef.current.currentData);
     }
   }, []);
 

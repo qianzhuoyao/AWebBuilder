@@ -34,7 +34,7 @@ export interface IParseInPanel {
  * @param PanelState
  * @param NodesState
  */
-export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
+export const toSaveJSON = (PanelState: IPs, NodesState: INs, id: string) => {
   toImage().then((image) => {
     console.log(image, "image");
     window.parent.postMessage(
@@ -43,6 +43,7 @@ export const toSaveJSON = (PanelState: IPs, NodesState: INs) => {
         name: PanelState.workSpaceName,
         panel: JSON.stringify(PanelState),
         shotImage: image,
+        id,
         logic: {
           C: genLogicConfigMapToJSON(),
           G: getWDGraph().toJSON(),

@@ -1,7 +1,7 @@
 import { Tooltip, Button } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 // import { Icon } from '@iconify-icon/react';
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useSearchParams } from "react-router-dom";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AInput } from "../comp/AInput";
@@ -172,7 +172,7 @@ export const Nav = memo(() => {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [search] = useSearchParams();
   useEffect(() => {
     setShowTools(
       location.pathname === "/panel" || location.pathname === "/panel/"
@@ -225,7 +225,8 @@ export const Nav = memo(() => {
   );
 
   const onSave = useCallback(() => {
-    toSaveJSON(PanelState, NodesState);
+    console.log(search.get('id'), 'dwdwwdffff')
+    toSaveJSON(PanelState, NodesState, search.get('id') || '');
   }, [NodesState, PanelState]);
 
   const redo = useCallback(() => {
@@ -270,10 +271,10 @@ export const Nav = memo(() => {
     );
     window.open(
       window.location.origin +
-        "/demo?work=" +
-        JSON.stringify({
-          indexList: [PanelState.workSpaceName],
-        })
+      "/demo?work=" +
+      JSON.stringify({
+        indexList: [PanelState.workSpaceName],
+      })
     );
   }, [NodesState, PanelState]);
 
