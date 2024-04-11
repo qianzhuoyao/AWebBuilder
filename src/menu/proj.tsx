@@ -131,8 +131,8 @@ const IntervalContent = memo(() => {
                             {index}
                           </span>
                         </div>
-                        {img ? <img src={img} alt="" /> : <></>}
-                        <p className="text-[12px] flex items-center">
+                        {img ? <img src={img} alt="" className="w-[100px] p-1"/> : <></>}
+                        <p className="text-[12px] flex items-center pl-1">
                           <span>{name}</span>
                         </p>
                       </li>
