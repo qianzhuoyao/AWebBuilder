@@ -179,6 +179,13 @@ export const viewNodesSlice = createSlice({
       const { id, alias } = action.payload;
       (state.list as Record<string, IViewNode>)[id].alias = alias;
     },
+    updateZ: (state, action: PayloadAction<{
+      id: string,
+      zIndex: number
+    }>) => {
+      const { id, zIndex } = action.payload;
+      (state.list as Record<string, IViewNode>)[id].z = zIndex;
+    },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
       const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX];
@@ -206,7 +213,11 @@ export const viewNodesSlice = createSlice({
     updateTargets: (state, action) => {
       state.targets = action.payload;
     },
-    updateSize: (state, action) => {
+    updateSize: (state, action: PayloadAction<{
+      id: string,
+      w: number,
+      h: number
+    }>) => {
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
@@ -220,7 +231,12 @@ export const viewNodesSlice = createSlice({
         state.list = { ...state.list, [action.payload.id]: newNode };
       }
     },
-    updatePosition: (state, action) => {
+    updatePosition: (state, action: PayloadAction<{
+      id: string
+      x: number,
+      y: number,
+      transform?: string
+    }>) => {
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
@@ -230,7 +246,7 @@ export const viewNodesSlice = createSlice({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,
         };
-        const mergeTransform = { transform: action.payload.transform } || {};
+        const mergeTransform = action.payload.transform ? { transform: action.payload.transform } : {};
         state.list = {
           ...state.list,
           [action.payload.id]: { ...newNode, ...mergeTransform },
@@ -250,6 +266,7 @@ export const viewNodesSlice = createSlice({
 export const {
   updateAlias,
   setList,
+  updateZ,
   updateInstance,
   addNode,
   updateTargets,

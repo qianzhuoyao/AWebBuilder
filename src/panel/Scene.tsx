@@ -20,7 +20,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Chip,
   useDisclosure,
 } from "@nextui-org/react";
@@ -45,17 +44,24 @@ import {
   IViewNode,
   addNode,
   deleteListItem,
+  updateTargets,
 } from "../store/slice/nodeSlice";
 import { NodeSlot } from "./operation";
 import { LogicPanel } from "./logicPanel.tsx";
 import type { SVGProps } from "react";
 import { ILs } from "../store/slice/logicSlice.ts";
 import { useAutoHeight } from "../comp/useAutoHeight.tsx";
-import { addLayer, subscribeLayerCreate } from "./layers.ts";
+import {
+  addLayer,
+  getLayerContent,
+  subscribeLayerCreate,
+  updateViewNodesInLayer,
+} from "./layers.ts";
 import { v4 } from "uuid";
 import { ReactKey } from "@react-awesome-query-builder/mui";
-import { updateCurrentLayer } from "../store/slice/widgetSlice.ts";
+import { IWls, updateCurrentLayer } from "../store/slice/widgetSlice.ts";
 import { useFilterLogicNode, useFilterViewNode } from "./useFilter.tsx";
+import { emitBlockReRender } from "../emit/emitBlock.ts";
 
 export function SolarLockBoldDuotone(props: SVGProps<SVGSVGElement>) {
   return (
@@ -311,7 +317,7 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
       scrollBehavior="inside"
     >
       <ModalContent>
-        {(onClose) => (
+        {() => (
           <>
             <ModalHeader className="flex flex-col gap-1">快捷键</ModalHeader>
             <ModalBody>
@@ -501,6 +507,10 @@ const SceneWidgetMap = memo(() => {
   const logicState = useSelector((state: { logicSlice: ILs }) => {
     return state.logicSlice;
   });
+  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
+    return state.widgetSlice;
+  });
+  const currentLayer = getLayerContent(widgetState.currentLayerId);
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
   });
@@ -533,6 +543,7 @@ const SceneWidgetMap = memo(() => {
   const onHandleRemove = useCallback(
     (id: string) => {
       dispatch(deleteListItem({ idList: [id] }));
+      emitBlockReRender();
     },
     [dispatch]
   );
@@ -544,9 +555,20 @@ const SceneWidgetMap = memo(() => {
         dispatch(
           addNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" })
         );
+        updateViewNodesInLayer(
+          currentLayer?.layerNameNodesOfView || "",
+          clone.id + "-clone"
+        );
       }
     },
-    [NodesState.list, dispatch]
+    [NodesState.list, currentLayer?.layerNameNodesOfView, dispatch]
+  );
+
+  const layerClickMappingNodeConfig = useCallback(
+    (node: IViewNode) => {
+      dispatch(updateTargets([node.id]));
+    },
+    [dispatch]
   );
 
   return (
@@ -593,7 +615,9 @@ const SceneWidgetMap = memo(() => {
                           ? "1px solid #006FEE"
                           : "",
                       }}
-                      onPress={() => {}}
+                      onPress={() => {
+                        console.log("layerLogicNode");
+                      }}
                     >
                       <CardBody className="overflow-visible p-1">
                         <img
@@ -624,9 +648,12 @@ const SceneWidgetMap = memo(() => {
                         ? "1px solid #006FEE"
                         : "",
                     }}
-                    onPress={() => {}}
+                    onPress={() => {
+                      console.log("layerViewNode");
+                      layerClickMappingNodeConfig(node);
+                    }}
                   >
-                    <CardBody className="overflow-visible p-0">
+                    <CardBody className="overflow-visible p-1 h-[100px]">
                       <NodeSlot tag="cube" node={node} isTemp={true}></NodeSlot>
                     </CardBody>
                     <CardFooter className="text-small justify-between items-center">

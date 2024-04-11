@@ -10,6 +10,7 @@ import {
   updateRotate,
   updateSize,
   updateTargets,
+  updateZ,
 } from "../store/slice/nodeSlice";
 import { IPs } from "../store/slice/panelSlice";
 import { IWls, updateDraggable } from "../store/slice/widgetSlice";
@@ -23,6 +24,7 @@ import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler";
 import { ATTR_TAG, NODE_TYPE_CODE, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
+import { emitBlockSubscribe } from "../emit/emitBlock";
 
 const useNodeContainerHotKeys = () => {
   const [lock, setLock] = useState(false);
@@ -128,6 +130,23 @@ export const NodeContainer = memo(() => {
     [PanelState.tickUnit]
   );
 
+  const downZIndexViewNode = useCallback((params: ItemParams) => {
+    dispatch(
+      updateZ({
+        zIndex: params.props.z - 1,
+        id: params.props.id,
+      })
+    );
+  }, []);
+  const upZIndexViewNode = useCallback((params: ItemParams) => {
+    dispatch(
+      updateZ({
+        zIndex: params.props.z + 1,
+        id: params.props.id,
+      })
+    );
+  }, []);
+
   const removeViewNode = useCallback(
     (params: ItemParams) => {
       dispatch(deleteListItem({ idList: [params.props.id] }));
@@ -146,9 +165,20 @@ export const NodeContainer = memo(() => {
     switch ((params.event.target as HTMLElement)?.innerText) {
       case "删除":
         return removeViewNode(params);
+      case "下降层级":
+        return downZIndexViewNode(params);
+      case "上升层级":
+        return upZIndexViewNode(params);
     }
   });
   const dispatch = useDispatch();
+
+  const hideBox = useCallback(() => {
+    const box = moveableRef.current?.getControlBoxElement();
+    if (box) {
+      box.style.display = "none";
+    }
+  }, []);
 
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
@@ -156,6 +186,54 @@ export const NodeContainer = memo(() => {
       box.style.zIndex = "9";
     }
   }, []);
+
+  useEffect(() => {
+    const sub = emitBlockSubscribe((param) => {
+      if (param.type === "render") {
+        console.log(selectoRef, moveableRef, "cwecwcwccwcwcwcw");
+        hideBox();
+      } else if (param.type === "positionChange") {
+        moveableRef.current!.request(
+          "draggable",
+          {
+            x: param.pack?.x || 0,
+            y: param.pack?.y || 0,
+          },
+          true
+        );
+      } else if (param.type === "sizeChange") {
+        moveableRef.current!.request(
+          "resizable",
+          {
+            offsetWidth: (param.pack?.w || 0) / PanelState.tickUnit,
+            offsetHeight: (param.pack?.h || 0) / PanelState.tickUnit,
+          },
+          true
+        );
+      } else if (param.type === "rotateChange") {
+        moveableRef.current!.request(
+          "rotatable",
+          {
+            rotate: param.pack?.rotate || 0,
+          },
+          true
+        );
+      } else if (param.type === "ZIndexChange") {
+        const box = moveableRef.current?.getControlBoxElement();
+
+        if (param.pack?.id && document.getElementById(param.pack.id)) {
+          (document.getElementById(param.pack.id) as HTMLElement).style.zIndex =
+            String(param.pack?.zIndex) || "1";
+        }
+        if (box) {
+          box.style.zIndex = String(param.pack?.zIndex) || "1";
+        }
+      }
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [PanelState.tickUnit]);
 
   return (
     <>
@@ -384,7 +462,7 @@ export const NodeContainer = memo(() => {
         })}
       </div>
       {view(
-        ["删除"].map((value) => {
+        ["删除", "下降层级", "上升层级"].map((value) => {
           return <div key={value}>{value}</div>;
         })
       )}

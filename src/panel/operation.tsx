@@ -12,6 +12,7 @@ import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler.ts"
 
 import { NodeContainer } from "./nodeContainer.tsx";
 import { getTemplate } from "../node/baseViewNode.ts";
+import zIndex from "@mui/material/styles/zIndex";
 
 export const Temp = memo(
   ({
@@ -108,10 +109,12 @@ export const NodeSlot = memo(
         style={
           isTemp
             ? {
+                zIndex: node.z,
                 width: "100%",
                 height: "100%",
               }
             : {
+                zIndex: node.z,
                 width: node.w / PanelState.tickUnit + "px",
                 height: node.h / PanelState.tickUnit + "px",
               }
