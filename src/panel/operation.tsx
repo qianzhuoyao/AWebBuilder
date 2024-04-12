@@ -1,20 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import {
-  Suspense,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { INs, IViewNode, updateTargets } from "../store/slice/nodeSlice";
 import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID, SCENE } from "../contant";
 
 import { NodeContainer } from "./nodeContainer.tsx";
 import { getTemplate } from "../node/baseViewNode.ts";
-import { insertMountedNodeId, isMountedNodeId } from "./nodeRenderedStack.ts";
 
 export const Temp = memo(
   ({

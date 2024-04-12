@@ -20,7 +20,6 @@ import {
   recordChange,
 } from "../store/slice/viewNodesRecordSlice";
 import { useSceneContext } from "../menu/context";
-import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler";
 import { ATTR_TAG, NODE_TYPE_CODE, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
