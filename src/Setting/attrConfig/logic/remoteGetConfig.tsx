@@ -164,7 +164,7 @@ const Test = memo(() => {
       body: null,
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: "application/json, text/plain",
       },
     }).then((res) => res.json());
 

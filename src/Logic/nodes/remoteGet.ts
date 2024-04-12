@@ -26,11 +26,15 @@ export const buildDataReqNode = () => {
         const query = () =>
           fetch(
             value?.config?.remoteReqInfo?.protocol +
-              "://" +
-              value.config?.remoteReqInfo?.url || "",
+            "://" +
+            value.config?.remoteReqInfo?.url || "",
             {
               method: value.config?.remoteReqInfo?.method || "post",
               body: JSON.stringify(value.pre) || null,
+              headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+              },
             }
           )
             .then((res) => res.json())
