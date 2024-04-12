@@ -3,6 +3,7 @@ import { logic_D_get } from "../../store/slice/nodeSlice.ts";
 import remoteGet from "../../assets/widgetIcon/remote_get.svg";
 import { from, of } from "rxjs";
 import { IRemoteReqInfo } from "./logicConfigMap.ts";
+import { aGet, aPost } from "../../fetch/request.ts";
 
 export const buildDataReqNode = () => {
   const dataReq = signalLogicNode<
@@ -22,28 +23,26 @@ export const buildDataReqNode = () => {
 
   dataReq.signalOut<unknown>("out", (value) => {
     return from(
-      new Promise((resolve, reject) => {
-        const query = () =>
-          fetch(
-            value?.config?.remoteReqInfo?.protocol +
-            "://" +
-            value.config?.remoteReqInfo?.url || "",
-            {
-              method: value.config?.remoteReqInfo?.method || "post",
-              body: JSON.stringify(value.pre) || null,
-              headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-Type': 'application/json;charset=UTF-8'
-              },
-            }
-          )
-            .then((res) => res.json())
-            .catch((e) => {
-              reject(e);
-            });
-        query().then((res) => {
+      new Promise((resolve) => {
+        console.log(value.config?.remoteReqInfo?.method, 'casascscassavalue')
+
+        console.log(value.config?.remoteReqInfo?.method?.toUpperCase(), 'value.config?.remoteReqInfo?.method?.toLowerCase()')
+        const req = () => value.config?.remoteReqInfo?.method?.toUpperCase() !== 'GET' ? aPost(
+          value?.config?.remoteReqInfo?.protocol +
+          "://" +
+          value.config?.remoteReqInfo?.url || "",
+          value.pre
+        ) : aGet(
+          value?.config?.remoteReqInfo?.protocol +
+          "://" +
+          value.config?.remoteReqInfo?.url || "",
+          value.pre
+        )
+
+        req().then((res) => {
+          console.log(res, 'resssss')
           resolve({
-            data: res,
+            data: res?.data,
           });
         });
       })
