@@ -162,6 +162,10 @@ const Test = memo(() => {
     fetch(params.protocol + "://" + params.url, {
       method: params.method,
       body: null,
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
     }).then((res) => res.json());
 
   const { isLoading, isError, error, data } = useQuery(
