@@ -9,6 +9,7 @@ export interface IPs {
   tickUnit: number;
   isSelection: boolean;
   offset: number;
+  panelBgImage: string
   lockScale: boolean;
   lockTransform: boolean;
   snap: number;
@@ -30,6 +31,7 @@ export const panelSlice = createSlice({
     isSelection: false,
     rulerMinY: 0,
     snap: 5,
+    panelBgImage: '',
     panelColor: DEFAULT_PANEL_COLOR,
     offset: 30,
     tickUnit: 2,
@@ -42,6 +44,9 @@ export const panelSlice = createSlice({
   reducers: {
     updateWorkSpaceName: (state, action) => {
       state.workSpaceName = action.payload;
+    },
+    updatePanelImage: (state, action) => {
+      state.panelBgImage = action.payload;
     },
     updatePanelColor: (state, action) => {
       state.panelColor = action.payload;
@@ -87,6 +92,7 @@ export const panelSlice = createSlice({
 // 
 export const {
   updatePanelColor,
+  updatePanelImage,
   updateCurrentSTab,
   updateWorkSpaceName,
   updateRulerMinX,

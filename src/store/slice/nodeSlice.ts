@@ -4,7 +4,6 @@ import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
 import { IFRAME_DEFAULT_OPTION, IMAGE_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
 import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
-import { isEqual } from "lodash";
 //pixTable
 export const pix_Table = "pixTable" as const;
 export const pix_frame = "pix_frame" as const;
@@ -214,9 +213,7 @@ export const viewNodesSlice = createSlice({
     },
 
     updateTargets: (state, action) => {
-      if (!isEqual(state.targets, action.payload)) {
-        state.targets = action.payload;
-      }
+      state.targets = action.payload;
 
     },
     updateSize: (state, action: PayloadAction<{

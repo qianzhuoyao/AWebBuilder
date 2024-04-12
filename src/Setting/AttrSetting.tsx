@@ -129,6 +129,7 @@ const SettingView = memo(() => {
     return state.viewNodesSlice;
   });
   const { targets } = NodesState;
+  console.log(targets,'targetsssss')
   return (
     <>
       {targets?.length > 0 ? (

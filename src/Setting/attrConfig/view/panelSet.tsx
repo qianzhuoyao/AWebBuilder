@@ -18,6 +18,7 @@ import {
   IPs,
   updatePanelColor,
   updatePanelHeight,
+  updatePanelImage,
   updatePanelLeft,
   updatePanelLockScale,
   updatePanelLockTransform,
@@ -71,14 +72,13 @@ const ColorPick = memo(() => {
     return state.panelSlice;
   });
   const onHandleColorChange = useCallback((color: ColorResult) => {
-  
     dispatch(updatePanelColor(color.hex));
   }, []);
 
   return (
     <Popover placement="bottom" showArrow offset={10}>
       <PopoverTrigger>
-        <div className="flex items-center">
+        <div className="">
           <small className="w-[30px]">颜色</small>
           <AInput
             placeholder="颜色"
@@ -104,6 +104,13 @@ export const ProviderSetting = memo(() => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
+
+  const onHandleSetBg = useCallback(
+    (src: string) => {
+      dispatch(updatePanelImage(src));
+    },
+    [dispatch]
+  );
   const onHandleResetColor = useCallback(() => {
     dispatch(updatePanelColor(DEFAULT_PANEL_COLOR));
   }, [dispatch]);
@@ -194,24 +201,29 @@ export const ProviderSetting = memo(() => {
           />
         </div>
       </div>
-      <div className="flex justify-center py-3">
-        <div className="flex flex-col items-center">
-          <IconParkOutlineUploadWeb></IconParkOutlineUploadWeb>
-          <small className="text-zinc-500 text-center">
-            容器背景,上传大小最大500kb,格式PNG/JPG
-          </small>
-        </div>
-      </div>
-      <div>
+      <div className=" mt-2">
         <ColorPick></ColorPick>
       </div>
-      <div className="flex mt-2 items-center">
+      <div className="mt-2 items-center">
+        <small>背景图片</small>
+        <AInput
+          placeholder="背景图片"
+          className="w-[100%] rounded-md"
+          size="xs"
+          radius="md"
+          onChange={(e) => {
+            onHandleSetBg(e.target.value);
+          }}
+        />
+      </div>
+      <div className="mt-2 items-center">
         <small className="w-[80px]">背景控制</small>
         <div className="flex">
-          <Button size="sm" className="mr-2">
+          <Button size="sm" className="mr-2 w-[50%]">
             清除背景图片
           </Button>
           <Button
+            className="w-[50%]"
             size="sm"
             onClick={() => {
               onHandleResetColor();

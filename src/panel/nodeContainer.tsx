@@ -410,7 +410,10 @@ export const NodeContainer = memo(() => {
         id={PANEL_MAIN_BG}
         className="relative w-full h-full elements"
         style={{
-          background: PanelState.panelColor,
+          backgroundColor: PanelState.panelColor,
+          backgroundImage: `url(${PanelState.panelBgImage})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
         }}
       >
         {layerViewNode.map((node) => {
