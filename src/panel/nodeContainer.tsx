@@ -183,7 +183,7 @@ export const NodeContainer = memo(() => {
   useEffect(() => {
     const box = moveableRef.current?.getControlBoxElement();
     if (box) {
-      box.style.zIndex = "9";
+      box.style.zIndex = "99999";
     }
   }, []);
 
@@ -337,40 +337,14 @@ export const NodeContainer = memo(() => {
           }, 0);
         }}
         onDragEnd={(e) => {
-          const pos = computeActPositionNodeByRuler(
-            e.target,
-            PanelState.tickUnit
+          const rect = e.moveable.getRect();
+          dispatch(
+            updatePosition({
+              id: e.target.id,
+              x: rect.left * PanelState.tickUnit,
+              y: rect.top * PanelState.tickUnit,
+            })
           );
-          if (pos) {
-            dispatch(
-              updatePosition({
-                id: e.target.id,
-                x: pos.x,
-                y: pos.y,
-                transform: e?.lastEvent?.transform,
-              })
-            );
-            setTimeout(() => {
-              dispatch(
-                recordChange({
-                  recordViewType: RECORD_VIEW_NODE,
-                  recordDesc: `将${
-                    NodesState.list[e.target.id].alias
-                  }拖动至 X:${pos.x}px,Y:${pos.y}px`,
-                  recordViewInfo: {
-                    ...NodesState.list,
-                    [e.target.id]: {
-                      ...NodesState.list[e.target.id],
-                      x: pos.x,
-                      y: pos.y,
-                    },
-                  },
-                })
-              );
-            }, 0);
-          } else {
-            throw new Error("computeActPositionNodeByRuler error");
-          }
         }}
         onResize={(e) => {
           e.target.style.width = `${e.width}px`;
@@ -404,7 +378,7 @@ export const NodeContainer = memo(() => {
           if (!lock) {
             e.preventDrag();
           }
-
+          console.log(e, "efgeggegegegeg");
           const target = e.inputEvent.target;
           if (
             moveableRef.current!.isMoveableElement(target) ||
@@ -452,7 +426,7 @@ export const NodeContainer = memo(() => {
               }}
             >
               <NodeSlot
-                tag="cube"
+                tag=""
                 key={node.id}
                 node={node}
                 isTemp={false}

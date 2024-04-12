@@ -17,7 +17,7 @@ export const useSceneContext = (
     show,
     hideAll,
     view: (nodes: ReactElement<any, any>[]) => (
-      <Menu id={id} theme={theme}>
+      <Menu className={"z-[9999999999]"} id={id} theme={theme}>
         {nodes.map((node, index) => {
           return (
             <Item

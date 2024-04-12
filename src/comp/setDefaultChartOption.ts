@@ -4,6 +4,7 @@ import {
   pic_Img,
   pix_BX,
   pix_Table,
+  pix_frame,
 } from "../store/slice/nodeSlice.ts";
 import pic from "../assets/widgetIcon/photo.svg";
 import { CHART_OPTIONS } from "../Setting/attrConfig/view/CHART_OPTIONS.ts";
@@ -38,7 +39,12 @@ export const IMAGE_DEFAULT_OPTION = {
   src: pic,
 } as const;
 
+export const IFRAME_DEFAULT_OPTION = {
+  url: ''
+} as const
+
 export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
+  console.log(type,'setDefaultChartOptions')
   switch (type) {
     case pix_BX:
       return {
@@ -49,6 +55,8 @@ export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
       return TABLE_DEFAULT_OPTION;
     case pic_Img:
       return IMAGE_DEFAULT_OPTION;
+    case pix_frame:
+      return IFRAME_DEFAULT_OPTION;
     default:
       throw new Error("unknown option type");
   }

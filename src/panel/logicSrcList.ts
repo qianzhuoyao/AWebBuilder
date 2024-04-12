@@ -1,4 +1,4 @@
-import { pic_Img, pix_BX, pix_Table } from "../store/slice/nodeSlice.ts";
+import { pix_frame, pic_Img, pix_BX, pix_Table } from "../store/slice/nodeSlice.ts";
 
 export const LOGIC_TYPE_LIST = [
   "remote",
@@ -6,9 +6,9 @@ export const LOGIC_TYPE_LIST = [
   "page",
   pic_Img,
   "input",
+  pix_frame,
   pix_Table,
   "date",
-  "frame",
   "hTrigger",
   "both",
   "dom",

@@ -383,13 +383,19 @@ export const WidgetIconTemp = memo(
                 const { x, y } = pointer;
                 const viewNodeId = uuidv4();
                 const newNodeName = name + "@" + viewNodeId;
-                console.log(drag_size_width,drag_size_height,PanelState.tickUnit,'PanelState.tickUnit')
+                console.log(
+                  drag_size_width,
+                  drag_size_height,
+                  PanelState.tickUnit,
+                  "PanelState.tickUnit"
+                );
                 const newNode: IViewNode = {
                   x: x * PanelState.tickUnit,
                   y: y * PanelState.tickUnit,
                   r: 0,
                   w,
                   h,
+      
                   z: 10,
                   desc: "",
                   id: viewNodeId,
@@ -403,8 +409,8 @@ export const WidgetIconTemp = memo(
                   },
                 };
                 dispatch(addNode(newNode));
-
                 setTimeout(() => {
+                 
                   dispatch(
                     recordChange({
                       recordViewType: RECORD_VIEW_NODE,

@@ -1,18 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
-import { memo, useCallback, useEffect, useRef } from "react";
 import {
-  INs,
-  IViewNode,
-  updatePosition,
-  updateTargets,
-} from "../store/slice/nodeSlice";
+  Suspense,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { INs, IViewNode, updateTargets } from "../store/slice/nodeSlice";
 import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID, SCENE } from "../contant";
-import { computeActPositionNodeByRuler } from "../comp/computeActNodeByRuler.ts";
 
 import { NodeContainer } from "./nodeContainer.tsx";
 import { getTemplate } from "../node/baseViewNode.ts";
-import zIndex from "@mui/material/styles/zIndex";
+import { insertMountedNodeId, isMountedNodeId } from "./nodeRenderedStack.ts";
 
 export const Temp = memo(
   ({
@@ -28,14 +30,19 @@ export const Temp = memo(
   }) => {
     const elementBuilder = getTemplate(NodesState.list[id]?.classify);
 
-    return (
-      elementBuilder?.(NodesState.list[id], {
-        isInit: !!isTemp,
-        PanelState,
-        NodesState,
-        id,
-      }) || <></>
+    const element = useMemo(
+      () =>
+        elementBuilder?.(NodesState.list[id], {
+          isInit: !!isTemp,
+          PanelState,
+          NodesState,
+          id,
+        }) || <></>,
+      [NodesState, PanelState, elementBuilder, id, isTemp]
     );
+
+    console.log(NodesState.list[id], "elementBuildersss");
+    return <Suspense fallback={<>loading</>}>{element}</Suspense>;
   }
 );
 
@@ -51,35 +58,14 @@ export const NodeSlot = memo(
   }) => {
     const nodeRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const PanelState = useSelector((state: { panelSlice: IPs }) => {
       return state.panelSlice;
     });
     const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
       return state.viewNodesSlice;
     });
-
-    useEffect(() => {
-      if (nodeRef.current) {
-        const pos = computeActPositionNodeByRuler(
-          nodeRef.current,
-          PanelState.tickUnit
-        );
-
-        if (pos) {
-          dispatch(
-            updatePosition({
-              id: nodeRef.current.id,
-              x: pos.x,
-              y: pos.y,
-            })
-          );
-          nodeRef.current.style.left = node.x / PanelState.tickUnit + "px";
-          nodeRef.current.style.top = node.y / PanelState.tickUnit + "px";
-        }
-      }
-    }, []);
-
+    console.log(node, "daw3efgfgg");
     useEffect(() => {
       if (!nodeRef.current) {
         return;
@@ -88,7 +74,7 @@ export const NodeSlot = memo(
         ele.setAttribute(ATTR_TAG, NODE_TYPE_CODE);
         ele.setAttribute(NODE_ID, node.id);
       });
-    }, [NodesState]);
+    }, [node.id]);
 
     const onHandleSelectedCurrent = useCallback(() => {
       //如果不是模板 就选中，否则映射至对应组件
@@ -100,33 +86,44 @@ export const NodeSlot = memo(
       }
     }, [dispatch, isTemp, node.id]);
 
+    useEffect(() => {
+      if (nodeRef.current) {
+        nodeRef.current.style.left = node.x / PanelState.tickUnit + "px";
+        nodeRef.current.style.top = node.y / PanelState.tickUnit + "px";
+        nodeRef.current.style.width = node.w / PanelState.tickUnit + "px";
+        nodeRef.current.style.height = node.h / PanelState.tickUnit + "px";
+      }
+    }, []);
+
     return (
-      <div
-        ref={nodeRef}
-        id={isTemp ? node.id + "-Map" : node.id}
-        className={isTemp ? `${tag}` : `absolute target ${tag}`}
-        onMouseDown={onHandleSelectedCurrent}
-        style={
-          isTemp
-            ? {
-                zIndex: node.z,
-                width: "100%",
-                height: "100%",
-              }
-            : {
-                zIndex: node.z,
-                width: node.w / PanelState.tickUnit + "px",
-                height: node.h / PanelState.tickUnit + "px",
-              }
-        }
-      >
-        <Temp
-          id={node.id}
-          isTemp={isTemp}
-          PanelState={PanelState}
-          NodesState={NodesState}
-        ></Temp>
-      </div>
+      <>
+        <div
+          ref={nodeRef}
+          id={isTemp ? node.id + "-Map" : node.id}
+          className={isTemp ? `${tag}` : `absolute target ${tag}`}
+          onMouseDown={onHandleSelectedCurrent}
+          style={
+            isTemp
+              ? {
+                  zIndex: node.z,
+                  width: "100%",
+                  height: "100%",
+                }
+              : {
+                  zIndex: node.z,
+                  width: "0px",
+                  height: "0px",
+                }
+          }
+        >
+          <Temp
+            id={node.id}
+            isTemp={isTemp}
+            PanelState={PanelState}
+            NodesState={NodesState}
+          ></Temp>
+        </div>
+      </>
     );
   }
 );
@@ -136,7 +133,7 @@ export const AScene = memo(() => {
   const PanelState = useSelector((state: { panelSlice: IPs }) => {
     return state.panelSlice;
   });
-
+  console.log("f222f2ff2f2f2f2");
   return (
     <>
       <div

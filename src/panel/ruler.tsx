@@ -16,7 +16,6 @@ import { AR_PANEL_DOM_ID } from "../contant";
 
 export const ARuler = React.memo(() => {
   const [sceneLock, setSceneLock] = useState(true);
-
   const ges = useRef<{ g: Gesto | null }>({ g: null });
   useHotkeys("s", () => setSceneLock(false), { keyup: false, keydown: true });
   useHotkeys("s", () => setSceneLock(true), { keyup: true, keydown: false });

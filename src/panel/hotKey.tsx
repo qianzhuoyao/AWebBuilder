@@ -158,6 +158,7 @@ const useDefaultBlurEvent = () => {
                 document.getElementById(AR_PANEL_DOM_ID)
               )
             ) {
+              console.log('osalfiafgasfaswfwfwfwfw')
               dispatch(updateTargets([]));
             }
             // dispatch(updateTargets([]));

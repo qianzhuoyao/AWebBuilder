@@ -1,7 +1,7 @@
 import { signalViewNodeAttrConfig } from "../../signalNodeConfig.ts";
 import {
   INs,
-  pic_Img,
+  pix_frame,
   updateInstance,
 } from "../../../store/slice/nodeSlice.ts";
 import { Card, CardBody, Input, Tab, Tabs } from "@nextui-org/react";
@@ -9,9 +9,8 @@ import { DefaultViewNodeConfigForm } from "../../form/view/BXChartConfigForm.tsx
 import { StreamData } from "../../form/logic/remoteReq/StreamData.tsx";
 import { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { insertConfig } from "../../../node/viewConfigSubscribe.ts";
 
-const ImageConfigSetting = memo(() => {
+const IframeConfigSetting = memo(() => {
   const dispatch = useDispatch();
   const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
     return state.viewNodesSlice;
@@ -19,16 +18,14 @@ const ImageConfigSetting = memo(() => {
 
   const onUpdateSrc = useCallback(
     (value: string) => {
-      insertConfig(NodesState.targets[0], {
-        src: value,
-      });
+      console.log(value, "useCallbackss");
       dispatch(
         updateInstance({
           type: NodesState.list[NodesState.targets[0]].instance.type,
-          id: NodesState.targets[0],
+          id: NodesState.list[NodesState.targets[0]].id,
           option: {
             ...NodesState.list[NodesState.targets[0]]?.instance?.option,
-            src: value,
+            url: value,
           },
         })
       );
@@ -38,13 +35,13 @@ const ImageConfigSetting = memo(() => {
   return (
     <div>
       <div>
-        <small>资源</small>
+        <small>URL</small>
         <Input
           type="text"
           placeholder="资源"
           labelPlacement="outside"
           value={
-            NodesState.list[NodesState.targets[0]]?.instance?.option?.src || ""
+            NodesState.list[NodesState.targets[0]]?.instance?.option?.url || ""
           }
           // value={NodesState.list[NodesState.targets[0]].instance.option?.src || ''}
           onChange={(e) => {
@@ -55,8 +52,8 @@ const ImageConfigSetting = memo(() => {
     </div>
   );
 });
-export const ImageConfig = () => {
-  const config = signalViewNodeAttrConfig(pic_Img);
+export const IframeConfig = () => {
+  const config = signalViewNodeAttrConfig(pix_frame);
   config.setConfigEle((nodeInfo) => {
     if (nodeInfo.target.length > 0) {
       return (
@@ -71,11 +68,11 @@ export const ImageConfig = () => {
             >
               <Tab
                 key={nodeInfo.target[0] + "TableConfigSetting"}
-                title={"图表配置"}
+                title={"网页配置"}
               >
                 <Card>
                   <CardBody>
-                    <ImageConfigSetting></ImageConfigSetting>
+                    <IframeConfigSetting></IframeConfigSetting>
                   </CardBody>
                 </Card>
               </Tab>

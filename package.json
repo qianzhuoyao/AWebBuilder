@@ -99,6 +99,7 @@
     "react-dragline": "^1.1.0",
     "react-gsap": "^3.2.1",
     "react-hotkeys-hook": "^4.4.4",
+    "react-iframe": "^1.8.5",
     "react-json-view": "^1.21.3",
     "react-keycon": "^0.3.0",
     "react-moveable": "^0.56.0",

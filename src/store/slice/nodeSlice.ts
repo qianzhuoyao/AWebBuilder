@@ -2,8 +2,9 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
 import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
-import { IMAGE_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
+import { IFRAME_DEFAULT_OPTION, IMAGE_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
 import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
+import { isEqual } from "lodash";
 //pixTable
 export const pix_Table = "pixTable" as const;
 export const pix_frame = "pix_frame" as const;
@@ -99,6 +100,7 @@ export type INodeType =
   | typeof pix_GLine
   | typeof pix_Line
   | typeof pic_Img
+  | typeof pix_frame
   | typeof pix_Text
   | ILogicType
   | keyof typeof CHART_OPTIONS;
@@ -109,6 +111,7 @@ export type IOptionInstance = Partial<
     chart: string;
   } & ITableConfig &
   typeof IMAGE_DEFAULT_OPTION
+  & typeof IFRAME_DEFAULT_OPTION
 >;
 
 interface IChartInstance {
@@ -188,7 +191,7 @@ export const viewNodesSlice = createSlice({
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
-      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX];
+      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX, pix_frame];
       //是视图
       if (viewNodeTypeIdList.includes(type)) {
         (state.list as Record<string, IViewNode>)[id].instance.option = option;
@@ -211,7 +214,10 @@ export const viewNodesSlice = createSlice({
     },
 
     updateTargets: (state, action) => {
-      state.targets = action.payload;
+      if (!isEqual(state.targets, action.payload)) {
+        state.targets = action.payload;
+      }
+
     },
     updateSize: (state, action: PayloadAction<{
       id: string,
@@ -237,6 +243,7 @@ export const viewNodesSlice = createSlice({
       y: number,
       transform?: string
     }>) => {
+      console.log(action.payload, 'action.paycload');
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
@@ -257,6 +264,7 @@ export const viewNodesSlice = createSlice({
       state.list = action.payload;
     },
     addNode: (state, action) => {
+
       (state.list as Record<string, IViewNode>)[action.payload.id] =
         action.payload;
     },

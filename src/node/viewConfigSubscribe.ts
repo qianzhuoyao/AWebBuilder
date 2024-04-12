@@ -9,7 +9,8 @@ export interface ITableConfig {
 }
 
 type IChartConfig = { chart: string, };
-export type IConfig = Partial<ITableConfig & IChartConfig>;
+type IImageConfig = { src: string, };
+export type IConfig = Partial<ITableConfig & IChartConfig & IImageConfig>;
 
 const configSubscribe = () => {
   const nodeConfig = new Map<string, IConfig>();

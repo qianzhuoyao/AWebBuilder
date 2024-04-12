@@ -139,19 +139,30 @@ export const DefaultViewNodeConfigForm = () => {
             }}
             value={String(Math.floor(NodesState.list[NodesState.targets[0]].r))}
           />
-          <small>层级</small>
+          <small>{"层级(最大999,最小1)"}</small>
           <AInput
             placeholder="zIndex"
             className="w-[250px] mr-2"
             size="xs"
             onChange={(e) => {
-              emitBlockSetZIndex(Number(e.target.value), NodesState.targets[0]);
-              dispatch(
-                updateZ({
-                  id: NodesState.targets[0],
-                  zIndex: Number(e.target.value),
-                })
-              );
+              if (
+                Number(e.target.value) &&
+                Number(e.target.value) > 0 &&
+                Number(e.target.value) < 999
+              ) {
+                emitBlockSetZIndex(
+                  Number(e.target.value) || 1,
+                  NodesState.targets[0]
+                );
+                dispatch(
+                  updateZ({
+                    id: NodesState.targets[0],
+                    zIndex: Number(e.target.value) || 1,
+                  })
+                );
+              } else {
+                toast.error("层级异常输入");
+              }
             }}
             value={String(Math.floor(NodesState.list[NodesState.targets[0]].z))}
           />
