@@ -8,12 +8,12 @@ const parseParam = <B>(body: B) => {
     return ''
 }
 
-export const aGet = <B>(url: string, body: B):Promise<any> => {
+export const aGet = <B>(url: string, body: B,config:any):Promise<any> => {
 
     return new Promise((resolve, rej) => {
         const params = parseParam(body)
 
-        axios.get(`${url}?${params}`)
+        axios.get(`${url}?${params}`,config)
             .then(function (response) {
                 // handle success
                 console.log(response);
@@ -30,14 +30,9 @@ export const aGet = <B>(url: string, body: B):Promise<any> => {
     })
 }
 
-export const aPost = <B>(url: string, body: B):Promise<any> => {
+export const aPost = <B>(url: string, body: B,config:any):Promise<any> => {
     return new Promise((resolve, rej) => {
-        axios.post(url, body, {
-
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(url, body, config)
             .then(function (response) {
                 resolve(response)
             })

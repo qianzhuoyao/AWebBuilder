@@ -11,6 +11,7 @@ import {
   CardHeader,
   Divider,
   Chip,
+  Textarea,
 } from "@nextui-org/react";
 import { ILs } from "../../../store/slice/logicSlice.ts";
 import { memo, useCallback, useRef, useState } from "react";
@@ -39,6 +40,16 @@ const Url = memo(() => {
     defaultRemote;
 
   const [params, setParams] = useState<IRemoteReqInfo>(loadParams);
+
+  const updateToken = useCallback(
+    (token: string) => {
+      setParams({ ...params, token });
+      genLogicConfigMap().configInfo.set(logicState.target[0], {
+        remoteReqInfo: { ...params, token },
+      });
+    },
+    [logicState.target, params]
+  );
 
   const updateUrl = useCallback(
     (url: string) => {
@@ -112,6 +123,7 @@ const Url = memo(() => {
           }}
         />
       </div>
+
       <div className={"mt-1"}>
         <small>方法:</small>
         <Select
@@ -140,6 +152,18 @@ const Url = memo(() => {
           ))}
         </Select>
       </div>
+      <div className={"mt-1"}>
+        <small>token:</small>
+        <Textarea
+          value={params?.token}
+          placeholder="token"
+          labelPlacement="outside"
+          className="max-w-xs"
+          onChange={(e) => {
+            updateToken(e.target.value);
+          }}
+        />
+      </div>
     </>
   );
 });
@@ -165,6 +189,7 @@ const Test = memo(() => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json, text/plain",
+        Authorization: params.token,
       },
     }).then((res) => res.json());
 

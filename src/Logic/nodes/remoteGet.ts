@@ -31,12 +31,26 @@ export const buildDataReqNode = () => {
           value?.config?.remoteReqInfo?.protocol +
           "://" +
           value.config?.remoteReqInfo?.url || "",
-          value.pre
+          value.pre,
+          {
+
+            headers: {
+              Authorization: value.config?.remoteReqInfo?.token,
+              'Content-Type': 'application/json'
+            }
+          }
         ) : aGet(
           value?.config?.remoteReqInfo?.protocol +
           "://" +
           value.config?.remoteReqInfo?.url || "",
-          value.pre
+          value.pre,
+          {
+
+            headers: {
+              Authorization: value.config?.remoteReqInfo?.token,
+              'Content-Type': 'application/json'
+            }
+          }
         )
 
         req().then((res) => {

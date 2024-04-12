@@ -45,6 +45,7 @@ export interface IViewMapInfo<T> {
 
 export interface IRemoteReqInfo {
   url: string;
+  token: string;
   protocol: IProtocol;
   method: "post" | "get";
 }

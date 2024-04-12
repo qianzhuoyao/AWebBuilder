@@ -281,6 +281,7 @@ export const defaultRemote: IRemoteReqInfo = {
   protocol: "http",
   method: "post",
   url: "",
+  token:''
 };
 
 const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
