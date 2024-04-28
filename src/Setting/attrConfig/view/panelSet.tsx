@@ -146,6 +146,9 @@ export const ProviderSetting = memo(() => {
   return (
     <div>
       <div className="flex">
+        <small className="text-[#1990ff]">点击自动化设置长款</small>
+      </div>
+      <div className="flex mt-1">
         <div className="flex items-center">
           <small className="w-[30px]">长</small>
           <AInput

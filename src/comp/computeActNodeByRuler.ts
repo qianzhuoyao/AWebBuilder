@@ -1,11 +1,11 @@
-import { PANEL_MAIN_BG } from "../contant";
+import { PANEL_MAIN_BG } from '../contant';
 
 /**
  * 更具元素，计算建立在坐标系下的坐标
  */
 export const computeActPositionNodeByRuler = (
   node: HTMLElement | SVGElement,
-  unit: number
+  unit: number,
 ) => {
   const panelDom = document.getElementById(PANEL_MAIN_BG);
   if (panelDom) {

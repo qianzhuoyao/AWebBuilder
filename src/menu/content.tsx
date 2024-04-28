@@ -8,7 +8,13 @@ import {
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { Fragment, useCallback, useEffect } from "react";
-import { IPs, updateWorkSpaceName } from "../store/slice/panelSlice";
+import {
+  IPs,
+  updatePanelAssign,
+  updatePanelHeight,
+  updatePanelWidth,
+  updateWorkSpaceName,
+} from "../store/slice/panelSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addNode } from "../store/slice/nodeSlice";
 import { createNode } from "../panel/logicPanelEventSubscribe";
@@ -98,6 +104,8 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
   }, [data]);
   const toPanel = useCallback(() => {
     dispatch(updateWorkSpaceName(data?.viewName));
+    dispatch(updatePanelAssign(JSON.parse(data.webPanel || "{}")));
+
     toParseInPanel(data, {
       paintLogicNodesEach: (node) => {
         createNode({
@@ -144,9 +152,13 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
       data.webPanel,
       data.webLogic
     );
-    window.open(window.location.origin + "/demo?work=" + JSON.stringify({
-      indexList: [PanelState.workSpaceName]
-    }));
+    window.open(
+      window.location.origin +
+        "/demo?work=" +
+        JSON.stringify({
+          indexList: [PanelState.workSpaceName],
+        })
+    );
   }, [PanelState.workSpaceName, data.webLogic, data.webNodes, data.webPanel]);
 
   return (

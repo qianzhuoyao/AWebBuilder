@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { DEFAULT_PANEL_COLOR } from "../../contant";
 
 export interface IPs {
@@ -72,6 +72,12 @@ export const panelSlice = createSlice({
     updatePanelTop: (state, action) => {
       state.panelTop = action.payload;
     },
+    updatePanelAssign: (state, action: PayloadAction<Partial<IPs>>) => {
+      // state.panelWidth = action.payload;
+      Object.keys(action.payload).map(key => {
+        state[key] = action.payload[key]
+      })
+    },
     updatePanelWidth: (state, action) => {
       state.panelWidth = action.payload;
     },
@@ -102,6 +108,7 @@ export const {
   updatePanelHeight,
   updatePanelLeft,
   updateIsSelection,
+  updatePanelAssign,
   updatePanelWidth,
   updatePanelTickUnit,
   updateRulerMinY,

@@ -1,7 +1,7 @@
-import { ILogicTypeList } from "../panel/logicSrcList.ts";
-import { ILogicType } from "../store/slice/nodeSlice.ts";
-import { Observable } from "rxjs";
-import { IMessageFromStream } from "../comp/signal3.ts";
+import { ILogicTypeList } from '../panel/logicSrcList.ts';
+import { ILogicType } from '../store/slice/nodeSlice.ts';
+import { Observable } from 'rxjs';
+import { IMessageFromStream } from '../comp/signal3.ts';
 
 export interface INodeInfo {
   id: ILogicType;
@@ -12,7 +12,7 @@ export interface INodeInfo {
   ports: {
     id: string;
     portName: string;
-    type: "isIn" | "isOut";
+    type: 'isIn' | 'isOut';
   }[];
 }
 
@@ -32,7 +32,7 @@ interface IMenu<Pre, F, I, O> {
 }
 
 const createLogicMenuInstance = <Pre, F, I, O>(
-  initializer: () => IMenu<Pre, F, I, O>
+  initializer: () => IMenu<Pre, F, I, O>,
 ): (() => IMenu<Pre, F, I, O>) => {
   let instance: IMenu<Pre, F, I, O> | null = null;
   return () => {
@@ -46,17 +46,17 @@ const createLogicMenuInstance = <Pre, F, I, O>(
 const initializeLogicNodeMenuItems = <Pre, F, I, O>(): IMenu<Pre, F, I, O> => {
   const initIdList = new Set<string>();
   const init = new Map<ILogicTypeList, INodeInfo[]>();
-  init.set("remote", []);
-  init.set("cache", []);
-  init.set("filter", []);
-  init.set("timeOut", []);
-  init.set("mix", []);
-  init.set("timeInter", []);
-  init.set("hTrigger", []);
-  init.set("page", []);
-  init.set("viewSlot", []);
-  init.set("date", []);
-  init.set("both", []);
+  init.set('remote', []);
+  init.set('cache', []);
+  init.set('filter', []);
+  init.set('timeOut', []);
+  init.set('mix', []);
+  init.set('timeInter', []);
+  init.set('hTrigger', []);
+  init.set('page', []);
+  init.set('viewSlot', []);
+  init.set('date', []);
+  init.set('both', []);
   const initLogicInMake: Map<
     string,
     (v: IMessageFromStream<Pre, F>) => Observable<I>
@@ -75,22 +75,22 @@ const initializeLogicNodeMenuItems = <Pre, F, I, O>(): IMenu<Pre, F, I, O> => {
 };
 
 export const genLogicNodeMenuItems = createLogicMenuInstance(
-  initializeLogicNodeMenuItems
+  initializeLogicNodeMenuItems,
 );
 
 export const signalLogicNode = <F, I, O>({
-  tips,
-  name,
-  id,
-  src,
-  type,
-}: Omit<INodeInfo, "ports"> & {
+                                           tips,
+                                           name,
+                                           id,
+                                           src,
+                                           type,
+                                         }: Omit<INodeInfo, 'ports'> & {
   type: ILogicTypeList;
 }) => {
   const temps = genLogicNodeMenuItems() as IMenu<unknown, F, I, O>;
 
   if (!temps.logicNodeMenuItems.has(type)) {
-    throw TypeError("分区不存在");
+    throw TypeError('分区不存在');
   }
 
   if (!temps.logicNodeMenuIdList.has(id)) {
@@ -106,11 +106,11 @@ export const signalLogicNode = <F, I, O>({
 
   const signalIn = <Pre>(
     portName: string,
-    buildInPort: (v: IMessageFromStream<Pre, F>) => Observable<I>
+    buildInPort: (v: IMessageFromStream<Pre, F>) => Observable<I>,
   ) => {
     const tempsIn = genLogicNodeMenuItems() as IMenu<Pre, F, I, O>;
-    if (portName.indexOf("#") > -1 || portName.indexOf("@") > -1) {
-      throw new Error("端口名称不允许存在#@");
+    if (portName.indexOf('#') > -1 || portName.indexOf('@') > -1) {
+      throw new Error('端口名称不允许存在#@');
     }
 
     const curNodes = tempsIn.logicNodeMenuItems.get(type);
@@ -121,8 +121,8 @@ export const signalLogicNode = <F, I, O>({
           ...node,
           ports: node.ports.concat([
             {
-              type: "isIn",
-              id: id + "@" + portName,
+              type: 'isIn',
+              id: id + '@' + portName,
               portName: portName,
             },
           ]),
@@ -130,12 +130,12 @@ export const signalLogicNode = <F, I, O>({
       }
       return node;
     });
-    tempsIn.initLogicInMake.set(id + "@" + portName, buildInPort);
+    tempsIn.initLogicInMake.set(id + '@' + portName, buildInPort);
     newCurNodes && tempsIn.logicNodeMenuItems.set(type, newCurNodes);
   };
   const signalOut = <Pre>(
     portName: string,
-    buildOutPort: (v: IMessageFromStream<Pre, F>) => Observable<O>
+    buildOutPort: (v: IMessageFromStream<Pre, F>) => Observable<O>,
   ) => {
     const tempsOut = genLogicNodeMenuItems() as IMenu<Pre, F, I, O>;
 
@@ -146,8 +146,8 @@ export const signalLogicNode = <F, I, O>({
           ...node,
           ports: node.ports.concat([
             {
-              type: "isOut",
-              id: id + "@" + portName,
+              type: 'isOut',
+              id: id + '@' + portName,
               portName: portName,
             },
           ]),
@@ -155,7 +155,7 @@ export const signalLogicNode = <F, I, O>({
       }
       return node;
     });
-    tempsOut.initLogicOutMake.set(id + "@" + portName, buildOutPort);
+    tempsOut.initLogicOutMake.set(id + '@' + portName, buildOutPort);
     newCurNodes && tempsOut.logicNodeMenuItems.set(type, newCurNodes);
   };
 
