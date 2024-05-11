@@ -35,8 +35,9 @@ const colorSet = (color: 0 | 1 | 2) => {
 };
 
 const renderNode = (node: ILogicNode) => {
+  
   const ports = getPortNodeMap(node.id);
-
+  console.log(node,ports,'nodessssss')
   return {
     shape: node.shape,
     x: node.x,
@@ -274,6 +275,7 @@ export const LogicPanel = memo(() => {
 
       deleteSubNode(params.props.nodeProp.nodeGId);
       GRef.current.G?.removeNode(params.props.node.id);
+      
       dispatch(deleteLogicNode({ id: params.props.nodeProp.nodeGId }));
     },
     [dispatch]

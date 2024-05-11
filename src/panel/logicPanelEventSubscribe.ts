@@ -63,6 +63,6 @@ export const createNode = (node: ILogicNode) => {
   getPanelSubscribe().createObservable.next(node);
 };
 
-export const deleteSubNode = (node: ILogicNode) => {
-  getPanelSubscribe().logicNodesConfig.delete(node.id);
+export const deleteSubNode = (id: string) => {
+  getPanelSubscribe().logicNodesConfig.delete(id);
 };

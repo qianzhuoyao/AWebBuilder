@@ -2,7 +2,7 @@ import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { WidgetIconTemp } from "./widgetIconTemp";
 import { SRC_ICON } from "./picList";
 import React, { memo, useMemo } from "react";
-import { pic_Img, pix_BX, pix_Table, pix_frame } from "../store/slice/nodeSlice.ts";
+import { pic_Img, pix_BX, pix_Table, pix_Text, pix_frame } from "../store/slice/nodeSlice.ts";
 
 export interface ITs {
   ele: {
@@ -163,7 +163,7 @@ const TextMap = memo(() => {
             nodeType="VIEW"
             key={text.id}
             typeId={text.id}
-            classify="text"
+            classify={pix_Text}
             src={text.src}
             name={text.name}
           ></WidgetIconTemp>

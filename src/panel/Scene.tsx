@@ -22,6 +22,10 @@ import {
   ModalBody,
   Chip,
   useDisclosure,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 
 import gsap from "gsap";
@@ -38,11 +42,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
 import { AR_PANEL_DOM_ID, MAIN_CONTAINER, MAIN_LAYER } from "../contant";
-import { IPs, updateCurrentSTab } from "../store/slice/panelSlice";
+import { IPs, updateCurrentSTab, updateShotImage } from "../store/slice/panelSlice";
 import {
   INs,
   IViewNode,
   addNode,
+  cloneNode,
   deleteListItem,
   updateTargets,
 } from "../store/slice/nodeSlice";
@@ -62,6 +67,11 @@ import { ReactKey } from "@react-awesome-query-builder/mui";
 import { IWls, updateCurrentLayer } from "../store/slice/widgetSlice.ts";
 import { useFilterLogicNode, useFilterViewNode } from "./useFilter.tsx";
 import { emitBlockReRender } from "../emit/emitBlock.ts";
+import { toImage } from "../comp/domToImage.ts";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
+import { useTakeLogicData } from "../comp/useTakeLogicData.tsx";
+import { useTakePanel, useTakeWidget, useTakeWidgetMap } from "../comp/useTakeStore.tsx";
+import { historySingle, mappingTips } from "../store/store.ts";
 
 export function SolarLockBoldDuotone(props: SVGProps<SVGSVGElement>) {
   return (
@@ -248,6 +258,9 @@ export function IcRoundLock(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+
+
+
 export function IcBaselineKeyboard(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -382,25 +395,58 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
 const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
   const dispatch = useDispatch();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
 
   const onHandleUpdateSTab = useCallback((key: string) => {
     dispatch(updateCurrentSTab(key));
+    toImage().then(image => {
+      dispatch(updateShotImage(image));
+    })
   }, []);
   return (
     <>
       <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
         <div className="absolute bottom-[5px] left-[5px]">
-          <Chip
-            startContent={<MdiHistory></MdiHistory>}
-            variant="faded"
-            radius="sm"
-            color="default"
-          >
-            <small>操作历史</small>
-          </Chip>
+
+          <Dropdown>
+            <DropdownTrigger>
+              <Chip
+                startContent={<MdiHistory></MdiHistory>}
+                variant="faded"
+                radius="sm"
+                color="default"
+              >
+                <small>操作历史</small>
+              </Chip>
+            </DropdownTrigger>
+            <DropdownMenu className="h-[400px] overflow-scroll" aria-label="history Actions">
+              {historySingle().history.map((item, index) => {
+                return <DropdownItem key={index}>
+
+                  <Card className="min-w-[300px] max-h-[320px] cursor-pointer">
+                    <CardBody className="overflow-visible my-2">
+                      <div>
+                        <small>{mappingTips(item.action)}</small>
+                      </div>
+
+                    </CardBody>
+                    <CardFooter className="justify-between">
+                      <Chip
+                        startContent={<MdiHistory></MdiHistory>}
+                        variant="bordered"
+                        radius="sm"
+                        color="primary"
+                      >{item.time}</Chip>
+
+                    </CardFooter>
+                  </Card>
+
+                </DropdownItem>
+              })}
+            </DropdownMenu>
+          </Dropdown>
+
+
         </div>
         <div className="absolute bottom-[5px] right-[5px] flex items-center">
           <Tooltip
@@ -504,19 +550,11 @@ const SceneWidgetMap = memo(() => {
   >("view_map_list");
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
   const height = useAutoHeight();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    return state.widgetSlice;
-  });
+  const logicState = useTakeLogicData()
+  const widgetState = useTakeWidget()
   const currentLayer = getLayerContent(widgetState.currentLayerId);
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
-  });
+  const NodesState = useTakeNodeData()
+  const widgetMapState = useTakeWidgetMap()
 
   useLayoutEffect(() => {
     if (!widgetMapState.show) {
@@ -551,13 +589,14 @@ const SceneWidgetMap = memo(() => {
   const onHandleCopy = useCallback(
     (id: string) => {
       const clone = NodesState.list[id];
+      const hash = Math.random()
       if (clone) {
         dispatch(
-          addNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" })
+          cloneNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" + hash })
         );
         updateViewNodesInLayer(
           currentLayer?.layerNameNodesOfView || "",
-          clone.id + "-clone"
+          clone.id + "-clone" + hash
         );
       }
     },
@@ -710,9 +749,7 @@ const AContent = memo(() => {
 export const Scene = memo(() => {
   const dispatch = useDispatch();
 
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
-  });
+  const widgetMapState = useTakeWidgetMap()
 
   const onHandleOpenWidMap = useCallback(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));

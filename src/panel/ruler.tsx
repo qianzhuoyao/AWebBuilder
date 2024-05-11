@@ -13,6 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { useCustomHotKeys } from "./hotKey";
 import { AR_PANEL_DOM_ID } from "../contant";
+import { useTakePanel } from "../comp/useTakeStore";
 
 export const ARuler = React.memo(() => {
   const [sceneLock, setSceneLock] = useState(true);
@@ -20,9 +21,7 @@ export const ARuler = React.memo(() => {
   useHotkeys("s", () => setSceneLock(false), { keyup: false, keydown: true });
   useHotkeys("s", () => setSceneLock(true), { keyup: true, keydown: false });
 
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState =useTakePanel()
 
   const guides1 = useRef<Guides>(null);
   const guides2 = useRef<Guides>(null);

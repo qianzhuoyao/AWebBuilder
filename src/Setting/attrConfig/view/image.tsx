@@ -13,32 +13,16 @@ import { insertConfig } from "../../../node/viewConfigSubscribe.ts";
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
 import { useTheme } from "next-themes";
-
-const props: UploadProps = {
-  name: "file",
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  headers: {
-    authorization: "authorization-text",
-  },
-  onChange(info) {
-    if (info.file.status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === "done") {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+import { ICs } from "../../../store/slice/configSlice.ts";
+import { SERVICE_PORT } from "../../../contant/index.ts";
+import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
+import { useTakeConfig } from "../../../comp/useTakeStore.tsx";
 
 const ImageConfigSetting = memo(() => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-
+  const NodesState = useTakeNodeData()
+  const ConfigState = useTakeConfig()
   const onUpdateSrc = useCallback(
     (value: string) => {
       insertConfig(NodesState.targets[0], {
@@ -57,13 +41,48 @@ const ImageConfigSetting = memo(() => {
     },
     [NodesState.list, NodesState.targets, dispatch]
   );
+
+
+  const HOST = window.location.protocol +
+    "//" +
+    window.location.hostname +
+    ":" +
+    SERVICE_PORT
+
+  const props: UploadProps = {
+    name: "file",
+    action: `/mwapi/visualize/visualizeView/upload`,
+    // action: `http://10.180.5.186:30081/mwapi/visualize/visualizeView/upload`,
+    headers: {
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Methods': "*",
+      'Access-Control-Allow-Headers': "*",
+      authorization: ConfigState?.contentList?.token || "",
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+        if (info.file.response.rtnCode === 200) {
+          onUpdateSrc(
+            `${HOST}/visualize_download/${info.file.response.data}`
+          );
+        }
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <div>
       <div>
         <small>资源</small>
         <Input
           type="text"
-          placeholder="资源"
+          placeholder="资源,可用过{}的形式取用流值路径"
           labelPlacement="outside"
           value={
             NodesState.list[NodesState.targets[0]]?.instance?.option?.src || ""
@@ -76,11 +95,45 @@ const ImageConfigSetting = memo(() => {
       </div>
       <div>
         <Upload
-          {...props}
-          className={`text-[${theme === "light" ? "#000" : "#fff"}]`}
+          name="file"
+          headers={{
+            authorization: window.localStorage.getItem('token') || '',
+          }}
+          style={{
+            color: theme === "light" ? "#000" : "#fff"
+          }}
+          className="avatar-uploader"
+          showUploadList={false}
+          accept='image'
+          maxCount={1}
+          action="/mwapi/visualize/visualizeView/upload"
+          onChange={(info) => {
+            if (info.file.status !== "uploading") {
+              console.log(info.file, info.fileList);
+            }
+            if (info.file.status === "done") {
+              message.success(`${info.file.name} file uploaded successfully`);
+              if (info.file.response.rtnCode === 200) {
+                onUpdateSrc(
+                  `${HOST}/visualize_download/${info.file.response.data}`
+                );
+              }
+            } else if (info.file.status === "error") {
+              message.error(`${info.file.name} file upload failed.`);
+            }
+          }}
         >
           <small className="cursor-pointer">上传</small>
         </Upload>
+        {/* <Upload
+          {...props}
+          style={{
+            color: theme === "light" ? "#000" : "#fff"
+          }}
+
+        >
+          <small className="cursor-pointer">上传</small>
+        </Upload> */}
       </div>
     </div>
   );

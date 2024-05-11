@@ -57,10 +57,11 @@ import {
   updateViewNodesInLayer,
 } from "./layers.ts";
 import { IWls } from "../store/slice/widgetSlice.ts";
-import {
-  RECORD_VIEW_NODE,
-  recordChange,
-} from "../store/slice/viewNodesRecordSlice.ts";
+
+
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
+import { useTakeLogicData } from "../comp/useTakeLogicData.tsx";
+import { useTakePanel, useTakeWidget, useTakeWidgetMap } from "../comp/useTakeStore.tsx";
 
 interface IW {
   nodeType: "LOGIC" | "VIEW";
@@ -104,9 +105,7 @@ const ViewCard = memo(
     id: string;
     src: string;
   }) => {
-    const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-      return state.widgetMapSlice;
-    });
+    const widgetMapState = useTakeWidgetMap()
     const ICardRef = useRef<HTMLDivElement>(null);
     const ImageRef = useRef<HTMLImageElement>(null);
     useCardDefaultSetting(
@@ -224,9 +223,7 @@ const LogicCard = memo(
     src: string;
     tips?: string;
   }) => {
-    const logicState = useSelector((state: { logicSlice: ILs }) => {
-      return state.logicSlice;
-    });
+    const logicState = useTakeLogicData()
     const ICardRef = useRef<HTMLDivElement>(null);
     const ImageRef = useRef<HTMLImageElement>(null);
     useCardDefaultSetting(
@@ -281,7 +278,7 @@ export const defaultRemote: IRemoteReqInfo = {
   protocol: "http",
   method: "post",
   url: "",
-  token:''
+  token: ''
 };
 
 const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
@@ -327,18 +324,11 @@ export const WidgetIconTemp = memo(
 
     const dispatch = useDispatch();
 
-    const PanelState = useSelector((state: { panelSlice: IPs }) => {
-      return state.panelSlice;
-    });
-    const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-      return state.widgetSlice;
-    });
+    const PanelState = useTakePanel()
+    const widgetState = useTakeWidget()
     const currentLayer = getLayerContent(widgetState.currentLayerId);
 
-    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-      return state.viewNodesSlice;
-    });
-
+    const NodesState = useTakeNodeData()
     useEffect(() => {
       const subscription = setWidgetStream<HTMLImageElement | null, undefined>(
         key,
@@ -379,8 +369,8 @@ export const WidgetIconTemp = memo(
                 PanelState.offset
               );
               if (pointer && isInPanel(e, AR_PANEL_DOM_ID)) {
-                const w = drag_size_width * PanelState.tickUnit;
-                const h = drag_size_height * PanelState.tickUnit;
+                const w = drag_size_width;
+                const h = drag_size_height;
                 const { x, y } = pointer;
                 const viewNodeId = uuidv4();
                 const newNodeName = name + "@" + viewNodeId;
@@ -396,7 +386,7 @@ export const WidgetIconTemp = memo(
                   r: 0,
                   w,
                   h,
-      
+
                   z: 10,
                   desc: "",
                   id: viewNodeId,
@@ -411,17 +401,8 @@ export const WidgetIconTemp = memo(
                 };
                 dispatch(addNode(newNode));
                 setTimeout(() => {
-                 
-                  dispatch(
-                    recordChange({
-                      recordViewType: RECORD_VIEW_NODE,
-                      recordDesc: "添加一个视图组件,别名为" + newNodeName,
-                      recordViewInfo: {
-                        ...NodesState.list,
-                        [viewNodeId]: newNode,
-                      },
-                    })
-                  );
+
+
                   updateViewNodesInLayer(
                     currentLayer?.layerNameNodesOfView || "",
                     viewNodeId

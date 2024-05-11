@@ -1,9 +1,10 @@
-import { pix_frame, pic_Img, pix_BX, pix_Table } from "../store/slice/nodeSlice.ts";
+import { pix_frame, pic_Img, pix_BX, pix_Table, pix_Text } from "../store/slice/nodeSlice.ts";
 
 export const LOGIC_TYPE_LIST = [
   "remote",
   "viewSlot",
   "page",
+  pix_Text,
   pic_Img,
   "input",
   pix_frame,

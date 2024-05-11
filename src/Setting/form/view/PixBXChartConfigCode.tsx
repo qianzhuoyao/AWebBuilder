@@ -16,6 +16,7 @@ import { useAutoHeight } from "../../../comp/useAutoHeight.tsx";
 import { dispatchViewUpdate } from "../../../emit/emitChart.ts";
 import { insertConfig } from "../../../node/viewConfigSubscribe.ts";
 import { CHART_OPTIONS } from "../../attrConfig/view/CHART_OPTIONS.ts";
+import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
 
 export const PixBXChartConfigCode = () => {
   const codeContainerHeight = useAutoHeight();
@@ -24,9 +25,7 @@ export const PixBXChartConfigCode = () => {
   const [parseError, setParseError] = useState("");
   const { theme } = useTheme();
   const [curCode, setCurCode] = useState("");
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
   const { targets } = NodesState;
 
   //只允许一项

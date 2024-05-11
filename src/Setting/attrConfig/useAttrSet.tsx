@@ -1,18 +1,14 @@
 import React, { useEffect } from "react";
 import { AttrConfigInit, DefaultLogicConfig } from "./logic";
 import { AttrViewConfigInit, DefaultPanelViewConfig } from "./view";
-import { useSelector } from "react-redux";
-import { INs } from "../../store/slice/nodeSlice.ts";
-import { ILs } from "../../store/slice/logicSlice.ts";
+
+import { useTakeNodeData } from "../../comp/useTakeNodeData.tsx";
+import { useTakeLogicData } from "../../comp/useTakeLogicData.tsx";
 
 //默认配置项注册
 export const useAttrSet = (deps?: React.DependencyList) => {
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const NodesState = useTakeNodeData()
+  const logicState = useTakeLogicData()
   useEffect(() => {
     DefaultLogicConfig();
     DefaultPanelViewConfig();

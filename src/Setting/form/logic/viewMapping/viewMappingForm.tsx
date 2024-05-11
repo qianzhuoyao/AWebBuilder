@@ -1,20 +1,15 @@
 import { memo, useCallback, useState } from "react";
 import { Select, SelectItem, Selection } from "@nextui-org/react";
-import { useSelector } from "react-redux";
-import { ILs } from "../../../../store/slice/logicSlice.ts";
 import { useFilterViewNode } from "../../../../panel/useFilter.tsx";
 import { genLogicConfigMap } from "../../../../Logic/nodes/logicConfigMap.ts";
 import { createBindMap, removeBindMap } from "./bindNodeMappingLogic.ts";
-import { INs } from "../../../../store/slice/nodeSlice.ts";
+import { useTakeNodeData } from "../../../../comp/useTakeNodeData.tsx";
+import { useTakeLogicData } from "../../../../comp/useTakeLogicData.tsx";
 
 export const ViewMappingForm = memo(() => {
   const layerViewNode = useFilterViewNode();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const logicState = useTakeLogicData()
+  const NodesState = useTakeNodeData()
   const defaultMappingViewNode = String(
     genLogicConfigMap().configInfo.get(logicState.target[0])?.viewMapInfo
       ?.viewNodeId

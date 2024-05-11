@@ -16,6 +16,7 @@ export interface IPs {
   panelColor: string;
   panelWidth: number;
   panelHeight: number;
+  shotImage:string;
   panelLeft: number;
   panelTop: number;
   workSpaceName: string;
@@ -24,6 +25,7 @@ export interface IPs {
 export const panelSlice = createSlice({
   name: "panel",
   initialState: {
+    shotImage:'',
     currentSTab: "view",
     rulerMinX: 0,
     lockTransform: false,
@@ -44,6 +46,9 @@ export const panelSlice = createSlice({
   reducers: {
     updateWorkSpaceName: (state, action) => {
       state.workSpaceName = action.payload;
+    },
+    updateShotImage: (state, action) => {
+      state.shotImage = action.payload;
     },
     updatePanelImage: (state, action) => {
       state.panelBgImage = action.payload;
@@ -98,6 +103,7 @@ export const panelSlice = createSlice({
 // 
 export const {
   updatePanelColor,
+  updateShotImage,
   updatePanelImage,
   updateCurrentSTab,
   updateWorkSpaceName,

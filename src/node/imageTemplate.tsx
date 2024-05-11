@@ -3,12 +3,14 @@ import { IViewNode, pic_Img } from "../store/slice/nodeSlice";
 import { signalViewNode } from "./baseViewNode";
 import { Image } from "@nextui-org/react";
 import { useAutoSubscription } from "../comp/autoSubscription";
+import { parseContent } from "../comp/parseTemplate";
 
-const BaseImage = memo(({ config }: { config: IViewNode }) => {
-  const [src, setSrc] = useState(() => config.instance.option?.src);
+const BaseImage = memo(({ config, id }: { config: IViewNode, id: string }) => {
+  const [content, setContent] = useState(() => config.instance.option);
   useAutoSubscription(config.id).render((value) => {
     console.log(value, "useAutoSubscription");
-    setSrc(value.src);
+    const result = parseContent(value, id)
+    setContent(result);
   });
   return (
     <Image
@@ -16,7 +18,7 @@ const BaseImage = memo(({ config }: { config: IViewNode }) => {
       height={"100%"}
       alt="BaseImage"
       className={"w-full h-full"}
-      src={src}
+      src={content?.src}
       classNames={{
         wrapper: "w-full h-full",
       }}
@@ -29,7 +31,7 @@ export const ImageTemplate = () => {
   image.createElement((_, { NodesState, id }) => {
     return (
       <>
-        <BaseImage config={NodesState.list[id]}></BaseImage>
+        <BaseImage config={NodesState.list[id]} id={id}></BaseImage>
       </>
     );
   });

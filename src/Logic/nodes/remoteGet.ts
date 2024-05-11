@@ -4,6 +4,7 @@ import remoteGet from "../../assets/widgetIcon/remote_get.svg";
 import { from, of } from "rxjs";
 import { IRemoteReqInfo } from "./logicConfigMap.ts";
 import { aGet, aPost } from "../../fetch/request.ts";
+import { filterObjValue } from "../../comp/filterObjValue.ts";
 
 export const buildDataReqNode = () => {
   const dataReq = signalLogicNode<
@@ -28,25 +29,30 @@ export const buildDataReqNode = () => {
 
         console.log(value.config?.remoteReqInfo?.method?.toUpperCase(), 'value.config?.remoteReqInfo?.method?.toLowerCase()')
         const req = () => value.config?.remoteReqInfo?.method?.toUpperCase() !== 'GET' ? aPost(
-          value?.config?.remoteReqInfo?.protocol +
-          "://" +
+
+          "/mwapi/" +
           value.config?.remoteReqInfo?.url || "",
           value.pre,
           {
 
             headers: {
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Methods': "*",
+              'Access-Control-Allow-Headers': "*",
               Authorization: value.config?.remoteReqInfo?.token,
               'Content-Type': 'application/json'
             }
           }
         ) : aGet(
-          value?.config?.remoteReqInfo?.protocol +
-          "://" +
+          "/mwapi/" +
           value.config?.remoteReqInfo?.url || "",
           value.pre,
           {
 
             headers: {
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Methods': "*",
+              'Access-Control-Allow-Headers': "*",
               Authorization: value.config?.remoteReqInfo?.token,
               'Content-Type': 'application/json'
             }
@@ -54,9 +60,14 @@ export const buildDataReqNode = () => {
         )
 
         req().then((res) => {
+          const parseKeyData = filterObjValue(
+            res?.data || {},
+            value.config?.remoteReqInfo?.parse || ""
+          )
           console.log(res, 'resssss')
           resolve({
             data: res?.data,
+            parseValue: parseKeyData
           });
         });
       })

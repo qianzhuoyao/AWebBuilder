@@ -18,12 +18,13 @@ import {
   emitBlockSetSize,
   emitBlockSetZIndex,
 } from "../../../emit/emitBlock.ts";
+import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
+import { useTakePanel } from "../../../comp/useTakeStore.tsx";
 
 export const DefaultViewNodeConfigForm = () => {
+  const PanelState = useTakePanel()
   const dispatch = useDispatch();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
   const isBind = useMemo(() => {
     return hasBindViewMap(NodesState.list[NodesState.targets[0]].id);
   }, [NodesState.list, NodesState.targets]);

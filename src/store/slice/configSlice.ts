@@ -5,6 +5,7 @@ export interface ICs {
   duration: number;
   indexList: { id: string; name: string; img?: string }[];
   contentList: {
+    token: string;
     total: number;
     records: IParseInPanel[];
   } | null;
@@ -16,6 +17,7 @@ export const configSlice = createSlice({
     duration: 0,
     indexList: [],
     contentList: {
+      token:'',
       total: 0,
       records: [
         // {
@@ -50,6 +52,7 @@ export const configSlice = createSlice({
     updateContentList: (
       state,
       action: PayloadAction<{
+        token:string
         total: number;
         records: IParseInPanel[];
       } | null>

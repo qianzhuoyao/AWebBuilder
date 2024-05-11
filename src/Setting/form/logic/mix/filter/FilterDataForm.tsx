@@ -15,6 +15,7 @@ import { Button, Modal, useDisclosure, ModalBody, ModalContent, ModalFooter, Mod
 import { useTheme } from 'next-themes';
 import { useDispatch, useSelector } from 'react-redux';
 import { ILs } from '../../../../../store/slice/logicSlice.ts';
+import { useTakeLogicData } from '../../../../../comp/useTakeLogicData.tsx';
 
 const stringify = JSON.stringify;
 const {
@@ -142,9 +143,7 @@ export const FilterDataForm = memo(() => {
 const FilterDataBuilder = memo(() => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const memo: React.MutableRefObject<DemoQueryBuilderMemo> = useRef({});
 
   const [state, setState] = useState<DemoQueryBuilderState>({

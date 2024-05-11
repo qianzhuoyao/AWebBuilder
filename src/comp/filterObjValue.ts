@@ -11,22 +11,23 @@ export const filterObjValue = <T>(
   if (!checkField(keyString)) {
     return;
   }
-  const path: string[] = keyString.split(".");
+  // const path: string[] = keyString.split(".");
 
-  const find = (
-    index: number,
-    object: IObjectNotNull<T>
-  ): IObjectNotNull<T> => {
-    if (path[index]) {
-      if (Object.keys(object).length && object[path[index]] instanceof Object) {
-        return find(index + 1, object[path[index]] as IObjectNotNull<T>);
-      } else {
-        return object;
-      }
-    } else {
-      return object;
-    }
-  };
-  return find(0, obj);
+  // const find = (
+  //   index: number,
+  //   object: IObjectNotNull<T>
+  // ): IObjectNotNull<T> => {
+  //   if (path[index]) {
+  //     if (Object.keys(object).length && object[path[index]] instanceof Object) {
+  //       return find(index + 1, object[path[index]] as IObjectNotNull<T>);
+  //     } else {
+  //       return object;
+  //     }
+  //   } else {
+  //     return object;
+  //   }
+  // };
+  // return find(0, obj);
+  return eval(`obj.${keyString}`)
 };
 //console.log(filterObjValue<number>({ a: { b: { c: { d: 1 } } } }, "a.b.c"));

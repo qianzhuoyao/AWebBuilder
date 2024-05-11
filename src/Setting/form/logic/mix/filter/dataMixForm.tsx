@@ -1,14 +1,11 @@
 import { Input } from '@nextui-org/react';
 import { memo, useCallback, useState } from 'react';
-import { ILs } from '../../../../../store/slice/logicSlice.ts';
-import { useSelector } from 'react-redux';
 import { genLogicConfigMap } from '../../../../../Logic/nodes/logicConfigMap.ts';
+import { useTakeLogicData } from '../../../../../comp/useTakeLogicData.tsx';
 
 export const DataMixForm = memo(() => {
 
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const defaultValue = genLogicConfigMap().configInfo.get(logicState.target[0])?.mixDataFieldMap?.fieldString;
   const [mixForm, setMixForm] = useState(defaultValue);
 

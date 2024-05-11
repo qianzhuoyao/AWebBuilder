@@ -1,19 +1,17 @@
 import gsap from "gsap";
 import { memo, useLayoutEffect, useRef } from "react";
-import { IAs } from "../store/slice/atterSlice.ts";
-import { useSelector } from "react-redux";
 import { INs } from "../store/slice/nodeSlice.ts";
 import { getAttrConfig, IConfig } from "./signalNodeConfig.ts";
-import { ILogicNode, ILs } from "../store/slice/logicSlice.ts";
+import { ILogicNode } from "../store/slice/logicSlice.ts";
 import { useAttrSet } from "./attrConfig/useAttrSet.tsx";
-import { IPs } from "../store/slice/panelSlice.ts";
 import { useSignalMsg } from "../comp/msg.tsx";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
+import { useTakeLogicData } from "../comp/useTakeLogicData.tsx";
+import { useTakeAttr, useTakePanel } from "../comp/useTakeStore.tsx";
 
 const DefaultSetting = memo(({ target }: { target: string[] }) => {
   const config = getAttrConfig();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const { go } = useSignalMsg(logicState.target[0]);
   return (
     <>
@@ -50,10 +48,8 @@ const SelectNodeInstance = memo(
 
 const SelectSetting = memo(() => {
   const config = getAttrConfig();
-  const LogicNodesState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
-  const { target, logicNodes } = LogicNodesState;
+  const logicState = useTakeLogicData()
+  const { target, logicNodes } = logicState;
 
   return (
     <>
@@ -70,9 +66,7 @@ const SelectSetting = memo(() => {
 const SelectSettingViewInstance = memo(
   ({ NodesState }: { NodesState: INs }) => {
     const config = getAttrConfig();
-    const logicState = useSelector((state: { logicSlice: ILs }) => {
-      return state.logicSlice;
-    });
+    const logicState = useTakeLogicData()
     const { go } = useSignalMsg(logicState.target[0]);
     const { targets } = NodesState;
     return (
@@ -93,9 +87,7 @@ const SelectSettingViewInstance = memo(
 
 const SelectSettingView = memo(() => {
   const config = getAttrConfig();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
   const { targets } = NodesState;
   return (
     <>
@@ -109,9 +101,7 @@ const SelectSettingView = memo(() => {
 });
 
 const DefaultSettingView = memo(({ targets }: { targets: string[] }) => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const { go } = useSignalMsg(logicState.target[0]);
   const config = getAttrConfig();
   return (
@@ -125,11 +115,9 @@ const DefaultSettingView = memo(({ targets }: { targets: string[] }) => {
   );
 });
 const SettingView = memo(() => {
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
   const { targets } = NodesState;
-  console.log(targets,'targetsssss')
+  console.log(targets, 'targetsssss')
   return (
     <>
       {targets?.length > 0 ? (
@@ -142,9 +130,7 @@ const SettingView = memo(() => {
 });
 
 const SettingTemp = memo(() => {
-  const LogicNodesState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const LogicNodesState = useTakeLogicData()
 
   const { target } = LogicNodesState;
 
@@ -166,14 +152,8 @@ export const AttrSetting = memo(() => {
 
   const gsapContainer = useRef<HTMLDivElement>(null);
 
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
-  const AttrState = useSelector(
-    (state: { viewNodesSlice: INs; attrSlice: IAs }) => {
-      return state.attrSlice;
-    }
-  );
+  const PanelState =useTakePanel()
+  const AttrState = useTakeAttr()
 
   useLayoutEffect(() => {
     if (!AttrState.show) {

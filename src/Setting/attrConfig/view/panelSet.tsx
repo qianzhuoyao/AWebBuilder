@@ -28,6 +28,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { DEFAULT_PANEL_COLOR } from "../../../contant";
 import { toast } from "react-toastify";
+import { useTakePanel } from "../../../comp/useTakeStore.tsx";
 
 export function IconParkOutlineUploadWeb(props: SVGProps<SVGSVGElement>) {
   return (
@@ -68,9 +69,7 @@ export function IconParkOutlineUploadWeb(props: SVGProps<SVGSVGElement>) {
 
 const ColorPick = memo(() => {
   const dispatch = useDispatch();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
   const onHandleColorChange = useCallback((color: ColorResult) => {
     dispatch(updatePanelColor(color.hex));
   }, []);
@@ -101,9 +100,7 @@ const ColorPick = memo(() => {
 });
 export const ProviderSetting = memo(() => {
   const dispatch = useDispatch();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
 
   const onHandleSetBg = useCallback(
     (src: string) => {
@@ -143,10 +140,16 @@ export const ProviderSetting = memo(() => {
     Number(h) && dispatch(updatePanelHeight(Number(h)));
   }, []);
 
+
+  const onAutoSetWindow = useCallback(() => {
+    dispatch(updatePanelWidth(window.screen.width));
+    dispatch(updatePanelHeight(window.screen.height))
+  }, [])
+
   return (
     <div>
       <div className="flex">
-        <small className="text-[#1990ff]">点击自动化设置长款</small>
+        <small className="text-[#1990ff] cursor-pointer" onClick={onAutoSetWindow}>点击按照窗口大小比例自动化设置长宽,特殊情况下预览需额外按下f11以全屏</small>
       </div>
       <div className="flex mt-1">
         <div className="flex items-center">
@@ -272,9 +275,7 @@ export function PhQuestion(props: SVGProps<SVGSVGElement>) {
 
 const PanelSetting = memo(() => {
   const dispatch = useDispatch();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
 
   return (
     <div>

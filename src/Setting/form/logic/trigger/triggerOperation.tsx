@@ -8,15 +8,15 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { memo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   clearSendDugCount,
   deleteSendDugCount,
-  ILs,
 } from "../../../../store/slice/logicSlice.ts";
 import dayjs from "dayjs";
 import { useAutoHeight } from "../../../../comp/useAutoHeight.tsx";
 import type { SVGProps } from "react";
+import { useTakeLogicData } from "../../../../comp/useTakeLogicData.tsx";
 
 export function PajamasClear(props: SVGProps<SVGSVGElement>) {
   return (
@@ -211,9 +211,7 @@ export const TriggerOperation = memo(
   ({ go, target }: { go?: () => void; target: string }) => {
     const dispatch = useDispatch();
     const height = useAutoHeight();
-    const logicState = useSelector((state: { logicSlice: ILs }) => {
-      return state.logicSlice;
-    });
+    const logicState = useTakeLogicData()
 
     const handleClick = () => {
       go && go();

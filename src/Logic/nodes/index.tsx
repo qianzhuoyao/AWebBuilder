@@ -16,6 +16,8 @@ import { and } from "./and.ts";
 import { or } from "./or.ts";
 import { not } from "./not.ts";
 import { checkFilter } from "./checkFilter.ts";
+import { mapFieldMixData } from './selectKeyMix.ts'
+import { handleGetDate } from "./day.tsx";
 
 export const nodeBuilder = () => {
   buildCacheClearReqNode();
@@ -23,11 +25,13 @@ export const nodeBuilder = () => {
   not();
   or();
   and();
+  mapFieldMixData();
   checkFilter();
   filterMixData();
   checkPassword();
   buildCacheSetNode();
   timeSetter();
+  handleGetDate()
   encryption();
   loadStart();
   rollPick();
@@ -37,3 +41,4 @@ export const nodeBuilder = () => {
   handleTrigger();
   viewLogicSlot();
 };
+

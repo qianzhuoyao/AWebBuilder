@@ -2,9 +2,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Moveable, { MoveableManagerInterface } from "react-moveable";
 import Selecto from "react-selecto";
 import { useFilterViewNode } from "./useFilter";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  INs,
   deleteListItem,
   updatePosition,
   updateRotate,
@@ -12,18 +11,17 @@ import {
   updateTargets,
   updateZ,
 } from "../store/slice/nodeSlice";
-import { IPs } from "../store/slice/panelSlice";
-import { IWls, updateDraggable } from "../store/slice/widgetSlice";
+
+import { updateDraggable } from "../store/slice/widgetSlice";
 import { ItemParams } from "react-contexify";
-import {
-  RECORD_VIEW_NODE,
-  recordChange,
-} from "../store/slice/viewNodesRecordSlice";
+import { SCENE, SHOT_IMAGE_CONTAINER } from "../contant";
 import { useSceneContext } from "../menu/context";
 import { ATTR_TAG, NODE_TYPE_CODE, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { emitBlockSubscribe } from "../emit/emitBlock";
+import { useTakeNodeData } from "../comp/useTakeNodeData";
+import { useTakePanel, useTakeWidget } from "../comp/useTakeStore";
 
 const useNodeContainerHotKeys = () => {
   const [lock, setLock] = useState(false);
@@ -79,20 +77,15 @@ const useNodeContainerHotKeys = () => {
 
 export const NodeContainer = memo(() => {
   const moveableRef = useRef<Moveable>(null);
+  const boundsRef = useRef<HTMLDivElement>(null);
   const selectoRef = useRef<Selecto>(null);
   const layerViewNode = useFilterViewNode();
   const { lock } = useNodeContainerHotKeys();
+  const SCENE_REF = useRef<HTMLDivElement>(null);
+  const NodesState = useTakeNodeData()
 
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
-  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    return state.widgetSlice;
-  });
+  const PanelState = useTakePanel()
+  const widgetState = useTakeWidget()
 
   const DimensionViewable = useMemo(
     <T,>() => ({
@@ -120,8 +113,8 @@ export const NodeContainer = memo(() => {
               transform: `translate(-50%, 0px)`,
             }}
           >
-            {Math.round(rect.offsetWidth) * PanelState.tickUnit} x
-            {Math.round(rect.offsetHeight) * PanelState.tickUnit}
+            {rect.width * PanelState.tickUnit} x
+            {rect.height * PanelState.tickUnit}
           </div>
         );
       },
@@ -149,13 +142,7 @@ export const NodeContainer = memo(() => {
   const removeViewNode = useCallback(
     (params: ItemParams) => {
       dispatch(deleteListItem({ idList: [params.props.id] }));
-      dispatch(
-        recordChange({
-          recordViewType: RECORD_VIEW_NODE,
-          recordDesc: "删除了一个视图组件,别名为" + params.props.alias,
-          recordViewInfo: NodesState.list,
-        })
-      );
+
     },
     [NodesState.list]
   );
@@ -188,6 +175,7 @@ export const NodeContainer = memo(() => {
 
   useEffect(() => {
     const sub = emitBlockSubscribe((param) => {
+      console.log(moveableRef.current!.getMoveables(), 'paramparam')
       if (param.type === "render") {
         console.log(selectoRef, moveableRef, "cwecwcwccwcwcwcw");
         hideBox();
@@ -195,17 +183,23 @@ export const NodeContainer = memo(() => {
         moveableRef.current!.request(
           "draggable",
           {
-            x: param.pack?.x || 0,
-            y: param.pack?.y || 0,
+            x: (param.pack?.x || 0) / PanelState.tickUnit,
+            y: (param.pack?.y || 0) / PanelState.tickUnit,
           },
           true
         );
+      } else if (param.type === "hideBox") {
+        const box = moveableRef.current?.getControlBoxElement();
+
+        if (box) {
+          box.style.overflow = 'hidden'
+        }
       } else if (param.type === "sizeChange") {
         moveableRef.current!.request(
           "resizable",
           {
-            offsetWidth: (param.pack?.w || 0) / PanelState.tickUnit,
-            offsetHeight: (param.pack?.h || 0) / PanelState.tickUnit,
+            offsetWidth: (param.pack?.w || 0),
+            offsetHeight: (param.pack?.h || 0),
           },
           true
         );
@@ -234,14 +228,46 @@ export const NodeContainer = memo(() => {
     };
   }, [PanelState.tickUnit]);
 
+
+  useEffect(() => {
+    console.log(SCENE_REF.current?.getBoundingClientRect(), 'cw3cwcw22')
+    if (boundsRef.current instanceof HTMLElement) {
+      // boundsRef.current.style.left = SCENE_REF.current?.getBoundingClientRect().left + 'px'
+      // boundsRef.current.style.top = SCENE_REF.current?.getBoundingClientRect().top + 'px'
+      boundsRef.current.style.width = SCENE_REF.current?.getBoundingClientRect().width + 'px'
+      boundsRef.current.style.height = SCENE_REF.current?.getBoundingClientRect().height + 'px'
+    }
+  }, [
+    PanelState.panelHeight,
+    PanelState.panelLeft,
+    PanelState.panelTop,
+    PanelState.panelWidth,
+    PanelState.tickUnit
+  ])
+
+  const onHandleFocus = useCallback(() => {
+    const box = moveableRef.current?.getControlBoxElement();
+
+    if (box) {
+      box.style.overflow = 'visible'
+    }
+  }, [])
+
   return (
-    <>
+    <div ref={boundsRef} id={SHOT_IMAGE_CONTAINER} className="absolute"
+      style={{
+        left: (PanelState.panelLeft - PanelState.rulerMinX) + "px",
+        top: (PanelState.panelTop - PanelState.rulerMinY) + "px",
+
+      }}
+    >
+
       <Moveable
         ref={moveableRef}
         origin={false}
         throttleDrag={1}
         keepRatio={false}
-        target={NodesState.targets.map((id) => document.getElementById(id))}
+        target={NodesState.targets?.map((id) => document.getElementById(id))}
         draggable={widgetState.inOperationForDraggable}
         resizable={true}
         scalable={true}
@@ -274,7 +300,7 @@ export const NodeContainer = memo(() => {
         snapThreshold={1}
         maxSnapElementGuidelineDistance={1}
         elementGuidelines={[".target"]}
-        onDragStart={() => {}}
+        onDragStart={() => { }}
         onClickGroup={(e) => {
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
@@ -285,58 +311,26 @@ export const NodeContainer = memo(() => {
               rotate: e.lastEvent.absoluteRotate,
             })
           );
-          setTimeout(() => {
-            dispatch(
-              recordChange({
-                recordViewType: RECORD_VIEW_NODE,
-                recordDesc: `将${NodesState.list[e.target.id].alias}旋转了${
-                  e.lastEvent.absoluteRotate
-                }度`,
-                recordViewInfo: {
-                  ...NodesState.list,
-                  [e.target.id]: {
-                    ...NodesState.list[e.target.id],
-                    r: e.lastEvent.absoluteRotate,
-                  },
-                },
-              })
-            );
-          }, 0);
+
         }}
         onRender={(e) => {
           e.target.style.cssText += e.cssText;
         }}
         onResizeEnd={(e) => {
+          const rect = e.moveable.getRect();
           dispatch(
             updateSize({
               id: e.target.id,
-              w: parseFloat(e.target.style.width) * PanelState.tickUnit,
-              h: parseFloat(e.target.style.height) * PanelState.tickUnit,
+              w: rect.width * PanelState.tickUnit,
+              h: rect.height * PanelState.tickUnit,
             })
           );
-          setTimeout(() => {
-            dispatch(
-              recordChange({
-                recordViewType: RECORD_VIEW_NODE,
-                recordDesc: `将${NodesState.list[e.target.id].alias}放大到 长:${
-                  parseFloat(e.target.style.width) * PanelState.tickUnit
-                }px,宽:${
-                  parseFloat(e.target.style.height) * PanelState.tickUnit
-                }px`,
-                recordViewInfo: {
-                  ...NodesState.list,
-                  [e.target.id]: {
-                    ...NodesState.list[e.target.id],
-                    w: parseFloat(e.target.style.width) * PanelState.tickUnit,
-                    h: parseFloat(e.target.style.height) * PanelState.tickUnit,
-                  },
-                },
-              })
-            );
-          }, 0);
+
         }}
         onDragEnd={(e) => {
+
           const rect = e.moveable.getRect();
+          console.log(rect, 'reddddd')
           dispatch(
             updatePosition({
               id: e.target.id,
@@ -363,13 +357,14 @@ export const NodeContainer = memo(() => {
         }}
       />
 
+
       <Selecto
         ref={selectoRef}
         dragContainer={".elements"}
         selectableTargets={[".target"]}
         hitRate={0}
         selectByClick={true}
-        selectFromInside={false}
+        selectFromInside={true}
         toggleContinueSelect={null}
         ratio={0}
         keyContainer={window}
@@ -377,7 +372,7 @@ export const NodeContainer = memo(() => {
           if (!lock) {
             e.preventDrag();
           }
-          console.log(e, "efgeggegegegeg");
+          console.log(selectoRef.current, e, "efgeggegegegeg");
           const target = e.inputEvent.target;
           if (
             moveableRef.current!.isMoveableElement(target) ||
@@ -405,43 +400,58 @@ export const NodeContainer = memo(() => {
           dispatch(updateTargets(e.selected.map((node) => node.id)));
         }}
       />
-      <div className="empty elements"></div>
       <div
-        id={PANEL_MAIN_BG}
-        className="relative w-full h-full elements"
+        ref={SCENE_REF}
+        id={SCENE}
+        className="absolute bg-[#232324] overflow-hidden"
         style={{
-          backgroundColor: PanelState.panelColor,
-          backgroundImage: `url(${PanelState.panelBgImage})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "100% 100%",
+          top: '0px',
+          left: '0px',
+          width: PanelState.panelWidth + "px",
+          height: PanelState.panelHeight + "px",
+          transform: `scale(${1 / PanelState.tickUnit},${1 / PanelState.tickUnit})`,
+          transformOrigin: 'top left'
         }}
       >
-        {layerViewNode.map((node) => {
-          return (
-            <div
-              key={node.id}
-              onContextMenu={(e) => {
-                show({
-                  event: e,
-                  props: node,
-                });
-              }}
-            >
-              <NodeSlot
-                tag=""
+        <div className="empty elements"></div>
+        <div
+          id={PANEL_MAIN_BG}
+          className="relative w-full h-full elements"
+          style={{
+            backgroundColor: PanelState.panelColor,
+            backgroundImage: `url(${PanelState.panelBgImage})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "100% 100%",
+          }}
+        >
+          {layerViewNode.map((node) => {
+            return (
+              <div
                 key={node.id}
-                node={node}
-                isTemp={false}
-              ></NodeSlot>
-            </div>
-          );
-        })}
+                onClick={onHandleFocus}
+                onContextMenu={(e) => {
+                  show({
+                    event: e,
+                    props: node,
+                  });
+                }}
+              >
+                <NodeSlot
+                  tag=""
+                  key={node.id}
+                  node={node}
+                  isTemp={false}
+                ></NodeSlot>
+              </div>
+            );
+          })}
+        </div>
       </div>
       {view(
         ["删除", "下降层级", "上升层级"].map((value) => {
           return <div key={value}>{value}</div>;
         })
       )}
-    </>
+    </div>
   );
 });

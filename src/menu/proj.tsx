@@ -20,19 +20,17 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  ICs,
   updateDuration,
   updateIndexList,
 } from "../store/slice/configSlice";
 import { DEMO_CAROUSEL_LOCALSTORAGE_CAROUSEL } from "../contant";
 import { toSetLocalstorage } from "../struct/toJSON";
+import { useTakeConfig } from "../comp/useTakeStore";
 
 const IntervalContent = memo(() => {
-  const ConfigState = useSelector((state: { configSlice: ICs }) => {
-    return state.configSlice;
-  });
+  const ConfigState = useTakeConfig()
   const dispatch = useDispatch();
   const [characters, updateCharacters] = useState<
     { id: string; name: string; img?: string }[]
@@ -164,9 +162,7 @@ const IntervalContent = memo(() => {
 
 export const Proj = memo(() => {
   const nav = useNavigate();
-  const ConfigState = useSelector((state: { configSlice: ICs }) => {
-    return state.configSlice;
-  });
+  const ConfigState = useTakeConfig()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const onHandleCreate = useCallback(() => {
     nav("/panel");

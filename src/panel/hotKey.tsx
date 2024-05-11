@@ -18,6 +18,8 @@ import {
 import { AR_PANEL_DOM_ID, ATTR_TAG, NODE_TYPE_CODE } from "../contant";
 import { updateTargets } from "../store/slice/nodeSlice";
 import { checkMouseDownInArea } from "../comp/mousdownArea.ts";
+import { useTakePanel } from "../comp/useTakeStore.tsx";
+import { emitBlockHideBox } from "../emit/emitBlock.ts";
 
 const scroll = <T,>(filter: (e: WheelEvent) => T) => {
   return fromEvent<WheelEvent>(document, "mousewheel").pipe(
@@ -53,9 +55,7 @@ const createKeyUp = () => {
 const useZoomKeyEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -72,6 +72,7 @@ const useZoomKeyEvent = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const subscription = zip(keyDown$, mouseScroll$).subscribe(([_, w]) => {
+      emitBlockHideBox()
       if (w > 0) {
         dispatch(
           updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1)))
@@ -91,9 +92,7 @@ const useZoomKeyEvent = () => {
 const useSelectionKeyEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -134,9 +133,7 @@ const useSelectionKeyEvent = () => {
 const useDefaultBlurEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -158,7 +155,7 @@ const useDefaultBlurEvent = () => {
                 document.getElementById(AR_PANEL_DOM_ID)
               )
             ) {
-              console.log('osalfiafgasfaswfwfwfwfw')
+              console.log(d?.target,d?.target.getAttribute(ATTR_TAG),'osalfiafgasfaswfwfwfwfw')
               dispatch(updateTargets([]));
             }
             // dispatch(updateTargets([]));

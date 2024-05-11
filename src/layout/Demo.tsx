@@ -8,12 +8,13 @@ import { parseMakeByFromId } from "../comp/signal3.ts";
 import { createNode } from "../panel/logicPanelEventSubscribe.ts";
 import { ILogicNode } from "../store/slice/logicSlice.ts";
 import { addNode, clear, INs, IViewNode } from "../store/slice/nodeSlice.ts";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { genLogicConfigMapToParse } from "../Logic/nodes/logicConfigMap.ts";
 import { templateMain } from "../node/index.ts";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { loop } from "../comp/loop.ts";
 import { IPs } from "../store/slice/panelSlice.ts";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
 
 interface ICurrentData {
   LOGIC: {
@@ -38,14 +39,13 @@ export const Demo = () => {
   const [search] = useSearchParams();
   const dispatch = useDispatch();
   const location = useLocation();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
   const localStorageDataJSON = window.localStorage.getItem(DEMO_LOCALSTORAGE);
   const localStorageData = JSON.parse(localStorageDataJSON || "{}");
   const params = JSON.parse(search.get("work") || "{}");
   const pathList = params?.indexList || [];
-
+  indexRef.current.currentData =
+    localStorageData[pathList[indexRef.current.index]];
   const draw = useCallback(
     (currentData: ICurrentData | null) => {
       console.log(currentData, "useCallback");
@@ -113,8 +113,7 @@ export const Demo = () => {
     },
     [dispatch, location.pathname]
   );
-  indexRef.current.currentData =
-    localStorageData[pathList[indexRef.current.index]];
+
   useEffect(() => {
     nodeBuilder();
     templateMain();
@@ -145,7 +144,7 @@ export const Demo = () => {
   }, []);
 
   if (indexRef.current.currentData) {
-    const panel = indexRef.current.currentData?.PANEL;
+    const panel = { ...indexRef.current.currentData?.PANEL, tickUnit: 1 };
     return (
       <div
         style={{

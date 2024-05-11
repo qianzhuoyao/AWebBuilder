@@ -3,11 +3,13 @@ import { INodeType, INs, IViewNode, pix_BX } from "../store/slice/nodeSlice";
 import { signalViewNode } from "./baseViewNode";
 import { viewUpdateReducer } from "../emit/emitChart";
 import { subscribeViewCacheUpdate } from "../panel/data";
-import { useSelector } from "react-redux";
+
 import { runChartOption } from "../comp/useChartOption";
 import { BaseChart } from "./chart";
-import { IPs } from "../store/slice/panelSlice";
+
 import { useAutoSubscription } from "../comp/autoSubscription";
+import { useTakeNodeData } from "../comp/useTakeNodeData";
+import { useTakePanel } from "../comp/useTakeStore";
 
 const MemoChart = memo(
   ({
@@ -30,8 +32,8 @@ const MemoChart = memo(
         () => (
           <BaseChart
             type={type}
-            width={isTemp ? 205 : node.w / tickUnit}
-            height={isTemp ? 100 : node.h / tickUnit}
+            width={205}
+            height={205}
             options={runChartOption(node.id, parseOption)}
           />
         ),
@@ -42,12 +44,8 @@ const MemoChart = memo(
 );
 
 const ChartContainer = ({ isInit, cid }: { isInit: boolean; cid: string }) => {
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const NodesState = useTakeNodeData()
+  const PanelState =useTakePanel()
   const [reRender, setReRender] = useState(false);
   const [parseOptionString, setParseOptionString] = useState(
     () => (NodesState?.list || {})[cid]?.instance?.option?.chart || ""

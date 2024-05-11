@@ -1,24 +1,26 @@
-import { Tooltip, Button } from "@nextui-org/react";
+import { Tooltip, Button, image } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 // import { Icon } from '@iconify-icon/react';
 import { Link, Outlet, useSearchParams } from "react-router-dom";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AInput } from "../comp/AInput";
-import { useDispatch, useSelector } from "react-redux";
-import { IWls } from "../store/slice/widgetSlice";
+import { useDispatch } from "react-redux";
 import { updateShow } from "../store/slice/widgetSlice";
 import type { SVGProps } from "react";
-import { IPs, updateWorkSpaceName } from "../store/slice/panelSlice.ts";
+import { updateWorkSpaceName } from "../store/slice/panelSlice.ts";
 import { toast } from "react-toastify";
-import { INs, setList } from "../store/slice/nodeSlice.ts";
 import { getWDGraph } from "../DirGraph/weightedDirectedGraph.ts";
 import { logicNodesConfigToJSON } from "../panel/logicPanelEventSubscribe.ts";
 import { genLogicConfigMapToJSON } from "../Logic/nodes/logicConfigMap.ts";
 import { toSaveJSON, toSetLocalstorage } from "../struct/toJSON.ts";
+import { ActionCreators } from 'redux-undo'
 
-import { IARs, RECORD_VIEW_NODE } from "../store/slice/viewNodesRecordSlice.ts";
 import { DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW } from "../contant/index.ts";
+import { toImage } from "../comp/domToImage.ts";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
+import { useTakePanel, useTakeStoreHisrtory, useTakeWidget } from "../comp/useTakeStore.tsx";
+import { emitBlockHideBox } from "../emit/emitBlock.ts";
 
 export function FluentMdl2PenWorkspace(props: SVGProps<SVGSVGElement>) {
   return (
@@ -193,23 +195,15 @@ export const Nav = memo(() => {
     setTheme(theme === "light" ? "dark" : "light");
   }, [setTheme, theme]);
 
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
 
-  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    return state.widgetSlice;
-  });
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
-  const NodesRecordState = useSelector(
-    (state: { viewNodesRecordSlice: { present: IARs } }) => {
-      return state.viewNodesRecordSlice.present;
-    }
-  );
+  const widgetState = useTakeWidget()
+
+  const NodesState = useTakeNodeData()
+
 
   const onHandleWidVis = useCallback(() => {
+
     dispatch(updateShow(!widgetState.show));
   }, [dispatch, widgetState.show]);
 
@@ -224,39 +218,61 @@ export const Nav = memo(() => {
     [dispatch]
   );
 
-  const onSave = useCallback(() => {
+  const onSave = () => {
     console.log(search.get('id'), 'dwdwwdffff')
-    toSaveJSON(PanelState, NodesState, search.get('id') || '');
-  }, [NodesState, PanelState]);
+    if (PanelState.currentSTab === 'view') {
+      toImage().then((image: string) => {
+        toSaveJSON(image, PanelState, NodesState, search.get('id') || '');
+      }).catch(() => {
+        toast.error("快照录取失败,请重试");
+      })
+    } else {
+      toSaveJSON(PanelState.shotImage, PanelState, NodesState, search.get('id') || '');
+    }
 
-  const redo = useCallback(() => {
-    dispatch({
-      type: "viewRedo",
-    });
+  }
+
+  const redo = () => {
+    dispatch(ActionCreators.redo())
     setTimeout(() => {
-      if (NodesRecordState.recordViewType === RECORD_VIEW_NODE) {
-        dispatch(setList(NodesRecordState.recordViewInfo));
-      }
-    }, 0);
-  }, [
-    NodesRecordState.recordViewInfo,
-    NodesRecordState.recordViewType,
-    dispatch,
-  ]);
-  const undo = useCallback(() => {
-    dispatch({
-      type: "viewUndo",
-    });
+      emitBlockHideBox()
+      Object.keys(NodesState.list).map(nodeId => {
+        const nodeEle = document.getElementById(nodeId)
+        if (nodeEle instanceof HTMLElement) {
+          nodeEle.style.left = NodesState.list[nodeId].x + 'px'
+          nodeEle.style.top = NodesState.list[nodeId].y + 'px'
+          nodeEle.style.width = NodesState.list[nodeId].w / PanelState.tickUnit + 'px'
+          nodeEle.style.height = NodesState.list[nodeId].h / PanelState.tickUnit + 'px'
+          nodeEle.style.transform = 'none'
+        }
+      })
+    }, 0)
+  }
+
+
+
+  const history = useTakeStoreHisrtory()
+  const undo = () => {
+    // 
+    dispatch(ActionCreators.undo())
     setTimeout(() => {
-      if (NodesRecordState.recordViewType === RECORD_VIEW_NODE) {
-        dispatch(setList(NodesRecordState.recordViewInfo));
-      }
-    }, 0);
-  }, [
-    NodesRecordState.recordViewInfo,
-    NodesRecordState.recordViewType,
-    dispatch,
-  ]);
+
+      console.log(NodesState, 'NodesStateAddd')
+      emitBlockHideBox()
+      Object.keys(NodesState.list).map(nodeId => {
+        const nodeEle = document.getElementById(nodeId)
+        if (nodeEle instanceof HTMLElement) {
+          nodeEle.style.left = NodesState.list[nodeId].x + 'px'
+          nodeEle.style.top = NodesState.list[nodeId].y + 'px'
+          nodeEle.style.width = NodesState.list[nodeId].w / PanelState.tickUnit + 'px'
+          nodeEle.style.height = NodesState.list[nodeId].h / PanelState.tickUnit + 'px'
+          nodeEle.style.transform = 'none'
+        }
+      })
+    }, 0)
+    console.log(ActionCreators, history, NodesState, 'ActionCreators')
+
+  };
   const onPreView = useCallback(() => {
     toSetLocalstorage(
       PanelState.workSpaceName,

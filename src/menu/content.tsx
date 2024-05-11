@@ -18,7 +18,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { addNode } from "../store/slice/nodeSlice";
 import { createNode } from "../panel/logicPanelEventSubscribe";
-import { ILogicNode } from "../store/slice/logicSlice";
+import { addLogicNode, ILogicNode } from "../store/slice/logicSlice";
 import { genWDGraph } from "../DirGraph/weightedDirectedGraph";
 import {
   frameSendChangePageInfo,
@@ -31,19 +31,24 @@ import {
 } from "../struct/toJSON.ts";
 import { ICs, updateContentList } from "../store/slice/configSlice.ts";
 import { DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW } from "../contant/index.ts";
+import { getLayerContent, updateLogicNodesInLayer } from "../panel/layers.ts";
+import { IWls } from "../store/slice/widgetSlice.ts";
+import { mapNodeBindPort } from "../comp/mapNodePort.ts";
+import { addPortNodeMap, getPortStatus } from "../node/portStatus.ts";
+import { useTakeConfig, useTakePanel, useTakeWidget } from "../comp/useTakeStore.tsx";
 
 export const MenuContent = () => {
-  const ConfigState = useSelector((state: { configSlice: ICs }) => {
-    return state.configSlice;
-  });
+  const ConfigState = useTakeConfig()
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const sub = messageEventListener<{
+      token: string;
       total: number;
       records: IParseInPanel[];
     }>((data) => {
+      console.log(data, 'messageEventListeners')
       dispatch(updateContentList(data));
     });
     frameSendPageLoadSuccess();
@@ -94,20 +99,51 @@ const Each = ({ data }: { data: IParseInPanel }) => {
 
 const CustomCard = ({ data }: { data: IParseInPanel }) => {
   const navigate = useNavigate();
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
+  const PanelState = useTakePanel()
 
   const dispatch = useDispatch();
+  const widgetState = useTakeWidget()
   const toDelete = useCallback(() => {
     frameSendDelete(data);
   }, [data]);
+  const currentLayer = getLayerContent(widgetState.currentLayerId);
   const toPanel = useCallback(() => {
     dispatch(updateWorkSpaceName(data?.viewName));
-    dispatch(updatePanelAssign(JSON.parse(data.webPanel || "{}")));
+    const assignPanel = JSON.parse(data.webPanel || "{}")
+    dispatch(updatePanelAssign(assignPanel));
 
     toParseInPanel(data, {
       paintLogicNodesEach: (node) => {
+        const Tem = mapNodeBindPort({
+          belongClass: node.belongClass,
+          typeId: node.typeId,
+        });
+        Tem?.ports.map((port, index) => {
+          if (port.type === "isIn") {
+            const inPortId = "in" + index + "#" + port.id;
+            addPortNodeMap(node.id, inPortId);
+            getPortStatus().status.set(inPortId, {
+              type: "in",
+              tag: index,
+              portType: "",
+              portName: port.portName,
+              pointStatus: 0,
+              id: port.id,
+            });
+          } else {
+            const outPortId = "out" + index + "#" + port.id;
+            // getPortStatus().nodePortMap.set(logicId).;
+            addPortNodeMap(node.id, outPortId);
+            getPortStatus().status.set(outPortId, {
+              type: "out",
+              tag: index,
+              portType: "",
+              portName: port.portName,
+              pointStatus: 0,
+              id: port.id,
+            });
+          }
+        });
         createNode({
           typeId: node.typeId,
           belongClass: node.belongClass,
@@ -119,6 +155,26 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
           id: node.id,
           imageUrl: node.imageUrl,
         } as ILogicNode);
+        dispatch(
+          addLogicNode({
+            typeId: node.typeId,
+            belongClass: node.belongClass,
+            x: node.x,
+            y: node.y,
+            shape: "image",
+            width: node.width,
+            height: node.height,
+            id: node.id,
+            imageUrl: node.imageUrl,
+          })
+        );
+        setTimeout(() => {
+          updateLogicNodesInLayer(
+            currentLayer?.layerNameNodesOfLogic || "",
+            node.id
+          );
+        }, 0);
+
       },
       paintViewNodesEach: (item) => {
         dispatch(
@@ -154,10 +210,10 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
     );
     window.open(
       window.location.origin +
-        "/demo?work=" +
-        JSON.stringify({
-          indexList: [PanelState.workSpaceName],
-        })
+      "/demo?work=" +
+      JSON.stringify({
+        indexList: [PanelState.workSpaceName],
+      })
     );
   }, [PanelState.workSpaceName, data.webLogic, data.webNodes, data.webPanel]);
 

@@ -8,7 +8,7 @@ interface ISize {
     h: number
 }
 interface IEmitter {
-    type: 'render' | 'positionChange' | 'sizeChange' | 'rotateChange' | 'ZIndexChange'
+    type: 'render' | 'positionChange' | 'sizeChange' | 'rotateChange' | 'ZIndexChange' | 'hideBox'
     pack?: Partial<IPosition & ISize & IRotate & { zIndex: number, id: string }>
 }
 
@@ -37,6 +37,13 @@ export const emitBlockSetPosition = (position: IPosition) => {
     })
 }
 
+
+export const emitBlockHideBox = () => {
+    getBlockObservableFn().blockObservable.next({
+        type: 'hideBox',
+        pack: {}
+    })
+}
 
 export const emitBlockSetZIndex = (zIndex: number, id: string) => {
     getBlockObservableFn().blockObservable.next({

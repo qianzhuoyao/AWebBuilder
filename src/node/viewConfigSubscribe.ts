@@ -10,7 +10,14 @@ export interface ITableConfig {
 
 type IChartConfig = { chart: string, };
 type IImageConfig = { src: string, };
-export type IConfig = Partial<ITableConfig & IChartConfig & IImageConfig>;
+export type IText = {
+  text: string,
+  color: string,
+  fontSize: string,
+  fontWeight: number,
+  fontFamily: string
+}
+export type IConfig = Partial<ITableConfig & IChartConfig & IImageConfig & IText>;
 
 const configSubscribe = () => {
   const nodeConfig = new Map<string, IConfig>();

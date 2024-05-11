@@ -11,5 +11,17 @@ export default defineConfig({
   define: {
     _global: ({})
   },
+  server: {
+    open: true,
+    port: 5173,
+    proxy: {
+      '/mwapi': {
+        target: 'http://10.180.5.186:30095',
+        secure: false,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/mwapi/, 'mwapi'),
+      },
+    },
+  },
   plugins: [react()],
 })

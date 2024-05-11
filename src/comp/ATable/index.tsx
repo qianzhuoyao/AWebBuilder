@@ -18,7 +18,7 @@ import {
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CSSProperties, memo, useCallback, useState } from "react";
+import { CSSProperties, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateDraggable } from "../../store/slice/widgetSlice.ts";
 import { filterObjValue } from "../filterObjValue.ts";
@@ -26,6 +26,7 @@ import { v4 } from "uuid";
 import { useMouseUp } from "../useMouseUp.tsx";
 import { getWCache } from "../../panel/data.ts";
 import { useAutoSubscription } from "../autoSubscription.tsx";
+import { ATTR_TAG, NODE_ID, NODE_TYPE_CODE } from "../../contant/index.ts";
 
 const DraggableTableHeader = <T,>({
   header,
@@ -83,9 +84,8 @@ const DraggableTableHeader = <T,>({
         {...{
           onMouseDown: resizeStart(),
           onTouchStart: resizeStart(),
-          className: `w-[4px] resizer ${table.options.columnResizeDirection} ${
-            header.column.getIsResizing() ? "isResizing" : ""
-          }`,
+          className: `w-[4px] resizer ${table.options.columnResizeDirection} ${header.column.getIsResizing() ? "isResizing" : ""
+            }`,
         }}
       ></div>
     </div>
@@ -124,7 +124,7 @@ const DragAlongCell = <T,>({
 export const ATable = memo(<T,>({ id }: { id: string }) => {
   const [columns, setColumns] = useState<ColumnDef<T>[]>([]);
   const [data, setData] = useState<T[]>([]);
-
+  const nodeRef = useRef<HTMLDivElement>(null)
   const dispatch = useDispatch();
 
   const [columnOrder, setColumnOrder] = useState<string[]>(() =>
@@ -154,6 +154,8 @@ export const ATable = memo(<T,>({ id }: { id: string }) => {
     dispatch(updateDraggable(false));
   }, []);
 
+
+
   useAutoSubscription(id).render((value) => {
     const col = filterObjValue(getWCache(id) || {}, value?.colField || "");
     const tableData = filterObjValue(
@@ -180,6 +182,17 @@ export const ATable = memo(<T,>({ id }: { id: string }) => {
     setData((tableData || []) as T[]);
   });
 
+
+  useEffect(() => {
+    if (!nodeRef.current) {
+      return;
+    }
+    [...nodeRef.current.getElementsByTagName("*")].forEach((ele) => {
+      ele.setAttribute(ATTR_TAG, NODE_TYPE_CODE);
+      ele.setAttribute(NODE_ID, id);
+    });
+  }, [data]);
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
@@ -193,7 +206,7 @@ export const ATable = memo(<T,>({ id }: { id: string }) => {
   }, []);
 
   return (
-    <>
+    <div ref={nodeRef} >
       {columns.length > 0 ? (
         <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
           <div className="w-full h-full overflow-scroll">
@@ -257,6 +270,6 @@ export const ATable = memo(<T,>({ id }: { id: string }) => {
       ) : (
         <>表格无配置</>
       )}
-    </>
+    </div>
   );
 });

@@ -30,36 +30,45 @@ export interface IParseInPanel {
 }
 
 /**
+ * window.location.protocol +
+  "//" +
+  window.location.hostname +
+  ":" +
+  SERVICE_PORT
+
+  'http://localhost:8000'
+ */
+const targetHost = window.location.protocol +
+"//" +
+window.location.hostname +
+":" +
+SERVICE_PORT
+
+/**
  * 当前作为内嵌iframe时，发送保存消息
  * @param PanelState
  * @param NodesState
  */
-export const toSaveJSON = (PanelState: IPs, NodesState: INs, id: string) => {
-  toImage().then((image) => {
-    console.log(image, "image");
-    window.parent.postMessage(
-      {
-        type: "save",
-        name: PanelState.workSpaceName,
-        panel: JSON.stringify(PanelState),
-        shotImage: image,
-        id,
-        logic: {
-          C: genLogicConfigMapToJSON(),
-          G: getWDGraph().toJSON(),
-          N: logicNodesConfigToJSON(),
-          L: getLayerContentToJSON(),
-        },
-        nodeConfig: viewNodesToJSON(),
-        nodes: JSON.stringify(NodesState),
+export const toSaveJSON = (image: string, PanelState: IPs, NodesState: INs, id: string) => {
+  console.log(id, "image");
+  window.parent.postMessage(
+    {
+      type: "save",
+      name: PanelState.workSpaceName,
+      panel: JSON.stringify(PanelState),
+      shotImage: image,
+      id: id,
+      logic: {
+        C: genLogicConfigMapToJSON(),
+        G: getWDGraph().toJSON(),
+        N: logicNodesConfigToJSON(),
+        L: getLayerContentToJSON(),
       },
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
-    );
-  });
+      nodeConfig: viewNodesToJSON(),
+      nodes: JSON.stringify(NodesState),
+    },
+    targetHost
+  );
 };
 
 /**
@@ -81,6 +90,7 @@ export const toParseInPanel = (
   Object.values(parseJsonView?.list || {})?.map((item) => {
     panelViewPaint.paintViewNodesEach(item as IViewNode);
   });
+  console.log(JSON.parse(parseJsonData?.N || "{}"), 'iuskjrrrr')
   Object.values(JSON.parse(parseJsonData?.N || "{}"))?.map((node) => {
     panelViewPaint.paintLogicNodesEach(node as ILogicNode);
   });
@@ -97,11 +107,7 @@ export const frameSendDelete = <T>(data: T) => {
       node: data,
       type: "delete",
     },
-    window.location.protocol +
-    "//" +
-    window.location.hostname +
-    ":" +
-    SERVICE_PORT
+    targetHost
   );
 };
 /**
@@ -112,11 +118,7 @@ export const frameSendPageLoadSuccess = () => {
     {
       type: "loadSuccess",
     },
-    window.location.protocol +
-    "//" +
-    window.location.hostname +
-    ":" +
-    SERVICE_PORT
+    targetHost
   );
 };
 
@@ -130,11 +132,7 @@ export const frameSendChangePageInfo = (pageNum: number) => {
       pageNum: pageNum,
       type: "changePage",
     },
-    window.location.protocol +
-    "//" +
-    window.location.hostname +
-    ":" +
-    SERVICE_PORT
+    targetHost
   );
 };
 /**
@@ -158,13 +156,10 @@ export const messageEventListener = <T>(callback: (params: T) => void) => {
       data: T;
     }>
   ) => {
+    console.log(e, 'dedededededd')
     if (
       e.origin ===
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      SERVICE_PORT
+      targetHost
     ) {
       callback(e.data?.data);
     }

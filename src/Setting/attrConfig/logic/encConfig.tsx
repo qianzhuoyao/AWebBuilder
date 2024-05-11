@@ -16,13 +16,11 @@ import {
   genLogicConfigMap,
   IEncryptionConfigInfo,
 } from "../../../Logic/nodes/logicConfigMap.ts";
-import { useSelector } from "react-redux";
-import { ILs } from "../../../store/slice/logicSlice.ts";
+
+import { useTakeLogicData } from "../../../comp/useTakeLogicData.tsx";
 
 const SetEncC = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const defaultConfig = genLogicConfigMap().configInfo.get(
     logicState.target[0]
   )?.encryptionConfigInfo;

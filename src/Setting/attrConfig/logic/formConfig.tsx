@@ -16,11 +16,10 @@ import {
 import { useSelector } from "react-redux";
 import { ILs } from "../../../store/slice/logicSlice.ts";
 import { PhQuestion } from "../view/panelSet.tsx";
+import { useTakeLogicData } from "../../../comp/useTakeLogicData.tsx";
 
 const CodeTip = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const defaultValue = () =>
     genLogicConfigMap().configInfo.get(logicState.target[0])?.formConfigInfo
       ?.json;
@@ -72,9 +71,7 @@ const CodeTip = memo(() => {
   );
 });
 const CodeEdit = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const mirrorRef = useRef<ReactCodeMirrorRef>(null);
   const height = useAutoHeight();
   const defaultCode = genLogicConfigMap().configInfo.get(logicState.target[0])
@@ -124,9 +121,7 @@ const CodeEdit = memo(() => {
   );
 });
 const FormMerge = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const defaultCheck = genLogicConfigMap().configInfo.get(logicState.target[0])
     ?.formConfigInfo?.mergePre;
   const [check, setCheck] = useState(defaultCheck);

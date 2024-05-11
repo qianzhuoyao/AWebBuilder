@@ -9,12 +9,11 @@ import { DefaultViewNodeConfigForm } from "../../form/view/BXChartConfigForm.tsx
 import { StreamData } from "../../form/logic/remoteReq/StreamData.tsx";
 import { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
 
 const IframeConfigSetting = memo(() => {
   const dispatch = useDispatch();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
 
   const onUpdateSrc = useCallback(
     (value: string) => {

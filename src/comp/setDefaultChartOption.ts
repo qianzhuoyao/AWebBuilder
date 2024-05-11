@@ -4,10 +4,12 @@ import {
   pic_Img,
   pix_BX,
   pix_Table,
+  pix_Text,
   pix_frame,
 } from "../store/slice/nodeSlice.ts";
 import pic from "../assets/widgetIcon/photo.svg";
 import { CHART_OPTIONS } from "../Setting/attrConfig/view/CHART_OPTIONS.ts";
+import { IText } from "../node/viewConfigSubscribe.ts";
 
 export const parseFnContent = (str: string) => {
   const value = str.match(/{([\s\S]*)}/);
@@ -43,13 +45,21 @@ export const IFRAME_DEFAULT_OPTION = {
   url: ''
 } as const
 
+export const ITEXT_DEFAULT_OPTION:IText = {
+  text: '文本',
+  color: 'black',
+  fontSize: '12px',
+  fontWeight: 500,
+  fontFamily: ''
+} as const
+
 export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
-  console.log(type,'setDefaultChartOptions')
+  console.log(type, 'setDefaultChartOptions')
   switch (type) {
     case pix_BX:
       return {
-        chartClass: "DEFAULT_BAR",
-        chart: CHART_OPTIONS["DEFAULT_BAR"],
+        chartClass: "普通柱状",
+        chart: CHART_OPTIONS["普通柱状"],
       };
     case pix_Table:
       return TABLE_DEFAULT_OPTION;
@@ -57,6 +67,8 @@ export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
       return IMAGE_DEFAULT_OPTION;
     case pix_frame:
       return IFRAME_DEFAULT_OPTION;
+    case pix_Text:
+      return ITEXT_DEFAULT_OPTION;
     default:
       throw new Error("unknown option type");
   }

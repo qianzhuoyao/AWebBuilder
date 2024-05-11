@@ -6,6 +6,8 @@ import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID, SCENE } from "../contant";
 
 import { NodeContainer } from "./nodeContainer.tsx";
 import { getTemplate } from "../node/baseViewNode.ts";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
+import { useTakePanel } from "../comp/useTakeStore.tsx";
 
 export const Temp = memo(
   ({
@@ -50,12 +52,8 @@ export const NodeSlot = memo(
     const nodeRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const PanelState = useSelector((state: { panelSlice: IPs }) => {
-      return state.panelSlice;
-    });
-    const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-      return state.viewNodesSlice;
-    });
+    const PanelState = useTakePanel()
+    const NodesState = useTakeNodeData()
     console.log(node, "daw3efgfgg");
     useEffect(() => {
       if (!nodeRef.current) {
@@ -69,7 +67,7 @@ export const NodeSlot = memo(
 
     const onHandleSelectedCurrent = useCallback(() => {
       //如果不是模板 就选中，否则映射至对应组件
-
+      console.log(isTemp, node, nodeRef, PanelState, 'isTempisTemp')
       if (isTemp) {
         dispatch(updateTargets([node.id]));
       } else {
@@ -79,10 +77,10 @@ export const NodeSlot = memo(
 
     useEffect(() => {
       if (nodeRef.current) {
-        nodeRef.current.style.left = node.x / PanelState.tickUnit + "px";
-        nodeRef.current.style.top = node.y / PanelState.tickUnit + "px";
-        nodeRef.current.style.width = node.w / PanelState.tickUnit + "px";
-        nodeRef.current.style.height = node.h / PanelState.tickUnit + "px";
+        nodeRef.current.style.left = node.x + "px";
+        nodeRef.current.style.top = node.y + "px";
+        nodeRef.current.style.width = node.w  + "px";
+        nodeRef.current.style.height = node.h  + "px";
       }
     }, []);
 
@@ -96,15 +94,15 @@ export const NodeSlot = memo(
           style={
             isTemp
               ? {
-                  zIndex: node.z,
-                  width: "100%",
-                  height: "100%",
-                }
+                zIndex: node.z,
+                width: "100%",
+                height: "100%",
+              }
               : {
-                  zIndex: node.z,
-                  width: "0px",
-                  height: "0px",
-                }
+                zIndex: node.z,
+                width: "0px",
+                height: "0px",
+              }
           }
         >
           <Temp
@@ -120,10 +118,6 @@ export const NodeSlot = memo(
 );
 
 export const AScene = memo(() => {
-  const SCENE_REF = useRef<HTMLDivElement>(null);
-  const PanelState = useSelector((state: { panelSlice: IPs }) => {
-    return state.panelSlice;
-  });
   console.log("f222f2ff2f2f2f2");
   return (
     <>
@@ -135,19 +129,9 @@ export const AScene = memo(() => {
         }}
       >
         <div id="container" className="relative w-full h-full overflow-hidden">
-          <div
-            ref={SCENE_REF}
-            id={SCENE}
-            className="absolute bg-[#232324] overflow-hidden"
-            style={{
-              left: PanelState.panelLeft - PanelState.rulerMinX + "px",
-              top: PanelState.panelTop - PanelState.rulerMinY + "px",
-              width: PanelState.panelWidth / PanelState.tickUnit + "px",
-              height: PanelState.panelHeight / PanelState.tickUnit + "px",
-            }}
-          >
+         
             <NodeContainer></NodeContainer>
-          </div>
+     
         </div>
       </div>
     </>

@@ -13,10 +13,8 @@ import {
   Chip,
   Textarea,
 } from "@nextui-org/react";
-import { ILs } from "../../../store/slice/logicSlice.ts";
 import { memo, useCallback, useRef, useState } from "react";
 import { Input } from "@nextui-org/react";
-import { useSelector } from "react-redux";
 import {
   genLogicConfigMap,
   IProtocol,
@@ -30,16 +28,22 @@ import { EditorView } from "@codemirror/view";
 import { useTheme } from "next-themes";
 import { useQuery } from "react-query";
 import { useAutoHeight } from "../../../comp/useAutoHeight.tsx";
+import { useTakeLogicData } from "../../../comp/useTakeLogicData.tsx";
 
 const Url = memo(() => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const loadParams =
     genLogicConfigMap().configInfo.get(logicState.target[0])?.remoteReqInfo ||
     defaultRemote;
 
   const [params, setParams] = useState<IRemoteReqInfo>(loadParams);
+
+  const updateParse = useCallback((parse: string) => {
+    setParams({ ...params, parse });
+    genLogicConfigMap().configInfo.set(logicState.target[0], {
+      remoteReqInfo: { ...params, parse },
+    });
+  }, [])
 
   const updateToken = useCallback(
     (token: string) => {
@@ -164,15 +168,25 @@ const Url = memo(() => {
           }}
         />
       </div>
+      <div className={"mt-1"}>
+        <small>parse(JSON):</small>
+        <Textarea
+          value={params?.parse}
+          placeholder="待解析的JSON 路径"
+          labelPlacement="outside"
+          className="max-w-xs"
+          onChange={(e) => {
+            updateParse(e.target.value);
+          }}
+        />
+      </div>
     </>
   );
 });
 
 const Test = memo(() => {
   const mirrorRef = useRef<ReactCodeMirrorRef>(null);
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const loadParams =
     genLogicConfigMap().configInfo.get(logicState.target[0])?.remoteReqInfo ||
     defaultRemote;
@@ -183,10 +197,13 @@ const Test = memo(() => {
   const height = useAutoHeight();
 
   const query = () =>
-    fetch(params.protocol + "://" + params.url, {
+    fetch("/mwapi/" + params.url, {
       method: params.method,
       body: null,
       headers: {
+        'Access-Control-Allow-Origin': "*",
+        'Access-Control-Allow-Methods': "*",
+        'Access-Control-Allow-Headers': "*",
         "Content-Type": "application/json",
         Accept: "application/json, text/plain",
         Authorization: params.token,

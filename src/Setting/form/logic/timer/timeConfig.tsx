@@ -1,10 +1,10 @@
 import { Chip, Input } from "@nextui-org/react";
-import { useSelector } from "react-redux";
-import { ILs } from "../../../../store/slice/logicSlice.ts";
+
 import { useCallback, useEffect, useState } from "react";
 import { genLogicConfigMap } from "../../../../Logic/nodes/logicConfigMap.ts";
 import { ReplaySubject } from "rxjs";
 import { createSingleInstance } from "../../../../comp/createSingleInstance.ts";
+import { useTakeLogicData } from "../../../../comp/useTakeLogicData.tsx";
 
 const syncTimeConfig = () => {
   const subject = new ReplaySubject();
@@ -19,9 +19,7 @@ interface ISubjectValue {
 }
 
 export const TimeConfig = () => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   const loadTime = String(
     genLogicConfigMap().configInfo.get(logicState.target[0])?.timerConfigInfo
       ?.time

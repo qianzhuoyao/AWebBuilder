@@ -1,9 +1,7 @@
-import { useSelector } from "react-redux";
-import { ILs } from "../../store/slice/logicSlice.ts";
+
+import { useTakeLogicData } from "../../comp/useTakeLogicData.tsx";
 
 export const useMapValue = (id: string) => {
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   return logicState.logicNodes[id];
 };

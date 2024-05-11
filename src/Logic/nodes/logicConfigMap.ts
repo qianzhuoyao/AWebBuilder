@@ -47,6 +47,7 @@ export interface IRemoteReqInfo {
   url: string;
   token: string;
   protocol: IProtocol;
+  parse?:string
   method: "post" | "get";
 }
 

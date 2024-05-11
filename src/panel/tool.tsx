@@ -13,9 +13,10 @@ import {
 } from "../store/slice/widgetMapSlice";
 import { IWls } from "../store/slice/widgetSlice";
 import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { ILs } from "../store/slice/logicSlice";
 import { LogicWidgetMenu } from "./logicWidgetMenu";
 import type { SVGProps } from "react";
+import { useTakeLogicData } from "../comp/useTakeLogicData";
+import { useTakeAttr, useTakeWidget, useTakeWidgetMap } from "../comp/useTakeStore";
 
 export function CarbonLogicalPartition(props: SVGProps<SVGSVGElement>) {
   return (
@@ -110,9 +111,7 @@ export function MingcuteLayerFill(props: SVGProps<SVGSVGElement>) {
 
 const LogicToolHeader = memo(() => {
   const dispatch = useDispatch();
-  const logicState = useSelector((state: { logicSlice: ILs }) => {
-    return state.logicSlice;
-  });
+  const logicState = useTakeLogicData()
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
       <div className="flex justify-between">
@@ -144,9 +143,7 @@ const LogicToolHeader = memo(() => {
 
 const ToolHeader = memo(() => {
   const dispatch = useDispatch();
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
-  });
+  const widgetMapState = useTakeWidgetMap()
 
   return (
     <div className="flex justify-between w-[100%] items-center bg-default-300 p-1">
@@ -280,17 +277,11 @@ export const Tools = memo(() => {
   );
   const dispatch = useDispatch();
 
-  const widgetMapState = useSelector((state: { widgetMapSlice: IWs }) => {
-    return state.widgetMapSlice;
-  });
+  const widgetMapState = useTakeWidgetMap()
 
-  const widgetState = useSelector((state: { widgetSlice: IWls }) => {
-    return state.widgetSlice;
-  });
+  const widgetState = useTakeWidget()
 
-  const AttrState = useSelector((state: { attrSlice: IAs }) => {
-    return state.attrSlice;
-  });
+  const AttrState =useTakeAttr()
 
   const onHandleShowAttr = useCallback(() => {
     dispatch(updateAttrShow(!AttrState.show));

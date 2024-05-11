@@ -12,6 +12,7 @@ import { memo, useCallback } from "react";
 import { insertConfig } from "../../../node/viewConfigSubscribe.ts";
 import { ITableConfig } from "../../../node/viewConfigSubscribe.ts";
 import { useDispatch, useSelector } from "react-redux";
+import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
 
 const TakeCol = memo(() => {
   return (
@@ -85,9 +86,7 @@ const TakeCol = memo(() => {
 
 const TakeForm = memo(() => {
   const dispatch = useDispatch();
-  const NodesState = useSelector((state: { viewNodesSlice: INs }) => {
-    return state.viewNodesSlice;
-  });
+  const NodesState = useTakeNodeData()
 
   const onChangeConfig = useCallback(
     (value: string, key: keyof ITableConfig) => {
@@ -174,7 +173,8 @@ const TakeForm = memo(() => {
         />
       </div>
       <div>
-        <small>内容取值</small>
+        <small>内容取值
+        </small>
         <Input
           type="text"
           value={

@@ -2,8 +2,9 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
 import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
-import { IFRAME_DEFAULT_OPTION, IMAGE_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
+import { IFRAME_DEFAULT_OPTION, IMAGE_DEFAULT_OPTION, ITEXT_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
 import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
+import { cloneDeep } from "lodash";
 //pixTable
 export const pix_Table = "pixTable" as const;
 export const pix_frame = "pix_frame" as const;
@@ -12,6 +13,7 @@ export const pix_input = "pix_input" as const;
 export const pix_Text = "pixText" as const;
 //图片资源
 export const pic_Img = "pic" as const;
+
 //条形图
 export const pix_Line = "pixLine" as const;
 //面积图
@@ -64,7 +66,8 @@ export const logic_Roll_get = "logic_Roll_get" as const;
 export const logic_TimesSet_get = "logic_TimesSet_get" as const;
 //手动触发
 export const logic_Dug_Trigger = "logic_Dug_Trigger" as const;
-
+//时间
+export const logic_Day_shift_Trigger = "logic_Day_shift_Trigger" as const;
 export type ILogicType =
   | typeof logic_Cache_clear
   | typeof logic_D_get
@@ -77,6 +80,7 @@ export type ILogicType =
   | typeof logic_TO_get
   | typeof logic_Dug_Trigger
   | typeof logic_ENC_get
+  | typeof logic_Day_shift_Trigger
   | typeof logic_Form_get
   | typeof logic_Ring_get
   | typeof logic_View_bind
@@ -111,6 +115,7 @@ export type IOptionInstance = Partial<
   } & ITableConfig &
   typeof IMAGE_DEFAULT_OPTION
   & typeof IFRAME_DEFAULT_OPTION
+  & typeof ITEXT_DEFAULT_OPTION
 >;
 
 interface IChartInstance {
@@ -190,7 +195,7 @@ export const viewNodesSlice = createSlice({
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
-      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX, pix_frame];
+      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX, pix_frame, pix_Text];
       //是视图
       if (viewNodeTypeIdList.includes(type)) {
         (state.list as Record<string, IViewNode>)[id].instance.option = option;
@@ -260,10 +265,20 @@ export const viewNodesSlice = createSlice({
     setList: (state, action) => {
       state.list = action.payload;
     },
+    cloneNode: (state, action) => {
+      state.list = {
+        ...state.list,
+        [action.payload.id]: action.payload
+      }
+    },
     addNode: (state, action) => {
+      state.list = {
+        ...state.list,
+        [action.payload.id]: action.payload
+      }
+      // (state.list as Record<string, IViewNode>)[action.payload.id] =
+      //   action.payload;
 
-      (state.list as Record<string, IViewNode>)[action.payload.id] =
-        action.payload;
     },
   },
 });
@@ -274,6 +289,7 @@ export const {
   updateZ,
   updateInstance,
   addNode,
+  cloneNode,
   updateTargets,
   clear,
   updateRotate,
