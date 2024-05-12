@@ -11,6 +11,7 @@ import {
   concatMap,
   merge,
   tap,
+  throttleTime,
 } from "rxjs";
 import {
   updateIsSelection,
@@ -111,8 +112,7 @@ const useMoveTarget = () => {
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
-          x: NodesState.list[NodesState.targets[0]].x,
-          y: NodesState.list[NodesState.targets[0]].y - 1,
+          y: Math.floor(NodesState.list[NodesState.targets[0]].y - 1),
         })
       );
     })
@@ -122,8 +122,7 @@ const useMoveTarget = () => {
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
-          x: NodesState.list[NodesState.targets[0]].x,
-          y: NodesState.list[NodesState.targets[0]].y + 1,
+          y: Math.floor(NodesState.list[NodesState.targets[0]].y + 1),
         })
       );
     })
@@ -133,8 +132,7 @@ const useMoveTarget = () => {
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
-          x: NodesState.list[NodesState.targets[0]].x - 1,
-          y: NodesState.list[NodesState.targets[0]].y,
+          x: Math.floor(NodesState.list[NodesState.targets[0]].x - 1),
         })
       );
     })
@@ -144,8 +142,7 @@ const useMoveTarget = () => {
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
-          x: NodesState.list[NodesState.targets[0]].x + 1,
-          y: NodesState.list[NodesState.targets[0]].y,
+          x: Math.floor(NodesState.list[NodesState.targets[0]].x + 1),
         })
       );
     })
@@ -157,7 +154,9 @@ const useMoveTarget = () => {
       downKeyDown$,
       leftKeDown$,
       rightKeDown$
-    ).subscribe();
+    )
+      .pipe(throttleTime(200))
+      .subscribe();
     return () => {
       subscription.unsubscribe();
     };

@@ -19,7 +19,7 @@ import { useSceneContext } from "../menu/context";
 import { ATTR_TAG, NODE_TYPE_CODE, PANEL_MAIN_BG } from "../contant";
 import { NodeSlot } from "./operation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { emitBlockSubscribe } from "../emit/emitBlock";
+import { IEmitter, emitBlockSubscribe } from "../emit/emitBlock";
 import { useTakeNodeData } from "../comp/useTakeNodeData";
 import { useTakePanel, useTakeWidget } from "../comp/useTakeStore";
 
@@ -83,7 +83,7 @@ export const NodeContainer = memo(() => {
   const { lock } = useNodeContainerHotKeys();
   const SCENE_REF = useRef<HTMLDivElement>(null);
   const NodesState = useTakeNodeData();
-
+  const dispatch = useDispatch();
   const PanelState = useTakePanel();
   const widgetState = useTakeWidget();
 
@@ -115,9 +115,9 @@ export const NodeContainer = memo(() => {
           >
             {`长:${Math.floor(
               rect.width * PanelState.tickUnit
-            )};高:${Math.floor(
-              rect.height * PanelState.tickUnit
-            )};X:${Math.floor(rect.left)};Y:${Math.floor(rect.top)}`}
+            )};高:${Math.floor(rect.height * PanelState.tickUnit)};X:${
+              rect.left
+            };Y:${rect.top}`}
           </div>
         );
       },
@@ -146,7 +146,7 @@ export const NodeContainer = memo(() => {
     (params: ItemParams) => {
       dispatch(deleteListItem({ idList: [params.props.id] }));
     },
-    [NodesState.list]
+    [dispatch]
   );
 
   const { view, show } = useSceneContext("viewNode", (params) => {
@@ -159,7 +159,6 @@ export const NodeContainer = memo(() => {
         return upZIndexViewNode(params);
     }
   });
-  const dispatch = useDispatch();
 
   const hideBox = useCallback(() => {
     const box = moveableRef.current?.getControlBoxElement();
@@ -175,24 +174,25 @@ export const NodeContainer = memo(() => {
     }
   }, []);
 
+  const getPosition = useCallback(
+    (param: IEmitter) => {
+      return {
+        x: Math.floor((param.pack?.x || 0) / PanelState.tickUnit),
+        y: Math.floor((param.pack?.y || 0) / PanelState.tickUnit),
+      };
+    },
+    [PanelState.tickUnit]
+  );
+
   useEffect(() => {
     const sub = emitBlockSubscribe((param) => {
-      console.log(moveableRef.current!.getMoveables(), "paramparam");
       if (param.type === "render") {
-        console.log(selectoRef, moveableRef, "cwecwcwccwcwcwcw");
-        hideBox();
+        moveableRef.current?.updateRect();
       } else if (param.type === "positionChange") {
-        moveableRef.current!.request(
-          "draggable",
-          {
-            x: (param.pack?.x || 0) / PanelState.tickUnit,
-            y: (param.pack?.y || 0) / PanelState.tickUnit,
-          },
-          true
-        );
+        moveableRef.current!.request("draggable", getPosition(param), true);
+        moveableRef.current?.updateRect();
       } else if (param.type === "hideBox") {
         const box = moveableRef.current?.getControlBoxElement();
-
         if (box) {
           box.style.visibility = "hidden";
         }
@@ -211,6 +211,7 @@ export const NodeContainer = memo(() => {
           },
           true
         );
+        moveableRef.current?.updateRect();
       } else if (param.type === "rotateChange") {
         moveableRef.current!.request(
           "rotatable",
@@ -219,6 +220,7 @@ export const NodeContainer = memo(() => {
           },
           true
         );
+        moveableRef.current?.updateRect();
       } else if (param.type === "ZIndexChange") {
         const box = moveableRef.current?.getControlBoxElement();
 
@@ -229,12 +231,13 @@ export const NodeContainer = memo(() => {
         if (box) {
           box.style.zIndex = String(param.pack?.zIndex) || "1";
         }
+        moveableRef.current?.updateRect();
       }
     });
     return () => {
       sub.unsubscribe();
     };
-  }, [PanelState.tickUnit, hideBox]);
+  }, [PanelState.tickUnit, getPosition, hideBox]);
 
   useEffect(() => {
     console.log(SCENE_REF.current?.getBoundingClientRect(), "cw3cwcw22");

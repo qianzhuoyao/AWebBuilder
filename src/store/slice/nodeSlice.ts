@@ -268,8 +268,8 @@ export const viewNodesSlice = createSlice({
       state,
       action: PayloadAction<{
         id: string;
-        x: number;
-        y: number;
+        x?: number;
+        y?: number;
         transform?: string;
       }>
     ) => {
@@ -282,6 +282,7 @@ export const viewNodesSlice = createSlice({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,
         };
+        console.log({ ...findNode }, "findNodesssss");
         emitBlockSetPosition({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,

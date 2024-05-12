@@ -12,7 +12,7 @@ interface ISize {
   w: number;
   h: number;
 }
-interface IEmitter {
+export interface IEmitter {
   type:
     | "render"
     | "positionChange"

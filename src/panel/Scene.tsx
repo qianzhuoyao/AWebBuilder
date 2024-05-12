@@ -66,7 +66,6 @@ import { useFilterLogicNode, useFilterViewNode } from "./useFilter.tsx";
 import {
   emitBlockDisplayBox,
   emitBlockHideBox,
-  emitBlockReRender,
 } from "../emit/emitBlock.ts";
 import { toImage } from "../comp/domToImage.ts";
 import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
@@ -634,7 +633,7 @@ const SceneWidgetMap = memo(() => {
   const onHandleRemove = useCallback(
     (id: string) => {
       dispatch(deleteListItem({ idList: [id] }));
-      emitBlockReRender();
+      emitBlockHideBox();
     },
     [dispatch]
   );
