@@ -11,6 +11,7 @@ import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
 import {
   emitBlockDisplayBox,
   emitBlockHideBox,
+  emitBlockReRender,
   emitBlockSetPosition,
 } from "../../emit/emitBlock.ts";
 //pixTable
@@ -287,6 +288,7 @@ export const viewNodesSlice = createSlice({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,
         });
+        emitBlockReRender();
         const mergeTransform = action.payload.transform
           ? { transform: action.payload.transform }
           : {};

@@ -21,7 +21,7 @@ import { AR_PANEL_DOM_ID, ATTR_TAG, NODE_TYPE_CODE } from "../contant";
 import { updatePosition, updateTargets } from "../store/slice/nodeSlice";
 import { checkMouseDownInArea } from "../comp/mousdownArea.ts";
 import { useTakePanel } from "../comp/useTakeStore.tsx";
-import { emitBlockHideBox } from "../emit/emitBlock.ts";
+import { emitBlockHideBox, emitBlockReRender } from "../emit/emitBlock.ts";
 import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
 
 const scroll = <T,>(filter: (e: WheelEvent) => T) => {
@@ -109,6 +109,7 @@ const useMoveTarget = () => {
   const NodesState = useTakeNodeData();
   const upKeyDown$ = createKeyDown("ArrowUp").pipe(
     tap(() => {
+      emitBlockReRender();
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
@@ -119,6 +120,7 @@ const useMoveTarget = () => {
   );
   const downKeyDown$ = createKeyDown("ArrowDown").pipe(
     tap(() => {
+      emitBlockReRender();
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
@@ -129,6 +131,7 @@ const useMoveTarget = () => {
   );
   const leftKeDown$ = createKeyDown("ArrowLeft").pipe(
     tap(() => {
+      emitBlockReRender();
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
@@ -139,6 +142,7 @@ const useMoveTarget = () => {
   );
   const rightKeDown$ = createKeyDown("ArrowRight").pipe(
     tap(() => {
+      emitBlockReRender();
       dispatch(
         updatePosition({
           id: NodesState.targets[0],
@@ -153,7 +157,12 @@ const useMoveTarget = () => {
       upKeyDown$,
       downKeyDown$,
       leftKeDown$,
-      rightKeDown$
+      rightKeDown$,
+      createKeyUp().pipe(
+        tap(() => {
+          emitBlockReRender();
+        })
+      )
     )
       .pipe(throttleTime(200))
       .subscribe();
