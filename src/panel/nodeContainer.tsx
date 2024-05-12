@@ -82,10 +82,10 @@ export const NodeContainer = memo(() => {
   const layerViewNode = useFilterViewNode();
   const { lock } = useNodeContainerHotKeys();
   const SCENE_REF = useRef<HTMLDivElement>(null);
-  const NodesState = useTakeNodeData()
+  const NodesState = useTakeNodeData();
 
-  const PanelState = useTakePanel()
-  const widgetState = useTakeWidget()
+  const PanelState = useTakePanel();
+  const widgetState = useTakeWidget();
 
   const DimensionViewable = useMemo(
     <T,>() => ({
@@ -113,8 +113,11 @@ export const NodeContainer = memo(() => {
               transform: `translate(-50%, 0px)`,
             }}
           >
-            {rect.width * PanelState.tickUnit} x
-            {rect.height * PanelState.tickUnit}
+            {`长:${Math.floor(
+              rect.width * PanelState.tickUnit
+            )};高:${Math.floor(
+              rect.height * PanelState.tickUnit
+            )};X:${Math.floor(rect.left)};Y:${Math.floor(rect.top)}`}
           </div>
         );
       },
@@ -142,7 +145,6 @@ export const NodeContainer = memo(() => {
   const removeViewNode = useCallback(
     (params: ItemParams) => {
       dispatch(deleteListItem({ idList: [params.props.id] }));
-
     },
     [NodesState.list]
   );
@@ -175,7 +177,7 @@ export const NodeContainer = memo(() => {
 
   useEffect(() => {
     const sub = emitBlockSubscribe((param) => {
-      console.log(moveableRef.current!.getMoveables(), 'paramparam')
+      console.log(moveableRef.current!.getMoveables(), "paramparam");
       if (param.type === "render") {
         console.log(selectoRef, moveableRef, "cwecwcwccwcwcwcw");
         hideBox();
@@ -192,14 +194,20 @@ export const NodeContainer = memo(() => {
         const box = moveableRef.current?.getControlBoxElement();
 
         if (box) {
-          box.style.overflow = 'hidden'
+          box.style.visibility = "hidden";
+        }
+      } else if (param.type === "displayBox") {
+        const box = moveableRef.current?.getControlBoxElement();
+
+        if (box) {
+          box.style.visibility = "visible";
         }
       } else if (param.type === "sizeChange") {
         moveableRef.current!.request(
           "resizable",
           {
-            offsetWidth: (param.pack?.w || 0),
-            offsetHeight: (param.pack?.h || 0),
+            offsetWidth: param.pack?.w || 0,
+            offsetHeight: param.pack?.h || 0,
           },
           true
         );
@@ -226,42 +234,44 @@ export const NodeContainer = memo(() => {
     return () => {
       sub.unsubscribe();
     };
-  }, [PanelState.tickUnit]);
-
+  }, [PanelState.tickUnit, hideBox]);
 
   useEffect(() => {
-    console.log(SCENE_REF.current?.getBoundingClientRect(), 'cw3cwcw22')
+    console.log(SCENE_REF.current?.getBoundingClientRect(), "cw3cwcw22");
     if (boundsRef.current instanceof HTMLElement) {
       // boundsRef.current.style.left = SCENE_REF.current?.getBoundingClientRect().left + 'px'
       // boundsRef.current.style.top = SCENE_REF.current?.getBoundingClientRect().top + 'px'
-      boundsRef.current.style.width = SCENE_REF.current?.getBoundingClientRect().width + 'px'
-      boundsRef.current.style.height = SCENE_REF.current?.getBoundingClientRect().height + 'px'
+      boundsRef.current.style.width =
+        SCENE_REF.current?.getBoundingClientRect().width + "px";
+      boundsRef.current.style.height =
+        SCENE_REF.current?.getBoundingClientRect().height + "px";
     }
   }, [
     PanelState.panelHeight,
     PanelState.panelLeft,
     PanelState.panelTop,
     PanelState.panelWidth,
-    PanelState.tickUnit
-  ])
+    PanelState.tickUnit,
+  ]);
 
   const onHandleFocus = useCallback(() => {
     const box = moveableRef.current?.getControlBoxElement();
 
     if (box) {
-      box.style.overflow = 'visible'
+      box.style.overflow = "visible";
     }
-  }, [])
+  }, []);
 
   return (
-    <div ref={boundsRef} id={SHOT_IMAGE_CONTAINER} className="absolute"
+    <div
+      ref={boundsRef}
+      id={SHOT_IMAGE_CONTAINER}
+      className="absolute"
       style={{
-        left: (PanelState.panelLeft - PanelState.rulerMinX) + "px",
-        top: (PanelState.panelTop - PanelState.rulerMinY) + "px",
-
+        left: PanelState.panelLeft - PanelState.rulerMinX + "px",
+        top: PanelState.panelTop - PanelState.rulerMinY + "px",
       }}
     >
-
       <Moveable
         ref={moveableRef}
         origin={false}
@@ -300,7 +310,7 @@ export const NodeContainer = memo(() => {
         snapThreshold={1}
         maxSnapElementGuidelineDistance={1}
         elementGuidelines={[".target"]}
-        onDragStart={() => { }}
+        onDragStart={() => {}}
         onClickGroup={(e) => {
           selectoRef.current!.clickTarget(e.inputEvent, e.inputTarget);
         }}
@@ -311,7 +321,6 @@ export const NodeContainer = memo(() => {
               rotate: e.lastEvent.absoluteRotate,
             })
           );
-
         }}
         onRender={(e) => {
           e.target.style.cssText += e.cssText;
@@ -325,12 +334,10 @@ export const NodeContainer = memo(() => {
               h: rect.height * PanelState.tickUnit,
             })
           );
-
         }}
         onDragEnd={(e) => {
-
           const rect = e.moveable.getRect();
-          console.log(rect, 'reddddd')
+          console.log(rect, "reddddd");
           dispatch(
             updatePosition({
               id: e.target.id,
@@ -356,7 +363,6 @@ export const NodeContainer = memo(() => {
           });
         }}
       />
-
 
       <Selecto
         ref={selectoRef}
@@ -405,12 +411,14 @@ export const NodeContainer = memo(() => {
         id={SCENE}
         className="absolute bg-[#232324] overflow-hidden"
         style={{
-          top: '0px',
-          left: '0px',
+          top: "0px",
+          left: "0px",
           width: PanelState.panelWidth + "px",
           height: PanelState.panelHeight + "px",
-          transform: `scale(${1 / PanelState.tickUnit},${1 / PanelState.tickUnit})`,
-          transformOrigin: 'top left'
+          transform: `scale(${1 / PanelState.tickUnit},${
+            1 / PanelState.tickUnit
+          })`,
+          transformOrigin: "top left",
         }}
       >
         <div className="empty elements"></div>

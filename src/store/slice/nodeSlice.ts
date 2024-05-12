@@ -2,9 +2,17 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
 import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
-import { IFRAME_DEFAULT_OPTION, IMAGE_DEFAULT_OPTION, ITEXT_DEFAULT_OPTION } from "../../comp/setDefaultChartOption.ts";
+import {
+  IFRAME_DEFAULT_OPTION,
+  IMAGE_DEFAULT_OPTION,
+  ITEXT_DEFAULT_OPTION,
+} from "../../comp/setDefaultChartOption.ts";
 import { CHART_OPTIONS } from "../../Setting/attrConfig/view/CHART_OPTIONS.ts";
-import { cloneDeep } from "lodash";
+import {
+  emitBlockDisplayBox,
+  emitBlockHideBox,
+  emitBlockSetPosition,
+} from "../../emit/emitBlock.ts";
 //pixTable
 export const pix_Table = "pixTable" as const;
 export const pix_frame = "pix_frame" as const;
@@ -113,9 +121,9 @@ export type IOptionInstance = Partial<
     chartClass: keyof typeof CHART_OPTIONS;
     chart: string;
   } & ITableConfig &
-  typeof IMAGE_DEFAULT_OPTION
-  & typeof IFRAME_DEFAULT_OPTION
-  & typeof ITEXT_DEFAULT_OPTION
+    typeof IMAGE_DEFAULT_OPTION &
+    typeof IFRAME_DEFAULT_OPTION &
+    typeof ITEXT_DEFAULT_OPTION
 >;
 
 interface IChartInstance {
@@ -173,7 +181,7 @@ export const viewNodesSlice = createSlice({
   initialState: {
     list: {},
     targets: [],
-  },
+  } as INs,
   reducers: {
     updateRotate: (
       state,
@@ -186,23 +194,33 @@ export const viewNodesSlice = createSlice({
       const { id, alias } = action.payload;
       (state.list as Record<string, IViewNode>)[id].alias = alias;
     },
-    updateZ: (state, action: PayloadAction<{
-      id: string,
-      zIndex: number
-    }>) => {
+    updateZ: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        zIndex: number;
+      }>
+    ) => {
       const { id, zIndex } = action.payload;
       (state.list as Record<string, IViewNode>)[id].z = zIndex;
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
-      const viewNodeTypeIdList = [pix_Table, pix_Text, pic_Img, pix_BX, pix_frame, pix_Text];
+      const viewNodeTypeIdList = [
+        pix_Table,
+        pix_Text,
+        pic_Img,
+        pix_BX,
+        pix_frame,
+        pix_Text,
+      ];
       //是视图
       if (viewNodeTypeIdList.includes(type)) {
         (state.list as Record<string, IViewNode>)[id].instance.option = option;
       }
     },
-    clear: (state,) => {
-      state.list = {}
+    clear: (state) => {
+      state.list = {};
     },
     deleteListItem: (state, action) => {
       const { idList } = action.payload;
@@ -217,15 +235,22 @@ export const viewNodesSlice = createSlice({
       }
     },
 
-    updateTargets: (state, action) => {
+    updateTargets: (state, action: PayloadAction<string[]>) => {
+      if (action.payload.length) {
+        emitBlockDisplayBox();
+      } else {
+        emitBlockHideBox();
+      }
       state.targets = action.payload;
-
     },
-    updateSize: (state, action: PayloadAction<{
-      id: string,
-      w: number,
-      h: number
-    }>) => {
+    updateSize: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        w: number;
+        h: number;
+      }>
+    ) => {
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
@@ -239,13 +264,15 @@ export const viewNodesSlice = createSlice({
         state.list = { ...state.list, [action.payload.id]: newNode };
       }
     },
-    updatePosition: (state, action: PayloadAction<{
-      id: string
-      x: number,
-      y: number,
-      transform?: string
-    }>) => {
-      console.log(action.payload, 'action.paycload');
+    updatePosition: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        x: number;
+        y: number;
+        transform?: string;
+      }>
+    ) => {
       const findNode = (state.list as Record<string, IViewNode>)[
         action.payload.id || ""
       ];
@@ -255,7 +282,13 @@ export const viewNodesSlice = createSlice({
           x: action.payload.x ?? findNode.x,
           y: action.payload.y ?? findNode.y,
         };
-        const mergeTransform = action.payload.transform ? { transform: action.payload.transform } : {};
+        emitBlockSetPosition({
+          x: action.payload.x ?? findNode.x,
+          y: action.payload.y ?? findNode.y,
+        });
+        const mergeTransform = action.payload.transform
+          ? { transform: action.payload.transform }
+          : {};
         state.list = {
           ...state.list,
           [action.payload.id]: { ...newNode, ...mergeTransform },
@@ -268,17 +301,16 @@ export const viewNodesSlice = createSlice({
     cloneNode: (state, action) => {
       state.list = {
         ...state.list,
-        [action.payload.id]: action.payload
-      }
+        [action.payload.id]: action.payload,
+      };
     },
     addNode: (state, action) => {
       state.list = {
         ...state.list,
-        [action.payload.id]: action.payload
-      }
+        [action.payload.id]: action.payload,
+      };
       // (state.list as Record<string, IViewNode>)[action.payload.id] =
       //   action.payload;
-
     },
   },
 });

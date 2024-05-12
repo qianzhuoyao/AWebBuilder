@@ -39,14 +39,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { IWs, updateWidgetMapShow } from "../store/slice/widgetMapSlice";
+import { useDispatch } from "react-redux";
+import { updateWidgetMapShow } from "../store/slice/widgetMapSlice";
 import { AR_PANEL_DOM_ID, MAIN_CONTAINER, MAIN_LAYER } from "../contant";
-import { IPs, updateCurrentSTab, updateShotImage } from "../store/slice/panelSlice";
+import { updateCurrentSTab, updateShotImage } from "../store/slice/panelSlice";
 import {
-  INs,
   IViewNode,
-  addNode,
   cloneNode,
   deleteListItem,
   updateTargets,
@@ -54,7 +52,6 @@ import {
 import { NodeSlot } from "./operation";
 import { LogicPanel } from "./logicPanel.tsx";
 import type { SVGProps } from "react";
-import { ILs } from "../store/slice/logicSlice.ts";
 import { useAutoHeight } from "../comp/useAutoHeight.tsx";
 import {
   addLayer,
@@ -64,13 +61,21 @@ import {
 } from "./layers.ts";
 import { v4 } from "uuid";
 import { ReactKey } from "@react-awesome-query-builder/mui";
-import { IWls, updateCurrentLayer } from "../store/slice/widgetSlice.ts";
+import { updateCurrentLayer } from "../store/slice/widgetSlice.ts";
 import { useFilterLogicNode, useFilterViewNode } from "./useFilter.tsx";
-import { emitBlockReRender } from "../emit/emitBlock.ts";
+import {
+  emitBlockDisplayBox,
+  emitBlockHideBox,
+  emitBlockReRender,
+} from "../emit/emitBlock.ts";
 import { toImage } from "../comp/domToImage.ts";
 import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
 import { useTakeLogicData } from "../comp/useTakeLogicData.tsx";
-import { useTakePanel, useTakeWidget, useTakeWidgetMap } from "../comp/useTakeStore.tsx";
+import {
+  useTakePanel,
+  useTakeWidget,
+  useTakeWidgetMap,
+} from "../comp/useTakeStore.tsx";
 import { historySingle, mappingTips } from "../store/store.ts";
 
 export function SolarLockBoldDuotone(props: SVGProps<SVGSVGElement>) {
@@ -258,9 +263,6 @@ export function IcRoundLock(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-
-
-
 export function IcBaselineKeyboard(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -317,11 +319,20 @@ export const STabs = [
 ];
 
 const HotKeyModal = memo(({ open }: { open: boolean }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   useEffect(() => {
     open ? onOpen() : onClose();
-  }, [open]);
+  }, [onClose, onOpen, open]);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  useEffect(() => {
+    if (isOpen) {
+      emitBlockHideBox();
+    } else {
+      emitBlockDisplayBox();
+    }
+  }, [isOpen]);
+
   return (
     <Modal
       size={"2xl"}
@@ -377,6 +388,42 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
                       <Kbd keys={["shift"]}>KeyV</Kbd>
                     </TableCell>
                   </TableRow>
+                  <TableRow key="5">
+                    <TableCell>选中节点上移</TableCell>
+                    <TableCell>
+                      <Kbd keys={["up"]}>arrow up</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["up"]}>arrow up</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="6">
+                    <TableCell>选中节点下移</TableCell>
+                    <TableCell>
+                      <Kbd keys={["down"]}>arrow down</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["down"]}>arrow down</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="7">
+                    <TableCell>选中节点左移</TableCell>
+                    <TableCell>
+                      <Kbd keys={["left"]}>arrow left</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["left"]}>arrow left</Kbd>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="8">
+                    <TableCell>选中节点右移</TableCell>
+                    <TableCell>
+                      <Kbd keys={["right"]}>arrow right</Kbd>
+                    </TableCell>
+                    <TableCell>
+                      <Kbd keys={["right"]}>arrow right</Kbd>
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </ModalBody>
@@ -395,19 +442,22 @@ const HotKeyModal = memo(({ open }: { open: boolean }) => {
 const SceneLayer = memo(() => {
   const [hotKeyOpen, setHotKeyOpen] = useState(false);
   const dispatch = useDispatch();
-  const PanelState = useTakePanel()
+  const PanelState = useTakePanel();
 
-  const onHandleUpdateSTab = useCallback((key: string) => {
-    dispatch(updateCurrentSTab(key));
-    toImage().then(image => {
-      dispatch(updateShotImage(image));
-    })
-  }, []);
+  const onHandleUpdateSTab = useCallback(
+    (key: string) => {
+      dispatch(updateCurrentSTab(key));
+      toImage().then((image) => {
+        dispatch(updateShotImage(image));
+      });
+    },
+    [dispatch]
+  );
+
   return (
     <>
       <div className="w-full h-full bg-content1 overflow-hidden flex flex-col-reverse relative">
         <div className="absolute bottom-[5px] left-[5px]">
-
           <Dropdown>
             <DropdownTrigger>
               <Chip
@@ -419,34 +469,35 @@ const SceneLayer = memo(() => {
                 <small>操作历史</small>
               </Chip>
             </DropdownTrigger>
-            <DropdownMenu className="h-[400px] overflow-scroll" aria-label="history Actions">
+            <DropdownMenu
+              className="h-[400px] overflow-scroll"
+              aria-label="history Actions"
+            >
               {historySingle().history.map((item, index) => {
-                return <DropdownItem key={index}>
-
-                  <Card className="min-w-[300px] max-h-[320px] cursor-pointer">
-                    <CardBody className="overflow-visible my-2">
-                      <div>
-                        <small>{mappingTips(item.action)}</small>
-                      </div>
-
-                    </CardBody>
-                    <CardFooter className="justify-between">
-                      <Chip
-                        startContent={<MdiHistory></MdiHistory>}
-                        variant="bordered"
-                        radius="sm"
-                        color="primary"
-                      >{item.time}</Chip>
-
-                    </CardFooter>
-                  </Card>
-
-                </DropdownItem>
+                return (
+                  <DropdownItem key={index}>
+                    <Card className="min-w-[300px] max-h-[320px] cursor-pointer">
+                      <CardBody className="overflow-visible my-2">
+                        <div>
+                          <small>{mappingTips(item.action)}</small>
+                        </div>
+                      </CardBody>
+                      <CardFooter className="justify-between">
+                        <Chip
+                          startContent={<MdiHistory></MdiHistory>}
+                          variant="bordered"
+                          radius="sm"
+                          color="primary"
+                        >
+                          {item.time}
+                        </Chip>
+                      </CardFooter>
+                    </Card>
+                  </DropdownItem>
+                );
               })}
             </DropdownMenu>
           </Dropdown>
-
-
         </div>
         <div className="absolute bottom-[5px] right-[5px] flex items-center">
           <Tooltip
@@ -458,7 +509,9 @@ const SceneLayer = memo(() => {
             <div>
               <IcBaselineKeyboard
                 className="cursor-pointer mr-2"
-                onClick={() => setHotKeyOpen(!hotKeyOpen)}
+                onClick={() => {
+                  setHotKeyOpen(!hotKeyOpen);
+                }}
               ></IcBaselineKeyboard>
             </div>
           </Tooltip>
@@ -550,11 +603,11 @@ const SceneWidgetMap = memo(() => {
   >("view_map_list");
   const gsapSceneWidgetContainer = useRef<HTMLDivElement>(null);
   const height = useAutoHeight();
-  const logicState = useTakeLogicData()
-  const widgetState = useTakeWidget()
+  const logicState = useTakeLogicData();
+  const widgetState = useTakeWidget();
   const currentLayer = getLayerContent(widgetState.currentLayerId);
-  const NodesState = useTakeNodeData()
-  const widgetMapState = useTakeWidgetMap()
+  const NodesState = useTakeNodeData();
+  const widgetMapState = useTakeWidgetMap();
 
   useLayoutEffect(() => {
     if (!widgetMapState.show) {
@@ -589,10 +642,14 @@ const SceneWidgetMap = memo(() => {
   const onHandleCopy = useCallback(
     (id: string) => {
       const clone = NodesState.list[id];
-      const hash = Math.random()
+      const hash = Math.random();
       if (clone) {
         dispatch(
-          cloneNode({ ...clone, copyBy: clone.id, id: clone.id + "-clone" + hash })
+          cloneNode({
+            ...clone,
+            copyBy: clone.id,
+            id: clone.id + "-clone" + hash,
+          })
         );
         updateViewNodesInLayer(
           currentLayer?.layerNameNodesOfView || "",
@@ -749,7 +806,7 @@ const AContent = memo(() => {
 export const Scene = memo(() => {
   const dispatch = useDispatch();
 
-  const widgetMapState = useTakeWidgetMap()
+  const widgetMapState = useTakeWidgetMap();
 
   const onHandleOpenWidMap = useCallback(() => {
     dispatch(updateWidgetMapShow(!widgetMapState.show));
@@ -870,6 +927,7 @@ const LayerContent = memo(() => {
   const onHandleSelectLayer = useCallback(
     (key: ReactKey) => {
       dispatch(updateCurrentLayer(key));
+      emitBlockHideBox()
     },
     [dispatch]
   );

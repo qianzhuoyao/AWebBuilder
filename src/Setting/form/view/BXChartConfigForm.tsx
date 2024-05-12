@@ -1,7 +1,6 @@
 import { AInput } from "../../../comp/AInput.tsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  INs,
   updateAlias,
   updatePosition,
   updateRotate,
@@ -13,16 +12,13 @@ import { toast } from "react-toastify";
 import { Chip } from "@nextui-org/react";
 import { hasBindViewMap } from "../logic/viewMapping/bindNodeMappingLogic.ts";
 import {
-  emitBlockSetPosition,
   emitBlockSetRotate,
   emitBlockSetSize,
   emitBlockSetZIndex,
 } from "../../../emit/emitBlock.ts";
 import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
-import { useTakePanel } from "../../../comp/useTakeStore.tsx";
 
 export const DefaultViewNodeConfigForm = () => {
-  const PanelState = useTakePanel()
   const dispatch = useDispatch();
   const NodesState = useTakeNodeData()
   const isBind = useMemo(() => {
@@ -80,10 +76,7 @@ export const DefaultViewNodeConfigForm = () => {
               className="w-[250px] mr-2"
               size="xs"
               onChange={(e) => {
-                emitBlockSetPosition({
-                  x: Number(e.target.value),
-                  y: NodesState.list[NodesState.targets[0]].y,
-                });
+               
                 dispatch(
                   updatePosition({
                     id: NodesState.targets[0],
@@ -101,10 +94,7 @@ export const DefaultViewNodeConfigForm = () => {
               className="w-[250px] mr-2"
               size="xs"
               onChange={(e) => {
-                emitBlockSetPosition({
-                  x: NodesState.list[NodesState.targets[0]].x,
-                  y: Number(e.target.value),
-                });
+               
                 dispatch(
                   updatePosition({
                     id: NodesState.targets[0],

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   fromEvent,
   filter,
@@ -9,17 +9,19 @@ import {
   map,
   takeUntil,
   concatMap,
+  merge,
+  tap,
 } from "rxjs";
 import {
-  IPs,
   updateIsSelection,
   updatePanelTickUnit,
 } from "../store/slice/panelSlice";
 import { AR_PANEL_DOM_ID, ATTR_TAG, NODE_TYPE_CODE } from "../contant";
-import { updateTargets } from "../store/slice/nodeSlice";
+import { updatePosition, updateTargets } from "../store/slice/nodeSlice";
 import { checkMouseDownInArea } from "../comp/mousdownArea.ts";
 import { useTakePanel } from "../comp/useTakeStore.tsx";
 import { emitBlockHideBox } from "../emit/emitBlock.ts";
+import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
 
 const scroll = <T,>(filter: (e: WheelEvent) => T) => {
   return fromEvent<WheelEvent>(document, "mousewheel").pipe(
@@ -49,13 +51,21 @@ const createKeyDown = (code: string) => {
     })
   );
 };
-const createKeyUp = () => {
-  return fromEvent<KeyboardEvent>(document, "keyup");
+const createKeyUp = (code?: string) => {
+  return fromEvent<KeyboardEvent>(document, "keyup").pipe(
+    filter((event) => {
+      if (code === void 0) {
+        return true;
+      } else {
+        return event.key === code;
+      }
+    })
+  );
 };
 const useZoomKeyEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useTakePanel()
+  const PanelState = useTakePanel();
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -72,7 +82,7 @@ const useZoomKeyEvent = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const subscription = zip(keyDown$, mouseScroll$).subscribe(([_, w]) => {
-      emitBlockHideBox()
+      emitBlockHideBox();
       if (w > 0) {
         dispatch(
           updatePanelTickUnit(Number((PanelState.tickUnit + 0.1).toFixed(1)))
@@ -89,10 +99,75 @@ const useZoomKeyEvent = () => {
     };
   }, [PanelState.tickUnit, dispatch, panelId]);
 };
+
+/*
+ * UP / DOWN / LEFT / RIGHT ARROW MOVE TARGET NODE
+ */
+const useMoveTarget = () => {
+  const dispatch = useDispatch();
+  const NodesState = useTakeNodeData();
+  const upKeyDown$ = createKeyDown("ArrowUp").pipe(
+    tap(() => {
+      dispatch(
+        updatePosition({
+          id: NodesState.targets[0],
+          x: NodesState.list[NodesState.targets[0]].x,
+          y: NodesState.list[NodesState.targets[0]].y - 1,
+        })
+      );
+    })
+  );
+  const downKeyDown$ = createKeyDown("ArrowDown").pipe(
+    tap(() => {
+      dispatch(
+        updatePosition({
+          id: NodesState.targets[0],
+          x: NodesState.list[NodesState.targets[0]].x,
+          y: NodesState.list[NodesState.targets[0]].y + 1,
+        })
+      );
+    })
+  );
+  const leftKeDown$ = createKeyDown("ArrowLeft").pipe(
+    tap(() => {
+      dispatch(
+        updatePosition({
+          id: NodesState.targets[0],
+          x: NodesState.list[NodesState.targets[0]].x - 1,
+          y: NodesState.list[NodesState.targets[0]].y,
+        })
+      );
+    })
+  );
+  const rightKeDown$ = createKeyDown("ArrowRight").pipe(
+    tap(() => {
+      dispatch(
+        updatePosition({
+          id: NodesState.targets[0],
+          x: NodesState.list[NodesState.targets[0]].x + 1,
+          y: NodesState.list[NodesState.targets[0]].y,
+        })
+      );
+    })
+  );
+
+  useEffect(() => {
+    const subscription = merge(
+      upKeyDown$,
+      downKeyDown$,
+      leftKeDown$,
+      rightKeDown$
+    ).subscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [downKeyDown$, leftKeDown$, rightKeDown$, upKeyDown$]);
+};
+
 const useSelectionKeyEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useTakePanel()
+  const PanelState = useTakePanel();
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -133,7 +208,7 @@ const useSelectionKeyEvent = () => {
 const useDefaultBlurEvent = () => {
   const dispatch = useDispatch();
   const panelId = AR_PANEL_DOM_ID;
-  const PanelState = useTakePanel()
+  const PanelState = useTakePanel();
   useEffect(() => {
     const dom = document.getElementById(panelId);
     if (!dom) {
@@ -155,7 +230,11 @@ const useDefaultBlurEvent = () => {
                 document.getElementById(AR_PANEL_DOM_ID)
               )
             ) {
-              console.log(d?.target,d?.target.getAttribute(ATTR_TAG),'osalfiafgasfaswfwfwfwfw')
+              console.log(
+                d?.target,
+                d?.target.getAttribute(ATTR_TAG),
+                "osalfiafgasfaswfwfwfwfw"
+              );
               dispatch(updateTargets([]));
             }
             // dispatch(updateTargets([]));
@@ -180,4 +259,6 @@ export const useCustomHotKeys = () => {
   useSelectionKeyEvent();
   //自动取消焦点
   useDefaultBlurEvent();
+  //方向键移动选中的节点
+  useMoveTarget();
 };
