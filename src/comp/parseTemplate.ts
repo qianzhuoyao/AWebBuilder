@@ -1,10 +1,10 @@
 import { getWCache } from "../panel/data"
 import { filterObjValue } from "./filterObjValue"
 
-export const parseContent = (input: Record<string, any>,id:string) => {
+export const parseContent = (input: Record<string, unknown>,id:string) => {
     const parseReg = /\{(.+?)\}/gi
 
-    const newContent: Record<string, any> = input
+    const newContent: Record<string, unknown> = input
     Object.keys(input).map((key) => {
         const parseResult = String(input[key]).match(parseReg)
         if (parseResult?.length) {

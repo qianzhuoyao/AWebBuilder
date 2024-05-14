@@ -1,6 +1,5 @@
 import { signalViewNodeAttrConfig } from "../../signalNodeConfig.ts";
 import {
-  INs,
   pix_frame,
   updateInstance,
 } from "../../../store/slice/nodeSlice.ts";
@@ -8,7 +7,7 @@ import { Card, CardBody, Input, Tab, Tabs } from "@nextui-org/react";
 import { DefaultViewNodeConfigForm } from "../../form/view/BXChartConfigForm.tsx";
 import { StreamData } from "../../form/logic/remoteReq/StreamData.tsx";
 import { memo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTakeNodeData } from "../../../comp/useTakeNodeData.tsx";
 
 const IframeConfigSetting = memo(() => {
