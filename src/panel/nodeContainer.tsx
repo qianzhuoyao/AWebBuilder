@@ -116,8 +116,8 @@ export const NodeContainer = memo(() => {
             {`长:${Math.floor(
               rect.width * PanelState.tickUnit
             )};高:${Math.floor(rect.height * PanelState.tickUnit)};X:${
-              rect.left
-            };Y:${rect.top}`}
+              rect.left * PanelState.tickUnit
+            };Y:${rect.top * PanelState.tickUnit}`}
           </div>
         );
       },
@@ -289,6 +289,18 @@ export const NodeContainer = memo(() => {
         isDisplaySnapDigit={true}
         isDisplayInnerSnapDigit={true}
         snapGap={true}
+        snapDigit={5}
+        verticalGuidelines={PanelState.verticalGuidelines.map((i) => {
+          return {
+            pos: i / PanelState.tickUnit,
+          };
+        })}
+        horizontalGuidelines={PanelState.horizontalGuidelines.map((i) => {
+          return {
+            pos: i / PanelState.tickUnit,
+          };
+        })}
+        snapRenderThreshold={5}
         snapDirections={{
           top: true,
           left: true,

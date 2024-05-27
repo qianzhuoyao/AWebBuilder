@@ -8,21 +8,25 @@ import { AScene } from "./operation";
 import {
   updateRulerMinY,
   updateRulerMinX,
-  IPs,
+  updateVerticalGuidelines,
+  updateHorizontalGuidelines,
 } from "../store/slice/panelSlice";
-import { useSelector } from "react-redux";
 import { useCustomHotKeys } from "./hotKey";
 import { AR_PANEL_DOM_ID } from "../contant";
 import { useTakePanel } from "../comp/useTakeStore";
+import { useTakeNodeData } from "../comp/useTakeNodeData";
 
 export const ARuler = React.memo(() => {
   const [sceneLock, setSceneLock] = useState(true);
-  const ges = useRef<{ g: Gesto | null }>({ g: null });
+  const ges = useRef<{ g: Gesto | null }>({
+    g: null,
+  });
   useHotkeys("s", () => setSceneLock(false), { keyup: false, keydown: true });
   useHotkeys("s", () => setSceneLock(true), { keyup: true, keydown: false });
-
-  const PanelState =useTakePanel()
-
+  const NodesState = useTakeNodeData();
+  const PanelState = useTakePanel();
+  const [snapX, setSnapX] = useState<number[]>([]);
+  const [snapY, setSnapY] = useState<number[]>([]);
   const guides1 = useRef<Guides>(null);
   const guides2 = useRef<Guides>(null);
   let scrollX = PanelState.rulerMinX;
@@ -66,6 +70,12 @@ export const ARuler = React.memo(() => {
       ArDomResizeObserver.disconnect();
     };
   }, [PanelState.lockTransform, sceneLock]);
+
+  React.useEffect(() => {
+    setSnapX(Object.values(NodesState.list).map((i) => i.x));
+    setSnapY(Object.values(NodesState.list).map((i) => i.y));
+  }, [NodesState]);
+
   return (
     <div className="page h-full relative">
       {/* <div className="box" onClick={restore}></div> */}
@@ -78,7 +88,7 @@ export const ARuler = React.memo(() => {
         lockGuides={[]}
         snapThreshold={PanelState.snap}
         textFormat={(v) => `${Math.floor(v * PanelState.tickUnit)}px`}
-        snaps={[1, 2, 3]}
+        snaps={snapY}
         digit={1}
         style={{ height: `${PanelState.offset}px`, width: "calc(100%px)" }}
         rulerStyle={{
@@ -94,7 +104,18 @@ export const ARuler = React.memo(() => {
         displayDragPos={true}
         displayGuidePos={true}
         guidesOffset={50}
-        onChangeGuides={() => {}}
+        onChangeGuides={(e) => {
+          dispatch(
+            updateHorizontalGuidelines(
+              e.guides.map((i) => {
+                return (
+                  i * PanelState.tickUnit +
+                  10 * PanelState.tickUnit * PanelState.snap
+                );
+              })
+            )
+          );
+        }}
         onDragStart={() => {}}
         onDrag={() => {}}
         onDragEnd={() => {}}
@@ -109,7 +130,7 @@ export const ARuler = React.memo(() => {
         lockGuides={[]}
         snapThreshold={PanelState.snap}
         textFormat={(v) => `${Math.floor(v * PanelState.tickUnit)}px`}
-        snaps={[1, 2, 3]}
+        snaps={snapX}
         digit={1}
         rulerStyle={{
           height: "calc(100%)",
@@ -120,6 +141,7 @@ export const ARuler = React.memo(() => {
           height: `calc(100% - ${PanelState.offset}px)`,
         }}
         dragPosFormat={(v) => {
+          console.log(v, "dawdwdwdwd");
           return `${
             v * PanelState.tickUnit + 10 * PanelState.tickUnit * PanelState.snap
           }px`;
@@ -127,7 +149,27 @@ export const ARuler = React.memo(() => {
         displayDragPos={true}
         displayGuidePos={true}
         guidesOffset={50}
-        onChangeGuides={() => {}}
+        onChangeGuides={(e) => {
+          console.log(
+            e.guides.map((i) => {
+              return (
+                i * PanelState.tickUnit +
+                10 * PanelState.tickUnit * PanelState.snap
+              );
+            }),
+            "eeeeee"
+          );
+          dispatch(
+            updateVerticalGuidelines(
+              e.guides.map((i) => {
+                return (
+                  i * PanelState.tickUnit +
+                  10 * PanelState.tickUnit * PanelState.snap
+                );
+              })
+            )
+          );
+        }}
         onDragStart={() => {}}
         onDrag={() => {}}
         onDragEnd={() => {}}

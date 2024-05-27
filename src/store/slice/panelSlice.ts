@@ -9,23 +9,27 @@ export interface IPs {
   tickUnit: number;
   isSelection: boolean;
   offset: number;
-  panelBgImage: string
+  panelBgImage: string;
   lockScale: boolean;
   lockTransform: boolean;
   snap: number;
   panelColor: string;
   panelWidth: number;
   panelHeight: number;
-  shotImage:string;
+  shotImage: string;
   panelLeft: number;
   panelTop: number;
   workSpaceName: string;
+  verticalGuidelines: number[];
+  horizontalGuidelines: number[];
 }
 
 export const panelSlice = createSlice({
   name: "panel",
   initialState: {
-    shotImage:'',
+    verticalGuidelines: [],
+    horizontalGuidelines: [],
+    shotImage: "",
     currentSTab: "view",
     rulerMinX: 0,
     lockTransform: false,
@@ -33,7 +37,7 @@ export const panelSlice = createSlice({
     isSelection: false,
     rulerMinY: 0,
     snap: 5,
-    panelBgImage: '',
+    panelBgImage: "",
     panelColor: DEFAULT_PANEL_COLOR,
     offset: 30,
     tickUnit: 2,
@@ -44,6 +48,12 @@ export const panelSlice = createSlice({
     panelTop: 0,
   },
   reducers: {
+    updateVerticalGuidelines: (state, action) => {
+      state.verticalGuidelines = action.payload;
+    },
+    updateHorizontalGuidelines: (state, action) => {
+      state.horizontalGuidelines = action.payload;
+    },
     updateWorkSpaceName: (state, action) => {
       state.workSpaceName = action.payload;
     },
@@ -79,9 +89,9 @@ export const panelSlice = createSlice({
     },
     updatePanelAssign: (state, action: PayloadAction<Partial<IPs>>) => {
       // state.panelWidth = action.payload;
-      Object.keys(action.payload).map(key => {
-        state[key] = action.payload[key]
-      })
+      Object.keys(action.payload).map((key) => {
+        state[key] = action.payload[key];
+      });
     },
     updatePanelWidth: (state, action) => {
       state.panelWidth = action.payload;
@@ -100,8 +110,10 @@ export const panelSlice = createSlice({
     },
   },
 });
-// 
+//
 export const {
+  updateVerticalGuidelines,
+  updateHorizontalGuidelines,
   updatePanelColor,
   updateShotImage,
   updatePanelImage,
