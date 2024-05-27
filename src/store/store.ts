@@ -8,7 +8,7 @@ import logicSlice from "./slice/logicSlice";
 import undoable from "redux-undo";
 import configSlice from "./slice/configSlice";
 import { createSingleInstance } from "../comp/createSingleInstance";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 
 

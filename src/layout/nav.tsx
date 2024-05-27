@@ -2,7 +2,7 @@ import { Tooltip, Button, image } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 // import { Icon } from '@iconify-icon/react';
 import { Link, Outlet, useSearchParams } from "react-router-dom";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AInput } from "../comp/AInput";
 import { useDispatch } from "react-redux";
@@ -169,12 +169,25 @@ export function IcBaselineHome(props: SVGProps<SVGSVGElement>) {
 }
 
 export const Nav = memo(() => {
+  const ref = useRef<{ intTimer: any }>({
+    intTimer: -1
+  })
   const [showTools, setShowTools] = useState(false);
   const dispatch = useDispatch();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [search] = useSearchParams();
+
+  useEffect(() => {
+    ref.current.intTimer = setInterval(() => {
+      onSave()
+    }, 10000)
+    return () => {
+      clearInterval(ref.current.intTimer)
+    }
+  }, [])
+
   useEffect(() => {
     setShowTools(
       location.pathname === "/panel" || location.pathname === "/panel/"

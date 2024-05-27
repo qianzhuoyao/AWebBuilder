@@ -36,6 +36,7 @@ import { IWls } from "../store/slice/widgetSlice.ts";
 import { mapNodeBindPort } from "../comp/mapNodePort.ts";
 import { addPortNodeMap, getPortStatus } from "../node/portStatus.ts";
 import { useTakeConfig, useTakePanel, useTakeWidget } from "../comp/useTakeStore.tsx";
+import { parseMakeByFromId } from "../comp/signal3.ts";
 
 export const MenuContent = () => {
   const ConfigState = useTakeConfig()
@@ -193,14 +194,41 @@ const CustomCard = ({ data }: { data: IParseInPanel }) => {
         );
       },
     });
-    genWDGraph(JSON.parse(data.webLogic || "{}")?.G || "{}");
-    navigate({
-      pathname: "/panel",
-      search: `?name=${data?.viewName}&id=${data?.viewId}`,
-    });
+
+
+    setTimeout(() => {
+      const newGraph = genWDGraph(JSON.parse(data.webLogic || "{}")?.G || "{}");
+      //查找所有入度为0的点执行
+      newGraph
+        ?.getVertices()
+        .filter((node) => {
+          return newGraph?.getInDegree(node).length === 0;
+        })
+        .map((taskNodeId) => {
+          parseMakeByFromId(taskNodeId, {
+            toAnd1: () => void 0,
+            toAnd0: () => void 0,
+            edgeRunOver: () => void 0,
+            taskErrorRecord: () => void 0,
+            toLoopStop: () => void 0,
+            logicItemOver: () => void 0,
+            complete: () => void 0,
+            startRun: () => void 0,
+          });
+        });
+      navigate({
+        pathname: "/panel",
+        search: `?name=${data?.viewName}&id=${data?.viewId}`,
+      });
+    }, 0);
+
+
   }, [data, dispatch, navigate]);
 
   const toDemo = useCallback(() => {
+    dispatch(updateWorkSpaceName(data?.viewName));
+    const assignPanel = JSON.parse(data?.webPanel || "{}")
+    dispatch(updatePanelAssign(assignPanel));
     toSetLocalstorage(
       PanelState.workSpaceName,
       DEMO_CAROUSEL_LOCALSTORAGE_PREVIEW,

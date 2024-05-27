@@ -13,7 +13,7 @@ export default defineConfig({
   },
   server: {
     open: true,
-    port: 5173,
+    port: 5183,
     proxy: {
       '/mwapi': {
         target: 'http://10.180.5.186:30095',
