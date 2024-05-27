@@ -86,7 +86,9 @@ export const NodeContainer = memo(() => {
   const dispatch = useDispatch();
   const PanelState = useTakePanel();
   const widgetState = useTakeWidget();
-
+  const [deleteLock, setDeleteLock] = useState(false);
+  useHotkeys("v", () => setDeleteLock(true), { keyup: false, keydown: true });
+  useHotkeys("v", () => setDeleteLock(false), { keyup: true, keydown: false });
   const DimensionViewable = useMemo(
     <T,>() => ({
       name: "dimensionViewable",
@@ -470,11 +472,12 @@ export const NodeContainer = memo(() => {
           })}
         </div>
       </div>
-      {view(
-        ["删除", "下降层级", "上升层级"].map((value) => {
-          return <div key={value}>{value}</div>;
-        })
-      )}
+      {!deleteLock &&
+        view(
+          ["删除", "下降层级", "上升层级"].map((value) => {
+            return <div key={value}>{value}</div>;
+          })
+        )}
     </div>
   );
 });
