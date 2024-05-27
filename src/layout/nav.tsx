@@ -179,15 +179,7 @@ export const Nav = memo(() => {
   const navigate = useNavigate();
   const [search] = useSearchParams();
 
-  useEffect(() => {
-    ref.current.intTimer = setInterval(() => {
-      onSave()
-    }, 10000)
-    return () => {
-      clearInterval(ref.current.intTimer)
-    }
-  }, [])
-
+ 
   useEffect(() => {
     setShowTools(
       location.pathname === "/panel" || location.pathname === "/panel/"

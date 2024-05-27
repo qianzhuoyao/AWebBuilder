@@ -3,6 +3,7 @@ import { enableMapSet } from "immer";
 import { ILogicTypeList } from "../../panel/logicSrcList.ts";
 import { ITableConfig } from "../../node/viewConfigSubscribe.ts";
 import {
+  IFRAME_3D_DEFAULT_OPTION,
   IFRAME_DEFAULT_OPTION,
   IMAGE_DEFAULT_OPTION,
   ITEXT_DEFAULT_OPTION,
@@ -17,6 +18,7 @@ import {
 //pixTable
 export const pix_Table = "pixTable" as const;
 export const pix_frame = "pix_frame" as const;
+export const pix_3d_frame = "pix_3d_frame" as const;
 export const pix_input = "pix_input" as const;
 //文本
 export const pix_Text = "pixText" as const;
@@ -115,6 +117,7 @@ export type INodeType =
   | typeof pix_frame
   | typeof pix_Text
   | ILogicType
+  | typeof pix_3d_frame
   | keyof typeof CHART_OPTIONS;
 
 export type IOptionInstance = Partial<
@@ -124,7 +127,8 @@ export type IOptionInstance = Partial<
   } & ITableConfig &
     typeof IMAGE_DEFAULT_OPTION &
     typeof IFRAME_DEFAULT_OPTION &
-    typeof ITEXT_DEFAULT_OPTION
+    typeof ITEXT_DEFAULT_OPTION & 
+    typeof IFRAME_3D_DEFAULT_OPTION
 >;
 
 interface IChartInstance {

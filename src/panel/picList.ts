@@ -4,9 +4,11 @@ import pixTable from "../assets/widgetIcon/table.svg";
 import pic from "../assets/widgetIcon/photo.svg";
 import pixText from "../assets/widgetIcon/text_static.svg";
 import pixFrame from "../assets/widgetIcon/pepicons-pop--eye-frame.svg";
+import pix3dFrame from "../assets/widgetIcon/f7--view-3d.svg";
 import pixInput from "../assets/widgetIcon/radix-icons--input.svg";
 import {
   pic_Img,
+  pix_3d_frame,
   pix_BX,
   pix_frame,
   pix_input,
@@ -28,6 +30,11 @@ export const SRC_ICON = {
       id: pix_frame,
       src: pixFrame,
       name: "网页",
+    },
+    {
+      id: pix_3d_frame,
+      src: pix3dFrame,
+      name: "3d",
     },
   ],
   table: [

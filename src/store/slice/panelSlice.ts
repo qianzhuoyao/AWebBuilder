@@ -90,7 +90,8 @@ export const panelSlice = createSlice({
     updatePanelAssign: (state, action: PayloadAction<Partial<IPs>>) => {
       // state.panelWidth = action.payload;
       Object.keys(action.payload).map((key) => {
-        state[key] = action.payload[key];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (state as any)[key] = (action.payload as any)[key];
       });
     },
     updatePanelWidth: (state, action) => {

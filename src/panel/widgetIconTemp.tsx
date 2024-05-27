@@ -15,8 +15,7 @@ import {
   useRef,
 } from "react";
 import { createLayerSrc, setWidgetStream } from "./createWidgetPipe";
-import { useDispatch, useSelector } from "react-redux";
-import { IPs } from "../store/slice/panelSlice";
+import { useDispatch } from "react-redux";
 import gsap from "gsap";
 import {
   AR_PANEL_DOM_ID,
@@ -34,13 +33,11 @@ import {
   logic_D_get,
   logic_Ring_get,
   logic_TO_get,
-  INs,
   logic_Form_get,
   logic_ENC_get,
   IViewNode,
 } from "../store/slice/nodeSlice";
-import { IWs } from "../store/slice/widgetMapSlice";
-import { ILs, addLogicNode, ILogicNode } from "../store/slice/logicSlice";
+import { addLogicNode, ILogicNode } from "../store/slice/logicSlice";
 import { toast } from "react-toastify";
 import { mapNodeBindPort } from "../comp/mapNodePort.ts";
 import { setDefaultChartOption } from "../comp/setDefaultChartOption.ts";
@@ -56,12 +53,14 @@ import {
   updateLogicNodesInLayer,
   updateViewNodesInLayer,
 } from "./layers.ts";
-import { IWls } from "../store/slice/widgetSlice.ts";
-
 
 import { useTakeNodeData } from "../comp/useTakeNodeData.tsx";
 import { useTakeLogicData } from "../comp/useTakeLogicData.tsx";
-import { useTakePanel, useTakeWidget, useTakeWidgetMap } from "../comp/useTakeStore.tsx";
+import {
+  useTakePanel,
+  useTakeWidget,
+  useTakeWidgetMap,
+} from "../comp/useTakeStore.tsx";
 
 interface IW {
   nodeType: "LOGIC" | "VIEW";
@@ -105,7 +104,7 @@ const ViewCard = memo(
     id: string;
     src: string;
   }) => {
-    const widgetMapState = useTakeWidgetMap()
+    const widgetMapState = useTakeWidgetMap();
     const ICardRef = useRef<HTMLDivElement>(null);
     const ImageRef = useRef<HTMLImageElement>(null);
     useCardDefaultSetting(
@@ -223,7 +222,7 @@ const LogicCard = memo(
     src: string;
     tips?: string;
   }) => {
-    const logicState = useTakeLogicData()
+    const logicState = useTakeLogicData();
     const ICardRef = useRef<HTMLDivElement>(null);
     const ImageRef = useRef<HTMLImageElement>(null);
     useCardDefaultSetting(
@@ -278,7 +277,7 @@ export const defaultRemote: IRemoteReqInfo = {
   protocol: "http",
   method: "post",
   url: "",
-  token: ''
+  token: "",
 };
 
 const setDefaultInfo = (typeId: INodeType): IConfigInfo => {
@@ -324,11 +323,11 @@ export const WidgetIconTemp = memo(
 
     const dispatch = useDispatch();
 
-    const PanelState = useTakePanel()
-    const widgetState = useTakeWidget()
+    const PanelState = useTakePanel();
+    const widgetState = useTakeWidget();
     const currentLayer = getLayerContent(widgetState.currentLayerId);
 
-    const NodesState = useTakeNodeData()
+    const NodesState = useTakeNodeData();
     useEffect(() => {
       const subscription = setWidgetStream<HTMLImageElement | null, undefined>(
         key,
@@ -401,8 +400,6 @@ export const WidgetIconTemp = memo(
                 };
                 dispatch(addNode(newNode));
                 setTimeout(() => {
-
-
                   updateViewNodesInLayer(
                     currentLayer?.layerNameNodesOfView || "",
                     viewNodeId

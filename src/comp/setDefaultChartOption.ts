@@ -2,6 +2,7 @@ import {
   INodeType,
   IOptionInstance,
   pic_Img,
+  pix_3d_frame,
   pix_BX,
   pix_Table,
   pix_Text,
@@ -42,19 +43,23 @@ export const IMAGE_DEFAULT_OPTION = {
 } as const;
 
 export const IFRAME_DEFAULT_OPTION = {
-  url: ''
-} as const
+  url: "",
+} as const;
 
-export const ITEXT_DEFAULT_OPTION:IText = {
-  text: '文本',
-  color: 'black',
-  fontSize: '12px',
+export const IFRAME_3D_DEFAULT_OPTION = {
+  A3durl: "",
+} as const;
+
+export const ITEXT_DEFAULT_OPTION: IText = {
+  text: "文本",
+  color: "black",
+  fontSize: "12px",
   fontWeight: 500,
-  fontFamily: ''
-} as const
+  fontFamily: "",
+} as const;
 
 export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
-  console.log(type, 'setDefaultChartOptions')
+  console.log(type, "setDefaultChartOptions");
   switch (type) {
     case pix_BX:
       return {
@@ -67,6 +72,8 @@ export const setDefaultChartOption = (type: INodeType): IOptionInstance => {
       return IMAGE_DEFAULT_OPTION;
     case pix_frame:
       return IFRAME_DEFAULT_OPTION;
+    case pix_3d_frame:
+      return IFRAME_3D_DEFAULT_OPTION;
     case pix_Text:
       return ITEXT_DEFAULT_OPTION;
     default:

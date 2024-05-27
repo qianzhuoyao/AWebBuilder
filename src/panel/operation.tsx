@@ -1,8 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { IPs } from "../store/slice/panelSlice";
 import { Suspense, memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { INs, IViewNode, updateTargets } from "../store/slice/nodeSlice";
-import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID, SCENE } from "../contant";
+import { ATTR_TAG, NODE_TYPE_CODE, NODE_ID } from "../contant";
 
 import { NodeContainer } from "./nodeContainer.tsx";
 import { getTemplate } from "../node/baseViewNode.ts";
@@ -52,8 +52,8 @@ export const NodeSlot = memo(
     const nodeRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const PanelState = useTakePanel()
-    const NodesState = useTakeNodeData()
+    const PanelState = useTakePanel();
+    const NodesState = useTakeNodeData();
     console.log(node, "daw3efgfgg");
     useEffect(() => {
       if (!nodeRef.current) {
@@ -67,20 +67,20 @@ export const NodeSlot = memo(
 
     const onHandleSelectedCurrent = useCallback(() => {
       //如果不是模板 就选中，否则映射至对应组件
-      console.log(isTemp, node, nodeRef, PanelState, 'isTempisTemp')
+      console.log(isTemp, node, nodeRef, PanelState, "isTempisTemp");
       if (isTemp) {
         dispatch(updateTargets([node.id]));
       } else {
-        dispatch(updateTargets([nodeRef.current?.id]));
+        nodeRef.current?.id && dispatch(updateTargets([nodeRef.current?.id]));
       }
-    }, [dispatch, isTemp, node.id]);
+    }, [PanelState, dispatch, isTemp, node]);
 
     useEffect(() => {
       if (nodeRef.current) {
         nodeRef.current.style.left = node.x + "px";
         nodeRef.current.style.top = node.y + "px";
-        nodeRef.current.style.width = node.w  + "px";
-        nodeRef.current.style.height = node.h  + "px";
+        nodeRef.current.style.width = node.w + "px";
+        nodeRef.current.style.height = node.h + "px";
       }
     }, []);
 
@@ -94,15 +94,15 @@ export const NodeSlot = memo(
           style={
             isTemp
               ? {
-                zIndex: node.z,
-                width: "100%",
-                height: "100%",
-              }
+                  zIndex: node.z,
+                  width: "100%",
+                  height: "100%",
+                }
               : {
-                zIndex: node.z,
-                width: "0px",
-                height: "0px",
-              }
+                  zIndex: node.z,
+                  width: "0px",
+                  height: "0px",
+                }
           }
         >
           <Temp
@@ -129,9 +129,7 @@ export const AScene = memo(() => {
         }}
       >
         <div id="container" className="relative w-full h-full overflow-hidden">
-         
-            <NodeContainer></NodeContainer>
-     
+          <NodeContainer></NodeContainer>
         </div>
       </div>
     </>

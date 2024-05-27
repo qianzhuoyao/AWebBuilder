@@ -2,7 +2,6 @@ import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { WidgetIconTemp } from "./widgetIconTemp";
 import { SRC_ICON } from "./picList";
 import React, { memo, useMemo } from "react";
-import { pic_Img, pix_BX, pix_Table, pix_Text, pix_frame } from "../store/slice/nodeSlice.ts";
 
 export interface ITs {
   ele: {
@@ -145,7 +144,7 @@ const InputMap = memo(() => {
             nodeType="VIEW"
             key={text.id}
             typeId={text.id}
-            classify="input"
+            classify={text.id}
             src={text.src}
             name={text.name}
           ></WidgetIconTemp>
@@ -163,7 +162,7 @@ const TextMap = memo(() => {
             nodeType="VIEW"
             key={text.id}
             typeId={text.id}
-            classify={pix_Text}
+            classify={text.id}
             src={text.src}
             name={text.name}
           ></WidgetIconTemp>
@@ -181,7 +180,7 @@ const IFrameMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={item.id}
-            classify={pix_frame}
+            classify={item.id}
             typeId={item.id}
             src={item.src}
             name={item.name}
@@ -200,7 +199,7 @@ const ImageMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={image.id}
-            classify={pic_Img}
+            classify={image.id}
             typeId={image.id}
             src={image.src}
             name={image.name}
@@ -218,7 +217,7 @@ const TableMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={table.id}
-            classify={pix_Table}
+            classify={table.id}
             typeId={table.id}
             src={table.src}
             name={table.name}
@@ -237,7 +236,7 @@ const BarMap = memo(() => {
           <WidgetIconTemp
             nodeType="VIEW"
             key={bar.id}
-            classify={pix_BX}
+            classify={bar.id}
             typeId={bar.id}
             src={bar.src}
             name={bar.name}

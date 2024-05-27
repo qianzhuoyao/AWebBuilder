@@ -8,16 +8,19 @@ export interface ITableConfig {
   dataField: string;
 }
 
-type IChartConfig = { chart: string, };
-type IImageConfig = { src: string, };
+type IChartConfig = { chart: string };
+type IImageConfig = { src: string };
+type I3dConfig = { A3durl: string };
 export type IText = {
-  text: string,
-  color: string,
-  fontSize: string,
-  fontWeight: number,
-  fontFamily: string
-}
-export type IConfig = Partial<ITableConfig & IChartConfig & IImageConfig & IText>;
+  text: string;
+  color: string;
+  fontSize: string;
+  fontWeight: number;
+  fontFamily: string;
+};
+export type IConfig = Partial<
+  ITableConfig & IChartConfig & IImageConfig & IText & I3dConfig
+>;
 
 const configSubscribe = () => {
   const nodeConfig = new Map<string, IConfig>();
@@ -31,7 +34,7 @@ const configSubscribe = () => {
 export const getConfigSubscribe = createSingleInstance(configSubscribe);
 
 export const insertConfig = (id: string, config: IConfig) => {
-  console.log(config, 'configsssss')
+  console.log(config, "configsssss");
   getConfigSubscribe().observable.next({ id, ...config });
   getConfigSubscribe().nodeConfig.set(id, config);
 };

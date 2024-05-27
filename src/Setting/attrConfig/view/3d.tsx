@@ -1,5 +1,8 @@
 import { signalViewNodeAttrConfig } from "../../signalNodeConfig.ts";
-import { pic_Img, updateInstance } from "../../../store/slice/nodeSlice.ts";
+import {
+  pix_3d_frame,
+  updateInstance,
+} from "../../../store/slice/nodeSlice.ts";
 import { Card, CardBody, Input, Tab, Tabs } from "@nextui-org/react";
 import { DefaultViewNodeConfigForm } from "../../form/view/BXChartConfigForm.tsx";
 import { StreamData } from "../../form/logic/remoteReq/StreamData.tsx";
@@ -20,7 +23,7 @@ const ImageConfigSetting = memo(() => {
     (value: string) => {
       try {
         insertConfig(NodesState.targets[0], {
-          src: value,
+            A3durl: value,
         });
         dispatch(
           updateInstance({
@@ -28,12 +31,12 @@ const ImageConfigSetting = memo(() => {
             id: NodesState.targets[0],
             option: {
               ...NodesState.list[NodesState.targets[0]]?.instance?.option,
-              src: value,
+              A3durl: value,
             },
           })
         );
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     },
     [NodesState.list, NodesState.targets, dispatch]
@@ -55,7 +58,7 @@ const ImageConfigSetting = memo(() => {
           placeholder="资源,可用过{}的形式取用流值路径"
           labelPlacement="outside"
           value={
-            NodesState.list[NodesState.targets[0]]?.instance?.option?.src || ""
+            NodesState.list[NodesState.targets[0]]?.instance?.option?.A3durl || ""
           }
           // value={NodesState.list[NodesState.targets[0]].instance.option?.src || ''}
           onChange={(e) => {
@@ -106,8 +109,8 @@ const ImageConfigSetting = memo(() => {
     </div>
   );
 });
-export const ImageConfig = () => {
-  const config = signalViewNodeAttrConfig(pic_Img);
+export const I3dConfig = () => {
+  const config = signalViewNodeAttrConfig(pix_3d_frame);
   config.setConfigEle((nodeInfo) => {
     if (nodeInfo.target.length > 0) {
       return (
@@ -122,7 +125,7 @@ export const ImageConfig = () => {
             >
               <Tab
                 key={nodeInfo.target[0] + "TableConfigSetting"}
-                title={"图表配置"}
+                title={"3d配置"}
               >
                 <Card>
                   <CardBody>

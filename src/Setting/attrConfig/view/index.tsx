@@ -5,6 +5,7 @@ import { TableConfig } from "./table.tsx";
 import { ImageConfig } from "./image.tsx";
 import { IframeConfig } from "./iframeConfig.tsx";
 import { TextConfig } from "./text.tsx";
+import { I3dConfig } from "./3d.tsx";
 
 export const DefaultPanelViewConfig = () => {
   const config = signalViewNodeAttrConfig("DEFAULT-VIEW-PANEL-CONFIG");
@@ -23,4 +24,5 @@ export const AttrViewConfigInit = () => {
   IframeConfig();
   ImageConfig();
   TextConfig()
+  I3dConfig()
 };

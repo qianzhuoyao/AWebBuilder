@@ -1,3 +1,4 @@
+import { A3dTemplate } from "./3dTemplate";
 import { ChartTemplate } from "./chartTemplate";
 import { IframeTemplate } from "./frameTemplate";
 import { ImageTemplate } from "./imageTemplate";
@@ -9,5 +10,6 @@ export const templateMain = () => {
   TableTemplate();
   TextTemplate();
   ImageTemplate();
-  IframeTemplate()
+  IframeTemplate();
+  A3dTemplate();
 };
