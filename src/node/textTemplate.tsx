@@ -3,15 +3,21 @@ import { IViewNode, pix_Text } from "../store/slice/nodeSlice";
 import { useEffect, useRef, useState } from "react";
 import { useAutoSubscription } from "../comp/autoSubscription";
 import { parseContent } from "../comp/parseTemplate";
+import { getWCache } from "../panel/data";
 const Content = ({ config, id }: { config: IViewNode, id: string }) => {
     const [content, setContent] = useState(() => config.instance.option);
 
     const textRef = useRef<HTMLSpanElement>(null)
 
-    useAutoSubscription(config.id).render((value) => {
-        console.log(value, parseContent(value, id), "useAutoSubscriptioAnasdasd");
-        const result = parseContent(value, id)
-        setContent(result)
+
+
+
+    useAutoSubscription(config.id).render(() => {
+        if (config?.instance?.option) {
+            console.log(config?.instance?.option, getWCache(id), 'adasdasdasdasd')
+            const result = parseContent(config?.instance?.option, id)
+            setContent(result)
+        }
     });
 
 

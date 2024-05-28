@@ -34,7 +34,7 @@ const configSubscribe = () => {
 export const getConfigSubscribe = createSingleInstance(configSubscribe);
 
 export const insertConfig = (id: string, config: IConfig) => {
-  console.log(config, "configsssss");
+  console.log(config,{ id, ...config }, "configsssss");
   getConfigSubscribe().observable.next({ id, ...config });
   getConfigSubscribe().nodeConfig.set(id, config);
 };

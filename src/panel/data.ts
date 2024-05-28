@@ -33,6 +33,7 @@ export const subscribeViewCacheUpdate = <T>(
   });
 };
 export const getWCache = (id: string) => {
+  console.log(getWindowDataInstance().data,'igetWindowDataInstanced')
   return getWindowDataInstance().data.get(id);
 };
 

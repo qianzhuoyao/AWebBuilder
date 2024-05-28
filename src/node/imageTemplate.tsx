@@ -7,10 +7,13 @@ import { parseContent } from "../comp/parseTemplate";
 
 const BaseImage = memo(({ config, id }: { config: IViewNode, id: string }) => {
   const [content, setContent] = useState(() => config.instance.option);
-  useAutoSubscription(config.id).render((value) => {
-    console.log(value, "useAutoSubscription");
-    const result = parseContent(value, id)
-    setContent(result);
+  useAutoSubscription(config.id).render(() => {
+    if (config.instance.option) {
+      console.log(config.instance.option, "useAutoSubscription");
+      const result = parseContent(config.instance.option, id)
+      setContent(result);
+    }
+
   });
   return (
     <Image

@@ -1,10 +1,10 @@
 import { getWCache } from "../panel/data"
 import { filterObjValue } from "./filterObjValue"
 
-export const parseContent = (input: Record<string, any>,id:string) => {
+export const parseContent = (input: Record<string, any>, id: string) => {
     const parseReg = /\{(.+?)\}/gi
-
-    const newContent: Record<string, any> = input
+    console.log(input, id, 'cascwc3cwwc1')
+    const newContent: Record<string, any> = {...input}
     Object.keys(input).map((key) => {
         const parseResult = String(input[key]).match(parseReg)
         if (parseResult?.length) {
@@ -13,7 +13,10 @@ export const parseContent = (input: Record<string, any>,id:string) => {
             //获取最终值
             const fKey = path.split('.').splice(-1)[0] || ''
             console.log(getWCache(id), fKey, 'cascwc3cwwc')
-            newContent[key] = filterObjValue(getWCache(id) || {}, path || "")
+            if (getWCache(id)) {
+                newContent[key] = filterObjValue(getWCache(id) || {}, path || "")
+            }
+
         }
     })
     return newContent

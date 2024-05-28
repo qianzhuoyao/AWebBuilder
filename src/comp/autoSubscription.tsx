@@ -7,6 +7,7 @@ export const useAutoSubscription = (id: string, deps?: DependencyList) => {
   }>({ fn: null });
   useEffect(() => {
     const autoSubscription = subscribeConfig((value) => {
+      console.log(value,'useAutoSubscriptionA')
       if (id === value.id) {
         callbackRef.current.fn?.(value);
       }

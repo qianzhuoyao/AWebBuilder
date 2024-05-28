@@ -22,7 +22,7 @@ export const viewLogicSlot = <T>() => {
   });
   ViewLogicSlot.signalIn("in-0", (value) => {
     //输入 =》数据绑定
-
+console.log(value,'valuesssss')
     //
     return of(value.pre);
   });
@@ -32,12 +32,13 @@ export const viewLogicSlot = <T>() => {
     //输出=》事件输出
     return of(value.pre).pipe(
       tap(() => {
-        console.log(value, 'ViewLogicSlot')
-        insertConfig(value?.config?.viewMapInfo?.viewNodeId, value.config.viewMapInfo.data.instance.option as ITableConfig);
+        console.log(value?.config?.viewMapInfo?.viewNodeId, {...(value?.pre||{})}, 'ViewLogicSlot')
         inertViewCache(
           value?.config?.viewMapInfo?.viewNodeId,
-          value?.pre as IObjectNotNull<unknown>
+          {...(value?.pre||{})} as IObjectNotNull<unknown>
         );
+        insertConfig(value?.config?.viewMapInfo?.viewNodeId, value.config.viewMapInfo.data.instance.option as ITableConfig);
+        
       })
     )
   });

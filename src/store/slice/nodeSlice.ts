@@ -125,10 +125,10 @@ export type IOptionInstance = Partial<
     chartClass: keyof typeof CHART_OPTIONS;
     chart: string;
   } & ITableConfig &
-    typeof IMAGE_DEFAULT_OPTION &
-    typeof IFRAME_DEFAULT_OPTION &
-    typeof ITEXT_DEFAULT_OPTION & 
-    typeof IFRAME_3D_DEFAULT_OPTION
+  typeof IMAGE_DEFAULT_OPTION &
+  typeof IFRAME_DEFAULT_OPTION &
+  typeof ITEXT_DEFAULT_OPTION &
+  typeof IFRAME_3D_DEFAULT_OPTION
 >;
 
 interface IChartInstance {
@@ -211,18 +211,8 @@ export const viewNodesSlice = createSlice({
     },
     updateInstance: (state, action) => {
       const { type, id, option } = action.payload;
-      const viewNodeTypeIdList = [
-        pix_Table,
-        pix_Text,
-        pic_Img,
-        pix_BX,
-        pix_frame,
-        pix_Text,
-      ];
-      //是视图
-      if (viewNodeTypeIdList.includes(type)) {
-        (state.list as Record<string, IViewNode>)[id].instance.option = option;
-      }
+      console.log(action.payload,'action.payloadtext');
+      (state.list as Record<string, IViewNode>)[id].instance.option = option;
     },
     clear: (state) => {
       state.list = {};
