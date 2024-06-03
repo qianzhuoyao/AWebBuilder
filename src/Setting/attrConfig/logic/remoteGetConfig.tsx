@@ -197,7 +197,7 @@ const Test = memo(() => {
   const height = useAutoHeight();
 
   const query = () =>
-    fetch("/mwapi/" + params.url, {
+    fetch("//" + params.url, {
       method: params.method,
       body: null,
       headers: {

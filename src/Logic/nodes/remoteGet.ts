@@ -30,7 +30,7 @@ export const buildDataReqNode = () => {
         console.log(value.config?.remoteReqInfo?.method?.toUpperCase(), 'value.config?.remoteReqInfo?.method?.toLowerCase()')
         const req = () => value.config?.remoteReqInfo?.method?.toUpperCase() !== 'GET' ? aPost(
 
-          "/mwapi/" +
+          "//" +
           value.config?.remoteReqInfo?.url || "",
           value.pre,
           {
@@ -44,7 +44,7 @@ export const buildDataReqNode = () => {
             }
           }
         ) : aGet(
-          "/mwapi/" +
+          "//" +
           value.config?.remoteReqInfo?.url || "",
           value.pre,
           {

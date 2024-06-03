@@ -76,7 +76,7 @@ const ImageConfigSetting = memo(() => {
           showUploadList={false}
           accept="image"
           maxCount={1}
-          action="/mwapi/visualize/visualizeView/upload"
+  
           onChange={(info) => {
             if (info.file.status !== "uploading") {
               console.log(info.file, info.fileList);

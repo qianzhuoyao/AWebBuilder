@@ -12,7 +12,6 @@ export const Model = ({ url }: IModel) => {
       gltf.scene && setModel(gltf.scene);
     });
   }, [url]);
-  // const gltf = useLoader(GLTFLoader, 'http://10.180.5.186:30081/visualize_download//view/52460ab87d37442e899e4adb1deab7cb.glb');
   // console.log(gltf,'gltf')
   return <>{model ? <primitive object={model} scale={0.5} /> : <></>}</>;
 };

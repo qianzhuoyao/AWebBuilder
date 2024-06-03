@@ -15,11 +15,11 @@ export default defineConfig({
     open: true,
     port: 5183,
     proxy: {
-      '/mwapi': {
-        target: 'http://10.180.5.186:30095',
+      '/xxapi': {
+        target: 'http://x.x.x.x:x',
         secure: false,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/mwapi/, 'mwapi'),
+        rewrite: (path) => path.replace(/^\/xxapi/, 'xxapi'),
       },
     },
   },
